@@ -1,0 +1,72 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>会员列表</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('Memadmin/index')}">
+        openid
+        <input type="text" name="openid" value="{$openid}" placeholder="请输入会员openid"> &nbsp;&nbsp;
+        会员昵称:
+        <input type="text" name="nickname"  value="{$nickname}" placeholder="请输入会员昵称"> &nbsp;&nbsp;
+        手机号:
+        <input type="text" name="memphone"  value="{$memphone}" placeholder="请输入会员手机号"> &nbsp;&nbsp;
+        加入时间:
+        <input type="text" name="add_time"  value="{$add_time}" placeholder="请输入注册时间"> &nbsp;&nbsp;
+        &nbsp;&nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        &nbsp;&nbsp;
+        <a class="btn btn-danger" href="{:U('Memadmin/index')}">清空</a>
+    </form>
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th width="50">编号</th>
+            <th width="150">openid</th>
+            <th width="300">头像</th>
+            <th>昵称</th>
+            <th>手机号</th>
+            <th>加入时间</th>
+
+
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="data" item="v">
+            <tr>
+                <td>{$v.id}</td>
+                <td>{$v.openid}</td>
+                <td>
+                    <img src="{$v.memimg}" style="height: 50px">
+                </td>
+                <td>{$v.nickname}</td>
+                <td>{$v.memphone}</td>
+                <td>{$v.add_time|date='Y-m-d H:i:s',###}</td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+    <div class="pagination" style="text-align: right">{$page}</div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<style>
+</style>
+<!--<script>
+    function exchange(status,id) {
+        $.post('{:U("adminIndex/exchangeSatatus")}',{status:status,id:id},function (data) {
+            if(data.code==1){
+                if($("#id_"+id).hasClass('fa fa-check fa-lg'))
+                {
+                    $("#id_"+id).attr('class','fa fa-close fa-lg');
+                    $("#id_"+id).attr('onclick',"exchange(1,'"+id+"')");
+                }else if($("#id_"+id).hasClass('fa fa-close fa-lg')){
+                    $("#id_"+id).attr('class','fa fa-check fa-lg');
+                    $("#id_"+id).attr('onclick',"exchange(0,'"+id+"')");
+                }
+            }
+        });
+    }
+</script>-->
+</body>
+</html>

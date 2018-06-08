@@ -1,0 +1,92 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('adminIndex/index')}">{:L('MERCHANTS_LIST')}</a></li>
+        <li ><a href="{:U('adminIndex/add')}">{:L('MERCHANTS_ADD')}</a></li>
+        <li class="active"><a href="{:U('adminIndex/add_merchant_machine')}">多门店添加假账号</a></li>
+    </ul>
+    <form id="form1" class="form-horizontal" method="post" action="{:U('adminIndex/add_merchant_machine')}">
+        <div class="control-group">
+            <label class="control-label">分店总部</label>
+            <div class="controls ">
+                <select name="mid" >
+                    <foreach name="mids" item="m">
+                        <option value="{$m.id}">{$m.merchant_name}</option>
+                    </foreach>
+                </select>   &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red">*选择多门店总部</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">地区</label>
+            <div class="controls">
+                <select name="province" class="span3"></select> &nbsp;&nbsp;<select name="city" class="span3"></select>&nbsp;&nbsp;<select name="county" class="span3"></select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="address">详细地址</label>
+            <div class="controls">
+                <input type="text" id="address" name="address" placeholder="请填写详细地址">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="merchant_name">商户名称</label>
+            <div class="controls">
+                <input type="text" id="merchant_name" name="merchant_name" placeholder="请填写商户名称">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">所属行业</label>
+            <div class="controls">
+                <select name="industry"  class="span3">
+                    <option value="-1">请选择</option>
+                    <option value="零售超市">零售超市</option>
+                    <option value="餐饮行业">餐饮行业</option>
+                    <option value="餐饮行业">美容美发</option>
+                    <option value="餐饮行业">休闲娱乐</option>
+                    <option value="餐饮行业">酒店住宿</option>
+                    <option value="餐饮行业">服装鞋帽</option>
+                    <option value="餐饮行业">手机行业</option>
+                    <option value="餐饮行业">其他</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">开通服务</label>
+            <div class="controls">
+                <select name="account_type"  class="span3">
+                    <option value="1">仅开通台签</option>
+                    <option value="2">开通台签和双屏</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">是否开通小程序服务</label>
+            <div class="controls">
+                <label class="radio inline">
+                    <input type="radio"  name="is_miniapp" value="1" checked>不开通
+                </label>
+                <label class="radio inline">
+                    <input type="radio" name="is_miniapp" value="2"> 开通
+                </label>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary " >添加</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/global.js"></script>
+<script src="__PUBLIC__/js/PCASClass.js"></script> <!-- 省市县插件-->
+<script>
+    $(function () {
+        new PCAS("province", "city", "county", "北京市", "市辖区", "朝阳区"); //省市县
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,260 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('adminAgent/index')}">{:L('AGENT_LIST')}</a></li>
+        <li class="active"><a href="{:U('adminAgent/add')}">{:L('AGENT_ADD')}</a></li>
+    </ul>
+    <form id="form1" class="form-horizontal">
+        <!--<div class="control-group">-->
+            <!--<label class="control-label" >上级用户手机号</label>-->
+            <!--<div class="controls">-->
+                <!--<input type="text" name="pid_phone" id="pid_phone" value="" placeholder="请输入由谁发展过来的用户手机"> &nbsp;&nbsp;-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="control-group">
+            <label class="control-label" for="agent_name">代理名称</label>
+            <div class="controls">
+                <input type="text" id="agent_name" name="agent_name" placeholder="请填写商户名称">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="uid">用户手机号</label>
+            <div class="controls">
+                <input type="text" id="user_phone" name="user_phone" placeholder="请填写用户手机号">
+                <button class="btn btn-primary" id="add_user" type="button">添加用户</button> &nbsp;&nbsp;<span id="tips">用户密码是：123456</span>
+                <input type="hidden" id="uid" name="uid" value="">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">地区</label>
+            <div class="controls">
+                <select name="province" class="span3"></select> &nbsp;&nbsp;<select name="city" class="span3"></select>&nbsp;&nbsp;<select name="county" class="span3"></select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="address">详细地址</label>
+            <div class="controls">
+                <input type="text" id="address" name="address" placeholder="请填写详细地址">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">代理方式</label>
+            <div class="controls">
+                <select name="agent_style"  class="span3 agent_style">
+                    <option value="">请选择</option>
+                    <option value="1">合同模式</option>
+                    <option value="2">自定义模式</option>
+                </select>
+            </div>
+        </div>
+           <div class="control-group">
+        <div style="width:50%;float: left;">
+        <h3 align="center">D1业务</h3>
+        <div class="control-group">
+            <label class="control-label" for="wx_rate">微信的基准费率</label>
+            <div class="controls">
+                <input type="text" id="wx_rate" name="wx_rate" placeholder="请填入微信的基准费率">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ali_rate">支付宝的基准费率</label>
+            <div class="controls">
+                <input type="text" id="ali_rate" name="ali_rate" placeholder="请填入支付宝的基准费率">
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label" >100万以下分润</label>
+            <div class="controls">
+                <input type="text" class="one_rate" name="one_rate" placeholder="请填入签约费率">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" >100万~500万费率</label>
+            <div class="controls">
+                <input type="text" class="two_rate" name="two_rate" placeholder="请填入签约费率">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" >500万~1000万费率</label>
+            <div class="controls">
+                <input type="text" class="three_rate" name="three_rate" placeholder="请填入签约费率">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" >1000万以上费率</label>
+            <div class="controls">
+                <input type="text" class="four_rate" name="four_rate" placeholder="请填入签约费率">
+            </div>
+        </div>
+		</div>
+		<div style="width:50%;float: left;">
+        <h3 align="center">D0业务</h3>
+        <div class="control-group">
+            <label class="control-label" for="wx_rate_0">微信的基准费率</label>
+            <div class="controls">
+                <input type="text" id="wx_rate_0" name="wx_rate_0" placeholder="请填入微信的基准费率">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ali_rate_0">支付宝的基准费率</label>
+            <div class="controls">
+                <input type="text" id="ali_rate_0" name="ali_rate_0" placeholder="请填入支付宝的基准费率">
+            </div>
+        </div>
+        
+      	 <div class="control-group">
+            <label class="control-label" for="poundage">单笔代付手续费金额</label>
+            <div class="controls">
+                <input type="text" id="poundage" name="poundage" placeholder="单笔代付手续费金额">
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="repaid_rate">垫资费率</label>
+            <div class="controls">
+                <input type="text" id="repaid_rate" name="repaid_rate" placeholder="垫资费率">
+            </div>
+        </div>
+        
+        </div>
+		</div>
+        <div class="control-group">
+            <label class="control-label">代理类型</label>
+            <div class="controls">
+                <select name="is_first_agent"  class="span3">
+                    <option value="-1">请选择</option>
+                    <option value="0">个人</option>
+                    <option value="1">企业</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">代理商角色</label>
+            <div class="controls">
+                <select name="juese"  class="span3">
+                    <option value="">请选择</option>
+                    <option value="1">代理</option>
+                    <option value="2">员工</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">开通会员卡权限</label>
+            <div class="controls">
+                <select name="card_auth"  class="span3">
+                    <option value="0">关闭</option>
+                    <option value="1">开通</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">是否开通供应链</label>
+            <div class="controls">
+                <select name="supply_chain"  class="span3">
+                    <option value="0">关闭</option>
+                    <option value="1">开通</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">新增类型</label>
+            <div class="controls">
+                <input name="agent_type" value="0" type="radio" checked/>直接发展 &nbsp;&nbsp;
+                <input name="agent_type" value="2" type="radio"/>内部员工推荐 &nbsp;&nbsp;
+            </div>
+        </div>
+        <div class="control-group" id="referrer_div" style="display: none">
+            <label class="control-label">推荐人</label>
+            <div class="controls">
+                <input name="referrer" type="text"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">代理业务</label>
+            <div class="controls">
+                <input name="agency_business[]" value="0" type="checkbox"/>二维码收款 &nbsp;&nbsp;
+                <input name="agency_business[]" value="1" type="checkbox"/>双屏收款系统 &nbsp;&nbsp;
+                <input name="agency_business[]" value="2" type="checkbox"/>POS机 &nbsp;&nbsp;
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="button" id="onSubmit" class="btn btn-primary js-ajax-submit" >{:L('ADD')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/global.js"></script>
+<script src="__PUBLIC__/js/PCASClass.js"></script> <!-- 省市县插件-->
+<script>
+    $(function () {
+        new PCAS("province","city","county","北京市","市辖区","朝阳区"); //省市县
+        $(".agent_style").change(function(){
+            var agent_style = $(".agent_style").val();
+            if(agent_style == "1"){
+//                $("#wx_rate").attr("disabled", true);
+//                $("#ali_rate").attr("disabled", true);
+                $("#wx_rate").val(0.25);
+                $("#ali_rate").val(0.25);
+                $(".one_rate").attr("disabled",false);
+                $(".two_rate").attr("disabled",false);
+                $(".three_rate").attr("disabled",false);
+                $(".four_rate").attr("disabled",false);
+            }else if(agent_style == "2"){
+//                $("#wx_rate").attr("disabled", false);
+//                $("#ali_rate").attr("disabled", false);
+                $("#wx_rate").val("");
+                $("#ali_rate").val("");
+                $(".one_rate").attr("disabled",true);
+                $(".two_rate").attr("disabled",true);
+                $(".three_rate").attr("disabled",true);
+                $(".four_rate").attr("disabled",true);
+            }
+        });
+
+
+        $("input[name='agent_type']").click(function () {
+            if($("input[name='agent_type']:checked").val()==2){
+                $("#referrer_div").css("display","block");
+            }else{
+                $("#referrer_div").css("display","none");
+            }
+        });
+
+        $("#onSubmit").click(function () {
+            $.post('{:U("adminAgent/add")}',$("#form1").serialize(),function (data) {
+                if(data.code !=1){
+                    alert(data.msg);
+                    return;
+                }else{
+                    alert(data.msg);
+                    location.href='{:U("adminAgent/index")}';
+                }
+            });
+            
+        });
+        
+        
+        $("#add_user").click(function () {
+            user_phone=$("#user_phone").val();
+            $.post('{:U("AdminAgent/add_user")}',{user_phone:user_phone},function (data) {
+                console.log(data);
+                if(data.code==1){
+                    $("#uid").val(data.uid);
+                    $("#tips").text("用户已添加！");
+                    $("#tips").css("color","red");
+                }else{
+                    alert(data.msg);
+                }
+
+            });
+        });
+    });
+</script>
+<style>
+    input{width: 60%;}
+</style>
+</body>
+</html>

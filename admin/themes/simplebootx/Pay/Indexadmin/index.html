@@ -1,0 +1,65 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><h2><a href="{:U('Contentadmin/index')}">流水大数据查看</a></h2></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Contentadmin/add_post')}">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label">交易总额(元)</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$data['total_pay']}" style="color:green" disabled>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">商户总数量</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$data['merchants']}" style="color:green" disabled>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">交易总笔数</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$data['total_number']}" style="color:green" disabled>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">昨日流水总额(元)</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$data['tomo_total_price']}"  style="color:green" disabled>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">昨日新增商户数</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$data['tomo_total_merchants']}" style="color:green" disabled>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">昨日交易的总笔数</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$data['tomo_total_number']}" style="color:green" disabled>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">昨日支付宝交易笔数</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$data['tomo_total_zfbnumber']}" style="color:green" disabled>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">昨日微信交易笔数</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$data['tomo_total_wxnumber']}" style="color:green" disabled>
+                </div>
+            </div>
+
+        </fieldset>
+
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

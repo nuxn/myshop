@@ -1,0 +1,121 @@
+<admintpl file="header" />
+
+</head>
+<body>
+
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">商户充值列表</a></li>
+        <!--<li><a href="{:U('Cashadmin/add')}" target="_self">新增支付</a></li>-->
+    </ul>
+    <form class="well form-search" method="post" action="{:U('Cashadmin/index')}">
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="" style="width: 120px;" autocomplete="off" placeholder="开始时间">-
+        <input type="text" class="js-datetime" name="end_time" value="" style="width: 120px;" autocomplete="off" placeholder="结束时间"> &nbsp;
+        支付类型：
+        <select name="paystyle" style="width: 120px;">
+            <option value='0'>全部</option>
+            <option value='1'>微信</option>
+            <option value='2'>支付宝</option>
+            <option value='3'>银联钱包</option>
+            <option value='4'>京东</option>
+            <option value='5'>百度钱包</option>
+        </select>&nbsp;&nbsp;&nbsp;
+        支付状态：
+        <select name="status" style="width: 120px;">
+            <option value='-1'>全部</option>
+            <option value='0'>支付失败</option>
+            <option value='1'>支付成功</option>
+        </select>&nbsp;
+        商户电话：
+        <input type="text" name="user_phone" style="width: 200px;" value="" placeholder="请输入对应商户的电话">
+        商户的简称：
+        <input type="text" name="merchant_name" style="width: 200px;" value="" placeholder="请输入对应商户的的简称">
+
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Cashadmin/index')}">清空</a>
+    </form>
+    <form class="js-ajax-form" action="{:U('Cashadmin/delete')}" method="post">
+        <div class="table-actions">
+            <!--<button class="btn btn-primary btn-md js-ajax-submit" type="submit" data-action="{:U('Cashadmin/add')}" data-subcheck="true">新增</button>-->
+            <button class="btn btn-danger btn-md " type="submit"  data-subcheck="true" data-msg="你确定删除吗？">全选删除</button>
+        </div>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>
+
+                <th width="70" >ID</th>
+                <th width="70" >商户的电话</th>
+                <th width="70" >商户的名称</th>
+                <th width="50" >支付方式</th>
+                <th width="70" >充值金额</th>
+                <th width="70" >支付样式</th>
+                <th width="70" >支付状态</th>
+                <th width="70">支付时间</th>
+            </tr>
+            </thead>
+            <foreach name="pays" item="p">
+                <tr>
+                    <td><input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$p.id}" ></td>
+                    <td><b>{$p.id}</b></td>
+                    <td><b>{$p.user_phone}</b></td>
+                    <td><b>{$p.merchant_name}</b></td>
+                    <td><b>{:paystyle($p['paystyle_id'])}</b></td>
+                    <td><b>{$p.price}</b></td>
+                    <td><b>{:numberstyle($p['mode'])}</b></td>
+                    <td >
+                        <b>{:pay_status($p['status'])}</b>
+                        <!--<span class="change_status" data-status="{$p.status}" data-id="{$p.id}">-->
+                        <!--<img src="__PUBLIC__/images/status_{$p.status}.gif" alt="改变状态" >-->
+                        <!--</span>-->
+                        <!--{:show_status($p)}-->
+                    </td>
+                    <td>
+                        {:date('Y-m-d H:i:s',$p['paytime'])}
+                    </td>
+                    <!--<td>-->
+                        <!--<a href="{:U('Cashadmin/check_pay',array('id'=>$p['id']))}">检查</a> |-->
+
+                    <!--</td>-->
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script >
+    $(function(){
+//        改变上线状态
+        $(".change_status").click(function(){
+//            var ab = $(this).data('status') == 1 ? 0 :1;
+            var data = {
+//                status : $(this).data('status'),
+                id : $(this).data('id')
+            };
+            console.log(data);
+            var _this = $(this);
+            $.post("{:U('Cashadmin/change_status')}", data, function(ad){
+                _this.children("img").attr("src","__PUBLIC__/images/status_"+ad+".gif")
+                console.log(ad);
+            },"json");
+        })
+////        改变支付状态
+//        $(".change_status").click(function(){
+//            var data = {
+//                status : !$(this).data('status'),
+//                id : $(this).data('id')
+//            };
+//            var _this = $(this);
+//            $.post("{:U('Cashadmin/change_status')}", data, function(data){
+//                console.log(data);
+//                _this.toggleClass('fa-check  fa-close');
+//            });
+//        })
+////
+//
+    })
+</script>
+</body>
+</html>

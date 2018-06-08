@@ -1,0 +1,62 @@
+<admintpl file="header" />
+
+</head>
+<body>
+
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li ><a href="{:U('AgentBank/index')}">代理商进件列表</a></li>
+        <li class="active"><a href="javascript:;">代理进件详情</a></li>
+    </ul>
+    <form id="form1" class="form-horizontal" method="post" >
+        <input type="hidden" name="id" value="{$a.id}">
+        <div class="control-group">
+            <label class="control-label" for="agent_id">代理商id</label>
+            <div class="controls">
+                <input type="text" name="agent_id" id="agent_id" value="{$a.agent_id}" > &nbsp;&nbsp;<span style="color: red">*代理商表的id</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">所选银行</label>
+            <div class="controls">
+                <select name="bank_style"  class="span3">
+                    <option value="3" <if condition="$a.bank_style eq 3" >selected</if>>招商</option>
+                    <option value="7" <if condition="$a.bank_style eq 7" >selected</if>>微信围餐</option>
+                    <option value="10" <if condition="$a.bank_style eq 10" >selected</if>>东莞中信</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="wx_mchid">商户号</label>
+            <div class="controls">
+                <input type="text" name="wx_mchid" id="wx_mchid" value="{$a.wx_mchid}" placeholder="请输入商户号">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="wx_key">秘钥</label>
+            <div class="controls">
+                <input type="text" name="wx_key" id="wx_key" value="{$a.wx_key}" placeholder="请输入商户秘钥">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="wx_rate">微信费率</label>
+            <div class="controls">
+                <input type="text" name="wx_rate" id="wx_rate" value="{$a.wx_rate}" placeholder="请输入微信费率">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script >
+
+</script>
+</body>
+</html>

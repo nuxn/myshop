@@ -1,0 +1,39 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <form id="form1" method="post" class="form-horizontal" action="{:U('Intoleshua/same')}">
+        <div class="control-group">
+            <label class="control-label">商户名称</label>
+            <div class="controls">
+                {$mch_name}
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">子商户</label>
+            <div class="controls">
+                <foreach name="mch_info" item="vo">
+                    <input name="mch_ids[]" type="text" value="{$vo.id}" readonly style="width: 100px;">{$vo.merchant_name}<br>
+                </foreach>
+            </div>
+        </div>
+        <foreach name="info" item="vol" key="ke">
+        <div class="control-group">
+            <label class="control-label">{$vol.name}</label>
+            <div class="controls">
+                <input type="text" name="{$vol.key}" value="{$vol.value}" readonly>
+            </div>
+        </div>
+        </foreach>
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >提交</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<style>
+    input{width: 40%;}
+</style>
+</body>
+</html>

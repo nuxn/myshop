@@ -1,0 +1,55 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('AdminMessage/index')}">{:L('MSGS_LIST')}</a></li>
+        <li class="active"><a href="{:U('AdminMessage/add')}">{:L('MSGS_ADD')}</a></li>
+    </ul>
+    <form id="form1" class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label" for="uid">用户ID</label>
+        <div class="controls">
+            <input type="text" id="uid" name="uid" placeholder="请填写用户ID">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="msg_tpl_id">消息模板</label>
+        <div class="controls">
+            <select name="msg_tpl_id" id="msg_tpl_id"  class="span3">
+                <option value="-1">请选择</option>
+                <foreach name="data" item="vo">
+                <option value="{$vo.id}">{$vo.tpl_name}</option>
+                </foreach>
+            </select>
+        </div>
+    </div>
+    <div class="form-actions">
+        <button type="button" id="onSubmit" class="btn btn-primary js-ajax-submit" >{:L('ADD')}</button>
+        <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+    </div>
+</form
+</div>
+<script type="text/javascript"src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/global.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#onSubmit").click(function () {
+            $.post('{:U("adminMessage/add")}',$("#form1").serialize(),function (data) {
+                if(data.status =='fail'){
+                    alert(data.msg);
+                    return;
+                }else{
+                    alert(data.msg);
+                    location.href='{:U("AdminMessage/index")}';
+                }
+            });
+            
+        });
+    });
+</script>
+<style>
+    input{width: 60%;}
+</style>
+</body>
+</html>

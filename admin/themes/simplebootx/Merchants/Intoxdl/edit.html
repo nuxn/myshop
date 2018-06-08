@@ -1,0 +1,88 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap" style="width: 800px;">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Intoxdl/index')}">返回</a></li>
+    </ul>
+	<form id="form1" class="form-horizontal" method="post" action="{:U('Intoxdl/edit')}">
+        <input type="hidden" name="id" value="{$id}">
+        <div class="control-group">
+            <label class="control-label" for="m_id">商户ID</label>
+            <div class="controls">
+                <input type="text" id="m_id" name="m_id" value="{$data.m_id|default=''}" placeholder="请填写商户id"> <span style="color: red">*</span>
+                <input type="hidden" id="orgNo" name="orgNo"  value="7170">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="trmNo">终端设备号</label>
+            <div class="controls">
+                <input type="text" id="trmNo" name="trmNo"  value="{$data.trmNo|default=''}" placeholder="终端设备号"> <span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mercId">新大陆商户号</label>
+            <div class="controls">
+                <input type="text" id="mercId" name="mercId"  value="{$data.mercId|default=''}" placeholder="新大陆商户号"> <span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="signKey">新大陆商户密钥</label>
+            <div class="controls">
+                <input type="text" id="signKey" name="signKey" value="{$data.signKey|default=''}" placeholder="费率"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="wx_rate">微信费率</label>
+            <div class="controls">
+                <input type="text" id="wx_rate" name="wx_rate" value="{$data.wx_rate|default=''}" placeholder="费率"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ali_rate">支付宝费率</label>
+            <div class="controls">
+                <input type="text" id="ali_rate" name="ali_rate" value="{$data.ali_rate|default=''}" placeholder="费率"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="debit_rate">借记卡费率</label>
+            <div class="controls">
+                <input type="text" id="debit_rate" name="debit_rate" value="{$data.debit_rate|default=''}" placeholder="费率"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="credit_rate">信用卡费率</label>
+            <div class="controls">
+                <input type="text" id="credit_rate" name="credit_rate" value="{$data.credit_rate|default=''}" placeholder="费率"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="appId">公众号appid</label>
+            <div class="controls">
+                <input type="text" id="appId" name="appId" value="{$data.appId|default=''}" placeholder="公众号appid">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="appIdKey">公众号密钥</label>
+            <div class="controls">
+                <input type="text" id="appIdKey" name="appIdKey" value="{$data.appIdKey|default=''}" placeholder="公众号密钥">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >保存</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+	</form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/global.js"></script>
+<script>
+
+</script>
+<style>
+	input{width: 60%;}
+	.blue{
+		background: #006dcc;}
+</style>
+</body>
+</html>

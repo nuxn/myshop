@@ -1,0 +1,77 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+	<ul class="nav nav-tabs">
+		<li><a href="{:U('Order/lists')}">{:L('ORDER_LIST')}</a></li>
+		<li class="active"><a href="javascript:;">填写发货信息</a></li>
+	</ul>
+	<form method="post" class="form-horizontal" action="{:U('Order/deliver')}">
+		<div class="control-group">
+			<label class="control-label">订单ID</label>
+			<div class="controls">
+				<input type="text" value="{$data.order_id}" readonly="readonly" name="order_id" placeholder="订单ID">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">收货人</label>
+			<div class="controls">
+				<span>{$data.consignee}</span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">手机号码</label>
+			<div class="controls">
+				<span>{$data.mobile}</span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">收货地址</label>
+			<div class="controls">
+				<span>{$data.province}{$data.city}{$data.district}{$data.twon}{$data.address}</span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">配送方式</label>
+			<div class="controls">
+				<select name="express_name"  class="span3" id="s">
+					<option value="" selected>请选择</option>
+					<foreach name="expressList" item="vo">
+						<option value="{$vo.id}">{$vo.e_name}</option>
+					</foreach>
+				</select>
+			</div>
+		</div>
+		<div class="control-group" id="sn">
+			<label class="control-label" for="express_sn">快递单号</label>
+			<div class="controls">
+				<input type="text" id="express_sn" name="express_sn" placeholder="请填写快递单号"><span style="color:red">自主配送不用填单号</span>
+			</div>
+		</div>
+		<div class="form-actions">
+			<button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >{:L('DELIVER')}</button>
+			<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+		</div>
+	</form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<style>
+	input{width: 60%;}
+	.blue{
+		background: #006dcc;}
+	.time{width:14%;}
+</style>
+<script>
+
+    $("#s").change(function () {
+        var ss = $(this).children('option:selected').val();
+        if (ss == "1") {
+            $("#sn").hide();
+            $("#express_sn").val("");
+        }else{
+            $("#sn").show();
+		}
+    });
+</script>
+</body>
+</html>

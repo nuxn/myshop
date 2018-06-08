@@ -1,0 +1,181 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <!--<ul class="nav nav-tabs">-->
+        <!--<li><a href="{:U('adminIndex/index')}">{:L('MERCHANTS_LIST')}</a></li>-->
+        <!--<li class="active"><a href="{:U('adminIndex/add')}">{:L('MERCHANTS_ADD')}</a></li>-->
+    <!--</ul>-->
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Testadmin/add_post')}">
+        <div class="control-group">
+            <label class="control-label" for="merchant_name">商户上级</label>
+            <div class="controls">
+                <select name="bid" >
+                    <foreach name="users" item="u">
+                        <option value="{$u.id}">{$u.short_name}</option>
+                    </foreach>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="merchant_name">商户名称</label>
+            <div class="controls">
+                <input type="text" id="merchant_name" name="merchant_name" placeholder="请填写商户名称">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="short_name">商户简称</label>
+            <div class="controls">
+                <input type="text" id="short_name" name="short_name" placeholder="请填写商户简称">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="uid">联系号码</label>
+            <div class="controls">
+                <input type="text" id="user_phone" name="user_phone" placeholder="联系号码">
+                <input type="hidden" id="uid" name="uid" value="">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">地区</label>
+            <div class="controls">
+                <select name="province" class="span3"></select> &nbsp;&nbsp;<select name="city" class="span3"></select>&nbsp;&nbsp;<select name="county" class="span3"></select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="address">详细地址</label>
+            <div class="controls">
+                <input type="text" id="address" name="address" placeholder="请填写详细地址">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">所属行业</label>
+            <div class="controls">
+                <select name="industry"  class="span3">
+                    <option value="-1">请选择</option>
+                    <option value="零售超市">零售超市</option>
+                    <option value="餐饮行业">餐饮行业</option>
+                    <option value="餐饮行业">美容美发</option>
+                    <option value="餐饮行业">休闲娱乐</option>
+                    <option value="餐饮行业">酒店住宿</option>
+                    <option value="餐饮行业">服装鞋帽</option>
+                    <option value="餐饮行业">手机行业</option>
+                    <option value="餐饮行业">其他</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" id="txt-door_head">内景（3张）</label>
+            <div class="controls">
+                <input type='file' name='header_interior_img'>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">营业执照</label>
+            <div class="controls">
+                <input type='file' name='business_license'>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">经营者姓名</label>
+            <div class="controls">
+                <input name="operator_name" type="text"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">身份证号</label>
+            <div class="controls">
+                <input name="id_number" type="text"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">身份证照片</label>
+            <div class="controls">
+                正面：
+                <input type='file' name='positive_id_card_img' class="positive_id_card_img" onchange="ajaxFileUpload(this);">
+                <br/>
+                反面：
+                <input type='file' name='id_card_img'>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">账户类型</label>
+            <div class="controls">
+                <select name="account_type"  class="span3">
+                    <option value="-1">请选择</option>
+                    <option value="0">个人账户</option>
+                    <option value="1">企业账户</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">账户名称/开户名称</label>
+            <div class="controls">
+                <input name="account_name" type="text"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="bank_account">开户银行</label>
+            <div class="controls">
+                <input name="bank_account" id="bank_account" type="text"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="branch_account">开户支行</label>
+            <div class="controls">
+                <input name="branch_account" id="branch_account" type="text"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">银行账号</label>
+            <div class="controls">
+                <input name="bank_account_no" type="text"/>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary ">{:L('ADD')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<!--<script src="__PUBLIC__/js/global.js"></script>-->
+<script src="__PUBLIC__/js/ajaxfileupload.js"></script>
+<script src="__PUBLIC__/js/PCASClass.js"></script> <!-- 省市县插件-->
+<script>
+    $(function () {
+        new PCAS("province", "city", "county", "北京市", "市辖区", "朝阳区"); //省市县
+    });
+
+    function ajaxFileUpload(thisobj) {
+        var fileid=$(thisobj).attr("class");
+        console.log(fileid);
+        $.ajaxFileUpload
+        (
+            {
+                url: '{:U("Testadmin/upload_into")}', //用于文件上传的服务器端请求地址
+                secureuri: false, //是否需要安全协议，一般设置为false
+                fileElementId:fileid, //文件上传域的ID
+                dataType: 'json', //返回值类型 一般设置为json
+                success: function (data)  //服务器成功响应处理函数
+                {
+                    console.log(data);
+                    if(data.type==1){
+                        $(thisobj).val(data);
+                    }else if(data.type==2){
+                        alert(data.message);
+                    }
+                },
+                error: function (data)//服务器响应失败处理函数
+                {
+                    alert('网络请求失败,请重新上传图片');
+                }
+            }
+        )
+
+    }
+
+</script>
+</body>
+</html>

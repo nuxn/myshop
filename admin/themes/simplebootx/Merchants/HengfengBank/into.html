@@ -1,0 +1,550 @@
+<admintpl file="header"/>
+<script src="__PUBLIC__/js/layer/layer.js"></script>
+<script src="__PUBLIC__/js/ajaxfileupload.js"></script>
+<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script> 
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+<style type="text/css">
+    .box2{
+        width: 50%;
+        float: left;
+    }
+    .box3{
+        width: 50%;
+        float: right;
+    }
+    .clear{
+        clear: both;
+    }
+	.examine{
+		display: inline-block;
+		height: 38px;
+		line-height: 38px;
+		padding: 0 18px;
+		background-color: #009688;
+		color: #fff;
+		white-space: nowrap;
+		text-align: center;
+		font-size: 14px;
+		border: none;
+		border-radius: 2px;
+		cursor: pointer;
+		opacity: .9;
+	}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+		<li><a href="{:U('HengfengBank/index')}">恒丰银行进件列表</a></li>
+        <li class="active"><a href="">进件信息</a></li>
+    </ul>
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th width="50">ID:{$id}</th>
+            <th>商户名称:{$phone.user_name}</th>
+            <th>商户电话:{$phone.user_phone}</th>
+            <th id="intoType">进件状态:<switch name="data.verify">
+                        <case value="0">未注册</case>
+                        <case value="1">注册失败</case>
+                        <case value="2">注册成功</case>
+                        <case value="3">验卡提交失败</case>
+                        <case value="4">验卡审核中</case>
+                        <case value='5'>验卡审核未通过</case>
+                        <case value='6'>验卡审核通过</case>
+                        <case value=''>未注册</case>
+                        </switch></th>
+            <th>
+                <?php if(empty($data)){ ?>
+                <a  onclick="into_bank(this);" data-id="{$id}" class="examine">注册</a>
+                <?php }elseif($data['into_type']==3){ ?>
+                 <a class="examine">已审核</a>
+                <?php }else{ ?>
+                <a onclick="examine({$data.id})" class="examine">等待审核</a>
+                <?php } ?>
+            </th>
+            <th id="intoStatus" width="120">
+                <switch name="data.into_type">
+                    <case value="1"><button onclick="into(this);" data-id="{$id}">进件</button></case>
+                    <case value="2"><button onclick="into(this);" data-id="{$id}">进件</button></case>
+                    <case value="3">进件成功</case>
+                    <case value=''><button onclick="into(this);" data-id="{$id}">进件</button></case>
+                </switch>
+            </th>
+        </tr>
+        </thead>
+    </table>
+    <div class="box1">
+    <div class="box2">
+        <h3 align="center">客户资料</h3>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">用户名</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$phone.user_name}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">手机号码</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$phone.user_phone}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">商户名称</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.merchant_name}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">省</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.province}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">市</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.city}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">县</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.county}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">详细地址</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.address}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">所属行业</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.industry}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">营业执照</label>
+            <div class="controls">
+                <img src="/data/upload/{$list.business_license}" style="width: 200px">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">姓名</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.operator_name}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">身份证</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.id_number}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">账号类型</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value='<switch name="list.account_type">
+                        <case value="0">个人账户</case>
+                        <case value="1">企业账号</case></switch>' disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="expanderCd">开户银行</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.bank_account}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="expanderCd">开户支付</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.bank_account_no}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="expanderCd">银行账号</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.id_number}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+    </div>
+    <div class="box3">
+    <form id="form1" method="post" class="form-horizontal" action="{:U('HengfengBank/upload_zspay',array('merchant_id'=>$id))}" enctype="multipart/form-data">
+    <h3 align="center">恒丰进件资料</h3>
+        <div class="control-group">
+            <label class="control-label" for="real_name">商户真实姓名</label>
+            <div class="controls">
+                <input type="text" id="real_name" name="real_name" placeholder="请填写商户真实姓名" value="{$data.real_name}"> <span style="color: red">*要求与营业执照上的一致</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="cmer">商户全称</label>
+            <div class="controls">
+                <input type="text"  name="cmer" placeholder="请填写商户全称" value="{$data.cmer}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="cmer_short">商户简称</label>
+            <div class="controls">
+                <input type="text"  name="cmer_short" placeholder="请填写商户简称" value="{$data.cmer_short}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="phone">联系电话</label>
+            <div class="controls">
+                <input type="text"  name="phone" placeholder="请填写联系电话" value="{$data.phone}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="business_id">经营类别MCCID</label>
+            <div class="controls">
+                <input type="text"  name="business_id" placeholder="请填写经营类别" value="{$data.business_id}"><span style="color: red">*参照经营类目表中对应的微信MCCID</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="wx_rate">微信费率</label>
+            <div class="controls">
+                <input type="text"  name="wx_rate" placeholder="选填" value="{$data.wx_rate}"><span style="color: red">*选填(不填默认取代理商给定的签约费率)</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ali_rate">支付宝费率</label>
+            <div class="controls">
+                <input type="text"  name="ali_rate" placeholder="选填" value="{$data.ali_rate}"><span style="color: red">*选填(不填默认取代理商给定的签约费率)</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="jd_rate">京东费率</label>
+            <div class="controls">
+                <input type="text"  name="jd_rate" placeholder="选填" value="{$data.jd_rate}"><span style="color: red">*选填(不填默认取代理商给定的签约费率)</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="settlement">结算方式</label>
+            <div class="controls">
+                <input type="text"  name="settlement" placeholder="请填写结算方式" value="{$data.settlement}">
+                <span style="color: red">*T1或者D0(不填默认D0)</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="region_code">区编码</label>
+            <div class="controls">
+                <input type="text"  name="region_code" placeholder="请填写区编码" value="{$data.region_code}">
+                <span style="color: red">*http://www.stats.gov.cn/tjsj/tjbz/xzqhdm/201703/t20170310_1471429.html?spm=a219a.7629140.0.0.7aZWPD(参考该网站地区编码ctrl+F搜索网页)</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="address">详细地址</label>
+            <div class="controls">
+                <input type="text" name="address" placeholder="请填写详细地址" value="{$data.address}">
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="card_type">结算卡类型</label>
+             <div class="controls">
+                 <select name="card_type">
+                     <option value="1">借记卡</option>
+                 </select>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="card_no">结算卡号</label>
+             <div class="controls">
+                <input type="text"  name="card_no" placeholder="请填写结算卡号" value="{$data.card_no}">
+                 <span style="color: red">*只允许个人卡号</span>
+            </div>
+        </div>
+        <input type="hidden" name="cert_type" value="00">
+        <div class="control-group">
+            <label class="control-label" for="cert_no">身份证号码</label>
+            <div class="controls">
+                <input type="text"  name="cert_no" placeholder="请填写身份证号码" value="{$data.cert_no}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mobile">开户时绑定手机号</label>
+            <div class="controls">
+                <input type="text"  name="mobile" placeholder="请填写开户时绑定手机号" value="{$data.mobile}">
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label">开户城市</label>
+            <div class="controls">
+                <input type="text"  name="location" placeholder="请填写开户时绑定手机号" value="{$data.location}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="cert_correct">身份证正面照片文件</label>
+            <div class="controls">
+                  <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                   <a class="file" >
+                  <?php if($data['cert_correct']){ ?>
+                     <label for="file1" id="img_1"><img src="./data/upload/{$data.cert_correct}" style="height: 140px" ></label>
+                    <?php }else{ ?> 
+                  <label for="file1" id="img_1"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                  <?php } ?>
+                  <input type="file" id="file1" name="cert_correct" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+               <label class="pic2">请上传身份证正面</label></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="cert_opposite">身份证反面照片文件</label>
+            <div class="controls">
+                  <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                   <a class="file" >
+                    <?php if($data['cert_opposite']){ ?>
+                     <label for="file2" id="img_2"><img src="./data/upload/{$data.cert_opposite}" style="height: 140px" ></label>
+                    <?php }else{ ?> 
+                  <label for="file2" id="img_2"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                  <?php } ?>
+                  <input type="file" id="file2" name="cert_opposite" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+               <label class="pic2">请上传身份证反面</label></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="cert_meet">手持身份证照片文件</label>
+            <div class="controls">
+                  <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                   <a class="file" >
+                    <?php if($data['cert_meet']){ ?>
+                     <label for="file3" id="img_3"><img src="./data/upload/{$data.cert_meet}" style="height: 140px" ></label>
+                    <?php }else{ ?>
+                  <label for="file3" id="img_3"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                  <?php } ?>
+                  <input type="file" id="file3" name="cert_meet" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+               <label class="pic2">请上传手持身份证照片文件</label></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="card_correct">银行卡正面</label>
+            <div class="controls">
+                  <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                   <a class="file" >
+                    <?php if($data['card_correct']){ ?>
+                     <label for="file4" id="img_4"><img src="./data/upload/{$data.card_correct}" style="height: 140px" ></label>
+                    <?php }else{ ?>
+                  <label for="file4" id="img_4"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                  <?php } ?>
+                  <input type="file" id="file4" name="card_correct" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+               <label class="pic2">请上传银行卡正面</label></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="card_opposite">银行卡背面</label>
+            <div class="controls">
+                  <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                   <a class="file" >
+                    <?php if($data['card_opposite']){ ?>
+                     <label for="file5" id="img_5"><img src="./data/upload/{$data.card_opposite}" style="height: 140px" ></label>
+                    <?php }else{ ?>
+                  <label for="file5" id="img_5"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                  <?php } ?>
+                  <input type="file" id="file5" name="card_opposite" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+               <label class="pic2">请上传银行卡背面</label></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="bl_img">营业执照照片</label>
+            <div class="controls">
+                  <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                   <a class="file" >
+                    <?php if($data['bl_img']){ ?>
+                     <label for="file6" id="img_6"><img src="./data/upload/{$data.bl_img}" style="height: 140px" ></label>
+                    <?php }else{ ?>
+                  <label for="file6" id="img_6"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                  <?php } ?>
+                  <input type="file" id="file6" name="bl_img" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+               <label class="pic2">请上传营业执照照片</label></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="door_img">门头照片</label>
+            <div class="controls">
+                  <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                   <a class="file" >
+                    <?php if($data['door_img']){ ?>
+                     <label for="file7" id="img_7"><img src="./data/upload/{$data.door_img}" style="height: 140px" ></label>
+                    <?php }else{ ?>
+                  <label for="file7" id="img_7"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                  <?php } ?>
+                  <input type="file" id="file7" name="door_img" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+               <label class="pic2">请上传门头照片</label></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="cashier_img">收银台照片</label>
+            <div class="controls">
+                  <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                   <a class="file" >
+                    <?php if($data['cashier_img']){ ?>
+                     <label for="file8" id="img_8"><img src="./data/upload/{$data.cashier_img}" style="height: 140px" ></label>
+                    <?php }else{ ?>
+                  <label for="file8" id="img_8"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                  <?php } ?>
+                  <input type="file" id="file8" name="cashier_img" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+               <label class="pic2">请上传收银台照片</label></p>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">保存</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+    </div>
+    <div class="clear"></div>
+    </div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>
+<script type="text/javascript">
+function ajaxFileUpload(thisobj) {
+    var fileid=$(thisobj).attr("id");
+    $.ajaxFileUpload
+    (
+
+         { 
+            url: '{:U("HengfengBank/upload_into")}', //用于文件上传的服务器端请求地址
+            secureuri: false, //是否需要安全协议，一般设置为false
+            fileElementId:fileid, //文件上传域的ID
+            dataType: 'json', //返回值类型 一般设置为json
+            success: function (data)  //服务器成功响应处理函数
+            { 
+                if(data.type==1){
+                    if(data.back==1){
+                        var path=data.cert_correct;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='cert_correct' value='"+path+"'>";
+                        $('#img_1').html(content);
+                    }else if(data.back==2){
+                        var path=data.cert_opposite;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='cert_opposite' value='"+path+"'>";
+                        $('#img_2').html(content);
+                    }else if(data.back==3){
+                        var path=data.cert_meet;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='cert_meet' value='"+path+"'>";
+                        $('#img_3').html(content);
+                    }else if(data.back==4){
+                        var path=data.card_correct;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='card_correct' value='"+path+"'>";
+                        $('#img_4').html(content);
+                    }else if(data.back==5){
+                        var path=data.card_opposite;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='card_opposite' value='"+path+"'>";
+                        $('#img_5').html(content);
+                    }else if(data.back==6){
+                        var path=data.bl_img;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='bl_img' value='"+path+"'>";
+                        $('#img_6').html(content);
+                    }else if(data.back==7){
+                        var path=data.door_img;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='door_img' value='"+path+"'>";
+                        $('#img_7').html(content);
+                    }else if(data.back==8){
+                        var path=data.cashier_img;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='cashier_img' value='"+path+"'>";
+                        $('#img_8').html(content);
+                    }
+                   
+                }else if(data.type==2){
+                    alert(data.message);
+                }
+            },
+            error: function (data)//服务器响应失败处理函数
+            {
+                   alert('网络请求失败,请重新上传图片');
+            }
+        }
+    )
+
+}
+function into(thisobj){
+    var uid=$(thisobj).attr("data-id");
+            $.ajax({
+                type:"post",
+                url:'http://sy.youngport.com.cn/index.php?g=Pay&m=Barcodezsbank&a=mchinlet',
+                data:{uid:uid},
+                success:function(data){
+                    if(data.code=="200"){
+                        alert("进件成功!");
+                    }else{
+                        alert("进件失败!"+data.message);
+                    }
+                }
+               
+            }) 
+}
+
+function examine(id){
+	$.ajax({
+			type:"post",
+			url:'http://sy.youngport.com.cn/index.php?g=Pay&m=Barcodezsbank&a=mchpaykey',
+			data:{id:id},
+			dataType: "json",
+			success:function(data){
+				if(data.info=='ok'){
+					$(".examine").removeAttr("onclick");
+					$(".examine").html("已审核");
+					$("#intoType").html("进件状态:进件成功");
+					$("#intoStatus").empty();
+					$("#intoStatus").html("进件成功");
+				}else{
+					alert("审核失败!"+data.info);
+				}
+			}
+		   
+		}) 
+}
+function into_bank(thisobj){
+    var id=$(thisobj).attr("data-id");
+
+    var content='<form action="" class="form-horizontal">'+
+        '<div class="control-group">'+
+        '<label class="control-label">商户id</label>'+
+        '<div class="controls">'+
+        '<input type="text" name="mch_id" disabled value="'+id+'">'+
+        '</div>'+
+        '</div>'+
+        '<div class="control-group">'+
+        '<label class="control-label">户账户（手机号码）</label>'+
+        '<div class="controls">'+
+        '<input type="text" name="accout" >'+
+        '</div>'+
+        '</div>'+
+        '<div class="control-group">'+
+        '<label class="control-label">商户账户密码</label>'+
+        '<div class="controls">'+
+        '<input type="text" name="pass" >'+
+        '</div>'+
+        '</div>'+
+        '<div class="form-actions">'+
+        '<button type="submit" class="btn btn-primary js-ajax-submit">注册</button>'+
+        '</div>'+
+        '</form>';
+    layer.open({
+        type:1,
+        title: '商户注册',
+        offset: '200px',
+        shadeClose: true,
+        closeBtn: 0,
+        area: ['700px', '280px'],
+        content: content
+    });
+}
+</script>

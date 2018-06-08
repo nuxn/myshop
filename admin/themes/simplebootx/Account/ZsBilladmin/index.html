@@ -1,0 +1,60 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('ZsBilladmin/index')}">招商银行对账单列表</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('ZsBilladmin/index')}">
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp;
+        商户编号：
+        <input type="text" name="mch_id" style="width: 200px;" value="{$formget.mch_id|default=''}" placeholder="请输入商户对应的编号">
+        商户名称：
+        <input type="text" name="mch_name" style="width: 200px;" value="{$formget.mch_name|default=''}" placeholder="请输入商户对应的名称">
+        招商订单号：
+        <input type="text" name="zs_order_sn" style="width: 200px;" value="{$formget.zs_order_sn|default=''}" placeholder="请输入对应的招商订单号">
+
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('ZsBilladmin/index')}">清空</a>
+    </form>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="20" >ID</th>
+                <th width="70" >商户编号</th>
+                <th width="80" >商户名称</th>
+                <th width="50" >交易类型</th>
+                <th width="50" >招商订单号</th>
+                <th width="90" >第三方订单号</th>
+                <th width="90" >洋仆淘订单号</th>
+                <th width="50" >交易金额</th>
+                <th width="50" >支付方式</th>
+                <th width="80" >手续费</th>
+                <th width="80" >支付时间</th>
+            </tr>
+            </thead>
+            <foreach name="bills" item="b">
+                <tr>
+                    <td><b>{$b.id}</b></td>
+                    <td><b>{$b.mch_id}</b></td>
+                    <td><b>{$b.mch_name}</b></td>
+                    <td><b>{$b.order_type}</b></td>
+                    <td><b>{$b.zs_order_sn}</b></td>
+                    <td><b>{$b.re_order_sn}</b></td>
+                    <td><b>{$b.order_sn}</b></td>
+                    <td><b><?php if($b['price'] == '0.00') echo $b['refund_price'];else echo $b['price'];?></b></td>
+                    <td><b><?php if(strstr($b['pay_type'],'.',TRUE) == 'weixin') echo '微信支付';else echo '支付宝支付'; ?></b></td>
+                    <td><b>{$b.sx_price}</b></td>
+                    <td><b>{$b.pay_time}</b></td>
+
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+</html>

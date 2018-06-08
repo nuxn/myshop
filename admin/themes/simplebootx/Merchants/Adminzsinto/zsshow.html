@@ -1,0 +1,637 @@
+<admintpl file="header"/>
+<script src="__PUBLIC__/js/layer/layer.js"></script>
+<script src="__PUBLIC__/js/ajaxfileupload.js"></script>
+<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script> 
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+<style type="text/css">
+    .box2{
+        width: 50%;
+        float: left;
+    }
+    .box3{
+        width: 50%;
+        float: right;
+    }
+    .clear{
+        clear: both;
+    }
+	.examine{
+		display: inline-block;
+		height: 38px;
+		line-height: 38px;
+		padding: 0 18px;
+		background-color: #009688;
+		color: #fff;
+		white-space: nowrap;
+		text-align: center;
+		font-size: 14px;
+		border: none;
+		border-radius: 2px;
+		cursor: pointer;
+		opacity: .9;
+	}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+		<li><a href="{:U('Adminzsinto/index')}">招商银行进件列表</a></li>
+        <li class="active"><a href="">进件信息</a></li>
+    </ul>
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th width="50">ID:{$id}</th>
+            <th>商户名称:{$phone.user_name}</th>
+            <th>商户电话:{$phone.user_phone}</th>
+            <th id="intoType">进件状态:<switch name="data.into_type">
+                        <case value="1">进件失败</case>
+                        <case value="2">进件中</case>
+                        <case value="3">进件成功</case>
+                        <case value=''>未进件</case>
+                        </switch></th>
+            <th><?php if($data['into_type']==2){ ?>
+                <!-- <a href="{:U('AdminInto/check_into',array('id'=>$data['id']))}" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;" >审核</a> -->
+                <a onclick="examine({$data.id})" class="examine">审核</a>
+                <?php }elseif($data['into_type']==3){ ?>
+                 <a class="examine">已审核</a>
+                <?php }else{ ?>
+                <a onclick="examine({$data.id})" class="examine">等待审核</a>
+                <?php } ?>
+            </th>
+            <th id="intoStatus" width="120"> <switch name="data.into_type"><case value="1"><button onclick="into(this);" data-id="{$id}">进件</button></case>
+                        <case value="2"><button onclick="into(this);" data-id="{$id}">进件</button></case>
+                        <case value="3">进件成功</case>
+                        <case value=''><button onclick="into(this);" data-id="{$id}">进件</button><button onclick="check_into(this);" data-id="{$id}">进件</button></case></switch></th>
+        </tr>
+        </thead>
+    </table>
+    <div class="box1">
+    <div class="box2">
+        <h3 align="center">客户资料</h3>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">用户名</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$phone.user_name}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">手机号码</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$phone.user_phone}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">商户名称</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.merchant_name}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">省</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.province}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">市</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.city}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">县</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.county}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">详细地址</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.address}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">所属行业</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.industry}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">营业执照</label>
+            <div class="controls">
+                <img src="/data/upload/{$list.business_license}" style="width: 200px">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">姓名</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.operator_name}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">身份证</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.id_number}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">账号类型</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value='<switch name="list.account_type">
+                        <case value="0">个人账户</case>
+                        <case value="1">企业账号</case></switch>' disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="expanderCd">开户银行</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.bank_account}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="expanderCd">开户支付</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.bank_account_no}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="expanderCd">银行账号</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.id_number}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+    </div>
+    <div class="box3">
+    <form id="form1" method="post" class="form-horizontal" action="{:U('Adminzsinto/upload_zspay',array('merchant_id'=>$id))}" enctype="multipart/form-data">
+    <h3 align="center">进件资料</h3> 
+        <div class="control-group">
+            <label class="control-label" for="mchtName">商户名称</label>
+            <div class="controls">
+                <input type="text" id="mchtName" name="mch_name" placeholder="请填写商户名称" value="{$data.mch_name}"> <span style="color: red">*要求与营业执照上的一致</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mchtShortName">商户简称</label>
+            <div class="controls">
+                <input type="text"  name="mch_shortname" placeholder="请填写商户简称" value="{$data.mch_shortname}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mchtShortName">省份</label>
+            <div class="controls">
+                <input type="text"  name="province" placeholder="请填写省份" value="{$data.province}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mchtShortName">城市</label>
+            <div class="controls">
+                <input type="text"  name="city" placeholder="请填写城市" value="{$data.city}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mchtShortName">详细地址</label>
+            <div class="controls">
+                <input type="text"  name="address" placeholder="请填写详细地址" value="{$data.address}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mchtShortName">手机号码</label>
+            <div class="controls">
+                <input type="text"  name="mobile" placeholder="请填写手机号" value="{$data.mobile}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mchtShortName">邮箱</label>
+            <div class="controls">
+                <input type="text" id="mchtShortName" name="email" placeholder="请填写邮箱" value="{$data.email}">
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="mchtShortName">服务电话</label>
+            <div class="controls">
+                <input type="text"  name="service_phone" placeholder="请填写服务电话" value="{$data.service_phone}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mchtShortName">支行联行号</label>
+            <div class="controls">
+                <input type="text"  name="bank_no" placeholder="请填写支行联行号" value="{$data.bank_no}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mchtType">行业类别编号</label>
+            <div class="controls">
+                <input type="text"  name="industry_no" placeholder="请填写行业类别编号" value="{$data.industry_no}">&nbsp;&nbsp;<span style="color: red">请参数表格</span>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label">结算类型</label>
+            <div class="controls">
+                <select name="balance_type">
+                        <?php if($data['balance_type']==1){ ?>
+                            <option value="1" selected="selected">公户</option>
+                            <option value="2">私户</option>
+                        <?php }elseif($data['balance_type']==2){ ?>
+                            <option value="1">公户</option>
+                            <option value="2" selected="selected">私户</option>
+                        <?php }else{ ?>
+                            <option value="1">公户</option>
+                            <option value="2">私户</option>
+                        <?php } ?>
+                   
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="accountName">账户名</label>
+            <div class="controls">
+                <input type="text" name="balance_name" placeholder="请填写户名" value="{$data.balance_name}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="account">银行账号</label>
+            <div class="controls">
+                <input type="text"  name="balance_account" placeholder="请填写银行号" value="{$data.balance_account}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="account">身份证正面照片文件</label>
+            <div class="controls">
+                  <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                  <!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+                   <a class="file" >
+                  <?php if($data['id_card_img_f']){ ?>
+                     <label for="file1" id="img_1"><img src="./data/upload/{$data.id_card_img_f}" style="height: 140px" ></label>
+                    <?php }else{ ?> 
+                  <label for="file1" id="img_1"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                  <?php } ?>
+ 
+
+                  <input type="file" id="file1" name="id_card_img_f" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+               <label class="pic2">请上传身份证正面</label></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="account">身份证反面照片文件</label>
+            <div class="controls">
+                  <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                  <!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+                   <a class="file" >
+                    <?php if($data['id_card_img_b']){ ?>
+                     <label for="file2" id="img_2"><img src="./data/upload/{$data.id_card_img_b}" style="height: 140px" ></label>
+                    <?php }else{ ?> 
+                  <label for="file2" id="img_2"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                  <?php } ?>
+                  <input type="file" id="file2" name="id_card_img_b" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+               <label class="pic2">请上传身份证反面</label></p>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label">商户法人证件号码</label>
+            <div class="controls">
+                <input type="text" name="id_card_no" placeholder="请填写商户法人证件号码" value="{$data.id_card_no}" >
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">联系人姓名</label>
+            <div class="controls">
+                <input type="text" name="contact" placeholder="请填写联系人姓名" value="{$data.contact}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">appid标识</label>
+            <div class="controls">
+                 <select name="wx_use_parent">
+                        <?php if($data['wx_use_parent']==1){ ?>
+                            <option value="1" selected="selected">禁用</option>
+                            <option value="2">启禁用</option>
+                        <?php }elseif($data['wx_use_parent']==2){ ?>
+                            <option value="1">禁用</option>
+                            <option value="2" selected="selected">启用</option>
+                        <?php }else{ ?>
+                            <option value="1">禁用</option>
+                            <option value="2">启用</option>
+                        <?php } ?>
+                   
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">微信支付费率</label>
+            <div class="controls">
+                <input type="text" name="payment_type1" placeholder="请填写微信支付费率(万分率，如60)" value="{$data.payment_type1}">
+            </div>
+        </div>
+       <!--  <div class="control-group">
+            <label class="control-label">微信线下小额支付费率</label>
+            <div class="controls">
+                <input type="text" name="payment_type2" placeholder="微信线下小额支付费率(万分率，如60)" value="{$data.payment_type2}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">微信公众账号支付费率</label>
+            <div class="controls">
+                <input type="text" name="payment_type3" placeholder="微信公众账号支付费率(万分率，如60)" value="{$data.payment_type3}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">微信APP支付费率(</label>
+            <div class="controls">
+                <input type="text" name="payment_type4" placeholder="微信APP支付费率(万分率，如60)" value="{$data.payment_type4}">
+            </div>
+        </div> -->
+        <div class="control-group">
+            <label class="control-label">支付宝支付费率</label>
+            <div class="controls">
+                <input type="text" name="payment_type7" placeholder="支付宝支付费率(万分率，如60)" value="{$data.payment_type7}">
+            </div>
+        </div>
+       <!--  <div class="control-group">
+            <label class="control-label">支付宝刷卡支付费率</label>
+            <div class="controls">
+                <input type="text" name="payment_type8" placeholder="支付宝刷卡支付费率(万分率，如60)" value="{$data.payment_type8}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">支付宝－JS支付费率</label>
+            <div class="controls">
+                <input type="text" name="payment_type9" placeholder="支付宝－JS支付费率(万分率，如60)" value="{$data.payment_type9}">
+            </div>
+        </div> -->
+         <div class="control-group">
+            <label class="control-label">营业执照编号</label>
+            <div class="controls">
+                <input type="text" name="license_num" placeholder="请填写营业执照编号" value="{$data.license_num}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">营业执照开始时间</label>
+            <div class="controls">
+                <input type="text" name="license_start_date" placeholder="请填写营业执照开始时间" value="{$data.license_start_date}">
+            </div>
+        </div>
+       <!--  <div class="control-group">
+            <label class="control-label">营业执照到期时间</label>
+            <div class="controls">
+                <input type="text" name="license_end_date" placeholder="请填写营业执照到期时间" value="{$data.license_end_date}">
+            </div>
+        </div> -->
+        <div class="control-group">
+            <label class="control-label">营业执照经营范围</label>
+            <div class="controls">
+                <input type="text" name="license_scope" placeholder="请填写营业执照到期时间" value="{$data.license_scope}">
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label">营业执照照片</label>
+            <div class="controls">
+                  <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                  <!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+                   <a class="file" >
+                    <?php if($data['license_img']){ ?>
+                     <label for="file3" id="img_3"><img src="./data/upload/{$data.license_img}" style="height: 140px" ></label>
+                    <?php }else{ ?> 
+                  <label for="file3" id="img_3"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                  <?php } ?>
+                 
+
+                  <input type="file" id="file3" name="license_img" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+               <label class="pic2">请上传营业执照</label></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">补充文件1</label>
+            <div class="controls">
+                <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                  <!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+                    <a class="file" >
+                        <?php if($data['annex_img1']){ ?>
+                         <label for="file4" id="img_4"><img src="./data/upload/{$data.annex_img1}" style="height: 140px" ></label>
+                        <?php }else{ ?> 
+                        <label for="file4" id="img_4"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                        <?php } ?>
+                        <input type="file" id="file4" name="annex_img1" style="display: none" onchange="ajaxFileUpload(this);"/>
+                    </a><br/>
+                    <label class="pic2">1、商户为线下实体经营的需要提供清晰的经营场所照片：经营场所门牌（即店门口）、生产经营主场景（含货架）。
+                    2、商户为线上经营的需要提供：域名证书、ICP备案证、线上商户信息登记表，如为游戏类、视频类的商户还需提供网络文化经营许可证、所运营游戏的游戏版号。</label>
+                </p>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label">补充文件2</label>
+            <div class="controls">
+                <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                  <!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+                    <a class="file" >
+                        <?php if($data['annex_img2']){ ?>
+                         <label for="file5" id="img_5"><img src="./data/upload/{$data.annex_img2}" style="height: 140px" ></label>
+                        <?php }else{ ?> 
+                        <label for="file5" id="img_5"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                        <?php } ?>
+                        <input type="file" id="file5" name="annex_img2" style="display: none" onchange="ajaxFileUpload(this);"/>
+                    </a><br/>
+                    <label class="pic2">1、商户为线下实体经营的需要提供清晰的经营场所照片：经营场所门牌（即店门口）、生产经营主场景（含货架）。
+                    2、商户为线上经营的需要提供：域名证书、ICP备案证、线上商户信息登记表，如为游戏类、视频类的商户还需提供网络文化经营许可证、所运营游戏的游戏版号。</label>
+                </p>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label">补充文件3</label>
+            <div class="controls">
+                <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                  <!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+                    <a class="file" >
+                        <?php if($data['annex_img3']){ ?>
+                         <label for="file6" id="img_6"><img src="./data/upload/{$data.annex_img3}" style="height: 140px" ></label>
+                        <?php }else{ ?> 
+                        <label for="file6" id="img_6"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                        <?php } ?>
+                        <input type="file" id="file6" name="annex_img3" style="display: none" onchange="ajaxFileUpload(this);"/>
+                    </a><br/>
+                    <label class="pic2">1、商户为线下实体经营的需要提供清晰的经营场所照片：经营场所门牌（即店门口）、生产经营主场景（含货架）。
+                    2、商户为线上经营的需要提供：域名证书、ICP备案证、线上商户信息登记表，如为游戏类、视频类的商户还需提供网络文化经营许可证、所运营游戏的游戏版号。</label>
+                </p>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label">补充文件4</label>
+            <div class="controls">
+                <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                  <!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+                    <a class="file" >
+                        <?php if($data['annex_img4']){ ?>
+                         <label for="file7" id="img_7"><img src="./data/upload/{$data.annex_img4}" style="height: 140px" ></label>
+                        <?php }else{ ?> 
+                        <label for="file7" id="img_7"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                        <?php } ?>
+                        <input type="file" id="file7" name="annex_img4" style="display: none" onchange="ajaxFileUpload(this);"/>
+                    </a><br/>
+                    <label class="pic2">1、商户为线下实体经营的需要提供清晰的经营场所照片：经营场所门牌（即店门口）、生产经营主场景（含货架）。
+                    2、商户为线上经营的需要提供：域名证书、ICP备案证、线上商户信息登记表，如为游戏类、视频类的商户还需提供网络文化经营许可证、所运营游戏的游戏版号。</label>
+                </p>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label">补充文件5</label>
+            <div class="controls">
+                <p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+                  <!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+                    <a class="file" >
+                        <?php if($data['annex_img5']){ ?>
+                         <label for="file8" id="img_8"><img src="./data/upload/{$data.annex_img5}" style="height: 140px" ></label>
+                        <?php }else{ ?> 
+                        <label for="file8" id="img_8"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+                        <?php } ?>
+                        <input type="file" id="file8" name="annex_img5" style="display: none" onchange="ajaxFileUpload(this);"/>
+                    </a><br/>
+                    <label class="pic2">1、商户为线下实体经营的需要提供清晰的经营场所照片：经营场所门牌（即店门口）、生产经营主场景（含货架）。
+                    2、商户为线上经营的需要提供：域名证书、ICP备案证、线上商户信息登记表，如为游戏类、视频类的商户还需提供网络文化经营许可证、所运营游戏的游戏版号。</label>
+                </p>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label">招商银行支付密钥</label>
+            <div class="controls">
+                <input type="text" name="mch_pay_key" placeholder="请填写营业执照到期时间" value="{$data.mch_pay_key}">
+            </div>
+        </div>
+
+
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">保存</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+    </div>
+    <div class="clear"></div>
+    </div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>
+<script type="text/javascript">
+function ajaxFileUpload(thisobj) {
+    var fileid=$(thisobj).attr("id");
+    $.ajaxFileUpload
+    (
+
+         { 
+            url: '{:U("Adminzsinto/upload_into")}', //用于文件上传的服务器端请求地址
+            secureuri: false, //是否需要安全协议，一般设置为false
+            fileElementId:fileid, //文件上传域的ID
+            dataType: 'json', //返回值类型 一般设置为json
+            success: function (data)  //服务器成功响应处理函数
+            { 
+                if(data.type==1){
+                    if(data.back==1){
+                        var path=data.id_card_img_f;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='id_card_img_f' value='"+path+"'>";
+                        $('#img_1').html(content);
+                    }else if(data.back==2){
+                        var path=data.id_card_img_b;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='id_card_img_b' value='"+path+"'>";
+                        $('#img_2').html(content);
+                    }else if(data.back==3){
+                        var path=data.license_img;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='license_img' value='"+path+"'>";
+                        $('#img_3').html(content);
+                    }else if(data.back==4){
+                        var path=data.annex_img1;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='annex_img1' value='"+path+"'>";
+                        $('#img_4').html(content);
+                    }else if(data.back==5){
+                        var path=data.annex_img2;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='annex_img2' value='"+path+"'>";
+                        $('#img_5').html(content);
+                    }else if(data.back==6){
+                        var path=data.annex_img3;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='annex_img3' value='"+path+"'>";
+                        $('#img_6').html(content);
+                    }else if(data.back==7){
+                        var path=data.annex_img4;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='annex_img4' value='"+path+"'>";
+                        $('#img_7').html(content);
+                    }else if(data.back==8){
+                        var path=data.annex_img5;
+                        var s="./data/upload/"+path;
+                        var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='annex_img5' value='"+path+"'>";
+                        $('#img_8').html(content);
+                    }
+                   
+                }else if(data.type==2){
+                    alert(data.message);
+                }
+            },
+            error: function (data)//服务器响应失败处理函数
+            {
+                   alert('网络请求失败,请重新上传图片');
+            }
+        }
+    )
+
+}
+function into(thisobj){
+    var uid=$(thisobj).attr("data-id");
+            $.ajax({
+                type:"post",
+                url:'http://sy.youngport.com.cn/index.php?g=Pay&m=Barcodezsbank&a=mchinlet',
+                data:{uid:uid},
+                success:function(data){
+                    if(data.code=="200"){
+                        alert("进件成功!");
+                    }else{
+                        alert("进件失败!"+data.message);
+                    }
+                }
+               
+            }) 
+}
+function check_into(thisobj){
+     var uid=$(thisobj).attr("data-id");
+            $.ajax({
+                type:"post",
+                url:'http://sy.youngport.com.cn/index.php?g=Pay&m=Barcodezsbank&a=update',
+                data:{uid:uid},
+                success:function(data){
+                    if(data.code=="200"){
+                        alert("进件成功!");
+                    }else{
+                        alert("进件失败!"+data.message);
+                    }
+                }
+               
+            }) 
+}
+function examine(id){
+	$.ajax({
+			type:"post",
+			url:'http://sy.youngport.com.cn/index.php?g=Pay&m=Barcodezsbank&a=mchpaykey',
+			data:{id:id},
+			dataType: "json",
+			success:function(data){
+				if(data.info=='ok'){
+					$(".examine").removeAttr("onclick");
+					$(".examine").html("已审核");
+					$("#intoType").html("进件状态:进件成功");
+					$("#intoStatus").empty();
+					$("#intoStatus").html("进件成功");
+				}else{
+					alert("审核失败!"+data.info);
+				}
+			}
+		   
+		}) 
+}
+</script>

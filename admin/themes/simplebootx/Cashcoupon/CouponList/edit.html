@@ -1,0 +1,89 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+	<ul class="nav nav-tabs">
+		<li><a href="{:U('CouponList/lists')}">现金券列表</a></li>
+		<li><a href="{:U('CouponList/add')}">新增现金券</a></li>
+		<li class="active"><a href="javascript:;">现金券修改</a></li>
+	</ul>
+	<form method="post" class="form-horizontal" action="{:U('CouponList/edit')}">
+		<div class="control-group">
+			<label class="control-label" for="id">ID</label>
+			<div class="controls">
+				<input type="text" id="id" name="id" value="{$data.id}" readonly="readonly" placeholder="请填写id">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="title">标题</label>
+			<div class="controls">
+				<input type="text" id="title" name="title" value="{$data.title}" placeholder="请填写标题">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">现金券面额</label>
+			<div class="controls">
+				<input name="up_price" value="{$data.up_price}" type="text"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="price">抵扣金额</label>
+			<div class="controls">
+				<input type="text" id="price" name="price" value="{$data.price}" placeholder="请填写抵扣金额">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label">使用范围</label>
+			<div class="controls">
+				<select name="type"  class="span3">
+					<option value="0" <if condition="$data.type eq 0">selected</if>>通用型</option>
+					<option value="1" <if condition="$data.type eq 1">selected</if>>小程序</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label">状态</label>
+			<div class="controls">
+				<label class="radio inline">
+					<input type="radio"  name="ban" value="0" <if condition="$data.ban eq 0">checked</if>>可用
+				</label>
+				<label class="radio inline">
+					<input type="radio" name="ban" value="1" <if condition="$data.ban eq 1">checked</if>> 禁用
+				</label>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">有效期</label>
+			<div class="controls">
+				<input type="text" class="time js-date" value="{$data.start_time|date='Y-m-d',###}" name="start_time" placeholder="开始时间" />&nbsp;&nbsp;至&nbsp;&nbsp;<input type="text" class="time js-date" name="end_time" value="{$data.end_time|date='Y-m-d',###}" placeholder="结束时间"  />
+			</div>
+		</div>
+		<!--<div class="control-group">
+			<label class="control-label">发出量</label>
+			<div class="controls">
+				<input name="send_nums" value="{$data.send_nums}" type="text" placeholder="请填写发出量"/>
+			</div>
+		</div>-->
+		<div class="control-group">
+			<label class="control-label">描述说明</label>
+			<div class="controls">
+				<input name="description" value="{$data.description}" type="text" placeholder="请填写描述说明"/>&nbsp;&nbsp;<span style="color: red">不填默认按照使用范围和满减金额进行描述</span>
+			</div>
+		</div>
+		<div class="form-actions">
+			<button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >{:L('EDIT')}</button>
+			<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+		</div>
+	</form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<style>
+	input{width: 60%;}
+	.blue{
+		background: #006dcc;}
+	.time{width:14%;}
+</style>
+</body>
+</html>

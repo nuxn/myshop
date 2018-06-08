@@ -1,0 +1,49 @@
+<admintpl file="header" />
+
+</head>
+<body>
+
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">代理商进件列表</a></li>
+        <li><a href="{:U('AgentBank/add')}" target="_self">新增代理</a></li>
+    </ul>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>代理名称</th>
+            <th>代理手机号</th>
+            <th>状态</th>
+            <th>创建时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="agentbank" item="a">
+
+        <tr>
+            <th scope="row">{$a.id}</th>
+            <td>{$a.agent_name}</td>
+            <td>{$a.user_phone}</td>
+            <td>
+                <img src="__PUBLIC__/images/status_{$a.status}.gif" alt="改变状态" >
+            </td>
+            <td>{:date('Y-m-d',$a['create_time'])}</td>
+            <td>
+                <a href="{:U('AgentBank/edit',array('id'=>$a['id']))}">编辑</a> |
+                <a href="{:U('AgentBank/detail',array('id'=>$a['id']))}">详情
+            </td>
+        </tr>
+
+        </foreach>
+        </tbody>
+    </table>
+    <div class="pagination">{$page}</div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script >
+
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('AdminGoods/library')}">商品列表</a></li>
+        <li><a href="{:U('AdminGoods/add_library')}">商品添加</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('AdminGoods/library')}">
+        商品条码:
+        <input type="text" name="bar_code" value="{$bar_code}" placeholder="请输入商品条码"> &nbsp;&nbsp;
+        商品名称:
+        <input type="text" name="goods_name"  value="{$goods_name}" placeholder="请输入商品名称"> &nbsp;&nbsp;
+        <!-- 上架位置:
+         <select name="is_on_shelf">
+            <option value="-1" <if condition="$is_on_shelf eq '-1'">selected</if>>请选择</option>
+            <option value="1" <if condition="$is_on_shelf eq '1'">selected</if>>双屏</option>
+            <option value="2" <if condition="$is_on_shelf eq '2'">selected</if>>小程序</option>
+        </select> -->
+
+        商品分类:
+        <select name="group_id" id="group_id" onchange="switch_cate(this)">
+                    <option value="">请选择</option>
+                    <foreach name="group" item="vo" >
+                        <option value="{$vo.group_id}">{$vo.group_name}</option>
+                    </foreach>
+                    <option value="{$group_name}" <if condition="$group_name neq ''">selected</if>>{$group_name}</option>
+         </select>
+
+        <select name="group_id_sec" id="group_id_sec">
+            <option value="">请选择</option>
+        </select>
+        <br/><br/>
+        时间：
+        <input type="text" class="js-date" value="{$start_time}" name="start_time" placeholder="开始时间" />-<input type="text" class="js-date" name="end_time" value="{$end_time}" placeholder="结束时间"  />
+        &nbsp;&nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        &nbsp;&nbsp;
+        <a class="btn btn-danger" href="{:U('AdminGoods/library')}">清空</a>
+    </form>
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th width="50">ID</th>
+            
+            <th>商品名称</th>
+            <th>商品图片</th>
+            <!-- <th>商品分类</th> -->
+            <!-- <th>销量(件)</th> -->
+            <!-- <th>库存(件)</th> -->
+            <th>商品条码</th>
+            
+            
+            <th>一级分类</th>
+            <th>二级分类</th>
+            <th>商品单位</th>
+            <th>进价(元)</th>
+            <th>售价(元)</th>
+           <!--  <th>商品品牌</th> -->
+            <!-- <th>商品分组</th> -->
+            <!-- <th>所属商家</th> -->
+            <th>添加时间</th>
+            <!-- <th>商品点击数</th> -->
+           <!--  <th>入库时间</th> -->
+            <th width="120">{:L('ACTIONS')}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="data_lists" item="vo">
+            <tr>
+                <td>{$vo.id}</td>
+                
+                <td>{$vo.goods_name}</td>
+                <td><img class="lazy" data-original="{$vo.window_img}" style="height: 35px;width: 60px;"/></td>
+                <td>{$vo.bar_code}</td>
+                
+                <!-- <td>{$vo.cat_name}</td> -->
+                <!-- <td>{$vo.sales}</td> -->
+                <!-- <td>{$vo.goods_number}</td> -->
+                <td>{$vo.group_name1}</td>
+                <td>{$vo.group_name2}</td>
+                
+                <td>{$vo.unit_name}</td>
+                <td>{$vo.buy_price}</td>
+                <td>{$vo.shop_price}</td>
+               <!--  <td>{$vo.brand_name}</td> -->
+                <!-- <td>{$vo.group_name}</td> -->
+                <!-- <td>{$vo.user_name}</td> -->
+                <td>{$vo.add_time|date="Y-m-d H:i:s",###}
+                </td>
+                <!-- <td>{$vo.click_count}</td> -->
+               <!--  <td>{$vo.add_time|date="Y-m-d H:i:s",###}</td> -->
+                <td>
+                    <a href='{:U("AdminGoods/edit_library",array("id"=>$vo["id"]))}'>编辑</a>|
+                    <a class="js-ajax-delete" onclick="return confirm('确定删除吗？')" href="{:U('AdminGoods/delete_library',array('id'=>$vo['id']))}">{:L('DELETE')}</a>
+                </td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+    <div class="pagination" style="text-align: right">{$page}</div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="http://m.hz41319.com/wei/js/jquery.lazyload.js?v=1.9.1"></script>
+<script>
+    //默认图片占位
+    function default_img(type) {
+        var img = '';
+        img = 'default.png';
+        $("img.lazy").lazyload({
+            placeholder: "http://m.hz41319.com/wei/images/" + img, //用图片提前占位
+            effect: "fadeIn",// 载入使用何种效果
+            threshold: 100
+        });
+    }
+
+    default_img();
+
+
+
+    function switch_cate(obj,num)
+    {
+        var value=$(obj).val();  
+        var group_id_sec='{$group_id_sec}';
+        //value存在就切换子分类
+        if (value){
+            $('#group_id_sec').empty();                 
+            $('#group_id_sec').append('<option value="">请选择</option>');
+            $.post("{:U('AdminGoods/get_child')}",{'parent_id':value},function(data){
+                if (data.status>0){
+                    var data_json=data.list;
+                    for(var o in data_json){
+                        var html='';
+                        is_selected='';
+                        if ( group_id_sec == data_json[o].group_id && num == 1){
+                            is_selected='selected';
+
+                        }
+                        html+='<option value="'+data_json[o].group_id+'"'+is_selected+'>'+data_json[o].group_name+'</option>';
+                        $('#group_id_sec').append(html);
+
+                    }
+
+                }
+
+
+
+            },'json');
+
+        }else{
+
+            $('#group_id_sec').empty();
+            var text='<option value="">请选择</option>';
+            $('#group_id_sec').append(text);
+
+        }
+
+    }
+
+    $(document).ready(function(){
+         var obj=$('#group_id');
+         switch_cate(obj,1);
+
+    });
+
+
+
+
+
+
+</script>
+<style>
+</style>
+</body>
+</html>

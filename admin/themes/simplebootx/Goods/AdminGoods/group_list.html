@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="utf-8">
+            <title>
+                商品分类
+            </title>
+            <link href="__PUBLIC__/assets/css/common.css" rel="stylesheet"/>
+
+            <!-- <link rel="stylesheet" href="lib/css/bootstrap.css" /> -->
+            <link href="__PUBLIC__/assets/css/index.css" rel="stylesheet"/>
+            <link href="__PUBLIC__/assets/css/bootstrap.css" rel="stylesheet"/>
+            <link rel="stylesheet" href="__PUBLIC__/js/css/jquery.fileupload.css">
+            <script src="__PUBLIC__/js/jquery.js">
+            </script>
+            <script src="__PUBLIC__/js/vendor/jquery.ui.widget.js"></script>
+
+            <script src="__PUBLIC__/simpleboot/bootstrap/js/bootstrap.min.js">
+            </script>
+
+            <script src="__PUBLIC__/js/jquery.fileupload.js"></script>
+<script src="__PUBLIC__/js/jquery.fileupload-process.js"></script>
+<script src="__PUBLIC__/js/jquery.fileupload-image.js"></script>
+<script src="__PUBLIC__/js/jquery.fileupload-audio.js"></script>
+<script src="__PUBLIC__/js/jquery.fileupload-video.js"></script>
+<script src="__PUBLIC__/js/jquery.fileupload-validate.js"></script>
+
+
+            <script src="__PUBLIC__/js/ajaxfileupload.js"></script>
+
+        </meta>
+    </head>
+    <body>
+
+        <div class="row" align="right" style="margin-bottom:-21px">
+         <button type="button" class="btn btn-success" onclick="add_cate_top(event,'add',this)" >添加分组
+
+        </div>
+
+        <div class="row">
+            <ul class="row_top">
+                <li class="col" style="border-radius: 6px 0 0 0;">
+                    分类名称
+                </li>
+                <li class="col">
+                    分类排行
+                </li>
+                <li class="col">
+                    添加
+                </li>
+                <li class="col" style="border-radius: 0 6px 0 0 ;">
+                    操作
+                </li>
+            </ul>
+            <ul>
+                <foreach item="vo" name="data_lists">
+                    <li class="item parent_{$vo.group_id}" style="overflow:hidden; " >
+                        <div class="item1">
+                            <img src="{$vo.cate_img}">
+                                <span class="item1_cs">
+                                    {$vo.group_name}
+                                </span>
+                                <span class="item2_cs" num="{$vo.child_num}">
+                                    [{$vo.child_num}个二级分类]
+                                </span>
+                                <ul class="UL2">
+                                    <foreach item="child" name="vo['child']">
+                                        <li style="float:left">
+                                            <i>
+                                            </i>
+                                            <span id="cate_{$child.group_id}">{$child.group_name}</span>
+                                        </li>
+                                    </foreach>
+                                    </li>
+                                </ul>
+                            </img>
+                        </div>
+                        <div class="item1">
+                            <img src="./images/up2.png">
+                                <img src="./images/down2.png">
+                                    <ul class="UL2">
+                                        <foreach item="child" name="vo['child']">
+                                            <li>
+                                                <img src="./images/up1.png">
+                                                    <img src="./images/down1.png"/>
+                                                </img>
+                                            </li>
+                                        </foreach>
+                                    </ul>
+                                </img>
+                            </img>
+                        </div>
+                        <div class="item1">
+                            <span class="add2" onclick="add_cate(event,'add',this)" parent_id="{$vo.group_id}" parent_name="{$vo.group_name}">
+                                添加二级分类
+                            </span>
+                            <ul class="UL2">
+                                <foreach item="child" name="vo['child']">
+                                    <li>
+                                    </li>
+                                </foreach>
+                            </ul>
+                        </div>
+                        <div class="item1">
+                            <span class="item1_edit" onclick="add_cate_top(event,'edit',this)" top_id="{$vo.group_id}" top_name="{$vo.group_name}" cate_img="{$vo.cate_img}">
+                                编辑
+                            </span>
+                            <span class="item1_del" onclick="del_top(event,{$vo.group_id},this)">
+                                删除
+                            </span>
+                            <ul class="UL2">
+                                <foreach item="child" name="vo['child']">
+                                    <li>
+                                        <span cat_id="{$child.group_id}" cat_name="{$child.group_name}" class="item1_edit" onclick="add_cate(event,'edit',this)" parent_id="{$vo.group_id}" parent_name="{$vo.group_name}">
+                                            编辑
+                                        </span>
+                                        <span class="item1_del" onclick="del_cate(event,{$child.group_id},this)">
+                                            删除
+                                        </span>
+                                    </li>
+                                </foreach>
+                            </ul>
+                        </div>
+                    </li>
+                </foreach>
+            </ul>
+        </div>
+        <!--级分类添加-->
+        <div aria-labelledby="myModalLabel" class="modal fade" id="myModal" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">
+                                ×
+                            </span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">
+                            新增
+                        </h4>
+                    </div>
+                    <input id="cate_id_top" name="cate_id_top" type="hidden">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="top_cate_name">
+                                    一级分类
+                                </label>
+                                <input class="form-control" id="top_cate_name" name="top_cate_name" placeholder="一级分类" type="text">
+                                </input>
+                            </div>
+                             <!-- <div class="form-group">
+                                <label for="top_cate_name">
+                                    图片
+                                </label>
+                                <a target="_blank" href="">
+                    <p>
+                        <input type="file" id="cate_img" name="cate_img" style="display: none" onchange="ajaxFileUpload(this);"/>
+                        <label for="cate_img" class="cate_img"><img  id="img_desc" src="__PUBLIC__/js/o_ff6.png" style="height: 60px" ></label>
+                    </p>
+                </a>
+                            </div> -->
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-default" data-dismiss="modal" type="button">
+                                <span aria-hidden="true" class="glyphicon glyphicon-remove">
+                                </span>
+                                关闭
+                            </button>
+                            <button class="btn btn-primary" id="btn_submit_top" type="button">
+                                <span aria-hidden="true" class="glyphicon glyphicon-floppy-disk">
+                                </span>
+                                保存
+                            </button>
+                        </div>
+                    </input>
+                </div>
+            </div>
+        </div>
+        <!--二级分类添加-->
+        <div aria-labelledby="myModalLabel" class="modal fade" id="myModal_top" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">
+                                ×
+                            </span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel_sec">
+                            新增
+                        </h4>
+                    </div>
+                    <input id="parent_cate" name="parent_cate" type="hidden">
+                        <input id="cate_id" name="cate_id" type="hidden">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label id="txt_belong_cate">
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cat_name">
+                                        二级分类
+                                    </label>
+                                    <input class="form-control" id="cat_name" name="cat_name" placeholder="二级分类名称" type="text">
+                                    </input>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-default" data-dismiss="modal" type="button">
+                                    <span aria-hidden="true" class="glyphicon glyphicon-remove">
+                                    </span>
+                                    关闭
+                                </button>
+                                <button class="btn btn-primary" id="btn_submit" type="button">
+                                    <span aria-hidden="true" class="glyphicon glyphicon-floppy-disk">
+                                    </span>
+                                    保存
+                                </button>
+                            </div>
+                        </input>
+                    </input>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        //删除二级分类
+    function del_cate(e,cat_id,obj)
+    {
+        var index = $(obj).parents('.UL2').find('li').index($(obj).parent('li'));
+        var height=$(obj).parents('.item').css('height');
+        var num=parseInt($(obj).parents('.item').find('.item2_cs').attr('num'));
+        num= num-1;
+         height=parseInt(height.replace('px',''))-39;   
+        if (cat_id) {
+            if (confirm('确定删除此二级分类吗？')) {
+                $.post("{:U('AdminGoods/del_cate')}",{cat_id:cat_id},function(data){
+                    if (data > 0) {
+                         var string="["+num+'个二级分类]';                      
+                         $(obj).parents('.item').find('.item2_cs').html(string);
+                         $(obj).parents('.item').find('.item2_cs').attr('num',num);
+                         $(obj).parents('.item').height(height);
+                         $(obj).parents('.item').find(".UL2").each(function() {
+                            $(this).find('li').eq(index).remove();
+                         });                   
+                      //$(obj).parent().parent().remove();
+                       // location.reload();
+
+                    }else{
+                        alert('删除失败');
+                    }
+                    
+
+                });
+
+            }
+
+        }
+        e.cancelBubble = true;
+    }
+
+
+
+    function del_top(e,cat_id,obj)//删除一级分类
+    {
+        if (cat_id) {
+            if (confirm('确定删除此一级分类以及其所有的二级分类吗？')) {
+                $.post("{:U('AdminGoods/del_top')}",{cat_id:cat_id},function(data){
+                    if (data > 0) {
+                        alert('删除成功');
+                        $(obj).parents('li').remove();
+
+                    }else{
+                        alert('删除失败');
+                    }
+
+
+                });
+
+            }
+
+        }
+        e.cancelBubble = true;
+
+
+
+
+    }
+//提交二级分类
+$('#btn_submit').click(function(){
+            var cate_id=$('#cate_id').val();
+            var cat_name=$('#cat_name').val();
+            var parent_id=$('#parent_cate').val();
+            var data={'cat_name':cat_name,'parent_id':parent_id,'cat_id':cate_id};
+            $.post("{:U('AdminGoods/add_cate')}",data,function(data){
+                if (data>0){
+                    //数据库更新成功
+                    alert('更新成功');
+                    if (cate_id >0) {
+                        $('#cate_'+cate_id).html(cat_name);
+                    }else {
+
+                        
+                            if ($('.parent_'+parent_id).find(".UL2").css('display') == 'none') {
+                            } else {
+                               var height = $('.parent_'+parent_id).css('height');
+                                height=height.replace('px','');
+                                height=parseInt(height)+39;
+                                $('.parent_'+parent_id).css('height',height+'px');
+
+
+                            }
+                        var parent_name= $('.parent_'+parent_id).find('.item1_cs').text();
+
+                        var num =parseInt($('.parent_'+parent_id).find('.item2_cs').attr('num'));
+                        num= num + 1;
+                        var string="["+num+'个二级分类]';                      
+                         $('.parent_'+parent_id).find('.item2_cs').html(string);
+                         $('.parent_'+parent_id).find('.item2_cs').attr('num',num);
+
+
+
+                         $('.parent_'+parent_id).find(".UL2").each(function(index,ele) {
+                            if (index == 0) {
+                                 $(ele).append('<li style="float:left"> <i> </i> <span id="cate_'+data+'">'+cat_name+'</span> </li>');
+
+                            }
+                            if (index == 1){
+                                 $(ele).append('<li> <img src="./images/up1.png"> <img src="./images/down1.png"></li>');
+
+
+                            }
+                            if (index == 2) {
+                                 $(ele).append('<li> </li>');
+
+                            }
+                            if (index == 3) {
+                                var content='';
+                                content+='<li> <span cat_id="'+data+'" cat_name="'+cat_name+'" class="item1_edit" ';
+                                content+='onclick="add_cate(event,\'edit\',this)" parent_id="'+parent_id+'" parent_name="'+parent_name+'">  编辑</span> <span class="item1_del"';
+                                content+='onclick="del_cate(event,'+data+',this)"> 删除</span> </li>';
+                                $(ele).append(content);
+                                    
+                            }
+                            
+                            
+                         }); 
+                        
+                    }
+
+                    $('#cate_'+cate_id).html(cat_name);
+                }else{
+                    alert('更新失败');
+                }
+                $('#myModal_top').modal('hide');
+
+            });
+            
+        }
+);
+
+   $('#btn_submit_top').click(function(){
+
+        var top_id=$('#cate_id_top').val();
+        var cate_name=$('#top_cate_name').val();
+        var img=$("input[name='cate_img']").eq(1).val();
+        var data={'cate_name':cate_name,'top_id':top_id,'cate_img':img};
+
+        $.post("{:U('AdminGoods/add_top_level')}",data,function(data){
+            if (data>0){
+                //数据库更新成功
+                alert('更新成功');
+                location.reload();
+                
+
+            }else{
+                alert('更新失败');
+            }
+
+        });
+                $('#myModal').modal('hide');
+            }
+    );
+
+
+    function add_cate_top(e,type,obj)
+    {
+        $('#top_cate_name').val('');
+        $('#cate_id_top').val(0);
+        $('input[name="cate_img"]').eq(1).remove();
+
+        if (type == 'add'){
+            $("#myModalLabel").text("新增");
+            $('.cate_img img').attr('src','__PUBLIC__/js/o_ff6.png');
+        }else{
+            var cate_img=$(obj).attr('cate_img');
+            if (cate_img) {
+               $('.cate_img img').attr('src',cate_img);
+            }else{
+               $('.cate_img img').attr('src','__PUBLIC__/js/o_ff6.png');
+
+            }
+
+            $('#top_cate_name').val($(obj).attr('top_name'));
+            $('#cate_id_top').val($(obj).attr('top_id'));
+            $("#myModalLabel").text("编辑");
+        }
+
+        $('#myModal').modal();
+        e.cancelBubble = true;
+
+    }
+
+//添加二级分类
+    function add_cate(e,type,obj){
+        $('#txt_belong_cate').text('');
+        var parent_name=$(obj).attr('parent_name');
+        var cate_desc='所属一级分类:'+parent_name;
+        $('#txt_belong_cate').text(cate_desc);
+        $('#parent_cate').val(0);
+        $('#cate_id').val(0);
+        $('#parent_cate').val($(obj).attr('parent_id'));
+        if (type == 'add'){
+            $("#myModalLabel_sec").text("新增");
+            $('#cat_name').val('');
+        }else{
+            $('#cate_id').val($(obj).attr('cat_id'));
+            $('#cat_name').val($(obj).attr('cat_name'));
+            $("#myModalLabel_sec").text("编辑");
+        }
+
+          $('#myModal_top').modal();
+          e.cancelBubble = true;
+
+
+    }
+    $(document).ready(function() {
+        $(".item").click(function() {
+            //获取高度并填充
+            var height=39;
+            var li_num=($(this).find(".UL2").find("li:not(.bread)").length)/4;
+            if (li_num>0) {
+                var total_height = height + li_num * 39;
+                if ($(this).find(".UL2").css('display') == 'none') {
+                    $(this).css('height', total_height + 'px');
+                    $(this).find(".UL2").slideToggle();
+                } else {
+                    $(this).css('height', '39px');
+                    $(this).find(".UL2").slideToggle();
+
+                }
+            }
+
+
+        });
+
+
+    });
+
+       $(function () {
+        'use strict';
+        // Change this to the location of your server-side upload handler:
+        var url = 'index.php?g=Goods&m=AdminGoods&a=upload_into',
+            uploadButton = $('<button/>')
+                .addClass('btn btn-primary')
+                .attr('type', 'button')
+                .prop('disabled', true)
+                .text('Processing...')
+                .on('click', function () {
+                    var $this = $(this),
+                        data = $this.data();
+                    $this
+                        .off('click')
+                        .text('Waiting...')
+                        .on('click', function () {
+                            $this.remove();
+                            data.abort();
+                        });
+                    data.submit().always(function () {
+                        $this.remove();
+                    });
+                });
+        $('#fileupload').fileupload({
+            url: url,
+            dataType: 'json',
+            autoUpload: false,
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            maxFileSize: 999000,
+            // Enable image resizing, except for Android and Opera,
+            // which actually support image resizing, but fail to
+            // send Blob objects via XHR requests:
+            disableImageResize: /Android(?!.*Chrome)|Opera/
+                .test(window.navigator.userAgent),
+            previewMaxWidth: 100,
+            previewMaxHeight: 100,
+            previewCrop: true
+        }).on('fileuploadadd', function (e, data) {
+            data.context = $('<div/>').appendTo('#files');
+            $.each(data.files, function (index, file) {
+                var node = $('<p/>')
+                    .append($('<span/>').text(file.name));
+                if (!index) {
+                    node
+                        .append('<br>')
+                        .append(uploadButton.clone(true).data(data));
+                }
+                node.appendTo(data.context);
+                data.context.attr('style', 'float:left;margin-left:15px;');
+            });
+        }).on('fileuploadprocessalways', function (e, data) {
+            var index = data.index,
+                file = data.files[index],
+                node = $(data.context.children()[index]);
+            if (file.preview) {
+                node
+                    .prepend('<br>')
+                    .prepend(file.preview);
+            }
+            if (file.error) {
+                node
+                    .append('<br>')
+                    .append($('<span class="text-danger"/>').text(file.error));
+            }
+            if (index + 1 === data.files.length) {
+                data.context.find('button')
+                    .text('上传图片')
+                    .prop('disabled', !!data.files.error);
+            }
+        }).on('fileuploadprogressall', function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+                'width',
+                progress + '%'
+            );
+        }).on('fileuploaddone', function (e, data) {
+            $.each(data.result.files, function (index, file) {
+                if (file.url) {
+                    addimg(file.url,'#imgfile')
+                    var link = $('<a>')
+                        .attr('target', '_blank')
+                        .prop('href', file.url);
+                    $(data.context.children()[index])
+                        .wrap(link);
+                } else if (file.error) {
+                    var error = $('<span class="text-danger"/>').text(file.error);
+                    $(data.context.children()[index])
+                        .append('<br>')
+                        .append(error);
+                }
+            });
+        }).on('fileuploadfail', function (e, data) {
+            $.each(data.files, function (index) {
+                var error = $('<span class="text-danger"/>').text('File upload failed.');
+                $(data.context.children()[index])
+                    .append('<br>')
+                    .append(error);
+            });
+        }).prop('disabled', !$.support.fileInput)
+            .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        var starRating = 0;
+        $('.photo span').on('mouseenter',function () {
+            var index = $(this).index()+1;
+            $(this).prevAll().find('.high').css('z-index',1)
+            $(this).find('.high').css('z-index',1)
+            $(this).nextAll().find('.high').css('z-index',0)
+            $('.starNum').html((index*2).toFixed(1)+'分')
+        })
+        $('.photo').on('mouseleave',function () {
+            $(this).find('.high').css('z-index',0)
+            var count = starRating / 2
+            if(count == 5) {
+                $('.photo span').find('.high').css('z-index',1);
+            } else {
+                $('.photo span').eq(count).prevAll().find('.high').css('z-index',1);
+            }
+            $('.starNum').html(starRating.toFixed(1)+'分')
+        })
+        $('.photo span').on('click',function () {
+            var index = $(this).index()+1;
+            $(this).prevAll().find('.high').css('z-index',1)
+            $(this).find('.high').css('z-index',1)
+            starRating = index*2;
+            $('.starNum').html(starRating.toFixed(1)+'分');
+            $('#judge').val(starRating.toFixed(1));
+        })
+        //取消评分
+        $('.cancleStar').on('click',function () {
+            starRating = 0;
+            $('.photo span').find('.high').css('z-index',0);
+            $('.starNum').html(starRating.toFixed(1)+'分');
+            $('#judge').val(0);
+
+        })
+        //确定评分
+
+});
+
+function addimg(url,div) {
+        var str = '<div class="controls">' +
+            '<input type="hidden" name="descimg[]" class="imgpic" value="' + url + '">' +
+            '</div>';
+        $(div).after(str);
+    }
+    function ajaxFileUpload(thisobj) {
+
+        var fileid = $(thisobj).attr("id");
+        $.ajaxFileUpload
+        (
+            {
+                url: 'index.php?g=Goods&m=AdminGoods&a=uploadInto', //用于文件上传的服务器端请求地址
+                secureuri: false, //是否需要安全协议，一般设置为false
+                fileElementId: fileid, //文件上传域的ID
+                data: {data: fileid},
+                dataType: 'json', //返回值类型 一般设置为json
+                success: function (data)  //服务器成功响应处理函数
+                {
+                    if (data.type == 1) {
+                        var name = data.name
+                        var path = data.path;
+                        var content = "<img src='" + path + "' style='height: 100px'>" +
+                            "<input type='hidden'  name='"+name+"' value='" + path + "'>";
+                        $('.' + name).html(content);
+                    } else if (data.type == 2) {
+                        alert(data.message);
+                    }
+                },
+                error: function ()//服务器响应失败处理函数
+                {
+                    alert('网络请求失败,请重新上传图片');
+                }
+            }
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+    </script>
+</html>

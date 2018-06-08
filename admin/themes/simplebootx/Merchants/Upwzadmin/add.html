@@ -1,0 +1,406 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Upwzadmin/index')}">进件列表</a></li>
+        <li class="active"><a href="{:U('Upwzadmin/add')}">商户进件</a></li>
+    </ul>
+    <form id="form1" method="post" class="form-horizontal" action="{:U('Upwzadmin/add')}">
+
+        <div class="control-group">
+            <label class="control-label" for="mid">商户ID</label>
+            <div class="controls">
+                <input type="text" name="mid" id="mid" placeholder="请填写商户ID" value="{$id}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <?php if($data){ ?>
+        <div class="control-group">
+            <label class="control-label" for="merchantName">商户名称</label>
+            <div class="controls">
+                <input type="text" id="merchantName" name="merchantName" placeholder="请填写商户名称" value="{$data.merchantName}"> <span style="color: red">*要求与营业执照上的一致</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="merchantAlis">商户简称</label>
+            <div class="controls">
+                <input type="text" id="merchantAlis" name="merchantAlis" placeholder="请填写商户简称" value="{$data.merchantAlis}">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">商户法人证件号码</label>
+            <div class="controls">
+                <input type="text" name="idNo" placeholder="请填写商户法人证件号码"  value="{$data.idNo}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">法人代表</label>
+            <div class="controls">
+                <input type="text"  name="legalRepresent" placeholder="请填写法人代表" value="{$data.legalRepresent}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">营业执照编号</label>
+            <div class="controls">
+                <input type="text" name="licenceNo" placeholder="请填写营业执照编号" value="{$data.licenceNo}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">税务登记号</label>
+            <div class="controls">
+                <input type="text"  name="taxRegisterNo" placeholder="请填写税务登记号" value="{$data.taxRegisterNo}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">联系人姓名</label>
+            <div class="controls">
+                <input type="text" name="contactName" placeholder="请填写联系人姓名" value="{$data.contactName}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">联系人电话</label>
+            <div class="controls">
+                <input type="text"  name="contactPhoneNo" placeholder="请填写联系人电话" value="{$data.contactPhone}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">主营业务</label>
+            <div class="controls">
+                <input type="text"  name="mainBusiness" placeholder="请填写主营业务" value="{$data.mainBusiness}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">经营范围</label>
+            <div class="controls">
+                <input type="text"  name="businessRange" placeholder="请填写经营范围" value="{$data.businessRange}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">注册地址</label>
+            <div class="controls">
+                <input type="text" name="registerAddr" placeholder="请填写注册地址" value="{$data.registerAddr}">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">联系人座机</label>
+            <div class="controls">
+                <input type="text"  name="contactPhone" placeholder="请填写联系人座机" value="{$data.contactPhone}">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="merchantArea">详细地址</label>
+            <div class="controls">
+                <input type="text" id="merchantArea" name="merchantArea" placeholder="请填写地区" value="{$data.merchantArea}"> <span style="color: red">*请输入地区码,如北京市 输入1000</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="bankName">开户行</label>
+            <div class="controls">
+                <input type="text" id="bankName" name="bankName" placeholder="请填写开户行" value="{$data.bankName}"><span style="color: red">*开户行,按总行开户行提交</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="revactBankNo">开户行号</label>
+            <div class="controls">
+                <input type="text" id="revactBankNo" name="revactBankNo" placeholder="请填写开户行号" value="{$data.revactBankNo}"><span style="color: red">*开户行号,查表如:平安银行 ->313584099990</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="bankAccoutName">户名</label>
+            <div class="controls">
+                <input type="text" id="bankAccoutName" name="bankAccoutName" placeholder="请填写户名" value="{$data.bankAccoutName}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="bankAccout">银行号</label>
+            <div class="controls">
+                <input type="text" id="bankAccout" name="bankAccout" placeholder="请填写银行号" value="{$data.bankAccout}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="servicePhone">客服电话</label>
+            <div class="controls">
+                <input type="text" id="servicePhone" name="servicePhone" placeholder="请填写客服电话" value="{$data.servicePhone}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="business">微信经营类目</label>
+            <div class="controls">
+                <input type="text" id="business" name="business" placeholder="请填写经营类目" value="{$data.business}"><span style="color: red">*经营类目,查表获取经营类目的数字</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="business">支付宝经营类目</label>
+            <div class="controls">
+                <input type="text" id="categoryId" name="categoryId" placeholder="请填写经营类目" value="{$data.categoryId}"><span style="color: red">*经营类目,查表获取经营类目的数字</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="business">支付宝商户类别码</label>
+            <div class="controls">
+                <input type="text" id="merchantTypeCode" name="merchantTypeCode" placeholder="请填写商户类别码" value="{$data.merchantTypeCode}"><span style="color: red">*商户类别码,查表获取商户类别码的数字</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="merchantNature">商户性质</label>
+            <div class="controls" id="merchantNature">
+                <select name="merchantNature"  >
+                    <switch name="data.merchantNature">
+                        <case value="国有企业">
+                            <option value="国有企业" selected="selected">国有企业</option>
+                            <option value="三资企业">三资企业</option>
+                            <option value="私营企业">私营企业</option>
+                            <option value="集体企业">集体企业</option>
+                        </case>
+                        <case value="三资企业">
+                            <option value="国有企业">国有企业</option>
+                            <option value="三资企业" selected="selected">三资企业</option>
+                            <option value="私营企业">私营企业</option>
+                            <option value="集体企业">集体企业</option>
+                        </case>
+                        <case value="私营企业">
+                            <option value="国有企业">国有企业</option>
+                            <option value="三资企业">三资企业</option>
+                            <option value="私营企业" selected="selected">私营企业</option>
+                            <option value="集体企业">集体企业</option>
+                        </case>
+                        <case value="集体企业">
+                            <option value="国有企业">国有企业</option>
+                            <option value="三资企业">三资企业</option>
+                            <option value="私营企业" >私营企业</option>
+                            <option value="集体企业" selected="selected">集体企业</option>
+                        </case>
+                        <default />
+                            <option value="国有企业">国有企业</option>
+                            <option value="三资企业">三资企业</option>
+                            <option value="私营企业">私营企业</option>
+                            <option value="集体企业">集体企业</option>
+                    </switch>
+                </select>
+
+                   
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="wxCostRate">微信商户扣率</label>
+            <div class="controls">
+                <input type="text" id="wxCostRate" name="wxCostRate" placeholder="请填写微信商户扣率" value="{$data.wxCostRate}"><span style="color: red">*如0.6表示0.6%</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">支付宝商户扣率</label>
+            <div class="controls">
+                <input type="text" name="aliCostRate" placeholder="请填写支付宝商户扣率" value="{$data.aliCostRate}"><span style="color: red">*如0.6表示0.6%</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="companyFlag">账号性质</label>
+            <div class="controls" id="companyFlag">
+                <select name="companyFlag"  >
+                    <switch name="data.companyFlag">
+                        <case value="00">
+                            <option value="00" selected="selected">对私</option>
+                            <option value="01">对公</option>
+                        </case>
+                        <case value="01">
+                            <option value="00">对私</option>
+                            <option value="01" selected="selected">对公</option>
+                        </case>
+                      
+                        <default />
+                            <option value="00">对私</option>
+                            <option value="01">对公</option>
+                    </switch>
+                </select>
+    
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <input type="submit" name="submit" value="保存" class="btn btn-primary js-ajax-submit">
+            <input type="submit" name="submit" value="进件" class="btn btn-primary js-ajax-submit">
+           <!--  <button type="submit" class="btn btn-primary js-ajax-submit">添加</button> -->
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+        <?php }else{ ?>
+        <div class="control-group">
+            <label class="control-label" for="merchantName">商户名称</label>
+            <div class="controls">
+                <input type="text" id="merchantName" name="merchantName" placeholder="请填写商户名称"> <span style="color: red">*要求与营业执照上的一致</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="merchantAlis">商户简称</label>
+            <div class="controls">
+                <input type="text" id="merchantAlis" name="merchantAlis" placeholder="请填写商户简称">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">商户法人证件号码</label>
+            <div class="controls">
+                <input type="text" name="idNo" placeholder="请填写商户法人证件号码">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">法人代表</label>
+            <div class="controls">
+                <input type="text"  name="legalRepresent" placeholder="请填写法人代表">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">营业执照编号</label>
+            <div class="controls">
+                <input type="text" name="licenceNo" placeholder="请填写营业执照编号">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">税务登记号</label>
+            <div class="controls">
+                <input type="text"  name="taxRegisterNo" placeholder="请填写税务登记号">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">联系人姓名</label>
+            <div class="controls">
+                <input type="text" name="contactName" placeholder="请填写联系人姓名">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">联系人电话</label>
+            <div class="controls">
+                <input type="text"  name="contactPhoneNo" placeholder="请填写联系人电话">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">主营业务</label>
+            <div class="controls">
+                <input type="text"  name="mainBusiness" placeholder="请填写主营业务">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">经营范围</label>
+            <div class="controls">
+                <input type="text"  name="businessRange" placeholder="请填写经营范围">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">注册地址</label>
+            <div class="controls">
+                <input type="text" name="registerAddr" placeholder="请填写注册地址">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">联系人座机</label>
+            <div class="controls">
+                <input type="text"  name="contactPhone" placeholder="请填写联系人座机">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="merchantArea">详细地址</label>
+            <div class="controls">
+                <input type="text" id="merchantArea" name="merchantArea" placeholder="请填写地区"> <span style="color: red">*请输入地区码,如北京市 输入1000</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="bankName">开户行</label>
+            <div class="controls">
+                <input type="text" id="bankName" name="bankName" placeholder="请填写开户行"><span style="color: red">*开户行,按总行开户行提交</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="revactBankNo">开户行号</label>
+            <div class="controls">
+                <input type="text" id="revactBankNo" name="revactBankNo" placeholder="请填写开户行号"><span style="color: red">*开户行号,查表如:平安银行 ->313584099990</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="bankAccoutName">户名</label>
+            <div class="controls">
+                <input type="text" id="bankAccoutName" name="bankAccoutName" placeholder="请填写户名">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="bankAccout">银行号</label>
+            <div class="controls">
+                <input type="text" id="bankAccout" name="bankAccout" placeholder="请填写银行号">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="servicePhone">客服电话</label>
+            <div class="controls">
+                <input type="text" id="servicePhone" name="servicePhone" placeholder="请填写客服电话">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="business">微信经营类目</label>
+            <div class="controls">
+                <input type="text" id="business" name="business" placeholder="请填写经营类目"><span style="color: red">*经营类目,查表获取经营类目的数字</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="business">支付宝经营类目</label>
+            <div class="controls">
+                <input type="text" id="categoryId" name="categoryId" placeholder="请填写经营类目"><span style="color: red">*经营类目,查表获取经营类目的数字</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="business">支付宝商户类别码</label>
+            <div class="controls">
+                <input type="text" id="merchantTypeCode" name="merchantTypeCode" placeholder="请填写商户类别码"><span style="color: red">*商户类别码,查表获取商户类别码的数字</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="merchantNature">商户性质</label>
+            <div class="controls" id="merchantNature">
+                <select name="merchantNature"  >
+                    <option value="国有企业">国有企业</option>
+                    <option value="三资企业">三资企业</option>
+                    <option value="私营企业">私营企业</option>
+                    <option value="集体企业">集体企业</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="wxCostRate">微信商户扣率</label>
+            <div class="controls">
+                <input type="text" id="wxCostRate" name="wxCostRate" placeholder="请填写微信商户扣率"><span style="color: red">*如0.6表示0.6%</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">支付宝商户扣率</label>
+            <div class="controls">
+                <input type="text" name="aliCostRate" placeholder="请填写支付宝商户扣率"><span style="color: red">*如0.6表示0.6%</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="companyFlag">账号性质</label>
+            <div class="controls" id="companyFlag">
+                <select name="companyFlag"  >
+                    <option value="00">对私</option>
+                    <option value="01">对公</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+             <input type="submit" name="submit" value="保存" class="btn btn-primary js-ajax-submit">
+            <input type="submit" name="submit" value="进件" class="btn btn-primary js-ajax-submit">
+           <!--  <button type="submit" class="btn btn-primary js-ajax-submit">添加</button> -->
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+        <?php } ?>
+        
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+</html>

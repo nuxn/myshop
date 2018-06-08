@@ -1,0 +1,127 @@
+<admintpl file="header" />
+<link href="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" type="text/css" media="screen"/>
+</head>
+<body>
+	<div class="wrap">
+			<fieldset>
+				<table class="table table-bordered" >
+                    <tr>
+                        <td width=" 200px">1：否决 0：通过 </td>
+                        <td  ><span style="color: red">{$base.auditStatus}</span></td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px">nopass Reason</td>
+                        <td  ><span style="color: red">{$base.nopassReason}</span></td>
+                    </tr>
+					<tr>
+						<td width=" 200px">姓名</td>
+						<td  >{$base.name}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">注册账号</td>
+						<td  >{$base.mobile}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">商户简称</td>
+						<td  >{$base.merchantName}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">省</td>
+						<td  >{$base.province}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">市</td>
+						<td  >{$base.city}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">区/县</td>
+						<td  >{$base.area}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">详细地址</td>
+						<td  >{$base.address}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">营业执照注册名称</td>
+						<td  >{$base.licenseFullName}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">营业执照注册地址</td>
+						<td  >{$base.licenseAddress}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">开户支行</td>
+						<td  >{$account.branch}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">联行号</td>
+						<td  >{$account.unionpay}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">开户名</td>
+						<td  >{$account.holder}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">卡号</td>
+						<td  >{$account.cardId}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">手机号</td>
+						<td  >{$account.mobile}</td>
+					</tr>
+                    <tr>
+                        <td width=" 200px">企业：法人身份证</td>
+                        <td>
+                            <img src="{$merchantPics.idcardFrontPic}" alt="" class="img-rounded">
+                            <img src="{$merchantPics.idcardBackPic}" alt="" class="img-rounded">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px">银行卡正面（如是对公账户，开户许可证）</td>
+                        <td><img src="{$merchantPics.bankCardFrontPic}" alt="" class="img-rounded">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px">营业执照</td>
+                        <td><img src="{$merchantPics.licensePic}" alt="" class="img-rounded">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px">门头照,经营场所,收银台招盘</td>
+                        <td>
+                            <img src="{$merchantPics.doorPic}" alt="" class="img-rounded">
+                            <img src="{$merchantPics.insidePic}" alt="" class="img-rounded">
+                            <img src="{$merchantPics.cashierDeskPic}" alt="" class="img-rounded">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px">卫生许可证</td>
+                        <td><img src="{$merchantPics.isIndustryDining|default=''}" alt="" class="img-rounded">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px">非法人结算授权书</td>
+                        <td><img src="{$merchantPics.nonLegSettleAuthPic|default=''}" alt="" class="img-rounded">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px">非法人结算人身份证</td>
+                        <td>
+                            <img src="{$merchantPics.nonLegIdcardFrontPic|default=''}" alt="" class="img-rounded">
+                            <img src="{$merchantPics.nonLlegIdcardBackPic|default=''}" alt="" class="img-rounded">
+                        </td>
+                    </tr>
+				</table>
+			</fieldset>
+			<div class="form-actions">
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+	</div>
+    <?php dump($result)?>
+	<style>
+		img{height: 280px}
+	</style>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script src="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.js"></script>
+</body>
+</html>

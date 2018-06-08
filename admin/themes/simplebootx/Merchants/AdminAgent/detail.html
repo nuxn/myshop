@@ -1,0 +1,93 @@
+<admintpl file="header" />
+<link href="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" type="text/css" media="screen"/>
+</head>
+<body>
+	<div class="wrap">
+			<fieldset>
+				<table class="table table-bordered" >
+					<tr>
+						<td width=" 200px">代理名称</td>
+						<td  >{$data.agent_name}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">代理用户</td>
+						<td  >{$data.user_phone}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">代理类型</td>
+						<td  >
+							<if condition="$data.agent_mode eq 1">企业<else/>个人</if>
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px">省</td>
+						<td  >{$data.province}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">市</td>
+						<td  >{$data.city}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">县</td>
+						<td  >{$data.county}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">详细地址</td>
+						<td  >{$data.address}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">新增类型</td>
+						<td  >{$data.agent_type}
+							<if condition="$data.agent_type eq 0">直接发展<elseif condition="$data.agent_type eq 1"/>员工推荐<else/>洋仆淘内部员工</if>
+						</td>
+					</tr>
+
+					<tr>
+						<td width=" 200px">账户类型</td>
+						<td  >
+							<if condition="$data['is_first_agent'] eq 0">
+								非一级代理
+								<else />
+								一级代理
+							</if>
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px">代理业务</td>
+						<td  >{$data.branch_account}
+							<foreach name="agency_business" item="vo" key="key">
+								{$vo.name} &nbsp;&nbsp;|&nbsp;&nbsp;
+							</foreach>
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px">推荐人</td>
+						<td  >{$data.referrer}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">审核状态</td>
+						<td  >
+							<if condition="$data['status'] eq 0">
+								未审核
+								<else />
+								通过
+							</if>
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px">申请时间</td>
+						<td  >{$data.add_time|date='Y-m-d H:i',###}</td>
+					</tr>
+				</table>
+			</fieldset>
+			<div class="form-actions">
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+	</div>
+	<style>
+		img{ width: 300px;height: 280px}
+	</style>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script src="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('AdminRole/index')}">{:L('ROLE_LIST')}</a></li>
+        <li class="active"><a href="{:U('AdminRole/add')}">{:L('ROLE_ADD')}</a></li>
+    </ul>
+    <form id="form1" class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label" for="role_name">角色</label>
+        <div class="controls">
+            <input type="text" id="role_name" name="role_name" placeholder="请填写角色">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="role_desc">角色描述</label>
+        <div class="controls">
+            <textarea name="role_desc" id="role_desc" rows="5" cols="120"></textarea>
+        </div>
+    </div>
+    <div class="form-actions">
+        <button type="button" id="onSubmit" class="btn btn-primary js-ajax-submit" >{:L('ADD')}</button>
+        <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+    </div>
+</form>
+</div>
+<script type="text/javascript"src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/global.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#onSubmit").click(function () {
+            $.post('{:U("adminRole/add")}',$("#form1").serialize(),function (data) {
+                if(data.status =='fail'){
+                    alert(data.msg);
+                    return;
+                }else{
+                    alert(data.msg);
+                    location.href='{:U("AdminRole/index")}';
+                }
+            });
+            
+        });
+    });
+</script>
+<style>
+    input{width: 60%;}
+</style>
+</body>
+</html>
