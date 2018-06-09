@@ -1,0 +1,40 @@
+<?php
+return array (
+  'app' => 'App',
+  'model' => 'App',
+  'action' => '0',
+  'data' => '',
+  'type' => '1',
+  'status' => '1',
+  'name' => 'app管理',
+  'icon' => 'apple',
+  'remark' => '',
+  'listorder' => '5',
+  'children' => 
+  array (
+    array (
+      'app' => 'App',
+      'model' => 'AdminApp',
+      'action' => 'index',
+      'data' => '',
+      'type' => '1',
+      'status' => '1',
+      'name' => 'app列表',
+      'icon' => '',
+      'remark' => '',
+      'listorder' => '0',
+    ),
+    array (
+      'app' => 'App',
+      'model' => 'AppStart',
+      'action' => 'index',
+      'data' => '',
+      'type' => '1',
+      'status' => '1',
+      'name' => 'app启动页',
+      'icon' => '',
+      'remark' => '',
+      'listorder' => '0',
+    ),
+  ),
+);

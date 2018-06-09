@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <title>会员卡充值</title>
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/card_recharge/css/index-rem.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/card_recharge/css/member.css">
+    <script src="__PUBLIC__/card_recharge/js/jquery.min.js"></script>
+    <script src="__PUBLIC__/card_recharge/js/swiper.min.js"></script>
+    <script src="__PUBLIC__/card_recharge/js/layer_mobile/layer.js"></script>
+
+</head>
+
+<body style="background:#f2f2f2;">
+    <!-- 微信会员 -->
+    <div class="member_info">
+        <div class="info_top"><img class="top_img" src="{$mch_info.logo_url|default='__PUBLIC__/card_recharge/imgs/conter_top.png'}" alt="">{$mch_info.merchant_jiancheng}</div>
+        <div class="info_QR"><img class="top_img" src="{$url|default='__PUBLIC__/card_recharge/imgs/QRcode.png'}" alt=""></div>
+        <!-- 微信浏览器 -->
+        <p class="info_wx">{$title}</p>
+        <!-- 支付宝浏览器 -->
+        <!--<p class="info_zfb">长按保存二维码,至微信识别二维码后,激活绑定会员卡</p>-->
+    </div>
+    <div class="info_box">
+        <h5>加入微信会员卡</h5>
+        <img src="__PUBLIC__/card_recharge/imgs/1@2x.png" alt="">
+        <img src="__PUBLIC__/card_recharge/imgs/2@2x.png" alt="">
+        <img src="__PUBLIC__/card_recharge/imgs/3@2x.png" alt="">
+        <img src="__PUBLIC__/card_recharge/imgs/4@2x.png" alt="">
+    </div>
+
+
+</body>
+
+</html>
+<script type="text/javascript">
+    $(document).ready(function() {
+        if ($('.info_wx')) {
+            $('.info_wx').show();
+        } else {
+            $('.info_zfb').show();
+        }
+    })
+</script>

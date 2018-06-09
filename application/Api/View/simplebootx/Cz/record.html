@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<title>充值记录</title>
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/record.css">
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/common.css">
+
+</head>
+<body>
+<div class="czjil clear">
+  <ul class="clear">
+  	<volist name="lists" id="v">
+	  	<li>
+		  	 <div class="frst"><h3>{:date('m-d',$v['add_time'])}</h3><h4>{:date('H:i',$v['add_time'])}</h4></div>
+		  	 <div class="cent"><h3>充值:{$v['price']}</h3><h4>微信支付</h4></div>
+		  	 <div class="last">到账:{$v['total_price']}</div>
+	    </li>
+    </volist>
+  	<volist name="cdklist" id="va">
+	  	<li>
+		  	 <div class="frst"><h3>{:date('m-d',$va['use_time'])}</h3><h4>{:date('H:i',$va['use_time'])}</h4></div>
+		  	 <div class="cent"><h3>充值:{$va['price']}</h3><h4>充值码充值</h4></div>
+		  	 <div class="last">到账:{$va['price']}</div>
+	    </li>
+    </volist>
+      <if condition="empty($lists) AND empty($cdklist) ">
+          <div style="text-align: center;line-height: 100px;height: 100px;">
+              暂无充值记录
+          </div>
+      </if>
+    <!--<empty name="lists">-->
+    	<!--<div style="text-align: center;line-height: 100px;height: 100px;">-->
+    		<!--暂无充值记录-->
+    	<!--</div>-->
+    <!--</empty>-->
+    
+  </ul>
+</div>
+</body>
+</html>
