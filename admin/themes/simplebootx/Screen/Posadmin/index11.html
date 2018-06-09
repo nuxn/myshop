@@ -1,0 +1,92 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Posadmin/index')}">收银机列表</a></li>
+        <li ><a href="{:U('Posadmin/add')}">添加收银机</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('Posadmin/index')}">
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" name="end_time"  class="js-datetime" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp;
+        收银机的ID：
+        <input type="text" name="id" style="width: 200px;" value="{$formget.id|default=''}"  placeholder="请输入收银机的ID">&nbsp;
+        来源商户的ID：
+        <input type="text" name="user_phone" style="width: 200px;" value="{$formget.mid|default=''}" placeholder="请输入来源商户ID">
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Posadmin/index')}">清空</a>
+    </form>
+    <form  action="{:U('Posadmin/delete')}" method="post">
+        <!--<div class="table-actions">-->
+            <!--<button class="btn btn-danger btn-md " type="submit"  data-subcheck="true" data-msg="你确定删除吗？">全选删除</button>-->
+        <!--</div>-->
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <!--<th width="70" >收银机的ID</th>-->
+                <th width="70" >来源商户ID</th>
+                <th width="70" >来源商户</th>
+                <!--<th width="70" >mac地址</th>-->
+                <th width="70" >入网时间</th>
+                <th width="70" >使用期限</th>
+                <th width="70" >状态</th>
+                <th width="50" >操作</th>
+            </tr>
+            </thead>
+            <foreach name="poses" item="p">
+                <tr>
+                    <!--<td><b>{$p.id}</b></td>-->
+                    <td><b>{$p.mid}</b></td>
+                    <td><b>{$p.merchant_name}</b></td>
+                    <!--<td><b>{$p.mac}</b></td>-->
+                    <td>
+                        <b>{:date('Y-m-d H:i:s',$p['add_time'])}</b>
+                    </td>
+                    <td>
+                        <if condition="$p.deadline == 0">
+                            永久
+                            <else/>
+                            {:date('Y-m-d H:i:s',$p['deadline'])}
+                        </if>
+                        <b></b>
+                    </td>
+                    <td>
+                        <span class="change_status" data-status="{$p.status}" data-id="{$p.id}">
+                        <img src="__PUBLIC__/images/status_{$p.status}.gif" alt="改变状态" >
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{:U('Posadmin/addtime',array('id'=>$p['id']))}">详情</a> |
+                        <a href="{:U('Posadmin/edit',array('id'=>$p['id']))}">修改</a> |
+                        <!--<a href="{:U('Posadmin/delete',array('id'=>$p['id']))}">删除</a> |-->
+                    </td>
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+<script>
+    $(function(){
+//        改变上线状态
+        $(".change_status").click(function(){
+            var data = {
+                id : $(this).data('id')
+            };
+            console.log(data);
+            var _this = $(this);
+            $.post("{:U('Posadmin/change_status')}", data, function(ad){
+                _this.children("img").attr("src","__PUBLIC__/images/status_"+ad+".gif")
+                console.log(ad);
+            },"json");
+        })
+//
+
+    })
+</script>
+
+</body>
+</html>

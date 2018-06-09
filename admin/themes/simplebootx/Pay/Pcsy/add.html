@@ -1,0 +1,44 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Pcsy/index')}">绑定列表</a></li>
+        <li class="active"><a href="{:U('Pcsy/add')}">添加绑定</a></li>
+    </ul>
+    <form method="post" class="form-horizontal" action="{:U('Pcsy/add')}">
+        <div class="control-group">
+            <label class="control-label">商家id</label>
+            <div class="controls">
+                <input type="text" id="mid" name="mid" placeholder="请输入商家id">
+                商户名称：<input type="text" id="merchant_name" name="merchant_name" style="width: 300px" readonly="readonly">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">设备号</label>
+            <div class="controls">
+                <input type="text" name="device_no" placeholder="请填写设备号">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit">添加</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    $(function(){
+        $("#mid").bind("input propertychange",function () {
+            var mid=$("#mid").val();
+            $.post('{:U("get_merchant_name")}',{id:mid},function (data) {
+                if(data.code==1){
+                    $("#merchant_name").val(data.merchant_name);
+                }
+            });
+        });
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,806 @@
+<admintpl file="header"/>
+<script src="__PUBLIC__/js/layer/layer.js"></script>
+<script src="__PUBLIC__/js/ajaxfileupload.js"></script>
+<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script>
+</head>
+<body>
+<div class="wrap">
+	<ul class="nav nav-tabs">
+		<li><a href="{:U('adminIndex/examine')}">商户审核列表</a></li>
+		<li class="active"><a href="">商户审核</a></li>
+	</ul>
+	<form id="form1" class="form-horizontal">
+		<notempty name="data.new_log">
+			<div class="control-group">
+				<label class="control-label" for="new_log">最新审核动态</label>
+				<div class="controls">
+					<input type="text" id="new_log" value="{$data.new_log}" disabled="disabled">
+					<a href='{:U("adminIndex/merchants_logs",array("id"=>$data["uid"]))}' type="button" class="btn btn-warning" >查看全部动态</a>
+				</div>
+			</div>
+		</notempty>
+		<div class="control-group">
+			<label class="control-label" for="uid">用户ID</label>
+			<div class="controls">
+				<input type="text" id="uid" name="uid" value="{$data.uid}" readonly="readonly" placeholder="请填写用户id">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="merchant_name">商户名称</label>
+			<div class="controls">
+				<input type="text" id="merchant_name" name="merchant_name" value="{$data.merchant_name}" placeholder="请填写商户名称">
+			</div>
+		</div>
+        <div class="control-group">
+            <label class="control-label" for="merchant_jiancheng">商户简称</label>
+            <div class="controls">
+                <input type="text" id="merchant_jiancheng" name="merchant_jiancheng" value="{$data.merchant_jiancheng}" placeholder="请填写商户简称"><span style="color: red">*不超过12汉字</span>
+            </div>
+        </div>
+		<div class="control-group">
+			<label class="control-label">推荐人手机号码</label>
+			<div class="controls">
+				<input name="referrer" value="{$data.referrer}" type="text"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">地区</label>
+			<div class="controls">
+				<select name="province" class="span3"></select> &nbsp;&nbsp;<select name="city" class="span3"></select>&nbsp;&nbsp;<select name="county" class="span3"></select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="address">详细地址</label>
+			<div class="controls">
+				<input type="text" id="address" name="address" value="{$data.address}" placeholder="请填写详细地址">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="address">商户类型</label>
+			<div class="controls ">
+				<select name="mid" >
+					<option value="0" <if condition="$data['mid'] eq 0">selected</if>>分店总部</option>
+					<foreach name="mids" item="m">
+						<option value="{$m.id}" <if condition="$data['mid'] eq $m['id']">selected</if>>{$m.merchant_name}</option>
+					</foreach>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label">所属行业</label>
+			<div class="controls">
+				<select name="industry"  class="span3">
+					<option value="-1">请选择</option>
+					<option value="零售超市" <if condition="$data.industry eq '零售超市'">selected</if>>零售超市</option>
+					<option value="餐饮行业" <if condition="$data.industry eq '餐饮行业'">selected</if>>餐饮行业</option>
+					<option value="美容美发" <if condition="$data.industry eq '美容美发'">selected</if>>美容美发</option>
+					<option value="休闲娱乐" <if condition="$data.industry eq '休闲娱乐'">selected</if>>休闲娱乐</option>
+					<option value="酒店住宿" <if condition="$data.industry eq '酒店住宿'">selected</if>>酒店住宿</option>
+					<option value="服装鞋帽" <if condition="$data.industry eq '服装鞋帽'">selected</if>>服装鞋帽</option>
+					<option value="手机行业" <if condition="$data.industry eq '手机行业'">selected</if>>手机行业</option>
+					<option value="医疗行业" <if condition="$data.industry eq '医疗行业'">selected</if>>医疗行业</option>
+					<option value="其他" <if condition="$data.industry eq '其他'">selected</if>>其他</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label">账户类型</label>
+			<div class="controls">
+				<select name="account_type"  class="span3">
+					<option value="1" <if condition="$data.agency_business eq 1">selected</if>>仅开通台签</option>
+					<option value="2" <if condition="$data.agency_business eq 2">selected</if>>开通台签和双屏</option>
+				</select>
+			</div>
+		</div>
+
+		<!--<div class="control-group">
+			<label class="control-label">是否开通微信支付</label>
+			<div class="controls">
+				<label class="radio inline">
+					<input type="radio"  name="is_miniapp" value="2" <if condition="$data.is_miniapp eq 2">checked</if>>是
+				</label>
+				<label class="radio inline">
+					<input type="radio" name="is_miniapp" value="1" <if condition="$data.is_miniapp eq 1">checked</if>> 否
+				</label>
+			</div>
+		</div>-->
+
+		<!--<div class="control-group">
+			<label class="control-label">是否有门头</label>
+			<div class="controls">
+				<label class="radio inline">
+					<input type="radio"  name="isdoor_header" value="1" <if condition="$data.isdoor_header eq 1">checked</if>>是
+				</label>
+				<label class="radio inline">
+					<input type="radio" name="isdoor_header" value="0" <if condition="$data.isdoor_header eq 0">checked</if>> 否
+				</label>
+			</div>
+		</div>-->
+
+		<!--<div class="control-group">-->
+		<!--<label class="control-label">门头</label>-->
+		<!--<div class="controls">-->
+		<!--<a class="btn btn-middle" onclick="GetUploadify4(1,'','idcard','call_back4');"> <i class="icon-arrow-up"></i>点此上传门头</a><input type="text" id="header_interior_img" value="" style="width: 300px;">-->
+		<!--</div>-->
+		<!--</div>-->
+
+		<!--<div class="control-group">-->
+			<!--<label class="control-label" id="txt-door_head">内景</label>-->
+			<!--<div class="controls">-->
+				<!--<a class="btn btn-middle blue" id="a-door_head" onclick="GetUploadify4(3,'','merchants','call_back4');"> <i class="icon-arrow-up"></i>点此上传</a><input type="text" id="header_interior_img" name="header_interior_img" value="{$data.header_interior_img}" readonly="readonly" style="width: 300px;">-->
+			<!--</div>-->
+		<!--</div>-->
+		<div class="control-group">
+			<label class="control-label">门头</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<label for="file3" id="img_3">
+							<?php if($data['header_interior_img']){ ?>
+							<?php if(strpos($data['header_interior_img'],'http') || strpos($data['header_interior_img'],'data')){ ?>
+							<img src="{$data.header_interior_img}" style="height: 140px" >
+							<?php }else{ ?>
+							<img src="./data/upload/{$data.header_interior_img}" style="height: 140px" >
+							<?php } ?>
+							<?php }else{ ?>
+							<img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" >
+							<?php } ?>
+						</label>
+						<input type="file" id="file3" name="header_interior_img" value="{$data.header_interior_img}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<label class="pic2">请上传门头</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">内景</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<a class="file" >
+						<label for="file5" id="img_5">
+							<?php if($data['interior_img_one']){ ?>
+							<?php if(strpos($data['interior_img_one'],'http') || strpos($data['interior_img_one'],'data')){ ?>
+							<img src="{$data.interior_img_one}" style="height: 140px" >
+							<?php }else{ ?>
+							<img src="./data/upload/{$data.interior_img_one}" style="height: 140px" >
+							<?php } ?>
+							<?php }else{ ?>
+							<img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" >
+							<?php } ?>
+						</label>
+						<input type="file" id="file5" name="interior_img_one" value="{$data.interior_img_one}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<label class="pic2">请上传内景</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">收银台</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<a class="file" >
+						<label for="file7" id="img_7">
+							<?php if($data['interior_img_three']){ ?>
+							<?php if(strpos($data['interior_img_three'],'http') || strpos($data['interior_img_three'],'data')){ ?>
+							<img src="{$data.interior_img_three}" style="height: 140px" >
+							<?php }else{ ?>
+							<img src="./data/upload/{$data.interior_img_three}" style="height: 140px" >
+							<?php } ?>
+							<?php }else{ ?>
+							<img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" >
+							<?php } ?>
+						</label>
+						<input type="file" id="file7" name="interior_img_three" value="{$data.interior_img_three}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<label class="pic2">请上传收银台</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">营业执照</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<label for="file4" id="img_4">
+							<?php if($data['business_license']){ ?>
+							<?php if(strpos($data['business_license'],'http') || strpos($data['business_license'],'data')){ ?>
+							<img src="{$data.business_license}" style="height: 140px" >
+							<?php }else{ ?>
+							<img src="./data/upload/{$data.business_license}" style="height: 140px" >
+							<?php } ?>
+							<?php }else{ ?>
+							<img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" >
+							<?php } ?>
+						</label>
+						<input type="file" id="file4" name="business_license" value="{$data.business_license}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<label class="pic2">请上传营业执照</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">营业执照编号</label>
+			<div class="controls">
+				<input name="business_license_number" value="{$data.business_license_number}" type="text"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">经营者姓名</label>
+			<div class="controls">
+				<input name="operator_name" value="{$data.operator_name}" type="text"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">身份证号</label>
+			<div class="controls">
+				<input name="id_number" value="{$data.id_number}" type="text"/>
+			</div>
+		</div>
+		<!--<div class="control-group">-->
+			<!--<label class="control-label">身份证照片</label>-->
+			<!--<div class="controls">-->
+				<!--正面：-->
+				<!--<a class="btn btn-middle blue" onclick="GetUploadify(1,'','merchants','call_back');"> <i class="icon-arrow-up"></i>点此上传正面</a><input type="text" id="positive_id_card_img" name="positive_id_card_img" readonly="readonly" value="{$data.positive_id_card_img}" style="width: 300px;"> <br/> <br/>-->
+				<!--反面：-->
+				<!--<a class="btn btn-middle blue" onclick="GetUploadify3(1,'','merchants','call_back2');"> <i class="icon-arrow-up"></i>点此上传反面</a><input type="text" id="id_card_img" name="id_card_img" readonly="readonly" value="{$data.id_card_img}" style="width: 300px;">-->
+			<!--</div>-->
+		<!--</div>-->
+		<div class="control-group">
+			<label class="control-label">身份证正面照片</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<label for="file1" id="img_1">
+							<?php if($data['positive_id_card_img']){ ?>
+							<?php if(strpos($data['positive_id_card_img'],'http') || strpos($data['positive_id_card_img'],'data')){ ?>
+							<img src="{$data.positive_id_card_img}" style="height: 140px" >
+							<?php }else{ ?>
+							<img src="./data/upload/{$data.positive_id_card_img}" style="height: 140px" >
+							<?php } ?>
+							<?php }else{ ?>
+							<img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" >
+							<?php } ?>
+						</label>
+						<input type="file" id="file1" name="positive_id_card_img" value="{$data.positive_id_card_img}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<label class="pic2">请上传身份证正面</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">身份证反面照片</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<input type="file" id="file2" name="id_card_img" value="{$data.id_card_img}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<label for="file2" id="img_2">
+						<?php if($data['id_card_img']){ ?>
+						<?php if(strpos($data['id_card_img'],'http') || strpos($data['id_card_img'],'data')){ ?>
+						<img src="{$data.id_card_img}" style="height: 140px" >
+						<?php }else{ ?>
+						<img src="./data/upload/{$data.id_card_img}" style="height: 140px" >
+						<?php } ?>
+						<?php }else{ ?>
+						<img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" >
+						<?php } ?>
+					</label>
+
+					<label class="pic2">请上传身份证反面</label></p>
+			</div>
+		</div>
+
+		<!--<div class="control-group">
+			<label class="control-label">手持身份证正面照片</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					&lt;!&ndash;  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> &ndash;&gt;
+					<a class="file" >
+						<input type="file" id="file8" name="hand_positive_id_card_img" value="{$data.hand_positive_id_card_img}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<label for="file8" id="img_8">
+						<?php if($data['hand_positive_id_card_img']){ ?>
+						<?php if(strpos($data['hand_positive_id_card_img'],'http') || strpos($data['hand_positive_id_card_img'],'data')){ ?>
+						<img src="{$data.hand_positive_id_card_img}" style="height: 140px" >
+						<?php }else{ ?>
+						<img src="./data/upload/{$data.hand_positive_id_card_img}" style="height: 140px" >
+						<?php } ?>
+						<?php }else{ ?>
+						<img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" >
+						<?php } ?>
+					</label>
+
+					<label class="pic2">请上传手持身份证正面照片</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">手持身份证反面照片</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					&lt;!&ndash;  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> &ndash;&gt;
+					<a class="file" >
+						<input type="file" id="file9" name="hand_id_card_img" value="{$data.hand_id_card_img}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<label for="file9" id="img_9">
+						<?php if($data['hand_id_card_img']){ ?>
+						<?php if(strpos($data['hand_id_card_img'],'http') || strpos($data['hand_id_card_img'],'data')){ ?>
+						<img src="{$data.hand_id_card_img}" style="height: 140px" >
+						<?php }else{ ?>
+						<img src="./data/upload/{$data.hand_id_card_img}" style="height: 140px" >
+						<?php } ?>
+						<?php }else{ ?>
+						<img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" >
+						<?php } ?>
+					</label>
+
+					<label class="pic2">请上传手持身份证反面照片</label></p>
+			</div>
+		</div>-->
+		<div class="control-group">
+			<label class="control-label">银行卡正面照片</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<input type="file" id="file10" name="positive_bank_card_img" value="{$data.positive_bank_card_img}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<label for="file10" id="img_10">
+						<?php if($data['positive_bank_card_img']){ ?>
+						<?php if(strpos($data['positive_bank_card_img'],'http') || strpos($data['positive_bank_card_img'],'data')){ ?>
+						<img src="{$data.positive_bank_card_img}" style="height: 140px" >
+						<?php }else{ ?>
+						<img src="./data/upload/{$data.positive_bank_card_img}" style="height: 140px" >
+						<?php } ?>
+						<?php }else{ ?>
+						<img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" >
+						<?php } ?>
+					</label>
+
+					<label class="pic2">请上传银行卡正面照片</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">银行卡反面照片照片</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<input type="file" id="file11" name="bank_card_img" value="{$data.bank_card_img}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+					<label for="file11" id="img_11">
+						<?php if($data['bank_card_img']){ ?>
+							<?php if(strpos($data['bank_card_img'],'http') || strpos($data['bank_card_img'],'data')){ ?>
+								<img src="{$data.bank_card_img}" style="height: 140px" >
+							<?php }else{ ?>
+								<img src="./data/upload/{$data.bank_card_img}" style="height: 140px" >
+							<?php } ?>
+						<?php }else{ ?>
+							<img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" >
+						<?php } ?>
+					</label>
+					<label class="pic2">请上传银行卡反面照片</label></p>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label">账户类型</label>
+			<div class="controls">
+				<select name="account_type"  class="span3">
+					<option value="-1">请选择</option>
+					<option value="0" <if condition="$data.account_type eq 0">selected</if>>个人账户</option>
+					<option value="1" <if condition="$data.account_type eq 1">selected</if>>企业账户</option>
+				</select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">账户名称/开户名称</label>
+			<div class="controls">
+				<input name="account_name" type="text" value="{$data.account_name}"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="bank_account">开户银行</label>
+			<div class="controls">
+				<input name="bank_account" id="bank_account" value="{$data.bank_account}" type="text"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="branch_account">开户支行</label>
+			<div class="controls">
+				<input name="branch_account" id="branch_account" value="{$data.branch_account}" type="text"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">银行账号</label>
+			<div class="controls">
+				<input name="bank_account_no" value="{$data.bank_account_no}" type="text"/>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">非法人身份证号</label>
+			<div class="controls">
+				<input name="uni_id_number" value="{$data.uni_id_number}" type="text"/><span style="color: red">*不是非法人不填</span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">非法人身份证正面照片</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<input type="file" id="file12" name="uni_positive_id_card_img" value="{$data.uni_positive_id_card_img}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<?php if($data['uni_positive_id_card_img']){ ?>
+					<?php if(strpos($data['uni_positive_id_card_img'],'data')){ ?>
+					<label for="file12" id="img_12"><img src="{$data.uni_positive_id_card_img}" style="height: 140px" ></label>
+					<?php }else{ ?>
+					<label for="file12" id="img_12"><img src="./data/upload/{$data.uni_positive_id_card_img}" style="height: 140px" ></label>
+					<?php } ?>
+					<?php }else{ ?>
+					<label for="file12" id="img_12"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+					<?php } ?>
+
+					<label class="pic2">请上传非法人身份证正面照片，不是非法人不上传</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">非法人身份证反面照片</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<input type="file" id="file13" name="uni_id_card_img" value="{$data.uni_id_card_img}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<?php if($data['uni_id_card_img']){ ?>
+					<?php if(strpos($data['uni_id_card_img'],'data')){ ?>
+					<label for="file13" id="img_13"><img src="{$data.uni_id_card_img}" style="height: 140px" ></label>
+					<?php }else{ ?>
+					<label for="file13" id="img_13"><img src="./data/upload/{$data.uni_id_card_img}" style="height: 140px" ></label>
+					<?php } ?>
+					<?php }else{ ?>
+					<label for="file13" id="img_13"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+					<?php } ?>
+
+					<label class="pic2">请上传非法人身份证反面照片，不是非法人不上传</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">乐刷非法人清算授权书</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<input type="file" id="file14" name="uni_ls_auth" value="{$data.uni_ls_auth}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<?php if($data['uni_ls_auth']){ ?>
+					<?php if(strpos($data['uni_ls_auth'],'data')){ ?>
+					<label for="file14" id="img_14"><img src="{$data.uni_ls_auth}" style="height: 140px" ></label>
+					<?php }else{ ?>
+					<label for="file14" id="img_14"><img src="./data/upload/{$data.uni_ls_auth}" style="height: 140px" ></label>
+					<?php } ?>
+					<?php }else{ ?>
+					<label for="file14" id="img_14"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+					<?php } ?>
+
+					<label class="pic2">请上传乐刷非法人清算授权书，不是非法人可不上传</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">乐刷非法人清算授权书</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<input type="file" id="file14" name="uni_ls_auth" value="{$data.uni_ls_auth}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<?php if($data['uni_ls_auth']){ ?>
+					<?php if(strpos($data['uni_ls_auth'],'data')){ ?>
+					<label for="file14" id="img_14"><img src="{$data.uni_ls_auth}" style="height: 140px" ></label>
+					<?php }else{ ?>
+					<label for="file14" id="img_14"><img src="./data/upload/{$data.uni_ls_auth}" style="height: 140px" ></label>
+					<?php } ?>
+					<?php }else{ ?>
+					<label for="file14" id="img_14"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+					<?php } ?>
+
+					<label class="pic2">请上传乐刷非法人清算授权书，不是非法人可不上传</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">新大陆非法人清算授权书</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<input type="file" id="file15" name="uni_xdl_auth" value="{$data.uni_xdl_auth}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<?php if($data['uni_xdl_auth']){ ?>
+					<?php if(strpos($data['uni_xdl_auth'],'data')){ ?>
+					<label for="file15" id="img_15"><img src="{$data.uni_xdl_auth}" style="height: 140px" ></label>
+					<?php }else{ ?>
+					<label for="file15" id="img_15"><img src="./data/upload/{$data.uni_xdl_auth}" style="height: 140px" ></label>
+					<?php } ?>
+					<?php }else{ ?>
+					<label for="file15" id="img_15"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+					<?php } ?>
+
+					<label class="pic2">请上传新大陆非法人清算授权书，不是非法人可不上传</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">法人与非法人清算新大陆授权书</label>
+			<div class="controls">
+				<p class="shouhxxtxr3 ft18" style="padding-top: 15px;">
+					<!--  <input type="hidden" id="thumb2" name="pic2" value="{$info['pic2']}"> -->
+					<a class="file" >
+						<input type="file" id="file16" name="xdl_auth" value="{$data.xdl_auth}" style="display: none" onchange="ajaxFileUpload(this);"/></a><br/>
+
+					<?php if($data['xdl_auth']){ ?>
+					<?php if(strpos($data['xdl_auth'],'data')){ ?>
+					<label for="file16" id="img_16"><img src="{$data.xdl_auth}" style="height: 140px" ></label>
+					<?php }else{ ?>
+					<label for="file16" id="img_16"><img src="./data/upload/{$data.xdl_auth}" style="height: 140px" ></label>
+					<?php } ?>
+					<?php }else{ ?>
+					<label for="file16" id="img_16"><img src="__PUBLIC__/js/o_ff6.png" style="height: 140px" ></label>
+					<?php } ?>
+
+					<label class="pic2">请上传法人与非法人清算新大陆授权书，不是非法人可不上传</label></p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">账户类型</label>
+			<div class="controls">
+				<select name="bank_type"  class="span3">
+					<option value="-1">请选择</option>
+					<option value="0" <if condition="$data.bank_type eq 0">selected</if>>D0或T0</option>
+					<option value="1" <if condition="$data.bank_type eq 1">selected</if>>D1或T1</option>
+					<option value="2" <if condition="$data.bank_type eq 2">selected</if>>D0.D1和T0.T1</option>
+				</select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">费率</label>
+			<div class="controls">
+				<input name="bank_rate" value="{$data.bank_rate}" type="text"/>
+			</div>
+		</div>
+
+
+		<input name="id" type="hidden" value="{$data.id}"/>
+		<input name="status" type="hidden" value="" />
+		<input name="msg" type="hidden" value="" />
+		<div class="form-actions">
+			<button type="button" onclick="submit_post(3)" class="btn btn-primary js-ajax-submit" >仅保存</button>
+			<button style="margin-left: 20px;" type="button" onclick="submit_post(1)" class="btn btn-success js-ajax-submit" >审核通过</button>
+			<button style="margin-left: 20px;"type="button" onclick="submit_post(2)" class="btn btn-danger js-ajax-submit" >审核不通过</button>
+			<a style="margin-left: 20px;"class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+		</div>
+	</form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/global.js"></script>
+<script src="__PUBLIC__/js/PCASClass.js"></script> <!-- 省市县插件-->
+<script>
+
+	function ajaxFileUpload(thisobj) {
+		var fileid=$(thisobj).attr("id");
+		$.ajaxFileUpload
+		(
+
+				{
+					url: '{:U("AdminIndex/upload_into")}', //用于文件上传的服务器端请求地址
+					secureuri: false, //是否需要安全协议，一般设置为false
+					fileElementId:fileid, //文件上传域的ID
+					dataType: 'json', //返回值类型 一般设置为json
+					success: function (data)  //服务器成功响应处理函数
+					{
+						console.log(data);
+						if(data.type==1){
+							if(data.back==1){
+								var path=data.positive_id_card_img;
+								var s="./data/upload/"+path;
+								console.log(s);
+								var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='positive_id_card_img' value='"+path+"'>";
+								$('#img_1').html(content);
+							}else if(data.back==2){
+								var path=data.id_card_img;
+								var s="./data/upload/"+path;
+								var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='id_card_img' value='"+path+"'>";
+								$('#img_2').html(content);
+							}else if(data.back==3){
+								var path=data.header_interior_img;
+								var s="./data/upload/"+path;
+								var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='header_interior_img' value='"+path+"'>";
+								$('#img_3').html(content);
+							}else if(data.back==4){
+								var path=data.business_license;
+								var s="./data/upload/"+path;
+								var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='business_license' value='"+path+"'>";
+								$('#img_4').html(content);
+							}else if(data.back==5){
+                                var path=data.interior_img_one;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='interior_img_one' value='"+path+"'>";
+                                $('#img_5').html(content);
+                            }else if(data.back==6){
+                                var path=data.interior_img_two;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='interior_img_two' value='"+path+"'>";
+                                $('#img_6').html(content);
+                            }else if(data.back==7){
+                                var path=data.interior_img_three;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='interior_img_three' value='"+path+"'>";
+                                $('#img_7').html(content);
+                            }else if(data.back==8){
+                                var path=data.hand_positive_id_card_img;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='hand_positive_id_card_img' value='"+path+"'>";
+                                $('#img_8').html(content);
+                            }else if(data.back==9){
+                                var path=data.hand_id_card_img;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='hand_id_card_img' value='"+path+"'>";
+                                $('#img_9').html(content);
+                            }else if(data.back==10){
+                                var path=data.positive_bank_card_img;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='positive_bank_card_img' value='"+path+"'>";
+                                $('#img_10').html(content);
+                            }else if(data.back==11){
+                                var path=data.bank_card_img;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='bank_card_img' value='"+path+"'>";
+                                $('#img_11').html(content);
+                            }else if(data.back==12){
+                                var path=data.uni_positive_id_card_img;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='uni_positive_id_card_img' value='"+path+"'>";
+                                $('#img_12').html(content);
+                            }else if(data.back==13){
+                                var path=data.uni_id_card_img;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='uni_id_card_img' value='"+path+"'>";
+                                $('#img_13').html(content);
+                            }else if(data.back==14){
+                                var path=data.uni_ls_auth;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='uni_ls_auth' value='"+path+"'>";
+                                $('#img_14').html(content);
+                            }else if(data.back==15){
+                                var path=data.uni_xdl_auth;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='uni_xdl_auth' value='"+path+"'>";
+                                $('#img_15').html(content);
+                            }else if(data.back==16){
+                                var path=data.xdl_auth;
+                                var s="./data/upload/"+path;
+                                var content="<img src='"+s+"' style='height: 140px'><input type='hidden'  name='xdl_auth' value='"+path+"'>";
+                                $('#img_16').html(content);
+                            }
+
+						}else if(data.type==2){
+							alert(data.message);
+						}
+					},
+					error: function (data)//服务器响应失败处理函数
+					{
+						alert('网络请求失败,请重新上传图片');
+					}
+				}
+		)
+
+	}
+
+    $(function () {
+        new PCAS("province","city","county","{$data.province}","{$data.city}","{$data.county}"); //省市县
+
+        check_val=$("input[name='isdoor_header']:checked").val();
+        if( check_val==1 ){
+            $("#txt-door_head").text("门头");
+            $("#a-door_head").attr("onclick","GetUploadify4(1,'','merchants','call_back4');");
+        }else{
+            $("#txt-door_head").text("内景");
+            $("#a-door_head").attr("onclick","GetUploadify4(3,'','merchants','call_back4');");
+        }
+
+
+        $("input[name='isdoor_header']").click(function () {
+            if($("input[name='isdoor_header']:checked").val()==1){
+                $("#txt-door_head").text("门头");
+                $("#a-door_head").attr("onclick","GetUploadify4(1,'','merchants','call_back4');");
+            }else{
+                $("#txt-door_head").text("内景");
+                $("#a-door_head").attr("onclick","GetUploadify4(3,'','merchants','call_back4');");
+            }
+        });
+
+        $("#navcid_select").change(function () {
+            if (location.search.indexOf("?") >= 0) {
+                location.href = location.href + "&cid=" + $(this).val();
+            } else {
+                location.href = location.href + "?cid=" + $(this).val();
+            }
+        });
+
+        $("#selecthref,#selecturl_radio").click(function () {
+            $('#outlink_input').removeAttr('name');
+            $(this).attr('name', 'href');
+            $('#selecturl_radio').attr({
+                'checked': 'checked'
+            });
+        });
+        $("#outlink_input,#outlink_radio").click(function () {
+            $('#selecthref').removeAttr('name');
+            $('#outlink_input').attr('name', 'external_href');
+            $('#outlink_radio').attr({
+                'checked': 'checked'
+            });
+        });
+    });
+    function submit_post(status){
+        if(status==2){
+            $("input[name='status']").val(status);
+            var content='<div align="center" style="margin-left:auto;margin-right:auto;margin-top: 20px;"><textarea id="msg" style="width:600px;height:110px;" placeholder="请说明审核不通过原因"></textarea></div>';
+            layer.open({
+                type:1,
+                title: '请说明审核不通过原因',
+                offset: '200px',
+                shadeClose: true,
+                closeBtn: 1,
+                area: ['700px', '240px'],
+                btn: ['确定', '取消'],
+                content: content,
+                yes: function (content) {
+                    $("input[name='msg']").val($('#msg').val());
+                    $.post('{:U("adminIndex/examine_edit")}',$("#form1").serialize(),function (data) {
+                        if(data.code !=1){
+                            layer.alert(data.msg);
+                        }else{
+                            layer.alert(data.msg,function () {
+                                location.href='{:U("adminIndex/examine")}';
+                                layer.close(content);
+                            });
+                        }
+                    });
+                }
+            });
+        }else{
+            $("input[name='status']").val(status);
+            $.post('{:U("adminIndex/examine_edit")}',$("#form1").serialize(),function (data) {
+                if(data.code !=1){
+                    alert(data.msg);
+                    return;
+                }else{
+                    alert(data.msg);
+                    location.href='{:U("adminIndex/examine")}';
+                }
+            });
+        }
+
+	}
+    // 上传商品图片成功回调函数
+    function call_back(fileurl_tmp){
+        $("#positive_id_card_img").val(fileurl_tmp);
+    }
+    function call_back2(fileurl_tmp){
+        $("#id_card_img").val(fileurl_tmp);
+    }
+    function call_back4(fileurl_tmp){
+        $("#header_interior_img").val(fileurl_tmp);
+    }
+
+    function call_back5(fileurl_tmp){
+        $("#business_license").val(fileurl_tmp);
+    }
+
+</script>
+<style>
+	input{width: 60%;}
+	.blue{
+		background: #006dcc;}
+</style>
+</body>
+</html>

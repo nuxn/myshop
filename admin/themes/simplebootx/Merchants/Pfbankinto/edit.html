@@ -1,0 +1,54 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+	<form id="form1" class="form-horizontal" method="post" action="{:U('Pfbankinto/edit')}">
+        <input type="hidden" name="id" value="{$id}">
+        <div class="control-group">
+            <label class="control-label" for="merchant_id">商户ID</label>
+            <div class="controls">
+                <input type="text" id="merchant_id" name="merchant_id"  value="{$data.merchant_id|default=''}" placeholder="请填写商户id"> <span style="color: red">*商户管理>>商户>>商户列表 下查询得到商户ID</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mch_id">银行分配商户号</label>
+            <div class="controls">
+                <input type="text" id="mch_id" name="mch_id" value="{$data.mch_id|default=''}" placeholder="请填写银行分配商户号"> <span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mch_key">商户密钥</label>
+            <div class="controls">
+                <input type="text" id="mch_key" name="mch_key" value="{$data.mch_key|default=''}" placeholder="请填写商户密钥"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="wx_code">微信费率</label>
+            <div class="controls">
+                <input type="text" id="wx_code" name="wx_code" value="{$data.wx_code|default=''}" placeholder="请填写微信费率"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ali_code">支付宝费率</label>
+            <div class="controls">
+                <input type="text" id="ali_code" name="ali_code" value="{$data.ali_code|default=''}" placeholder="请填写支付宝费率"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >添加</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+	</form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/global.js"></script>
+<script>
+
+</script>
+<style>
+	input{width: 60%;}
+	.blue{
+		background: #006dcc;}
+</style>
+</body>
+</html>

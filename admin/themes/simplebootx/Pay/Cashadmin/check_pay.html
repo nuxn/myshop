@@ -1,0 +1,41 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><h2><a href="{:U('Contentadmin/index')}">订单检验</a></h2></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Contentadmin/add_post')}">
+        <fieldset>
+
+            <div class="control-group">
+                <label class="control-label">订单号</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$result['transaction_id']}" style="color:green" disabled>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">支付金额</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$result['total_fee']}" style="color:green" disabled>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">奖励金</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$result['coupon_fee']}" style="color:green" disabled>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">支付状态</label>
+                <div class="controls">
+                    <input type="text" name="label" value="{$result['status']}" style="color:green" disabled>
+                </div>
+            </div>
+
+        </fieldset>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

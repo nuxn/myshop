@@ -1,0 +1,156 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">{$title_arr.0}</a></li>
+        <li><a href="{:U('AdminSms/add',array('term'=>empty($term['term_id'])?'':$term['term_id']))}" target="_self">{$title_arr.1}</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('AdminSms/index')}">
+        <!--        分类：-->
+        <!--        <select name="type" style="width: 120px;">-->
+        <!--            <option value='0'>全部</option>-->
+        <!--            <option value='1'>消息</option>-->
+        <!--            <option value='2'>文章</option>-->
+        <!--        </select> &nbsp;&nbsp;-->
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp; &nbsp;
+        关键字：
+        <input type="text" name="title" style="width: 200px;" value="{$formget.title|default=''}" placeholder="请输入标题...">
+        <input type="submit" class="btn btn-primary" value="搜索"/>
+        <a class="btn btn-danger" href="{:U('AdminSms/index')}">清空</a>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <div class="table-actions">
+            <notempty name="term">
+                <button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('AdminPost/listorders')}">{:L('SORT')}</button>
+            </notempty>
+            <button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('AdminSystem/delete')}" data-subcheck="true" data-msg="您确定删除吗？">{:L('DELETE')}</button>
+        </div>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>
+                <th width="50">ID</th>
+                <th width="150">短信主题</th>
+                <th width="50">模板ID</th>
+                <th width="80">目标用户</th>
+                <th width="80">手机号</th>
+                <th width="100">发送时间</th>
+                <th width="50">目标用户类型</th>
+                <th width="50">状态</th>
+            </tr>
+            </thead>
+            <foreach name="data_lists" item="vo">
+                <tr>
+                    <td><input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$vo.id}" title="ID:{$vo.id}"></td>
+                    <td><b>{$vo.id}</b></td>
+                    <td>{$vo.title}</td>
+                    <td>{$vo.sms_id}</td>
+                    <td>{$vo.user_login}</td>
+                    <td>{$vo.phone}</td>
+                    <td>{$vo['create_time']|date="Y-m-d H:i:s",###}</td>
+                    <td class="js-ajax-delete">
+                        <if condition="$vo.type eq -1">
+                            <a class="js-ajax-delete" style="text-decoration:none;">无角色的用户</a>
+                            <elseif condition="$vo.type eq 0"/>
+                            <a class="js-ajax-delete" style="text-decoration:none;">全体用户</a>
+                            <else/>
+                            <a class="js-ajax-delete" style="text-decoration:none;">
+                                <foreach name="role_arr" item="v" key="k">
+                                    <eq name="k" value="$vo.type">
+                                        {$v.role_name}
+                                        <else/>
+                                    </eq>
+                                </foreach>
+                            </a>
+                        </if>
+
+                    </td>
+                    <td>
+                        <if condition="$vo.status eq 1">
+                            <a data-toggle="tooltip" title="正常"><i class="fa fa-check"></i></a>
+                            <else/>
+                            <a data-toggle="tooltip" title="异常"><i class="fa fa-close"></i></a>
+                        </if>
+                    </td>
+
+                </tr>
+            </foreach>
+        </table>
+
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    function refersh_window() {
+        var refersh_time = getCookie('refersh_time');
+        if (refersh_time == 1) {
+            window.location = "{:U('AdminPost/index',$formget)}";
+        }
+    }
+    setInterval(function () {
+        refersh_window();
+    }, 2000);
+    $(function () {
+        setCookie("refersh_time", 0);
+        Wind.use('ajaxForm', 'artDialog', 'iframeTools', function () {
+            //批量复制
+            $('.js-articles-copy').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminPost&a=copy&ids=" + ids, {
+                    title: "批量复制",
+                    width: "300px"
+                });
+            });
+            //批量移动
+            $('.js-articles-move').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminPost&a=move&old_term_id={$term.term_id|default=0}&ids=" + ids, {
+                    title: "批量移动",
+                    width: "300px"
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

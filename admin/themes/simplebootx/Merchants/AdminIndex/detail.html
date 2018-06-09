@@ -1,0 +1,276 @@
+<admintpl file="header" />
+<link href="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" type="text/css" media="screen"/>
+</head>
+<body>
+	<div class="wrap">
+			<fieldset>
+				<table class="table table-bordered" >
+					<tr>
+						<td width=" 200px">商户名称</td>
+						<td  >{$data.merchant_name}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">注册账号</td>
+						<td  >{$data.user_phone}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">省</td>
+						<td  >{$data.province}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">市</td>
+						<td  >{$data.city}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">县</td>
+						<td  >{$data.county}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">详细地址</td>
+						<td  >{$data.address}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">所属行业</td>
+						<td  >{$data.industry}</td>
+					</tr>
+
+					<tr>
+						<td width=" 200px">账户类型</td>
+						<td  >
+							<if condition="$data['account_type'] eq 0">
+								个人账户
+								<else />
+								企业账户
+							</if>
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px">开通服务</td>
+						<td  >
+							<if condition="$data['agency_business'] eq 1">
+								开通台签
+								<else />
+								既开通台签也开通双屏
+							</if>
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px">是否开通小程序</td>
+						<td  >
+							<if condition="$data['is_miniapp'] eq 1">
+								未开启
+								<else />
+								开启
+							</if>
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px">开户人</td>
+						<td  >{$data.account_name}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">开户银行</td>
+						<td  >{$data.bank_account}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">开户支行</td>
+						<td  >{$data.branch_account}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">推荐人</td>
+						<td  >{$data.referrer}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">审核状态</td>
+						<td  >
+							<if condition="$data['status'] eq 1">
+								通过
+								<else />
+								未审核
+							</if>
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px">申请时间</td>
+						<td>{$data.add_time|date='Y-m-d H:i',###}</td>
+					</tr>
+					<tr>
+						<td width=" 200px" >门头，内景，收银台</td>
+						<td >
+							<php>
+								$str=$data['header_interior_img'];
+								$img_arr=explode(",",$str);
+								if(count($img_arr)>1){
+									foreach($img_arr as $val){
+										if (strpos($val,'data')){
+											echo '<a href="'.$val.'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$val.'" alt="" class="img-rounded"></a>';
+										} else {
+											echo '<a href="./data/upload/'.$val.'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$val.'" alt="" class="img-rounded"></a>';
+										}
+									}
+								}else{
+									if (strpos($data['header_interior_img'],'data')){
+										echo '<a href="'.$data['header_interior_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['header_interior_img'].'" alt="" class="img-rounded"></a>';
+									} else {
+										echo '<a href="./data/upload/'.$data['header_interior_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['header_interior_img'].'" alt="" class="img-rounded"></a>';
+									}
+								}
+								$s=$data['interior_img'];
+								$arr=explode(",",$s);
+								foreach($arr as $val){
+									if ($val) {
+										if (strpos($val,'data')){
+											echo '<a href="'.$val.'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$val.'" alt="" class="img-rounded"></a>';
+										} else {
+											echo '<a href="./data/upload/'.$val.'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$val.'" alt="" class="img-rounded"></a>';
+										}
+									}
+								}
+
+							</php>
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px">营业执照</td>
+						<td >
+                            <php>
+                                if (strpos($data['business_license'],'data')){
+                                    echo '<a href="'.$data['business_license'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['business_license'].'" alt="" class="img-rounded"></a>';
+                                } else {
+                                    echo '<a href="./data/upload/'.$data['business_license'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['business_license'].'" alt="" class="img-rounded"></a>';
+                                }
+                            </php>
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px">身份证照片</td>
+						<td >
+                            <php>
+                                if (strpos($data['positive_id_card_img'],'data')){
+                                    echo '<a href="'.$data['positive_id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['positive_id_card_img'].'" alt="" class="img-rounded"></a>';
+                                } else {
+                                    echo '<a href="./data/upload/'.$data['positive_id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['positive_id_card_img'].'" alt="" class="img-rounded"></a>';
+                                }
+                                if (strpos($data['id_card_img'],'data')){
+                                    echo '<a href="'.$data['id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['id_card_img'].'" alt="" class="img-rounded"></a>';
+                                } else {
+                                    echo '<a href="./data/upload/'.$data['id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['id_card_img'].'" alt="" class="img-rounded"></a>';
+                                }
+                            </php>
+							<!--<a href="/data/upload/{$data.positive_id_card_img}" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="/data/upload/{$data.positive_id_card_img}" alt=""  class="img-rounded"></a>-->
+							<!--<a href="/data/upload/{$data.id_card_img}" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70"><img src="/data/upload/{$data.id_card_img}" alt="" class="img-rounded"></a>-->
+						</td>
+					</tr>
+					<!--<tr>
+						<td width=" 200px">手持身份证照片</td>
+						<td >
+                            <php>
+								if ($data['hand_positive_id_card_img']) {
+									if (strpos($data['hand_positive_id_card_img'],'data')){
+										echo '<a href="'.$data['hand_positive_id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['hand_positive_id_card_img'].'" alt="" class="img-rounded"></a>';
+									} else {
+										echo '<a href="./data/upload/'.$data['hand_positive_id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['hand_positive_id_card_img'].'" alt="" class="img-rounded"></a>';
+									}
+								}
+                                if ($data['hand_id_card_img']) {
+									if (strpos($data['hand_id_card_img'],'data')){
+										echo '<a href="'.$data['hand_id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['hand_id_card_img'].'" alt="" class="img-rounded"></a>';
+									} else {
+										echo '<a href="./data/upload/'.$data['hand_id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['hand_id_card_img'].'" alt="" class="img-rounded"></a>';
+									}
+								}
+
+                            </php>
+						</td>
+					</tr>-->
+					<tr>
+						<td width=" 200px">银行卡照片</td>
+						<td >
+                            <php>
+                                if (strpos($data['positive_bank_card_img'],'data')){
+                                    echo '<a href="'.$data['positive_bank_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['positive_bank_card_img'].'" alt="" class="img-rounded"></a>';
+                                } else {
+                                    echo '<a href="./data/upload/'.$data['positive_bank_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['positive_bank_card_img'].'" alt="" class="img-rounded"></a>';
+                                }
+                                if (strpos($data['bank_card_img'],'data')){
+                                    echo '<a href="'.$data['bank_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['bank_card_img'].'" alt="" class="img-rounded"></a>';
+                                } else {
+                                    echo '<a href="./data/upload/'.$data['bank_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['bank_card_img'].'" alt="" class="img-rounded"></a>';
+                                }
+                            </php>
+						</td>
+					</tr>
+					<notempty name="data.uni_positive_id_card_img">
+						<tr>
+							<td width=" 200px">非法人银行卡照片</td>
+							<td >
+								<php>
+									if (strpos($data['uni_positive_id_card_img'],'data')){
+										echo '<a href="'.$data['uni_positive_id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['uni_positive_id_card_img'].'" alt="" class="img-rounded"></a>';
+									} else {
+										echo '<a href="./data/upload/'.$data['uni_positive_id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['uni_positive_id_card_img'].'" alt="" class="img-rounded"></a>';
+									}
+									if (strpos($data['uni_id_card_img'],'data')){
+										echo '<a href="'.$data['uni_id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['uni_id_card_img'].'" alt="" class="img-rounded"></a>';
+									} else {
+										echo '<a href="./data/upload/'.$data['uni_id_card_img'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['uni_id_card_img'].'" alt="" class="img-rounded"></a>';
+									}
+								</php>
+							</td>
+						</tr>
+					</notempty>
+					<notempty name="data.uni_ls_auth">
+						<tr>
+							<td width=" 200px">乐刷非法人清算授权书</td>
+							<td >
+								<php>
+									if (strpos($data['uni_ls_auth'],'data')){
+										echo '<a href="'.$data['uni_ls_auth'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['uni_ls_auth'].'" alt="" class="img-rounded"></a>';
+									} else {
+										echo '<a href="./data/upload/'.$data['uni_ls_auth'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['uni_ls_auth'].'" alt="" class="img-rounded"></a>';
+									}
+								</php>
+							</td>
+						</tr>
+					</notempty>
+					<notempty name="data.uni_xdl_auth">
+						<tr>
+							<td width=" 200px">新大陆非法人清算授权书</td>
+							<td >
+								<php>
+									if (strpos($data['uni_xdl_auth'],'data')){
+										echo '<a href="'.$data['uni_xdl_auth'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['uni_xdl_auth'].'" alt="" class="img-rounded"></a>';
+									} else {
+										echo '<a href="./data/upload/'.$data['uni_xdl_auth'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['uni_xdl_auth'].'" alt="" class="img-rounded"></a>';
+									}
+								</php>
+							</td>
+						</tr>
+					</notempty>
+					<notempty name="data.xdl_auth">
+						<tr>
+							<td width=" 200px">法人与非法人清算新大陆授权书</td>
+							<td >
+								<php>
+									if (strpos($data['xdl_auth'],'data')){
+										echo '<a href="'.$data['xdl_auth'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="'.$data['xdl_auth'].'" alt="" class="img-rounded"></a>';
+									} else {
+										echo '<a href="./data/upload/'.$data['xdl_auth'].'" class="MagicZoomPlus" rel="zoom-width:500px;zoom-height:500px;;opacity:25; zoom-height:200;background-opacity: 70" ><img src="./data/upload/'.$data['xdl_auth'].'" alt="" class="img-rounded"></a>';
+									}
+								</php>
+							</td>
+						</tr>
+					</notempty>
+				</table>
+			</fieldset>
+			<div class="form-actions">
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+	</div>
+	<style>
+		img{ width: 300px;height: 280px}
+	</style>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script src="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.js"></script>
+</body>
+</html>

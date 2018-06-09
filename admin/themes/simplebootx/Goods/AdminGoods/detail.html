@@ -1,0 +1,108 @@
+<admintpl file="header" />
+<link href="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" type="text/css" media="screen"/>
+</head>
+<body>
+	<div class="wrap">
+			<fieldset>
+				<table class="table table-bordered" >
+					<tr>
+						<td width=" 200px">商品名称</td>
+						<td  >{$data.goods_name}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">商品分类</td>
+						<td  >{$data.cat_name}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">商品分组</td>
+						<td  >{$data.group_name}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">商品品牌</td>
+						<td  >{$data.brand_name}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">所属商家</td>
+						<td  >{$data.user_name}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">商品条码</td>
+						<td  >{$data.bar_code}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">销量</td>
+						<td  >{$data.sales}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">库存</td>
+						<td  >{$data.goods_number}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">入库时间</td>
+						<td  >{$data.add_time|date="Y-m-d H:i:s", ###}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">进价</td>
+						<td  >{$data.buy_price}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">售价</td>
+						<td  >{$data.shop_price}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">是否上架</td>
+						<td  ><if condition="$data.is_on_sale eq 1">
+                            <a data-toggle="tooltip" title="是"><i class="fa fa-check"></i></a>
+                            <else/>
+                            <a data-toggle="tooltip" title="否"><i class="fa fa-close"></i></a>
+                        </if></td>
+					</tr>
+					<tr>
+						<td width=" 200px">是否精品</td>
+						<td  ><if condition="$data.is_best eq 1">
+                            <a data-toggle="tooltip" title="是"><i class="fa fa-check"></i></a>
+                            <else/>
+                            <a data-toggle="tooltip" title="否"><i class="fa fa-close"></i></a>
+                        </if></td>
+					</tr>
+					<tr>
+						<td width=" 200px">是否新品</td>
+						<td  ><if condition="$data.is_new eq 1">
+                            <a data-toggle="tooltip" title="是"><i class="fa fa-check"></i></a>
+                            <else/>
+                            <a data-toggle="tooltip" title="否"><i class="fa fa-close"></i></a>
+                        </if></td>
+					</tr>
+					<tr>
+						<td width=" 200px">是否热销</td>
+						<td  ><if condition="$data.is_hot eq 1">
+                            <a data-toggle="tooltip" title="是"><i class="fa fa-check"></i></a>
+                            <else/>
+                            <a data-toggle="tooltip" title="否"><i class="fa fa-close"></i></a>
+                        </if></td>
+					</tr>
+					<tr>
+						<td width=" 200px" >商品图片</td>
+						<td >
+							<img src="{$data.goods_img1}" alt="" class="img-rounded">
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px">图文描述</td>
+						<td >
+                            <img src="{$data.pic_desc1}" alt="" class="img-rounded">
+                        </td>
+					</tr>
+				</table>
+			</fieldset>
+			<div class="form-actions">
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+	</div>
+	<style>
+		img{ width: 300px;height: 280px}
+	</style>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script src="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.js"></script>
+</body>
+</html>

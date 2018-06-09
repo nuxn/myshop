@@ -1,0 +1,65 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+	<form id="form1" class="form-horizontal" method="post" action="{:U('Szlzinto/edit')}">
+        <input type="hidden" name="id" value="{$id}">
+        <div class="control-group">
+            <label class="control-label" for="mid">商户ID</label>
+            <div class="controls">
+                <input type="text" id="mid" name="mid"  value="{$data.mid|default=''}" placeholder="请填写商户id"> <span style="color: red">*商户管理>>商户>>商户列表 下查询得到商户ID</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mch_id">微信商户号</label>
+            <div class="controls">
+                <input type="text" id="mch_id" name="mch_id"  value="{$data.mch_id|default=''}" placeholder="请填写微信商户号"> <span style="color: red">*</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="ali_mchid">支付宝商户号</label>
+            <div class="controls">
+                <input type="text" id="ali_mchid" name="ali_mchid"  value="{$data.ali_mchid|default=''}" placeholder="请填写支付宝商户号"> <span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ali_token">支付宝token</label>
+            <div class="controls">
+                <input type="text" id="ali_token" name="ali_token"  value="{$data.ali_token}" placeholder="请填写支付宝token"> <span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="rate">费率</label>
+            <div class="controls">
+                <input type="text" id="rate" name="rate" value="{$data.rate|default=''}" placeholder="费率">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="status">状态</label>
+            <div class="controls">
+                <select name="status" id="status">
+                    <option value="">--请选择--</option>
+                    <option value="1" <?php echo $data['status'] == 1 ? 'selected' : ''?>>开</option>
+                    <option value="0" <?php echo $data['status'] == 0 ? 'selected' : ''?>>关</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >添加</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+	</form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/global.js"></script>
+<script>
+
+</script>
+<style>
+	input{width: 60%;}
+	.blue{
+		background: #006dcc;}
+</style>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('adminMessage/msg_tpl_list')}">{:L('MSG_LIST')}</a></li>
+        <li class="active"><a href="{:U('adminMessage/msg_tpl_add')}">{:L('MSG_ADD')}</a></li>
+    </ul>
+    <form id="form1" class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label" for="tpl_name">模板名称</label>
+        <div class="controls">
+            <input type="text" id="tpl_name" name="tpl_name" placeholder="请填写模板名称">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="content">模板</label>
+        <div class="controls">
+            <script type="text/plain" id="content" name="msg_contents"></script>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">状态</label>
+        <div class="controls">
+            <input  class="radio" type="radio" name="status" value="1" checked>启用 &nbsp;&nbsp;
+            <input class="radio" type="radio" name="status" value="0" >禁用
+        </div>
+    </div>
+    <div class="form-actions">
+        <button type="button" id="onSubmit" class="btn btn-primary js-ajax-submit" >{:L('ADD')}</button>
+        <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+    </div>
+</form>
+</div>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        //======创建编辑器=======
+        editorcontent = new baidu.editor.ui.Editor();
+        editorcontent.render('content');
+        //======创建编辑器=======
+
+        $("#onSubmit").click(function () {
+            $.post('{:U("adminMessage/msg_tpl_add")}',$("#form1").serialize(),function (data) {
+                if(data.status =='fail'){
+                    alert(data.msg);
+                    return;
+                }else{
+                    alert(data.msg);
+                    location.href='{:U("adminMessage/msg_tpl_list")}';
+                }
+            });
+            
+        });
+    });
+</script>
+<style>
+    input{width: 60%;}
+</style>
+</body>
+</html>

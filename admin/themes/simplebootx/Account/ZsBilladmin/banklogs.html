@@ -1,0 +1,50 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('ZsBilladmin/banklogs')}">招商打款记录</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('ZsBilladmin/banklogs')}">
+        时间:
+        <input type="text" name="need_pay_date" style="width: 200px;" value="{$need_pay_date}" placeholder="格式为 20170327">&nbsp;
+        商户名称:
+        <input type="text" name="mch_name" style="width: 200px;" value="{$mch_name}" placeholder="请输入对应的商户名称">&nbsp;
+        商户号:
+        <input type="text" name="mch_id" style="width: 200px;" value="{$mch_id}" placeholder="请输入对应的商户号">&nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索" />
+		<a class="btn btn-danger" href="{:U('ZsBilladmin/banklogs')}">清空</a>
+    </form>
+
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" >ID</th>
+                <th width="70" >商户号</th>
+                <th width="70" >商户名称</th>
+                <th width="70" >商户手机</th>
+                <th width="70">打款金额（元）</th>
+                <th width="70">打款状态</th>
+                <th width="70">打款方式</th>
+                <th width="70">打款时间</th>
+            </tr>
+            </thead>
+            <foreach name="bills" item="b">
+                <tr>
+                    <td><b>{$b.id}</b></td>
+                    <td><b>{$b.mch_id}</b></td>
+                    <td><b>{$b.mch_name}</b></td>
+                    <td><b>{$b.mobile}</b></td>
+                    <td><b>{$b.fee}</b></td>
+                    <td><b>{$b.content}</b></td>
+                    <td><b><?php if($b['channel'] == 'weixin') echo '微信支付';else if($b['channel'] == 'alipay') echo '支付宝支付';?></b></td>
+                    <td><b>{$b.need_pay_date}</b></td>
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+</html>

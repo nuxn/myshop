@@ -1,0 +1,60 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('CouponList/lists')}">现金券列表</a></li>
+        <li class="active"><a href="{:U('CouponList/add')}">新增现金券</a></li>
+    </ul>
+    <form method="post" class="form-horizontal" action="{:U('CouponList/add')}">
+
+        <div class="control-group">
+            <label class="control-label">现金券标题</label>
+            <div class="controls">
+                <input type="text" name="title" id="" value="" placeholder="请输入现金券标题">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">现金券面额</label>
+            <div class="controls">
+                <input type="text"  name="up_price" value="" placeholder="请填写现金券面额">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">抵扣金额</label>
+            <div class="controls">
+                <input type="text"  name="price" value="" placeholder="请填写抵扣金额">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">有效期</label>
+            <div class="controls">
+                <input type="text" class="js-date" value="{$start_time}" name="start_time" placeholder="开始时间" />-<input type="text" class="js-date" name="end_time" value="{$end_time}" placeholder="结束时间"  />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">使用范围</label>
+            <div class="controls">
+                <select name="type">
+                    <option value="" selected>请选择</option>
+                    <option value="0">通用型</option>
+                    <option value="1">小程序服务</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">使用描述</label>
+            <div class="controls">
+                <input type="text"  name="description" value="" placeholder="请填写使用描述">&nbsp;&nbsp;<span style="color: red">不填默认按照使用范围和满减金额进行描述</span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit">{:L('ADD')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

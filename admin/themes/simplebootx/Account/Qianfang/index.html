@@ -1,0 +1,75 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Qianfang/index')}">微众对账单刘表</a></li>
+        <!--<li ><a href="{:U('Billadmin/add')}">添加商户二维码</a></li>-->
+    </ul>
+    <form class="well form-search" method="post" action="{:U('Qianfang/index')}">
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp;
+        商户名称：
+        <input type="text" name="name" style="width: 200px;" value="{$formget.name|default=''}" placeholder="请输入商户对应的名称">
+        钱方好近订单号：
+        <input type="text" name="syssn" style="width: 200px;" value="{$formget.syssn|default=''}" placeholder="请输入好近订单号">
+        系统订单号：
+        <input type="text" name="out_trade_no" style="width: 200px;" value="{$formget.out_trade_no|default=''}" placeholder="请输入系统订单号">
+
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Qianfang/index')}">清空</a>
+    </form>
+    <form  action="{:U('Billadmin/delete')}" method="post">
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" >钱方子商户</th>
+                <th width="70" >商户</th>
+                <th width="70" >支付类型</th>
+                <th width="80" >交易时间</th>
+                <th width="50" >交易类型</th>
+                <th width="50" >订单支付金额</th>
+                <th width="90" >系统订单号</th>
+                <th width="90" >钱方好近订单号</th>
+                <th width="50" >交易状态</th>
+                <!--<th width="50" >撤销/退款标记</th>-->
+            </tr>
+            </thead>
+            <foreach name="bills" item="b">
+                <tr>
+                    <td><b>{$b.qf_mchid}</b></td>
+                    <td><b>{$b.name}</b></td>
+                    <td><b>
+                        <if condition="$b.pay_type eq '800208' ">微信刷卡
+                            <elseif condition="$b.pay_type eq '800207'"/>微信公众号
+                            <else />
+                        </if>
+                    </b></td>
+                    <td><b>{$b.txdtm}</b></td>
+                    <td><b>
+                        <if condition="$b.order_type eq 'payment' "> 支付的订单
+                            <elseif condition="$b.order_type eq 'refund'"/> 退款的订单
+                            <else />关闭的订单
+                        </if>
+                    </b></td>
+                    <td><b>{$b['txamt']/100}</b></td>
+                    <td><b>{$b.out_trade_no}</b></td>
+                    <td><b>{$b.syssn}</b></td>
+                    <td><b>
+                        <if condition="$b.errmsg eq '交易成功' ">交易成功
+                            <else />订单未支付
+                        </if>
+                    </b></td>
+                    <!--<td><b>{$b.cancel}</b></td>-->
+
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,523 @@
+<admintpl file="header" />
+</head>
+    <style>
+    div {
+        display: block;
+    }
+    body {
+        line-height: 1.6;
+        font-family: "Helvetica Neue","Hiragino Sans GB","Microsoft YaHei","\9ED1\4F53",Arial,sans-serif;
+        color: #323232;
+        font-size: 16px;
+    }
+    .intro:first-child {
+        padding-top: 0;
+    }
+    .intro:first-child {
+        border-top-width: 0;
+    }
+    .card_msg {
+        padding: 0 30px 30px;
+    }
+    .group:after {
+        content: "\200B";
+        display: block;
+        height: 0;
+        clear: both;
+    }
+    .list_img .img_panel {
+        padding: 7px 225px 10px;
+    }
+    .l {
+        float: left;
+    }
+    .card_preview_area {
+        float: left;
+        width: 318px;
+        margin-right: 16px;
+        padding-bottom: 150px;
+        overflow: hidden;
+        background: #f6f6f8 url(../../../images/pic/cardticket/topbar28a82e.png) no-repeat center 5px;
+    }
+    .card_body {
+        margin: 64px 10px 10px;
+    }
+    .msg_title {
+        text-align: center;
+        height: 62px;
+        line-height: 85px;
+        font-size: 11px;
+        color: #fff;
+        display: none;
+    }
+    p {
+        display: block;
+        -webkit-margin-before: 1em;
+        -webkit-margin-after: 1em;
+        -webkit-margin-start: 0px;
+        -webkit-margin-end: 0px;
+    }
+    .msg_card_section.shop {
+        margin: 0;
+        padding: 0;
+        border-bottom: 1px dashed #e7e7eb;
+        position: relative;
+        background-color: #fff;
+        border-radius: 5px 5px 0 0;
+        -moz-border-radius: 5px 5px 0 0;
+        -webkit-border-radius: 5px 5px 0 0;
+    }
+    .msg_card_section.shop .shop_panel {
+        padding: 21px 12px 12px;
+        min-height: 137px;
+        height: auto;
+        text-align: center;
+    }
+    .card_preview_area .logo_area {
+        position: relative;
+        margin-bottom: 7px;
+        line-height: 42px;
+        color: #8d8d8d;
+        margin-top: -40px;
+    }
+    .card_preview_area .logo {
+        display: block;
+        width: 38px;
+        height: 38px;
+        padding-top: 0;
+        margin: 0 auto;
+        border-radius: 22px;
+        -moz-border-radius: 22px;
+        -webkit-border-radius: 22px;
+        float: none;
+        border: 1px solid #e7e7eb;
+        background-color: #fff;
+    }
+    .msg_card_section.shop .tick_msg {
+        margin-bottom: 6px;
+    }
+    .tick_msg .card_name {
+        font-weight: normal;
+        font-size: 28px;
+        word-break: break-word;
+        word-wrap: break-word;
+    }
+    .btn_use_card[style^="background"] {
+        color: #fff;
+    }
+    .btn_use_card {
+        border-width: 0;
+        background-color: #f4f5f9;
+    }
+    .btn {
+        min-width: 60px;
+    }
+    .btn {
+        display: inline-block;
+        overflow: visible;
+        padding: 0 22px;
+        height: 30px;
+        line-height: 30px;
+        vertical-align: middle;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 3px;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        font-size: 14px;
+        border-width: 1px;
+        border-style: solid;
+        cursor: pointer;
+    }
+    .card_usage {
+        text-align: left;
+        padding: 0 10px 1em;
+        background-color: #fff;
+    }
+    dl, dd, ul, li {
+        list-style-type: none;
+    }
+    ul, menu, dir {
+        display: block;
+        list-style-type: disc;
+        -webkit-margin-before: 1em;
+        -webkit-margin-after: 1em;
+        -webkit-margin-start: 0px;
+        -webkit-margin-end: 0px;
+        -webkit-padding-start: 40px;
+    }
+    .card_usage {
+        text-align: left;
+        padding: 0 10px 1em;
+        background-color: #fff;
+    }
+    ul, ol {
+        padding-left: 0;
+        list-style-type: none;
+    }
+    li {
+        display: list-item;
+        text-align: -webkit-match-parent;
+    }
+
+    .card_usage li {
+        overflow: hidden;
+        padding-left: 5em;
+        clear: both;
+        color: #8d8d8d;
+    }
+    .card_usage .usage_label {
+        float: left;
+        margin-left: -5em;
+        color: #222;
+    }
+    .msg_card_cell.dispose {
+        display: none;
+    }
+    .msg_card_cell {
+        background-color: #fff;
+    }
+    .msg_img_text .list {
+        overflow: hidden;
+        border-bottom: 0;
+    }
+    .list {
+        margin: 0 10px;
+        border-bottom: 1px solid #e7e7eb;
+    }
+    .msg_card_section {
+        position: relative;
+    }
+    .list li.last_li .li_panel {
+        border-bottom: 0;
+    }
+    .msg_img_text .list .li_panel {
+        padding: 11px 0 0;
+    }
+    .msg_card_cell.last_cell {
+        border-radius: 0 0 5px 5px;
+        -moz-border-radius: 0 0 5px 5px;
+        -webkit-border-radius: 0 0 5px 5px;
+    }
+    .card_preview_area .msg_card_cell {
+        background-color: #fff;
+    }
+    .msg_card_cell.last_cell .list {
+        border-bottom-width: 0;
+    }
+    .list {
+        margin: 0 10px;
+        border-bottom: 1px solid #e7e7eb;
+    }
+    .msg_card_section {
+        position: relative;
+    }
+    .list li .li_panel {
+        display: block;
+        padding: 11px 30px 11px 0;
+        border-bottom: 1px solid #e7e7eb;
+    }
+    .list li .li_panel .ic {
+        position: absolute;
+        top: 36%;
+        right: 5px;
+        width: 16px;
+        height: 15px;
+        background: url(/mpres/zh_CN/htmledition/comm_htmledition/style/page/cardticket/card_msg_z331295.png) 0 -565px no-repeat;
+    }
+    .list li .li_panel {
+        display: block;
+        padding: 11px 30px 11px 0;
+        border-bottom: 1px solid #e7e7eb;
+    }
+    .msg_card_section {
+        position: relative;
+    }
+    .msg_card_cell.shop_detail .list li:last-child .li_panel {
+        border-bottom-width: 0;
+    }
+    .list li .li_panel {
+        display: block;
+        padding: 11px 30px 11px 0;
+        border-bottom: 1px solid #e7e7eb;
+    }
+    .list_img .msg_preview_panel {
+        width: 820px;
+    }
+    .r {
+        float: right;
+    }
+    .msg_pre_view.msg_section {
+        margin-bottom: 36px;
+    }
+    ul, ol {
+        padding-left: 0;
+        list-style-type: none;
+    }
+    .msg_pre_view li.section_title {
+        color: #000;
+        margin-bottom: 7px;
+    }
+    .msg_pre_view li {
+        margin-bottom: 20px;
+    }
+    .msg_pre_view .group .title {
+        width: 72px;
+        text-align: left;
+        color: #8d8d8d;
+    }
+    .msg_pre_view .msg {
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        display: inline-block;
+        width: 50%;
+        padding-left: 1em;
+        word-break: break-all;
+        word-wrap: break-word;
+        zoom: 1;
+    }
+    .msg .brand_item .brand_img {
+        display: inline-block;
+        vertical-align: top;
+    }
+    .msg_pre_view .msg {
+        width: 53%;
+        text-align: left;
+        padding-left: 2em;
+    }
+    .msg .brand_item .brand_img {
+        display: inline-block;
+        vertical-align: top;
+    }
+    .msg .brand_item .brand_name {
+        display: inline-block;
+        vertical-align: top;
+    }
+
+</style>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Couponadmin/index')}">优惠券列表</a></li>
+        <li ><a href="{:U('Couponadmin/add')}">添加优惠券</a></li>
+        <li ><a href="{:U('Couponadmin/detail')}">优惠券详情</a></li>
+    </ul>
+    <div id="js_showinfo">
+        <div class="intro card_msg">
+            <div class="list_img group">
+                <div class="img_panel l">
+                    <div class="card_preview_area" style="background-color:#63b359;">
+                        <div class="card_body">
+                            <p class="msg_title">优惠券</p>
+                            <div class="js_preview msg_card_section shop">
+                                <div class="shop_panel">
+                                    <div class="logo_area">
+<span class="logo">
+<img data-src="https://mmbiz.qlogo.cn/mmbiz/pEjibTibnM4kjzGwdia33qWmBZKTsncHxm1kpQ1UqeXSOyIlLq8KLPDb9VB6XbHN425ibicXHAfYNDLj2lF0Z5MVia6g/0" class="js_noreferimg" src="https://mmbiz.qlogo.cn/mmbiz/pEjibTibnM4kjzGwdia33qWmBZKTsncHxm1kpQ1UqeXSOyIlLq8KLPDb9VB6XbHN425ibicXHAfYNDLj2lF0Z5MVia6g/0">
+</span>
+                                        <p>海底捞</p>
+                                    </div>
+                                    <div class="msg_area">
+                                        <div class="tick_msg">
+                                            <p class="card_name">测试</p>
+                                            <span class="btn btn_use_card" style="background-color:#63b359;">立即使用</span>
+                                        </div>
+                                        <div class="js_card_pay_money_tips" style="display:none;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card_usage">
+                                    <ul>
+
+                                        <li><span class="usage_label">可用时间：</span><span id="js_use_time_wording">2017.04.22-2017.07.31</span>&nbsp;&nbsp;周一至周日 全天</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="msg_card_cell dispose">
+                                <p>请向店员出示二维码</p>
+                            </div>
+                            <div class="msg_card_cell msg_img_text">
+                                <ul class="list">
+                                    <li class="msg_card_section last_li">
+                                        <div class="li_panel">
+                                            <div class="li_content">
+                                                <p>优惠券详情</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="msg_card_cell shop_detail last_cell">
+                                <ul class="list">
+                                    <li class="msg_card_section">
+                                        <div class="li_panel" href="">
+                                            <div class="li_content">
+                                                <p>适用门店</p>
+                                            </div>
+                                            <span class="ic ic_go"></span>
+                                        </div>
+                                    </li>
+                                    <li class="msg_card_section last_li">
+                                        <div class="li_panel" href="">
+                                            <div class="li_content">
+                                                <p>公众号</p>
+                                            </div>
+                                            <span class="ic ic_go"></span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form action="">
+                <div class="msg_preview_panel r">
+                    <div class="msg_section msg_pre_view">
+                        <ul>
+                            <li class="section_title">基本信息</li>
+                            <li class="group">
+                                <span class="l title">商户</span>
+                                <div class="msg">
+                                    <div class="brand_item">
+                                        <div class="brand_img"><img id="js_logo_url_preview_1" src="https://mmbiz.qlogo.cn/mmbiz/pEjibTibnM4kjzGwdia33qWmBZKTsncHxm1kpQ1UqeXSOyIlLq8KLPDb9VB6XbHN425ibicXHAfYNDLj2lF0Z5MVia6g/0"></div>
+                                        <span id="js_brand_name_preview_1" class="brand_name">海底捞</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="group">
+                                <span class="l title">卡券类型</span>
+                                <div class="msg">优惠券</div>
+                            </li>
+                            <li class="group">
+                                <span class="l title">卡券标题</span>
+                                <div class="msg">测试</div>
+                            </li>
+
+                            <li class="group">
+                                <span class="l title">副标题</span>
+                                <div class="msg">无</div>
+                            </li>
+                            <li class="group">
+                                <span class="l title">卡券颜色</span>
+                                <div class="msg"><span class="colour_block" style="background-color:#63b359;">#63b359</span></div>
+                            </li>
+                            <li class="group">
+                                <span class="l title">有效期</span>
+                                <div class="msg">
+                                    <span id="js_time_container">2017-04-22至2017-07-31</span>
+                                    &nbsp;&nbsp;
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div class="msg_section msg_pre_view">
+                        <ul>
+                            <li class="section_title">商户介绍</li>
+                            <li class="group">
+                                <span class="l title">客服电话</span>
+                                <div class="msg">4008883658</div>
+                            </li>
+                            <li class="group">
+                                <span class="l title">商户服务</span>
+                                <div class="msg">无</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="msg_section msg_pre_view">
+                        <ul>
+                            <li class="section_title">优惠券详情</li>
+                            <li class="group">
+                                <span class="l title">使用须知</span>
+                                <div class="msg">不可与其他优惠同享</div>
+                            </li>
+                            <li class="group">
+                                <span class="l title">优惠说明</span>
+                                <div class="msg">
+                                    \u4f60\u597d；
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="msg_section msg_pre_view">
+                        <ul>
+                            <li class="section_title">门店信息&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </li>
+                            <li class="group">
+                                <span class="l title">适用门店</span>
+                                <div class="msg">暂无数据</div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="msg_section msg_pre_view">
+                        <ul>
+                            <li class="section_title">使用设置</li>
+                            <li class="group">
+                                <span class="l title">库存</span>
+                                <div class="msg">1000</div>
+                            </li>
+
+                            <li class="group">
+                                <span class="l title">领取限制</span>
+                                <div class="msg">每个用户限领张</div>
+                            </li>
+
+                            <li class="group">
+                                <span class="l title">销券方式</span>
+                                <div class="msg">
+                                    扫码核销
+                                </div>
+                            </li>
+                            <li class="group">
+                                <span class="l title">操作提示</span>
+                                <div class="msg">请向店员出示二维码</div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="msg_section msg_pre_view">
+                        <ul>
+                            <li class="section_title">消息通知&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                            </li>
+                            <li class="group">
+                                <span class="l title">内容设置</span>
+                                <div class="msg" id="js_msg_operation_content">
+                                    无
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+<script>
+    $(function(){
+//        改变上线状态
+        $(".change_status").click(function(){
+            var data = {
+                id : $(this).data('id')
+            };
+            console.log(data);
+            var _this = $(this);
+            $.post("{:U('Couponadmin/change_status')}", data, function(ad){
+                _this.children("img").attr("src","__PUBLIC__/images/status_"+ad+".gif")
+                console.log(ad);
+            },"json");
+        })
+//
+
+    })
+</script>
+
+</body>
+</html>

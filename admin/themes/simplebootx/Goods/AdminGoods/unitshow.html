@@ -1,0 +1,143 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('AdminGoods/index')}">商品单位</a></li>
+    </ul>
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th width="50">ID</th>
+            <th>单位</th>
+            <th>备注</th>
+            <th>操作</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <if condition="$data_lists!=[]">
+        <foreach name="data_lists" item="vo">
+            <tr>
+                <td>{$vo.id}</td>
+                <td><input type="text" name="unit_name" value="{$vo.unit_name}" placeholder="请输入单位名称" style="width:50px;" onblur="save_unit(this,1)">
+                    </td>
+                <td>
+                    <input type="text" name="remark" value="{$vo.unit_info}" placeholder="请输入备注" style="width:100px;" onblur="save_unit(this,2)">
+
+                </td>
+                <td><span class="input-group-btn">
+       <button class="btn btn-default" type="button" onClick="add_row(this)">+</button>
+     </span>
+                   <span class="input-group-btn">
+       <button class="btn btn-default" type="button" onClick="del_row(this)">-</button>
+     </span>
+                </td>
+            </tr>
+        </foreach>
+        <else /> 
+            <tr>
+                <td>{$vo.id}</td>
+                <td><input type="text" name="unit_name" value="" placeholder="请输入单位名称" style="width:50px;" onblur="save_unit(this,1)">
+                    </td>
+                <td>
+                    <input type="text" name="remark" value="" placeholder="请输入备注" style="width:100px;" onblur="save_unit(this,2)">
+
+                </td>
+                <td><span class="input-group-btn">
+                   <button class="btn btn-default" type="button" onClick="add_row(this)">+</button>
+                 </span>
+                               <span class="input-group-btn">
+                   <button class="btn btn-default" type="button" onClick="del_row(this)">-</button>
+                 </span>
+                </td>
+            </tr>
+        </if>
+        </tbody>
+    </table>
+    <div class="pagination" style="text-align: right">{$page}</div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="http://m.hz41319.com/wei/js/jquery.lazyload.js?v=1.9.1"></script>
+<script>
+    //默认图片占位
+    function default_img(type) {
+        var img = '';
+        img = 'default.png';
+        $("img.lazy").lazyload({
+            placeholder: "http://m.hz41319.com/wei/images/" + img, //用图片提前占位
+            effect: "fadeIn",// 载入使用何种效果
+            threshold: 100
+        });
+    }
+    //保存单位信息 type为1保存单位名称unit为2保存备注
+    function save_unit(obj,type)
+    {
+       var id= $(obj).parent().parent().find('td:eq(0)').text();
+       if (id == ''){
+           id=0;
+       }
+        //内容
+        //
+      var text = $(obj).val();
+      var  data={'unit_id':id,'content':text,'type':type};
+
+        //单位名称必须有
+        if (type == 1) {
+            if (text !='') {
+                $.post("{:U('AdminGoods/save_unit')}", data, function(info){
+                    if (info.status>0) {
+                        $(obj).parent().parent().find('td:eq(0)').text(info.status);
+
+                    }
+                },"json");
+            }
+        }
+       if (type == 2 && id!=0) {
+           $.post("{:U('AdminGoods/save_unit')}", data, function(info){
+           },"json");
+       }
+
+
+
+    }
+    function del_row(obj)
+    {
+        var id= $(obj).parent().parent().parent().find('td:eq(0)').text();
+        if (!id){
+            $(obj).parent().parent().parent().remove();
+
+        }else{
+            $.post("{:U('AdminGoods/del_unit')}", {'unit_id':id}, function(info){
+                if (info>0){
+                    $(obj).parent().parent().parent().remove();
+                }else{
+                    alert('仅剩一个单位不允许删除');
+                }
+                
+            });
+
+
+        }
+
+
+    }
+    function add_row(obj)
+    {
+
+        var html='';
+        html+='<tr><td></td><td><input type="text" name="unit_name" value="" placeholder="请输入单位名称" style="width:50px;" onblur="save_unit(this,1)" ></td>';
+        html+='<td> <input type="text" name="remark" value="{$vo.remark}" placeholder="请输入备注" style="width:100px;" onblur="save_unit(this,2)"> </td>';
+        html+='<td><span class="input-group-btn"> <button class="btn btn-default" type="button" onClick="add_row(this)">+</button> </span>';
+        html+='<span class="input-group-btn"> <button class="btn btn-default" type="button" onClick="del_row(this)">-</button> </span> </td> </tr>';
+        $(html).insertAfter($(obj).parent().parent().parent());
+
+
+    }
+
+    default_img();
+</script>
+<style>
+</style>
+</body>
+</html>

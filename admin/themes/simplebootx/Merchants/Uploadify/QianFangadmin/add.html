@@ -1,0 +1,225 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('QianFangadmin/index')}">进件列表</a></li>
+        <li class="active"><a href="{:U('QianFangadmin/add')}">商户进件</a></li>
+    </ul>
+    <form id="form1" method="post" class="form-horizontal" action="{:U('QianFangadmin/add')}">
+
+        <div class="control-group">
+            <label class="control-label" for="mid">商户ID</label>
+            <div class="controls">
+                <input type="text" name="mid" id="mid" placeholder="请填写商户ID"> &nbsp;&nbsp;</span><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="username">用户手机号</label>
+            <div class="controls">
+                <input type="text" id="username" name="username" placeholder="用户手机号"><span style="color: red">*</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">用户身份证号</label>
+            <div class="controls">
+                <input type="text" name="idnumber" placeholder="身份证号"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">用户姓名</label>
+            <div class="controls">
+                <input type="text"  name="name" placeholder="用户姓名"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">省份</label>
+            <div class="controls">
+                <input type="text" name="province" placeholder="省份"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">城市</label>
+            <div class="controls">
+                <input type="text" name="city" placeholder="城市"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">详细地址</label>
+            <div class="controls">
+                <input type="text" name="address" placeholder="详细地址"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">商店名</label>
+            <div class="controls">
+                <input type="text" name="shopname" placeholder="请填写商店名"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">总行名</label>
+            <div class="controls">
+                <input type="text"  name="headbankname" placeholder="总行名"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">开户名</label>
+            <div class="controls">
+                <input type="text"  name="bankuser" placeholder="开户名"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">开户银行账号</label>
+            <div class="controls">
+                <input type="text"  name="bankaccount" placeholder="开户银行账号"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">银行所属省</label>
+            <div class="controls">
+                <input type="text" name="bankprovince" placeholder="银行所属省"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">银行所属市</label>
+            <div class="controls">
+                <input type="text" name="bankcity" placeholder="银行所属市"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">银行名称</label>
+            <div class="controls">
+                <input type="text" name="bankname" placeholder="银行名称"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">联行号</label>
+            <div class="controls">
+                <input type="text" name="bankcode" placeholder="联行号"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">银行卡类型</label>
+            <div class="controls">
+                <input type="radio" name="banktype" value="1" checked="checked" onclick="hiddenDiv()"/>对私　
+                <input type="radio" name="banktype" value="2" onclick="showDiv()"/>对公
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">mcc_id</label>
+            <div class="controls">
+                <input type="text" name="mcc_id" placeholder="mcc_id"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">身份证正面</label>
+            <div class="controls">
+                <input type="file" name="idcardfront" id="idcardfront" onchange="uploadMypic(this)">
+                <input type="text" name="idcardfront" value="" readonly="readonly"  style="width: 300px;"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">身份证正面</label>
+            <div class="controls">
+                <input type="file" name="idcardback" id="idcardback" onchange="uploadMypic(this)">
+                <input type="text" name="idcardback" value="" readonly="readonly"  style="width: 300px;"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">营业执照</label>
+            <div class="controls">
+                <input type="file" name="licensephoto" id="licensephoto" onchange="uploadMypic(this)">
+                <input type="text" name="licensephoto" value="" readonly="readonly"  style="width: 300px;"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">法人或申请人近期生活照</label>
+            <div class="controls">
+                <input type="file" name="livingphoto" id="livingphoto" onchange="uploadMypic(this)">
+                <input type="text" name="livingphoto" value="" readonly="readonly"  style="width: 300px;"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">公司内办公区</label>
+            <div class="controls">
+                <input type="file" name="goodsphoto" id="goodsphoto" onchange="uploadMypic(this)">
+                <input type="text" name="goodsphoto" value="" readonly="readonly"  style="width: 300px;"><span style="color: red">*所售商品/经营场所内景照片</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">前台门头</label>
+            <div class="controls">
+                <input type="file" name="shopphoto" id="shopphoto" onchange="uploadMypic(this)">
+                <input type="text" name="shopphoto" value="" readonly="readonly"  style="width: 300px;"><span style="color: red">*经营场所，商户店面正门照</span>
+            </div>
+        </div>
+        <div class="soh control-group">
+            <label class="control-label">税务登记证</label>
+            <div class="controls">
+                <input type="file" name="taxphoto" id="taxphoto" onchange="uploadMypic(this)">
+                <input type="text" name="taxphoto" value="" readonly="readonly"  style="width: 300px;"><span style="color: red">*对公必选项，对私可选项</span>
+            </div>
+        </div>
+        <div class="soh control-group">
+            <label class="control-label">组织机构代码证</label>
+            <div class="controls">
+                <input type="file" name="orgphoto" id="orgphoto" onchange="uploadMypic(this)">
+                <input type="text" name="orgphoto" value="" readonly="readonly"  style="width: 300px;"><span style="color: red">*对公必选项，对私可选项</span>
+            </div>
+        </div>
+        <div class="soh control-group">
+            <label class="control-label">开户许可证</label>
+            <div class="controls">
+                <input type="file" name="openlicense" id="openlicense" onchange="uploadMypic(this)">
+                <input type="text" name="openlicense" value="" readonly="readonly"  style="width: 300px;"><span style="color: red">*对公必选项，对私可选项</span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">添加</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/ajaxfileupload.js"></script>
+<script>
+    // 上传商品图片成功回调函数
+    function uploadMypic(obj){
+        var name = $(obj).attr('name');
+        $.ajaxFileUpload({
+            url:'https://sy.youngport.com.cn/index.php?g=merchants&m=qian_fangadmin&a=upload',
+            dataType:'json',
+            secureuri: false, //是否需要安全协议，一般设置为false
+            type:'post',
+            async: false,
+            fileElementId:name,
+            data:{id:name},
+            success:function (data) {
+                if(data.code == "success"){
+                    $("input[name="+name+"]:text").val(data.msg);
+                    console.log(data.msg)
+                } else {
+                    console.log(data)
+                    alert("上传失败");
+                }
+            }
+
+        });
+        return false;
+    }
+
+    function showDiv(){
+        $(".soh").show()
+    }
+    function hiddenDiv(){
+        $(".soh").hide()
+    }
+</script>
+<style>
+    input{width: 60%;}
+    .soh{display: none}
+</style>
+</body>
+</html>

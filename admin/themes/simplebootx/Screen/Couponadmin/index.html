@@ -1,0 +1,126 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Couponadmin/index')}">优惠券列表</a></li>
+        <li ><a href="{:U('Couponadmin/add')}">添加优惠券</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('Couponadmin/index')}">
+        创建时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" name="end_time"  class="js-datetime" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp;
+        卡券状态：
+        <select name="status" style="width: 120px;">
+            <option value='' <if condition="$formget.status eq '' ">selected</if> >全部</option>
+            <option value='2' <if condition="$formget.status eq '2' ">selected</if> >未通过</option>
+            <option value='3' <if condition="$formget.status eq '3' ">selected</if> >待投放</option>
+            <option value='5' <if condition="$formget.status eq '5' ">selected</if> >卡券已失败</option>
+        </select>&nbsp;
+        商户名称：
+        <input type="text" name="merchant_name" style="width: 200px;" value="{$formget.merchant_name|default=''}"  placeholder="请输入商户名称">&nbsp;
+        卡券名称：
+        <input type="text" name="title" style="width: 200px;" value="{$formget.title|default=''}" placeholder="请输入卡券名称">
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Couponadmin/index')}">清空</a>
+    </form>
+    <form  action="{:U('Couponadmin/delete')}" method="post">
+        <!--<div class="table-actions">-->
+        <!--<button class="btn btn-danger btn-md " type="submit"  data-subcheck="true" data-msg="你确定删除吗？">全选删除</button>-->
+        <!--</div>-->
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" >优惠卷id</th>
+                <th width="70" >卡劵类型</th>
+                <th width="70" >商户名称</th>
+                <th width="70" >商户logo</th>
+                <th width="70" >卡劵名称</th>
+                <th width="70" >卡劵内容</th>
+                <th width="70" >卡券有有效期</th>
+                <th width="70" >卡劵状态</th>
+                <th width="70" >库存</th>
+                <th width="70" >创建时间</th>
+                <th width="50" >操作</th>
+            </tr>
+            </thead>
+            <foreach name="coupons" item="c">
+                <tr>
+                    <td><b>{$c.id}</b></td>
+                    <td><b>{$c.card_type}</b></td>
+                    <td><b>{$c.merchant_name}</b></td>
+                    <td><img src="{$c.base_url}" alt="" style="width:60px;height:50px"></td>
+                    <td><b>{$c.title}</b></td>
+                    <td><b>{$c.content}</b></td>
+                    <td><b>{$c.indate}</b></td>
+                    <td><b>{$c.status}</b></td>
+                    <td><b>{$c.quantity}</b></td>
+                    <td>{$c.create_time}</td>
+                    <td>
+                        <a href="{:U('Couponadmin/detail',array('id'=>$p['id']))}">详情</a> |
+                        <!--<a href=""><span class="look_img">领取优惠券 </span></a>|-->
+                        <a href="{:U('Couponadmin/edit',array('id'=>$p['id']))}">修改</a>
+                        <!--<a href="{:U('Couponadmin/delete',array('id'=>$p['id']))}">删除</a> |-->
+                    </td>
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+
+<!--&lt;!&ndash;查看图片&ndash;&gt;-->
+<!--<div class="modal fade" id="look_img" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+    <!--<div class="modal-dialog">-->
+        <!--<div class="modal-content">-->
+            <!--<div class="modal-header">-->
+                <!--<button type="button" class="close" data-dismiss="modal"><span-->
+                        <!--aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>-->
+
+                <!--<h4 class="modal-title" id="myModalLabel">观看图片</h4>-->
+            <!--</div>-->
+            <!--<div class="modal-body ">-->
+                <!--<img src="" alt="" style="width:450px ;height:270px">-->
+            <!--</div>-->
+            <!--<div class="modal-footer">-->
+                <!--<button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+<script src="__PUBLIC__/js/common.js"></script>
+
+<script>
+    $(function(){
+//        改变上线状态
+        $(".change_status").click(function(){
+            var data = {
+                id : $(this).data('id')
+            };
+            console.log(data);
+            var _this = $(this);
+            $.post("{:U('Couponadmin/change_status')}", data, function(ad){
+                _this.children("img").attr("src","__PUBLIC__/images/status_"+ad+".gif")
+                console.log(ad);
+            },"json");
+        })
+
+////                  //查看图片，并且给图片添加属性
+//        $(".look_img").click(function () {
+//            alert(213);exit;
+//            var url = $(".input_url").val().substr(29);
+//            url='http://peng.app'+url;
+////                console.log(url);
+//            var name = $(this).parent().siblings(".name").text().replace(/\s+/g, "");
+//            var ab = url + '/' + name;
+//            console.log(ab);
+//            $(".modal-body").children("img").attr("src", ab);
+//        });
+
+
+    })
+</script>
+
+</body>
+</html>

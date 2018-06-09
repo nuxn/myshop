@@ -1,0 +1,63 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Xybank/index')}">兴业银行对账单刘表</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('Xybank/index')}">
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp;
+        银行商户号：
+        <input type="text" name="mch_id" style="width: 200px;" value="{$formget.mch_id|default=''}" placeholder="请输入商户对应的编号">
+        商户名称：
+        <input type="text" name="merchant_name" style="width: 200px;" value="{$formget.merchant_name|default=''}" placeholder="请输入商户对应的名称">
+        订单号：
+        <input type="text" name="order_sn" style="width: 200px;" value="{$formget.order_zn|default=''}" placeholder="请输入商户对应的编号">
+
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Xybank/index')}">清空</a>
+    </form>
+    <form  action="{:U('Billadmin/delete')}" method="post">
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" >交易时间</th>
+                <th width="70" >商户号</th>
+                <th width="80" >商户名称</th>
+                <th width="80" >用户标识</th>
+                <th width="80" >用户id</th>
+                <th width="50" >交易类型</th>
+                <th width="90" >交易状态</th>
+                <th width="50" >订单号</th>
+                <th width="50" >交易金额</th>
+                <th width="50" >手续费</th>
+                <th width="80" >费率</th>
+                <th width="80" >实收金额</th>
+            </tr>
+            </thead>
+            <foreach name="bills" item="b">
+                <tr>
+                    <td><b>{$b.bill_date}</b></td>
+                    <td><b>{$b.mch_id}</b></td>
+                    <td><b>{$b.mch_name}</b></td>
+                    <td><b>{$b.open_id}</b></td>
+                    <td><b>{$b.sub_mch_id}</b></td>
+                    <td><b>{$b.deal_type}</b></td>
+                    <td><b>{$b.deal_status}</b></td>
+                    <td><b>{$b.mch_order_sn}</b></td>
+                    <td><b>{$b.deal_money}</b></td>
+                    <td><b>{$b.poundage}</b></td>
+                    <td><b>{$b.cost_cate}</b></td>
+                    <td><b>{$b.actual_money}</b></td>
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+</html>

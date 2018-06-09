@@ -1,0 +1,55 @@
+<admintpl file="header" />
+<link href="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" type="text/css" media="screen"/>
+</head>
+<style>
+	.circle{
+		width: 38px;
+		height: 38px;
+		line-height: 56px;
+		text-align: center;
+		margin-left: 20px;
+		margin-right: 10px;
+		border-radius: 50%;
+		color: white;
+		display: inline-block;
+	}
+	.type{
+		line-height: 40px;
+	}
+</style>
+<body>
+	<div class="wrap">
+			<fieldset>
+				<table class="table table-bordered" >
+					<tr>
+						<td style="font-size: 18px;"><div style="display: inline;height:20px;border-left:4px solid #329cff;margin-right:10px;"></div>全部审核动态记录</td>
+					</tr>
+					<tr>
+						<td>
+							<foreach name="data" item="vo">
+								<div>
+									<switch name="vo.type">
+										<case value="1"><div class="circle" style="background-color:#FF9232"><div class="type">商户</div></div></case>
+										<case value="2"><div class="circle" style="background-color:#329cff"><div class="type">分部</div></div></case>
+										<case value="3"><div class="circle" style="background-color:#04a05c"><div class="type">总部</div></div></case>
+									</switch>
+									<div style="display: inline-block ;font-size: 16px;margin-top: 10px;">
+										<span style="color:#999">{$vo.add_time|date='Y-m-d H:i:s',###}</span>
+											<br/>
+										<span style="color:#666">{$vo.msg}</span>
+									</div>
+									<div style="height:10px;border-bottom:1px solid #eee"></div>
+								</div>
+							</foreach>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+			<div class="form-actions">
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script src="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.js"></script>
+</body>
+</html>

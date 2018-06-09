@@ -1,0 +1,100 @@
+<admintpl file="header" />
+<link href="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" type="text/css" media="screen"/>
+</head>
+<body>
+	<div class="wrap">
+        <ul class="nav nav-tabs">
+            <li><a href="{:U('QianFangadmin/index')}">进件列表</a></li>
+            <li class="active"><a href="{:U('QianFangadmin/add')}">详情</a></li>
+        </ul>
+			<fieldset>
+				<table class="table table-bordered" >
+					<tr>
+						<td width=" 200px">用户id</td>
+						<td  >{$data.uid}</td>
+					</tr>
+                    <tr>
+						<td width=" 200px">用户</td>
+						<td  >{$data.operator_name}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">身份证号</td>
+						<td  >{$data.id_number}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">省份</td>
+						<td  >{$data.province}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">城市</td>
+						<td  >{$data.city}</td>
+					</tr>
+						<td width=" 200px">区</td>
+						<td  >{$data.county}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">详细地址</td>
+						<td  >{$data.address}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">开户名</td>
+						<td  >{$data.bank_account}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">开户支行</td>
+						<td  >{$data.branch_account}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">银行账号</td>
+						<td  >{$data.bank_account_no}</td>
+					</tr>
+					<tr>
+						<td width=" 200px">申请时间</td>
+						<td>{$data.add_time|date='Y-m-d H:i',###}</td>
+					</tr>
+					<tr>
+						<td width=" 200px" >logo</td>
+						<td >
+                            <img src="https://sy.youngport.com.cn{$data.logo_url}" alt="">
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px" >身份证正面</td>
+						<td >
+                            <img src="https://sy.youngport.com.cn{$data.positive_id_card_img}" alt="">
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px" >身份证反面</td>
+						<td >
+                            <img src="https://sy.youngport.com.cn{$data.id_card_img}" alt="">
+						</td>
+					</tr>
+					<tr>
+						<td width=" 200px" >营业执照</td>
+						<td >
+                            <img src="https://sy.youngport.com.cn{$data.business_license}" alt="">
+						</td>
+					</tr>
+
+				</table>
+			</fieldset>
+			<div class="form-actions">
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+	</div>
+	<style>
+		img{ width: 300px;height: 280px}
+	</style>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script src="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.js"></script>
+    <script>
+        $(function () {
+            var type = "{$data['banktype']}"
+            if(type=="1"){
+                $(".show").hide()
+            }
+        })
+    </script>
+</body>
+</html>
