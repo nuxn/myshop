@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>会员等级</title>
+    <meta name="viewport" content="width=100%; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/simpleboot/wx/css/css.css"/>
+</head>
+<body>
+<div class='level clear'>
+    <img src="__PUBLIC__/simpleboot/wx/images/member/imguh.jpg" id="hyu">
+    <div class="topy clear">
+        <img src="__PUBLIC__/simpleboot/wx/images/member/imgton.png" class='lever'><h5>银卡会员</h5>
+        <div class="pptet clear">累计积分：{$info.card_amount}&nbsp;&nbsp;可用积分：{$info.card_balance}</div>
+    </div>
+    <div class="stper clear">
+        <div class="imgs <if condition="$info.level eq 1">on</if>">
+        <img src="__PUBLIC__/simpleboot/wx/images/member/vv1.png"></div>
+        <div class="imgsq imgyy"><font></font></div>
+        <div class="imgs <if condition="$info.level eq 2">on</if>"><img src="__PUBLIC__/simpleboot/wx/images/member/vv2.png"></div>
+        <div class="imgsq imgtt"><font></font></div>
+        <div class="imgs <if condition="$info.level eq 3">on</if>"><img src="__PUBLIC__/simpleboot/wx/images/member/vv5.png"></div>
+    </div>
+    <div class="jianka clear"><span>银卡会员</span><span>金卡会员</span><span>白金卡会员</span></div>
+</div>
+</body>
+</html>

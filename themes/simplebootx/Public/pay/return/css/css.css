@@ -1,0 +1,94 @@
+@charset "utf-8";
+*{margin:0;padding:0;}
+body{font-family:'微软雅黑';font-size:12px;}
+a{text-decoration:none;}
+li{list-style:none;}
+.clear{clear:both;overflow:hidden;}
+.dnone{display:none;}
+body,html{clear:both;height:100%;background:#fefefe;}
+.bigRTie{width:100%;margin:0 auto;}
+.bigRTie .toipsl{width:94%;margin:3% auto;font-size:16px;color:#545454;background:url(../img/huidiao_03.png) left center no-repeat;background-size:30px;line-height:30px;text-indent:35px;}3%
+.centsucd{width:100%;margin:35px auto 5px auto;}
+.centsucd img{display:block;margin:0 auto 1% auto;width:40px;}
+.centsucd h4{font-size:18px;color:#31c83f;font-weight:500;display:block;text-align:center;margin-bottom:1%;}
+.peice{width:100%;}
+.peice span{display:inline-block;float:left;width:100%;}
+.peice span:nth-child(1):after{content:'元';font-weight:400;font-size:12px;}
+.peice span:nth-child(1){font-size:30px;height:35px;line-height:35px;color:#323232;font-weight:700;text-align:center;}
+.peice span:nth-child(2){font-size:12px;color:#a9a9a9;line-height:25px;margin-left:4px;width:95%;}
+.detail{
+	padding: 0 20px;
+}
+.detail ul{
+	border-top: 1px #c6c7cd dashed;
+	padding: 5px 0;
+}
+.detail ul li{
+	width: 100%;
+	line-height: 25px;
+}
+.detail ul li span{
+	color: #888888;
+	font-size: 12px;
+}
+.detail ul li span:first-child{
+	float: left;
+}
+.detail ul li span:last-child{
+	float: right;
+}
+.newback{width:100%;background:#fefefe;margin:0 auto;}
+.newback .youghuiq{width:94%;margin:0% auto 4% auto;background:url(../img/huidiao_11.png) left center no-repeat #f6aaac;background-size:60px;border-radius:5px;height:60px;}
+.newback .youghuiq span{display:inline-block;float:left;margin-left:50px;color:#fff;font-size:15px;line-height:60px;}
+.newback .youghuiq a{font-size:14px;display:inline-block;float:right;width:80px;height:28px;line-height:28px;border-radius:7px;color:#f6aaac;text-align:center;margin:16px 3% 0 0;background:#fff;}
+.tuijian{ width:100%;
+          background: linear-gradient(top left, #d2e5ee, #a6cce8);
+          background: -ms-linear-gradient(top left, #d2e5ee, #a6cce8);
+          background: -webkit-linear-gradient(top left, #d2e5ee, #a6cce8);
+          background: -moz-linear-gradient(top left, #d2e5ee, #a6cce8);margin-bottom:45px;
+		}
+.listu{width:260px;background:#fff;border-radius:10px;border:solid 2px #fff;box-shadow:0px 0px 20px #84a5cc;margin:3% 5% 4% 0%;}
+.listu img{width:100%;display:block;margin:0 auto;}
+.listu .center{width:100%;margin:0 auto}
+.listu .center span{display:inline-block;float:left;color:#545454;font-size:14px;margin-left:3%;line-height:45px;width: calc(90% - 82px);word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.listu .center a{display:inline-block;float:right;width:80px;height:25px;line-height:25px;font-size:14px;color:#999;margin-top:10px;margin-right:3%;text-align:center;border-radius:25px;color:#999;border:solid 1px #cdcdcd;}
+.santuijian{width:60%;margin:3% auto 0 auto;}
+.santuijian span{display:inline-block;float:left;height:0;border-top:solid 1px #fff;width: calc(50% - 50px);margin-top:15px;}
+.santuijian .cetnyu{width:100px;text-align:center;color:#fffefe;font-size:15px;font-weight:600;line-height:30px;float:left;font-family:'微软雅黑';}
+.button{width:100%;background:#fff;margin:0 auto;position:fixed;bottom:0;left:0;z-index:999;padding:2% 0;}
+.button span{width:50%;display:inline-block;float:left;}
+.button span img{display:inline-block;}
+.button span:nth-child(1){border-right:solid 1px #ccc;height:21px;line-height:21px;margin-left:-1px;}
+.button span:nth-child(2) img{margin-left:6%;float:left}
+.button span:nth-child(1) img{float:right;margin-right:6%;}
+.newon{position:fixed;bottom:50px;left:0;margin-bottom:0;}
+
+@media (min-width:360px) and (max-width:400px){
+	.listu{width:290px;}
+}
+@media (min-width:401px) and (max-width:450px){
+	.listu{width:320px;}
+}
+@media (min-width:451px) and (max-width:700px){
+	.listu{width:360px;}
+}
+@media (min-width:370px) and (max-width:4000px){
+	.tuijian{position:fixed;bottom:0px;left:0;margin-bottom:0;}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

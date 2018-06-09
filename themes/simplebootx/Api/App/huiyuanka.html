@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name = "format-detection" content = "telephone=no">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>预览</title>
+    <link rel="stylesheet" type="text/css" href="__ROOT__/public/simpleboot/api/css/app/record.css">
+    <link rel="stylesheet" type="text/css" href="__ROOT__/public/simpleboot/api/css/app/common.css">
+</head>
+<style>
+.bansd .img {
+    width: 100%;
+    display: block;
+    height: 180px;
+}
+.nanvc ul li p{
+	color:{$color}
+}
+.buyrns{
+	color:{$color};
+	border: solid 1px {$color};
+}
+<?php $count=$jifen+$chuzhi+$zhekou+$type; ?>
+.nanvc ul li:nth-child({$count}){
+	border-right:none;
+}
+.bansd .neisd .tou {
+    border: solid 2px white;
+}
+</style>
+
+<body style="background:#fff;">
+<div class="weixin clear">
+    <div class="bansd clear">
+    	<div class="img" style="background:url('__PUBLIC__/img/395972306598630884.png') {$color} no-repeat bottom;background-size:100% 55%"></div>
+        <div class="neisd clear">
+            <div class="tou"><img src="{$logoimg}"/></div>
+            <div class="cents"><h3>{$merchant_name}</h3><h4>{$cardname}</h4></div>
+            <span><img src="__ROOT__/public/simpleboot/api/images/app/erweim.png"/></span>
+        </div>
+        <div class="btnym clear" style="color: white;">8888 8888 8888</div>
+    </div>
+    <div class="nanvc clear">
+    	<?php
+    			$width = 100/($jifen+$chuzhi+(int)($zhekou||$type));
+    			$width--;
+    	?>
+    	<style>
+.nanvc ul li {
+    width: {$width}%;
+}
+.nanvc ul li p{
+	line-height: 33px;
+}
+.nanvc ul li h2 {
+   
+    font-size: 18px;
+    font-weight: 200;
+    line-height: 18px;
+}
+    	</style>
+        <ul>
+            <if condition="$jifen eq 1 ">
+                <li><h2>积分</h2>
+                    <p>0</p></li>
+            </if>
+            <if condition="$chuzhi eq 1 ">
+                <li><h2>储值</h2>
+                    <p>0.00元</p></li>
+            </if>
+            <if condition="$type eq 1 ">
+                <li><h2>等级</h2>
+                    <p>普通会员</p></li>
+            </if>
+            
+            <!--<if condition="$zhekou eq 1  ">
+                <li><h2>折扣</h2>
+                 <p>0折</p></li>
+            </if>-->
+
+        </ul>
+    </div>
+    <input class="buyrns" type="button" value="快速买单"/>
+    <h1 class="pptit clear">买单可享积分抵扣</h1>
+    <div class="buttnd clear">
+        <ul>
+           <!-- <li><span>适用门店</span><a><img src="__ROOT__/public/simpleboot/api/images/app/rights.jpg"/></a></li>-->
+            <if condition="$chuzhi eq 1 ">
+                <li><span>会员卡充值</span><a><img src="__ROOT__/public/simpleboot/api/images/app/rights.jpg"/></a></li>
+            </if>
+            <li><span>会员卡详情</span><a><img src="__ROOT__/public/simpleboot/api/images/app/rights.jpg"/></a></li>
+            <li><span>公众号</span><a><img src="__ROOT__/public/simpleboot/api/images/app/rights.jpg"/></a></li>
+        </ul>
+    </div>
+</div>
+
+</body>
+<script src="__ROOT__/public/js/jquery.js"></script>
+<script>
+    $(function () {
+        $('.buyrns,.level,.buttnd ul li').click(function () {
+            alert('不可点击!');
+        })
+    })
+</script>
+</html>

@@ -1,0 +1,49 @@
+//省级
+var provs_data = 
+[
+{
+	"text":"零售超市",
+	"value":"1"
+},
+{
+	"text":"餐饮行业",
+	"value":"2"
+},
+{
+	"text":"美容美发",
+	"value":"3"
+},
+{
+	"text":"休闲娱乐",
+	"value":"4"
+},
+{
+	"text":"酒店住宿",
+	"value":"5"
+},
+{
+	"text":"服装鞋帽",
+	"value":"6"
+},
+{
+	"text":"手机行业",
+	"value":"7"
+},
+{
+	"text":"其他",
+	"value":"8"
+},
+]
+
+var zhanghu_data = 
+[
+{
+	"text":"个人账户",
+	"value":"1"
+},
+{
+	"text":"企业账户",
+	"value":"2"
+}
+]
+

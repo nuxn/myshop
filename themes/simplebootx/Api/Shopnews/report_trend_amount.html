@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,install-scale=1">
+    <title>报表</title>
+    <!-- 引入 echarts.js -->
+    <script src="__PUBLIC__/js/echarts/echarts4.js"></script>
+
+</head>
+<style type="text/css">
+</style>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="height:400px;"></div>
+
+<script type="text/javascript">
+    var data = eval('(' + '{$count}' + ')');
+    var excel = eval('(' + '{$excel}' + ')');
+    console.log(excel)
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+
+    var option = {
+        title: {
+            // text: '堆叠区域图'
+        },
+        tooltip : {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                label: {
+                    backgroundColor: '#6a7985'
+                }
+            }
+        },
+        color:['#8fc31f','#00ccff','#f35833','#ffcc00','#ff7171','#3373f0'],
+        legend: {
+            data:['微信','支付宝','现金','银联刷卡','商户储值','代理储值']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                data: [data[1].time, data[2]['time'], data[3].time, data[4].time, data[5].time,data[6].time,data[7].time]
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : excel
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+
+</body>
+
+</html>

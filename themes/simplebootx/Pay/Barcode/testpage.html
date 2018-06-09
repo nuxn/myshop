@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <!--<script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>-->
+    <!--<script src="https://cdn.bootcss.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>-->
+    <link rel="stylesheet" href="__TMPL__Public/test/swiper-3.4.2.min.css" />
+    <link rel="stylesheet" href="__TMPL__Public/test/index.css" />
+</head>
+<body>
+<div class="wrap">
+    <div class="title">
+        <h6>洋仆淘大商户</h6>
+    </div>
+    <div class="success">
+        <img src="__TMPL__Public/test/correct.png" width="40" height="40" />
+        <p>支付成功</p>
+        <span class="price">240.00</span>
+        <span class="yuan">元</span>
+        <span class="discount">已优惠10.00元</span>
+    </div>
+    <div class="borker">
+        <img src="__TMPL__Public/test/rect.png" class="rect" height="61" />
+        <img src="__TMPL__Public/test/juan.png" class="juan" width="23.5" height="23.5" />
+        <p class="col-sm-3">恭喜你获得一张优惠券</p>
+        <a href="#">立即领取</a>
+    </div>
+    <div class="recommend">
+        <div class="line">
+            <span>商家推荐</span>
+        </div> 
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <img src="__TMPL__Public/test/pic2.png" />
+                </div>
+                <div class="swiper-slide">
+                    <img src="__TMPL__Public/test/pic2.png"  />
+                </div>
+                <div class="swiper-slide">
+                    <img src="__TMPL__Public/test/pic2.png" />
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+    <div class="footer">
+        <img src="__TMPL__Public/test/bottom.png" width="230" />
+    </div>
+</div>
+<script src="__TMPL__Public/test/swiper-3.4.2.min.js"></script>
+<script>
+    var mySwiper = new Swiper('.swiper-container', {
+        roundLengths : true,
+        autoplay:2000,
+        loop:true,
+        initialSlide :0,
+        speed:600,
+        slidesPerView:"auto",
+        centeredSlides : true,
+        followFinger : false,
+        pagination : '.swiper-pagination',
+    })
+</script>
+</body>
+</html>

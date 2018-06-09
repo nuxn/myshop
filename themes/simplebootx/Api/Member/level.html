@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=100%; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+    <meta charset="UTF-8">
+    <title>会员等级</title>
+    <link rel="stylesheet" href="__PUBLIC__/simpleboot/wx/css/levelCommon.css">
+    <link rel="stylesheet" href="__PUBLIC__/simpleboot/wx/css/levelGrade.css">
+</head>
+<body>
+<div class="Grade">
+    <div class="top">
+        <img src="__PUBLIC__/simpleboot/wx/images/levelMember/topbaiyin-top.jpg" alt="">
+        <div class="title">
+            <img src="__PUBLIC__/simpleboot/wx/images/levelMember/grade-{$mem.current_level}.png" alt="">
+            <p>{$mem.current_level_name}</p>
+        </div>
+        <div class="bottom">买单享受 <span>{$mem.current_level_discount}</span> 折</div>
+    </div>
+    <p>等级说明</p>
+    <div class="content">
+        <ul class="clearfix">
+            <foreach name="level_info" item="vo">
+                <if condition="$vo['level'] elt 3">
+                    <li class="{$vo.make_it}">
+                        <img src="__PUBLIC__/simpleboot/wx/images/levelMember/grade-{$vo.level}.png" alt="">
+                        <img src="__PUBLIC__/simpleboot/wx/images/levelMember/{$vo.make_it}.jpg" alt="">
+                        <p>{$vo.level_name}</p>
+                        <if condition="($vo['level'] neq $best_level) AND ($vo['level'] neq 3)">
+                            <div class="line" <if condition="$vo['level'] eq $mem['current_level']">style="border-top:1px solid #e2e2e2;"</if>></div>
+                        </if>
+                    </li>
+                </if>
+                <if condition="$vo['level'] gt 3">
+                    <if condition="$vo['level'] eq 4">
+                        <li class="next-li">
+                            <img src="__PUBLIC__/simpleboot/wx/images/levelMember/next-{$vo.make_it}.jpg" alt="" class="next">
+                        </li>
+                    </if>
+                    <li class="{$vo.make_it}" style="float: right">
+                        <img src="__PUBLIC__/simpleboot/wx/images/levelMember/grade-{$vo.level}.png" alt="">
+                        <img src="__PUBLIC__/simpleboot/wx/images/levelMember/{$vo.make_it}.jpg" alt="">
+                        <p>{$vo.level_name}</p>
+                        <if condition="$vo['level'] neq 4">
+                            <div class="line" <if condition="$vo['level'] eq $mem['next_level']">style="border-top:1px solid #e2e2e2;"</if>></div>
+                        </if>
+                    </li>
+                </if>
+            </foreach>
+        </ul>
+    </div>
+    <div class="shengji clearfix">
+        <span>升级方式</span>
+        <p>{$mem['next_level_pre']}</p>
+    </div>
+    <div class="page-bottom">
+        <img src="__PUBLIC__/simpleboot/wx/images/levelMember/logo.jpg" alt="">
+        <span> | 提供技术支持</span>
+    </div>
+</div>
+</body>
+</html>
