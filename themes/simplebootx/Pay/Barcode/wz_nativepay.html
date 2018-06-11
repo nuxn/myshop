@@ -1,0 +1,38 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>微信支付样例-查退款单</title>
+</head>
+<body>
+<style>
+    img{height: 200px;}
+</style>
+<form action="{:U('Barcode/wz_nativepay')}" method="post">
+    <div style="margin-left:2%;">商品描述：</div><br/>
+    <input type="text" style="width:96%;height:35px;margin-left:2%;" readonly value="扫码测试样例-支付" name="auth_code" /><br /><br />
+    <div style="margin-left:2%;">支付金额：</div><br/>
+    <input type="text" style="width:96%;height:35px;margin-left:2%;" readonly value="1分" name="auth_code" /><br /><br />
+    <div align="center">
+        <input type="submit" value="提交" style="width:210px; height:50px; border-radius: 15px;background-color:#FE6714; border:0px #FE6714 solid; cursor: pointer;  color:white;  font-size:16px;" type="button" onclick="callpay()" />
+    </div>
+</form>
+</body>
+<script src="//cdn.bootcss.com/jquery/2.1.1/jquery.js"></script>
+<script src="//cdn.bootcss.com/layer/3.0.1/layer.min.js"></script>
+</html>
+<script>
+
+    <if condition='$url'>
+        var img = '<img src="{:U('Barcode/wz_qrcode?url=' . $url)}"/>';
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            area:['200px','200px'],
+            skin: 'layui-layer-nobg', //没有背景色
+            shadeClose: true,
+            content: img
+        });
+    </if>
+</script>

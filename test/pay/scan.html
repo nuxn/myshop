@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="http://sy.youngport.com.cn/public/js/jquery.js"></script>
+</head>
+<body>
+<input id="id_securityCode_input">
+<button id="scanQRCode">扫码</button>
+<script>
+    $(function () {
+        var scan_url = 'http://sy.youngport.com.cn/index.php?s=app/scan/getConfig';
+        $.post(scan_url, {suggest: 'scanQRCode'}, function (result) {
+            result = JSON.parse(result);
+            if (result.code == 'success') {
+                var appId = result.data.appid;
+                var timestamp = result.data.timestamp;
+                var nonceStr = result.data.nonceStr;
+                var signature = result.data.signature;
+                console.log(appId);
+                console.log(signature);
+                wx.config({
+                    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来
+                    appId: appId, // 必填，公众号的唯一标识
+                    timestamp: timestamp, // 必填，生成签名的时间戳
+                    nonceStr: nonceStr, // 必填，生成签名的随机串
+                    signature: signature,// 必填，签名，见附录1
+                    jsApiList: ['scanQRCode'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                });
+            }
+        });
+
+    });
+
+    $("#scanQRCode").click(function () {
+        wx.scanQRCode({
+            // 默认为0，扫描结果由微信处理，1则直接返回扫描结果
+            needResult: 1,
+            desc: 'scanQRCode desc',
+            success: function (res) {
+                //扫码后获取结果参数赋值给Input
+                var url = res.resultStr;
+                //商品条形码，取","后面的
+                if (url.indexOf(",") >= 0) {
+                    var tempArray = url.split(',');
+                    var tempNum = tempArray[1];
+                    $("#id_securityCode_input").val(tempNum);
+                } else {
+                    $("#id_securityCode_input").val(url);
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

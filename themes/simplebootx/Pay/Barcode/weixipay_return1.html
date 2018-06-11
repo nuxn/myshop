@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=100%; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+    <title>洋仆淘收银台</title>
+    <style>
+        html,body{height:100%;}
+        *{margin:0;padding:0;}
+        a{text-decoration:none;}
+        li{list-style:none;}
+        h1,h2,h3,h4,h5,h6{font-weight:400;}
+        body{font-family:'黑体';font-size:12px;position:relative;}
+        .clear{clear:both;overflow:hidden;}
+        .bigcont{width:100%;margin:0 auto;}
+        .bigcont .topheas{width:100%;}
+        .bigcont .topheas img{width:28px;display:inline-block;float:left;margin:9px;}
+        .bigcont .topheas p{font-size:12.9px;color:#323232;display:inline-block;float:left;margin-top:9px;height:30px;line-height:30px;}
+        .bigcont .topheas p font{color:#ff6600;}
+        .bigcont .cenboc{width:100%;background:#f2f2f2;}
+        .bigcont .cenboc img{width:50px;margin:7% auto 4% auto;display:block;}
+        .bigcont .cenboc h3{text-align:center;color:#323232;font-size:16px;margin:0 auto;}
+        .bigcont .cenboc h4{margin-top:7%;text-align:center;font-weight:bold;font-size:50px;color:#323232;line-height:50px;}
+        .bigcont .cenboc h4 font{font-size:15px;font-weight:200;}
+        .bigcont .cenboc a{color:#09bb07;font-size:13px;text-align:center;display:block;margin-bottom:12%;}
+        .bigcont .bottombanner{width:92%;margin:3% auto;display:block;}
+        .bigcont .buttoms{width:120px;position:absolute;left:50%;margin-left:-60px;bottom:3%;z-index:999;}
+        .cenghu{width:92%;border:solid 1px #09bb07;margin:4% auto;background:#fff;}
+        .cenghu ul{width: calc(100% - 102px);float:left;margin-left:10px;}
+        .cenghu ul li{clear:both;overflow:hidden;}
+        .cenghu ul li:nth-child(1){border-bottom:dashed 1px #b6b6b6;}
+        .bigcont .cenghu a{margin-top:30px;float:right;color:#09bb07;font-size:14px;text-align:center;height:26px;line-height:26px;border:solid 1px #09bb07;border-radius:3px;width:70px;margin-bottom:0;margin-right:10px;}
+        .bigcont .cenboc .cenghu ul li img{margin:6px 6px 6px 0;float:left;width:31px;}
+        .bigcont .cenboc .cenghu ul li img.imh1{width:26px;margin:6px 9px 6px 4px;}
+        .bigcont .cenboc .cenghu ul li p{height:31px;line-height:31px;color:#323232;font-size:13px;width:auto;margin-top:6px;float:left;}
+        .bigcont .cenboc .cenghu ul li p.qingren{color:#09bb07;font-size:14px;}
+        .tabks{width:100%;height:100%;background:#000;opacity:0.4;position:fixed;left:0;top:0;z-index:999;}
+        .moneytack{width:260px;position:fixed;left:50%;margin-left:-130px;top:15%;z-index:9999;background:#d04848;border-radius:20px;overflow:hidden;}
+        .moneytack img{width:100%;display:block;}
+        .moneytack a.picket{font-size:18px;width:40%;border-radius:18px;color:#fff;border:solid 2px #fff760;background:#ffb533;height:36px;line-height:36px;text-align:center;display:block;margin:11% auto;}
+        .moneytack .packright{text-align:center;display:block;margin:5% auto 7% auto;color:#f6da65;font-size:12px;}
+        @media (min-width:340px) and (max-width:400px){
+            .bigcont .topheas p{font-size:14px;}
+            .bigcont .cenboc h3{font-size:18px;}
+            .bigcont .cenboc img{width:55px;}
+            .bigcont .topheas img{width:30px;}
+        }
+        @media (min-width:401px) and (max-width:600px){
+            .bigcont .topheas p{font-size:15px;}
+            .bigcont .cenboc h3{font-size:19px;}
+            .bigcont .cenboc img{width:58px;}
+            .bigcont .topheas img{width:32px;}
+        }
+        @media (min-width:601px) and (max-width:6000px){
+            .bigcont .topheas p{font-size:16px;}
+            .bigcont .cenboc h3{font-size:20px;}
+            .bigcont .cenboc img{width:80px;}
+            .bigcont .topheas img{width:35px;}
+            .bigcont .topheas p{margin-top:11px;}
+            .bigcont .cenboc a{font-size:15px;}
+            .bigcont .cenboc h4{margin-top:5%;}
+            .bigcont .buttoms{bottom:1%;}
+            .bigcont{position:relative;}
+        }
+    </style>
+</head>
+<body>
+<div class="bigcont clear">
+    <div class="topheas clear"><img src="__TMPL__Public/pay/images/img1.jpg"/><p>您已成功支付<font>{$price}</font>元！获得<font>11</font>个会员卡积分！</p></div>
+    <div class="cenboc clear">
+        <volist name="title" id="v">
+            <div class="cenghu clear">
+                <ul class="clear">
+                    <li><img src="__TMPL__Public/pay/images/img5.jpg"/><p>{$v[title]}</p></li>
+                    <li><img src="__TMPL__Public/pay/images/img7.jpg" class="imh1"/><p class="qingren">{$v[sub_title]}</p></li></ul>
+                <a>立即领取</a>
+            </div>
+        </volist>
+
+
+    </div>
+    <img src="__TMPL__Public/pay/images/img3.jpg" class="bottombanner"/>
+    <img src="__TMPL__Public/pay/images/img4.jpg" class="buttoms"/>
+</div>
+<!--><!-->
+<div class="tabks"></div>
+<div class="moneytack">
+    <img src="__TMPL__Public/pay/images/img1.png">
+    <a href="{:U('Barcode/pay1',array('price'=>$price,'jin'=>$jin,'title'=>$title,'openid'=>$openid))}" class="picket">立即领取</a>
+    <h4 class="packright">到洋仆淘合作商家购物可抵扣</h4>
+</div>
+</body>
+</html>

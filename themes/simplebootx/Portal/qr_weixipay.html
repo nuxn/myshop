@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=100%; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+    <link rel="stylesheet" type="text/css" href="__TMPL__Public/pay/css/css.css"/>
+    <title>洋仆淘收银台</title>
+    <script src="__TMPL__Public/pay/js/jquery1.42.min.js"></script>
+</head>
+<body>
+<div class="mingtit clearfix">
+    <img src="__TMPL__Public/pay/images/imgtit.jpg"><span>海豚妈妈</span>
+</div>
+<div class="cengbic clearfix">
+    <span class="spp">请输入消费金额(元)</span>
+    <input type="text" placeholder='0.00' id='div' style="border-radius:none">
+    <div class="lefts clearfix"><span>红包抵扣</span><font>11.88</font></div>
+</div>
+<img src="__TMPL__Public/pay/images/imgty.jpg" class="jishu"/>
+<div class="titchenr clearfix"><img src="__TMPL__Public/pay/images/ysngp.png"><span>提供技术支持</span></div>
+
+<div class="tbalbe clearfix">
+    <ul>
+        <li class="lili1">1</li>
+        <li class="lili1">2</li>
+        <li class="lili1">3</li>
+        <li><img src="__TMPL__Public/pay/images/guanbi.jpg" class="img1" id="remove"></li>
+        <li class="lili1">4</li>
+        <li class="lili1">5</li>
+        <li class="lili1">6</li>
+        <li class="lili8 olbcolor"></li>
+        <li class="lili1">7</li>
+        <li class="lili1">8</li>
+        <li class="lili1">9</li>
+        <li class="lili8 lili7" style=""><img src="__TMPL__Public/pay/images/cheng.png" class="img2">付款</li>
+        <li class="lili1"  style="width:50%;padding-left:1px;">0</li>
+        <li class="lili1">.</li>
+        <li class="lili8 lili7" style="margin-right:-2px;"></li>
+    </ul>
+</div>
+<script>
+    $(function(){
+        $('#div').focus(function(){
+            $('.tbalbe ul li.lili8,.tbalbe ul li.lili7').addClass('newcolor');
+        })
+        $('#div').blur(function(){
+            $('.tbalbe ul li.lili8,.tbalbe ul li.lili7').removeClass('newcolor');
+        })
+        $('.tbalbe ul li.lili1').click(function(){
+            var oDiv = document.getElementById("div");
+            oDiv.value += this.innerHTML;
+        })
+        $('#remove').click(function(){
+            var oDiv = document.getElementById("div");
+            var oDivHtml = oDiv.value;
+            oDiv.value = oDivHtml.substring(0,oDivHtml.length-1);
+        })
+    })
+</script>
+</body>
+</html>

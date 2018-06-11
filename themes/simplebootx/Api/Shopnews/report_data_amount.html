@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,install-scale=1">
+    <title>报表</title>
+    <script src="__PUBLIC__/js/echarts/echarts4.js"></script>
+
+</head>
+<style type="text/css">
+</style>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="height:200px;"></div>
+
+<script type="text/javascript">
+    var data = eval('(' + '{$data}' + ')');
+    var title = '{$title}';
+    console.log(data);
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+    var option = {
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b}: {c} ({d}%)"
+        },
+        color:['#8fc31f','#00ccff','#f35833','#ffcc00','#ff7171','#3373f0'],
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            data:['微信','支付宝','现金','银联刷卡','商户储值','代理储值']
+        },
+        series: [
+            {
+                name:title,
+                type:'pie',
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    normal: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        show: true,
+                        textStyle: {
+                            fontSize: '12',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        show: false
+                    }
+                },
+                data:data
+            }
+        ]
+    };
+
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+
+</body>
+
+</html>
