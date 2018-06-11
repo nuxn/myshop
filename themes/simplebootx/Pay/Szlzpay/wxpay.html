@@ -1,0 +1,297 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+    <title>向商家付款</title>
+    <style>
+        * {
+            -webkit-touch-callout:none;
+            -webkit-user-select:none;
+            -khtml-user-select:none;
+            -moz-user-select:none;
+            -ms-user-select:none;
+            user-select:none;
+            margin:0;padding:0;
+        }
+        body{font-family:'微软雅黑';font-size:12px;}
+        a{text-decoration:none;}
+        li{list-style:none;}
+        body,html{width:100%;height:96%;}
+        .clear{clear:both;overflow:hidden;}
+        .cleat{width:100%;position:fixed;bottom:0;left:0;}
+        .cleat table{background:#f6f6f6;border-collapse: collapse;width:100%;border-bottom:solid 1px #ccc;}
+        @font-face{
+            font-family: "fzzdxjw";
+            src: url("__TMPL__Public/pay/ttf/fzzdxjw.ttf")
+            }
+        .cleat table td{border-top:solid 1px #ccc;border-left:solid 1px #ccc;width:25%;text-align:center;color:#323232;padding:3% 0;font-size: 25px;}
+        .cleat table td img{display:block;width:40%;margin:0 auto;}
+        .cleat table tr td:nth-child(1){border-left:none;}
+        .cleat table tr td.tbgds{background:#8fbc8f;color:#fff;}
+        .tixing{width:94%;margin:3% auto;}
+        .tixing p{color:#b6b6b6;font-size:12px;display:block;width:100%;line-height:19px;}
+        .tixing p:before{content:'郑重提醒';color:#f83636;}
+        .newconte{position:relative;width:96%;margin:4.5% auto 0 auto;}
+        .newry label{margin-top:2%;color:#b6b6b6;font-size:15px;display:block;line-height:10px;}
+        .newry input{display:block;line-height:20px;border:none;color:#ccc;margin-left:2%;outline:none;font-size:28px;}
+        .newconte{padding:4.5% 0 4% 0;background:url(__TMPL__Public/pay/images/newbavk.jpg) bottom center no-repeat;background-size:100%;border-bottom:none;}
+        .newry input::-webkit-input-placeholder {color: #ccc;}
+        .newry input:-moz-placeholder {color: #ccc;}
+        .newry input::-moz-placeholder{color: #ccc;}
+        .newry input:-ms-input-placeholder {color: #ccc;}
+        .newry input{text-align:right;width:70%;float:right;color:#000;font-family:'微软雅黑';margin-bottom:4%;margin-top:4%;background:none;margin-right:2%;}
+        .newry input:focus{color:#1080d8}
+        .newry label{font-size:17px;color:#323232;margin-top:3%;}
+        .beizhu font{font-size:12px;position:absolute;right:4%;top:0;padding-top:2%;line-height:20px;display:block;color:#b6b6b6;}
+        .newry{width:88%;margin:0 auto;}
+        .tuos{width:50%;margin:3% auto 4% auto;}
+        .tuos img{display:block;margin:0 auto;border-radius:52px;width:52px;}
+        .tuos h4{display:block;text-align:center;color:#323232;font-size:17px;margin-top:7%;font-weight:500;}
+        .on{background:#1080d8;}
+        .btnlogon{width:120px;margin:2% auto;display:block;}
+        .btns{width:86%;margin:1% auto 0 auto;}
+        .btns label,.btns font{display:inline-block;float:left;color:#939393;font-size:14px;}
+        .btns font{float:left;}
+        .tavkd{width:100%;height:100%;background:#000;opacity:0.3;z-index:99;display:block;position:fixed;top:0;left:0;}
+        .youhui{width:76%;background:#fff;border-radius:12px;position:fixed;top:20%;left:12%;z-index:999;padding-bottom:6%;display:none;}
+        .mima{width:86%;background:#fff;border-radius:12px;position:fixed;top:30%;left:7%;z-index:999;padding-bottom:6%;display:none;}
+        .weload{width:14%;position:fixed;top:35%;left:43%;z-index:1000;display:none;}
+        .mima h3{font-weight:200;color:#000;font-size:16px;width:100%;text-align:center;margin-top:7%;margin-bottom:6%;}
+        .mima .cenmimi{width:90%;margin:0 auto;}
+        .mima .cenmimi input{display:inline-block;  width:22px;height:22px;text-align:center;border-radius:2px;margin-left:5.5%;border:solid 1px #ccc;outline:none}
+        .mima a{position:absolute;top:16%;right:5%;width:13px;}
+        .mima a img{display:block;width:100%;}
+        .youhui{width:76%;background:none;}
+        .youyi{width:100%;background:#fff;border-radius:13px;}
+        .youhui h3{text-align:center;display:block;color:#000;font-size:16px;margin:4% auto;font-weight:300;}
+        .youhui ul{width:100%;margin:0 auto;}
+        .youhui ul li{width:100%;clear:both;overflow:hidden;border-top:solid 1px #e6e6e6;padding:4% 0;}
+        .youhui ul li span{display:inline-block;color:#323232;font-size:15px;margin-left:3%;float:left;line-height:17px;}
+        .youhui ul li .disco{display:inline-block;float:right;line-height:17px;margin-right:3%;font-size:13px;}
+        .youhui ul li .jifen{display:inline-block;float:right;line-height:17px;margin-right:3%;font-size:13px;}
+        .youhui ul li .agent_disco{display:inline-block;float:right;line-height:17px;margin-right:3%;font-size:13px;}
+        .youhui ul li .agent_jifen{display:inline-block;float:right;line-height:17px;margin-right:3%;font-size:13px;}
+        .youhui ul li a{border:solid 1px #329cff;width:15px;height:15px;border-radius:15px;display:inline-block;float:right;margin-right:3%;}
+        .youhui .nihk{width:30px;margin:7% auto 0 auto;display:block;}
+        .youhui .nihk img{display:block;width:100%;}
+        .on{background:url(__TMPL__Public/pay/images/closk.png) center center no-repeat;background-size:10px;}
+        .neti{width:90%;margin:2% auto;}
+        .neti .youhuijin span,.neti a{display:none;color:#939393;font-size:14px;float:left;}
+        .neti a{margin-left:2%;color:#329cff}
+        .neti .yingf{color:#ee4c4c;font-size:14px;float:right;}
+        .neti .yingf:before{content:'应付金额:';color:#939393;font-size:14px;}
+        #tankd{display: none}
+        @media (min-width:350px) and (max-width:430px){
+            .newry{margin-top:3%;}
+        }
+        input{color:transparent;margin-left: 110%;}
+        .alieditContainer{position:relative;}
+        .alieditContainer .i-text{position: absolute;color: #fff;opacity:0.2; width:306px; height:48px; font-size:12px; left:0; -webkit-user-select:initial;  /*取消禁用选择页面元素*/z-index:9;	padding:0;	borde:0;}
+        .alieditContainer .sixDigitPassword {margin: auto;width:306px; height:22px; cursor:text; background:#fff; outline:none; position:relative; padding:13px 0; border:1px solid #ddd; border-radius:5px;}
+        .alieditContainer .sixDigitPassword i {width:50px; height:16px; float:left; display:block; padding:4px 0; border-left:1px solid #cccccc;}
+        .alieditContainer .sixDigitPassword i:first-child{border-left:0;}
+        .alieditContainer .sixDigitPassword i.active{background-image: url("https://t.alipayobjects.com/images/rmsweb/T1nYJhXalXXXXXXXXX.gif");background-repeat: no-repeat;background-position: center center; }
+        .alieditContainer .sixDigitPassword b{display:block; margin:5px auto 4px auto; width:7px; height:7px; overflow:hidden; display:none;/*visibility:hidden;*/ background:#000; border-radius:100%;}
+        .alieditContainer .sixDigitPassword .guangbiao{width:50px; height:48px; position:absolute; display:block; left:0px; top:-1px; border:1px solid rgba(82, 168, 236, .8); border:1px solid #00ffff\9; border-radius:5px; visibility:visible; -webkit-box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.75), 0 0 8px rgba(82, 168, 236, 0.6); box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);}
+    </style>
+</head>
+<body>
+<div class="tuos clear"><img src="__TMPL__Public/pay/images/homeixonwx.png"/><h4>{$merchant['jianchen']}</h4></div>
+<div class="newconte clear">
+    <div class="newry clear"><label>消费金额(元)</label>
+        <input placeholder="0" type="text" id="ontgj" readonly='readonly'></div>
+    <div class="btns clear">
+        <label class="yue"> 　</label>
+        <!--<if condition="empty($yue)">-->
+            <!--<label class="yue" yue="{$agent_yue|0}">可用余额:{$agent_yue|default=0}</label>-->
+            <!--<else />-->
+            <!--<label class="yue" yue="{$yue|0}">可用余额:{$yue|0}</label>-->
+        <!--</if>-->
+    </div>
+</div>
+<div class="neti clear">
+    <span class="youhuijin"><span>优惠金额:￥0 </span><a onclick="displa()">点击查看</a></span><span class="yingf">￥0</span>
+</div>
+<div class="cleat clear">
+    <img src="__TMPL__Public/pay/images/bickv.jpg" class="btnlogon"/>
+    <table id="tabw">
+        <tr>
+            <td class="lxl" ontouchend="pay_money(this,1)">1</td>
+            <td class="lxl" ontouchend="pay_money(this,1)">2</td>
+            <td class="lxl" ontouchend="pay_money(this,1)">3</td>
+            <td class="lxl" ontouchend="pay_money(this,3)"><img src="__TMPL__Public/pay/images/delect.png"/></td>
+        </tr>
+        <tr>
+            <td class="lxl" ontouchend="pay_money(this,1)">4</td>
+            <td class="lxl" ontouchend="pay_money(this,1)">5</td>
+            <td class="lxl" ontouchend="pay_money(this,1)">6</td>
+            <td class="tbgds" id="btnw" style="font-family:'微软雅黑';" rowspan=3 >支付</td>
+        </tr>
+        <tr>
+            <td class="lxl" ontouchend="pay_money(this,1)">7</td>
+            <td class="lxl" ontouchend="pay_money(this,1)">8</td>
+            <td class="lxl" ontouchend="pay_money(this,1)">9</td>
+        </tr>
+        <tr>
+            <td class="lxl" ontouchend="pay_money(this,1)" colspan=2>0</td>
+            <td class="lxl" ontouchend="pay_money(this,1)">.</td>
+        </tr>
+    </table>
+</div>
+<img class="weload" src="__TMPL__Public/pay/images/wenewload.gif" alt="">
+<div class="mima" id="mima">
+    <h3>请输入余额支付密码</h3><a onClick="document.getElementById('mima').style.display='none';document.getElementById('tankd').style.display='none'"><img
+        src="__TMPL__Public/pay/images/close.jpg"/></a>
+    <div class="alieditContainer" id="payPassword_container">
+        <input minlength="6" maxlength="6" tabindex="1" id="payPassword_rsainput" oninput="yuepay(this)" name="payPassword_rsainput" class="ui-input i-text" oncontextmenu="return false" onpaste="return false" oncopy="return false" oncut="return false" autocomplete="off" value=""  readonlyunselectable="on"  type="number">
+        <div class="sixDigitPassword" tabindex="0">
+            <i class="active"><b></b></i>
+            <i><b></b></i>
+            <i><b></b></i>
+            <i><b></b></i>
+            <i><b></b></i>
+            <i><b></b></i>
+            <span class="guangbiao" style="left:0px;"></span>
+        </div>
+    </div>
+</div>
+<div class="youhui" id="youhui">
+    <div class="youyi clear">
+        <h3>选择优惠</h3>
+        <ul id="ulul">
+            <!--会员卡-->
+            <if condition="$discount neq ''">
+                <li class="memcard mch" cardcode="{$card_code}" discount="{$discount}" type="mch"><span>会员卡{$discount}折</span><a class='on'></a><span class="disco">-￥0</span></li></if>
+            <if condition="$credits neq ''">
+                <li class="dikoujf mch" credits_discount="{$credits_discount}" credits="{$credits}" type="mch"><span>积分抵扣</span><a class='on'></a><span class="jifen">-￥0</span></li></if>
+            <!--联名卡-->
+            <if condition="$agent_discount neq ''">
+                <li class="memcard agent" cardcode="{$agent_card_code}" discount="{$agent_discount}" type="agent"><span>联名卡{$agent_discount}折</span><a></a><span class="agent_disco">-￥0</span></li></if>
+            <if condition="$agent_credits neq ''">
+                <li class="dikoujf agent" credits_discount="{$agent_credits_discount}" credits="{$agent_credits}" type="agent" ><span>联名卡积分抵扣</span><a></a><span class="agent_jifen">-￥0</span></li></if>
+            <if condition="!empty($coupon_data)">
+                <volist  name="coupon_data" id="v">
+                    <li man="{$v.total_price}" jian="{$v.de_price}" code="{$v.usercard}" class="coupon">
+                        <span>满{$v.total_price}减{$v.de_price}优惠券</span>
+                        <a></a>
+                    </li>
+                </volist>
+            </if>
+        </ul>
+    </div>
+    <a class="nihk" onClick="document.getElementById('youhui').style.display='none';document.getElementById('tankd').style.display='none'"><img
+            src="__TMPL__Public/pay/images/closeing.png"/></a>
+</div>
+
+<input type="hidden" name="seller_id" value="{$seller_id}">
+<input type="hidden" name="openid" value="{$openid}">
+<input type="hidden" name="checker_id" value="{$checker_id}">
+<input type="hidden" name="agent_yue" value="{$agent_yue|0}">
+<input type="hidden" name="mch_yue" value="{$yue|0}">
+<div class="tavkd clear" id="tankd"></div>
+<script src="__TMPL__Public/pay/news/js/jquery.min.js"></script>
+<script src="__TMPL__Public/pay/news/js/bootstrap.min.js"></script>
+<script>
+    var flag = <?php echo $flag?1:0;?>;
+    var mch_id = <?php echo $merchant['merchant_id'];?>
+</script>
+<script>
+    if(flag == 1){
+
+    } else {
+        $(".youhuijin").css('display', 'none');
+    }
+    var ab =0;
+    var num;
+    var price;
+    var mch_yue = parseFloat($('input[name=mch_yue]').val());
+    var agent_yue = parseFloat($('input[name=agent_yue]').val());
+    var realprice = 0.0;
+
+    function pay_money(obj,tip){
+        if(tip==1){
+            var con = $('#ontgj').val();
+            num = con + $(obj).html();
+            if(num !=''&& num.substr(0,1) == '.'){num="";}
+            num = num.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符
+            num = num.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的
+            num = num.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+            num = num.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数
+            // 此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+            if(num.indexOf(".")< 0 && num !="") {
+                if (num.substr(0, 1) == '0' && num.length == 2) {
+                    num = num.substr(1, num.length);
+                }
+            }
+            if(num<=99999.99 && num.toString().length<=8){
+                if(num.indexOf(".")>0){
+                    num = num.replace(/\b(0+)/gi,"0");
+                    if(num.toString().split(".")[1].length<=2){
+                        $('#ontgj').val(num);
+                    } else {
+                        num =  num.substr(0, num.length - 1);
+                    }
+                }else {
+                    $('#ontgj').val(num);
+                }
+
+            } else {
+                num =  num.substr(0, num.length - 1);
+            }
+            if(num>0){
+                $("#btnw").css('background','#32cd32');
+            }
+        }else if(tip==2){
+            $('#ontgj').val('');
+        }else if(tip==3){
+            var con = document.getElementById('ontgj').value;
+            num = con.slice(0,-1);
+            if(num < 0.01){
+                $("#btnw").css('background','#8fbc8f');
+            }
+            $('#ontgj').val(num);
+        }
+        price = toDecimal(num);
+        realprice = price;
+        //============================================ END =============================================================
+        $('.yingf').html('￥'+realprice);
+        event.preventDefault();
+    }
+
+
+    $('.lxl').on('touchend',function(){$(this).css('background', '#f6f6f6')})
+    $('.lxl').on('touchmove',function(){$(this).css('background', '#f6f6f6')})
+    $('.lxl').on('touchstart',function(){$(this).css('background', '#999999')})
+    $('.tbgds').on('click', function () {
+        if(realprice > 0){
+            var id = $("input[name=seller_id]").val();
+            var openid = $("input[name=openid]").val();
+            var checker_id = $("input[name=checker_id]").val();
+            var random=Math.ceil(Math.random()*100000);
+            if(ab<1) {
+                ab+=1;
+                var price = parseFloat(realprice)+"/seller_id/"+ id + "/openid/"+openid+"/checker_id/"+checker_id+"/random/"+random+"/ok";
+                location = "https://sy.youngport.com.cn/index.php?s=/Pay/Szlzpay/wx_pay/price/" + price;
+            }
+        }
+    })
+
+    function displa() {
+        $(".youhui").show();
+        $("#tankd").show();
+    }
+
+    //功能：将浮点数四舍五入，取小数点后2位
+    function toDecimal(x) {
+        var f = parseFloat(x);
+        if (isNaN(f)) {
+            return x;
+        }
+        f = Math.round(x*100)/100;
+        return f;
+    }
+</script>
+</body>
+</html>

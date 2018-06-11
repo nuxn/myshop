@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -77,4 +78,85 @@
 
 </script>
 </body>
+=======
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('cateadmin/index')}">商户列表</a></li>
+        <li ><a href="{:U('cateadmin/add')}">添加商户</a></li>
+        <li class="active"><a href="#">编辑商户</a></li>
+    </ul>
+    <form method="post"  action="{:U('cateadmin/edit_post')}" class="form-horizontal " enctype="multipart/form-data">
+        <fieldset>
+            <input type="hidden" name="id" value="{$shopcate['id']}">
+            <div class="control-group">
+                <label class="control-label">商户ID:</label>
+                <div class="controls">
+                    <input type="text" name="merchant_id" value="{$shopcate[merchant_id]}" placeholder="请填入商户对应的ID"><span class="form-required">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">二维码前缀:</label>
+                <div class="controls">
+                    <input type="text" name="qz_number" value="{$shopcate[qz_number]}" placeholder="请填入商户对应的ID"><span class="form-required">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">商户简称:</label>
+                <div class="controls">
+                    <input type="text" name="post[jianchen]" value="{$shopcate['jianchen']}" placeholder="请填入商户简称"><span class="form-required">*</span>
+                </div>
+            </div>
+
+            <h2>支付宝信息填写:</h2>
+            <div class="control-group">
+                <label class="control-label">支付宝商户名:</label>
+                <div class="controls">
+                    <input type="text" name="post[name]" value="{$shopcate['name']}" placeholder="请填入支付宝的商户名"><span class="form-required">*</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">支付宝ID:</label>
+                <div class="controls">
+                    <input type="text" name="post[alipay_partner]" value="{$shopcate['alipay_partner']}" placeholder="请填入支付宝的ID"><span class="form-required">*</span>
+                </div>
+            </div>
+            <h2>微信的信息填写:</h2>
+
+            <div class="control-group">
+                <label class="control-label">微信商户名:</label>
+                <div class="controls">
+                    <input type="text" name="post[wx_name]" value="{$shopcate['wx_name']}" placeholder="请填入微信的商户名"><span class="form-required">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">微信KEY</label>
+                <div class="controls">
+                    <input type="text" name="post[wx_key]" value="{$shopcate['wx_key']}" placeholder="请填入微信的KEY"><span class="form-required">*</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">微信MCHID</label>
+                <div class="controls">
+                    <input type="text" name="post[wx_mchid]" value="{$shopcate['wx_mchid']}" placeholder="请填入微信的MCHID"><span class="form-required">*</span>
+                </div>
+            </div>
+
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">提交</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+
+</script>
+</body>
+>>>>>>> dev
 </html>

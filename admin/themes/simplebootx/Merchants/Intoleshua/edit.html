@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header"/>
 <script src="__PUBLIC__/js/layer/layer.js"></script>
 <script src="__PUBLIC__/js/ajaxfileupload.js"></script>
@@ -488,4 +489,496 @@
             $('.qiyea').hide();
         }
     })
+=======
+<admintpl file="header"/>
+<script src="__PUBLIC__/js/layer/layer.js"></script>
+<script src="__PUBLIC__/js/ajaxfileupload.js"></script>
+<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script>
+</head>
+<body>
+<div class="wrap" style="width: 800px;">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Intoleshua/index')}">返回</a></li>
+    </ul>
+    <div class="box3">
+        <form id="form1" method="post" class="form-horizontal" action="{:U('Intoleshua/add')}">
+            <h3 align="center">进件资料</h3>
+            <div class="control-group">
+                <label class="control-label" for="m_id">商户ID</label>
+                <div class="controls">
+                    <input type="text" id="m_id" name="m_id" value="{$info.m_id}" placeholder="请填写商户id"> <span style="color: red">*</span>
+                    <input type="hidden" name="into_id" value="{$info.id}">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="merchantType">商户类型</label>
+                <div class="controls">
+                    <select name="merchantType" id="merchantType" onchange="disp(this)">
+                        <option value="">选择</option>
+                        <option <if condition="$info['merchantType'] eq 1">selected</if> value="1">个人</option>
+                        <option <if condition="$info['merchantType'] eq 3">selected</if> value="3">企业</option>
+                    </select>
+                    <span style="color: red">*（开通公众号支付必须为企业类型）</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="name">姓名</label>
+                <div class="controls">
+                    <input type="text" id="name" name="name" value="{$info.name}" placeholder="姓名"> <span
+                        style="color: red">*（企业填法人）</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="idcard">身份证号</label>
+                <div class="controls">
+                    <input type="text" id="idcard" name="idcard" value="{$info.idcard}"
+                           placeholder="身份证号"> <span style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="mobile">手机号</label>
+                <div class="controls">
+                    <input type="text" id="mobile" name="mobile" value="{$info.mobile}" placeholder="手机号"> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="idcardFrontPic">身份证正面照片</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="idcardFrontPic" class="idcardFrontPic">
+                            <if condition="$info['idcardFrontPic'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.idcardFrontPic}" style="height: 60px">
+                            </if>
+                            <input type="file" id="idcardFrontPic" name="idcardFrontPic" style="display: none" value="{$info.idcardFrontPic|default=''}"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">请上传身份证</label>
+                        <span style="color: red">*（图片大小均不能超出1M）</span>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="idcardBackPic">身份证反面照片</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="idcardBackPic" class="idcardBackPic">
+                            <if condition="$info['idcardBackPic'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.idcardBackPic}" style="height: 60px">
+                            </if>
+                            <input type="file" id="idcardBackPic" name="idcardBackPic" style="display: none"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label>
+                    </a>
+                    <br/>
+                    <label class="pic2">请上传身份证反面</label>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="bankCardFrontPic">银行卡正面（如是对公账户，开户许可证）</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="bankCardFrontPic" class="bankCardFrontPic">
+                            <if condition="$info['bankCardFrontPic'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.bankCardFrontPic}" style="height: 60px">
+                            </if>
+                            <input type="file" id="bankCardFrontPic" name="bankCardFrontPic" style="display: none"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">如是对公账户，开户许可证</label>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="licensePic">营业执照</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="licensePic" class="licensePic">
+                            <if condition="$info['licensePic'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.licensePic}" style="height: 60px">
+                            </if>
+                            <input type="file" id="licensePic" name="licensePic" style="display: none"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">营业执照</label>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="insidePic">内景照</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="insidePic" class="insidePic">
+                            <if condition="$info['insidePic'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.insidePic}" style="height: 60px">
+                            </if>
+                            <input type="file" id="insidePic" name="insidePic" style="display: none"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">内景照</label>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="doorPic">门头</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="doorPic" class="doorPic">
+                            <if condition="$info['doorPic'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.doorPic}" style="height: 60px">
+                            </if>
+                            <input type="file" id="doorPic" name="doorPic" style="display: none"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">门头</label>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="cashierDeskPic">收银台</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="cashierDeskPic" class="cashierDeskPic">
+                            <if condition="$info['cashierDeskPic'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.cashierDeskPic}" style="height: 60px">
+                            </if>
+                            <input type="file" id="cashierDeskPic" name="cashierDeskPic" style="display: none"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">收银台</label>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="nonLegSettleAuthPic" style="color: blue">非法人结算授权书</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="nonLegSettleAuthPic" class="nonLegSettleAuthPic">
+                            <if condition="$info['nonLegSettleAuthPic'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.nonLegSettleAuthPic}" style="height: 60px">
+                            </if>
+                            <input type="file" id="nonLegSettleAuthPic" name="nonLegSettleAuthPic" style="display: none"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">非法人结算授权书</label>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="nonLegIdcardFrontPic" style="color: blue">非法人结算人身份证正面</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="nonLegIdcardFrontPic" class="nonLegIdcardFrontPic">
+                            <if condition="$info['nonLegIdcardFrontPic'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.nonLegIdcardFrontPic}" style="height: 60px">
+                            </if>
+                            <input type="file" id="nonLegIdcardFrontPic" name="nonLegIdcardFrontPic" style="display: none"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">非法人结算人身份证正面</label>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="nonLlegIdcardBackPic" style="color: blue">非法人结算人身份证反面</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="nonLlegIdcardBackPic" class="nonLlegIdcardBackPic">
+                            <if condition="$info['nonLlegIdcardBackPic'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.nonLlegIdcardBackPic}" style="height: 60px">
+                            </if>
+                            <input type="file" id="nonLlegIdcardBackPic" name="nonLlegIdcardBackPic" style="display: none"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">非法人结算人身份证反面</label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="merchantName">商户简称</label>
+                <div class="controls">
+                    <input type="text" id="merchantName" name="merchantName" value="{$info.merchantName}"
+                           placeholder=""> <span
+                        style="color: red">*<br>个人：商户名称如深圳市贵人鸟鞋服店（城市+名称+行业）或身份证姓名<br>企业：商户名称如深圳市贵人鸟鞋服店（城市+名称+行业） </span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="province">省</label>
+                <div class="controls">
+                    <input type="text" id="province" name="province" value="{$info.province}" placeholder=""> <span
+                        style="color: red">*</span>
+                    <br><a target="_blank" href="http://sy.youngport.com.cn/data/log/leShua/leshua_doc.docx">参考文档</a>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="city">市</label>
+                <div class="controls">
+                    <input type="text" id="city" name="city" value="{$info.city}" placeholder=""> <span
+                        style="color: red">*（直辖市填直辖市名）</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="area">县</label>
+                <div class="controls">
+                    <input type="text" id="area" name="area" value="{$info.area}" placeholder=""> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="address">详细地址</label>
+                <div class="controls">
+                    <input type="text" id="address" name="address" value="{$info.address}" placeholder=""> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="isIndustryDining">是否为餐饮</label>
+                <div class="controls">
+                    <select name="isIndustryDining" id="isIndustryDining" >
+                        <option value="">选择</option>
+                        <option <if condition="$info['isIndustryDining'] eq 1">selected</if> value="1">是的</option>
+                        <option <if condition="$info['isIndustryDining'] eq 0">selected</if> value="0">不是的</option>
+                    </select><span
+                        style="color: red">*企业必填</span>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="cashierDeskPic">卫生许可证</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="footHealthPermissionPic" class="footHealthPermissionPic">
+                            <if condition="$info['footHealthPermissionPic'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.footHealthPermissionPic}" style="height: 60px">
+                            </if>
+                            <input type="file" id="footHealthPermissionPic" name="footHealthPermissionPic" style="display: none"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">卫生许可证（餐饮行业需要）</label>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="license">营业执照注册号</label>
+                <div class="controls">
+                    <input type="text" id="license" name="license"
+                           value="{$info.license}" placeholder=""> <span
+                        style="color: red">*企业必填</span>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="licenseFullName">营业执照注册名称</label>
+                <div class="controls">
+                    <input type="text" id="licenseFullName" name="licenseFullName" value="{$info.licenseFullName}"
+                           placeholder=""> <span
+                        style="color: red">*企业必填</span>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="licenseAddress">营业执照注册地址</label>
+                <div class="controls">
+                    <input type="text" id="licenseAddress" name="licenseAddress" value="{$info.licenseAddress}"
+                           placeholder=""> <span
+                        style="color: red">*企业必填</span>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="licenseStart">注册号开始日期</label>
+                <div class="controls">
+                    <input type="text" id="licenseStart" name="licenseStart" value="{$info.licenseStart}"
+                           placeholder=""> <span
+                        style="color: red">*格式2000-11-10 企业必填</span>
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="licenseEnd">注册号结束日期</label>
+                <div class="controls">
+                    <input type="text" id="licenseEnd" name="licenseEnd" value="{$info.licenseEnd}" placeholder="">
+                    <span
+                            style="color: red">*企业必填</span>
+                </div>
+            </div>
+            <h5 align="center">银行卡设置</h5>
+            <div class="control-group ">
+                <label class="control-label" for="type">银行账户类型</label>
+                <div class="controls">
+                    <select name="type" id="type" onchange="disp(this)">
+                        <option value="">选择</option>
+                        <option <if condition="$info['type'] eq 1">selected</if> value="1">个人</option>
+                        <option <if condition="$info['type'] eq 2">selected</if> value="2">企业</option>
+                    </select></div>
+
+            </div>
+            <div class="control-group ">
+                <label class="control-label" for="branch">开户网点</label>
+                <div class="controls">
+                    <input type="text" id="branch" name="branch" value="{$info.branch}" placeholder=""> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group ">
+                <label class="control-label" for="unionpay">开户支行联行号</label>
+                <div class="controls">
+                    <input type="text" id="unionpay" name="unionpay" value="{$info.unionpay}" placeholder=""> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group ">
+                <label class="control-label" for="holder">开户名</label>
+                <div class="controls">
+                    <input type="text" id="holder" name="holder" value="{$info.holder}" placeholder=""> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group ">
+                <label class="control-label" for="cardId">银行卡号</label>
+                <div class="controls">
+                    <input type="text" id="cardId" name="cardId" value="{$info.cardId}"
+                           placeholder=""> <span style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group ">
+                <label class="control-label" for="bankMobile">银行预留手机号</label>
+                <div class="controls">
+                    <input type="text" id="bankMobile" name="bankMobile" value="{$info.bankMobile}" placeholder="">
+                    <span
+                            style="color: red">*</span>
+                </div>
+            </div>
+            <h5 align="center">公众号设置</h5>
+            <div class="control-group ">
+                <label class="control-label" for="mccCode">MCC 码商户行业编号(</label>
+                <div class="controls">
+                    <input type="text"  id="mccCode" name="mccCode" value="{$info.mccCode}" placeholder=""> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group ">
+                <label class="control-label" for="mccType">行业类别</label>
+                <div class="controls">
+                    <select name="mccType" id="mccType">
+                        <option value="">选择</option>
+                        <option <if condition="$info['mccType'] eq 1">selected</if> value="1">1-餐娱类</option>
+                        <option <if condition="$info['mccType'] eq 2">selected</if> value="2">2-一般类</option>
+                        <option <if condition="$info['mccType'] eq 3">selected</if> value="3">3-民生类</option>
+                        <option <if condition="$info['mccType'] eq 4">selected</if> value="4">4-批发类</option>
+                        <option <if condition="$info['mccType'] eq 5">selected</if> value="5">5-房车类</option>
+                    </select></div>
+
+            </div>
+            <div class="control-group ">
+                <label class="control-label" for="userWx">联系人微信号</label>
+                <div class="controls">
+                    <input type="text"  id="userWx" name="userWx" value="{$info.userWx}" placeholder=""> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group ">
+                <label class="control-label" for="gzhMerchantName">公众号名称</label>
+                <div class="controls">
+                    <input type="text" id="gzhMerchantName" name="gzhMerchantName" value="{$info.gzhMerchantName}" placeholder=""> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group ">
+                <label class="control-label" for="publicsignalAppid">公众号appid</label>
+                <div class="controls">
+                    <input type="text" id="publicsignalAppid" name="publicsignalAppid" value="{$info.publicsignalAppid}" placeholder=""> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group ">
+                <label class="control-label" for="publicDirectory">授权回调域名</label>
+                <div class="controls">
+                    <input type="text" id="publicDirectory" name="publicDirectory" value="{$info.publicDirectory}" placeholder=""> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group ">
+                <label class="control-label" for="publicsignalAppidGZ">推荐关注appid</label>
+                <div class="controls">
+                    <input type="text" id="publicsignalAppidGZ" name="publicsignalAppidGZ" value="{$info.publicsignalAppidGZ}" placeholder=""> <span
+                        style="color: red">*</span>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit">添加</button>
+                <a class="btn" href="javascript:history.back(-1);">返回</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/global.js"></script>
+<script>
+
+</script>
+<style>
+    input {
+        width: 60%;
+    }
+
+    .blue {
+        background: #006dcc;
+    }
+</style>
+</body>
+</html>
+<script type="text/javascript">
+    function ajaxFileUpload(thisobj) {
+        var fileid = $(thisobj).attr("id");
+        $.ajaxFileUpload
+        (
+            {
+                url: '{:U("Intoleshua/upload_into")}', //用于文件上传的服务器端请求地址
+                secureuri: false, //是否需要安全协议，一般设置为false
+                fileElementId: fileid, //文件上传域的ID
+                data: {data: fileid},
+                dataType: 'json', //返回值类型 一般设置为json 
+                success: function (data)  //服务器成功响应处理函数
+                {
+                    if (data.type == 1) {
+                        var name = data.name
+                        var path = data.path;
+                        var content = "<img src='" + path + "' style='height: 140px'>" +
+                            "<input type='hidden'  name='"+name+"' value='" + path + "'>";
+                        $('.' + name).html(content);
+                    } else if (data.type == 2) {
+                        alert(data.message);
+                    }
+                },
+                error: function (data)//服务器响应失败处理函数
+                {
+                    alert('网络请求失败,请重新上传图片');
+                }
+            }
+        )
+    }
+    function disp(obj) {
+        var type = $(obj).val();
+        if (type == 1) {
+            $('.qiyea').show();
+        } else if (type == 3) {
+            $('.qiyea').show();
+        }
+    }
+    $(function () {
+        var flag = {$info.merchantType};
+        if(flag == 1){
+            $('.qiyea').hide();
+        }
+    })
+>>>>>>> dev
 </script>

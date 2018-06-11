@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="wap-font-scale" content="no">
+    <meta name="viewport" content="width=375,target-densitydpi=320,user-scalable=no">
+    <!--[if IE]>
+    <script type="text/javascript" src="__TMPL__Public/assets/merchants/js/html5.js"></script>
+    <![endif]-->
+    <!--[if lt ie 9]>
+    <script type="text/javascript" src="__TMPL__Public/assets/merchants/js/css3-mediaqueries.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="__TMPL__Public/assets/merchants/css/larea.css">
+    <link rel="stylesheet" href="__TMPL__Public/assets/merchants/css/all.css"/>
+    <link rel="stylesheet" href="__TMPL__Public/assets/merchants/css/self.css"/>
+    <link rel="stylesheet" href="__TMPL__Public/assets/merchants/css/self-xys.css"/>
+</head>
+<body class="dc-bk1 dc-pb">
+<!-- body -->
+<div id="bd">
+    <div class="page-m1">
+        <form action="{:U('merchants/postData')}" method="post" id="form">
+            <dl class="dc-dl1">
+                <dt class="dc-dt1">
+                <h3><span>商户信息</span></h3>
+                </dt>
+                <dd>
+                    <ul class="inputList1">
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">商户名称</span>
+                                <div class="txt"><input type="text" name="merchant_name" placeholder="输入商户名称"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">商户地址</span>
+                                <div class="txt">
+                                    <input id="address-demo1" type="text" readonly="true" name="province"
+                                           placeholder="选择省市区"
+                                           class="dc-ysbk1">
+                                    <input id="address-value1" type="hidden" value="20,234,504"/>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="inputList1-m1">
+                                <div class="txt"><input type="text" name="address" placeholder="具体街道地址"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">行业</span>
+                                <div class="txt">
+                                    <input type="text" readonly="true" name="industry" placeholder="请选择"
+                                           class="dc-ysbk1 dc-c1 up-open1 hytext">
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">商户证件</span>
+                                <div class="txt"><a href="{:U('merchants/certificate')}" id="certificate"
+                                                    class="dc-ysbk1 dc-c1">
+                                    <if condition="session('header_interior_img')">已上传
+                                        <else/>
+                                        上传证件
+                                    </if>
+                                </a></a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul><!-- inputList1 end -->
+                    <div class="clear"></div>
+                    <ul class="inputList1">
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">经营者姓名</span>
+                                <div class="txt"><input type="text" name="operator_name" placeholder="输入经营者姓名(同营业执照所填)">
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">身份证号</span>
+                                <div class="txt"><input type="text" name="id_number" placeholder="输入经营者身份证号码"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">身份证正反面</span>
+                                <div class="txt"><a href="{:U('merchants/idcard')}" id="idcard" class="dc-ysbk1 dc-c1">
+                                    <if condition="session('positive_id_card_img')">已上传
+                                        <else/>
+                                        上传证件
+                                    </if>
+                                </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul><!-- inputList1 end -->
+                    <div class="clear"></div>
+                    <ul class="inputList1">
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">推荐人(选填)</span>
+                                <div class="txt"><input type="text" name="referrer" placeholder="输入推荐人手机号码"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </dd>
+            </dl><!-- dc-dl1 end -->
+            <div class="clear"></div>
+            <dl class="dc-dl1">
+                <dt class="dc-dt1">
+                <h3><span>收款账户</span></h3>
+                </dt>
+                <dd>
+                    <ul class="inputList1">
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">账户类型</span>
+                                <div class="txt">
+                                    <input id="zhlx-demo1" type="text" name="account_type" readonly="true"
+                                           placeholder="请选择"
+                                           class="dc-ysbk1 dc-c1">
+                                    <input id="zhlx-value1" type="hidden" value="0"/>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">账户名称</span>
+                                <div class="txt"><input type="text" name="account_name" placeholder="输入开户名称"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">开户银行</span>
+                                <div class="txt"><input type="text" name="bank_account" placeholder="输入开户银行"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">开户支行</span>
+                                <div class="txt"><input type="text" name="branch_account" placeholder="输入开户支行"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="inputList1-m1">
+                                <span class="tt">银行账户</span>
+                                <div class="txt"><input type="text" name="bank_account_no" placeholder="输入银行账号"></div>
+                            </div>
+                        </li>
+                    </ul><!-- inputList1 end -->
+                </dd>
+            </dl><!-- dc-dl1 end -->
+            <div class="clear"></div>
+            <div class="pagem11">
+                <label class="tt" for="ckid1"><input type="checkbox" id="ckid1" class="hid"></label>
+                <div class="txt">同意<a href="#">《商户服务协议》</a></div>
+            </div><!-- pagem11 end -->
+            <div class="clear"></div>
+            <input type="hidden" name="positive_id_card_img" value="{$Think.session.positive_id_card_img}">
+            <input type="hidden" name="header_interior_img" value="{$Think.session.header_interior_img}">
+            <input type="hidden" name="business_license" value="{$Think.session.business_license}">
+            <input type="hidden" name="isdoor_header" value="{$Think.session.isdoor_header}">
+            <input type="submit" id="submit" value="保存并提交" disabled="disabled" class="dc-btn1">
+        </form>
+    </div><!-- page-m1 end -->
+</div>
+<!-- body end -->
+<!-- 行业类目 bg -->
+<div class="hangye-m1">
+    <ul class="hangyeList1">
+        <li>
+            <div class="hangyeList1-m1">
+                <span>零售超市</span>
+            </div>
+        </li>
+        <li>
+            <div class="hangyeList1-m1">
+                <span>餐饮行业</span>
+            </div>
+        </li>
+        <li>
+            <div class="hangyeList1-m1">
+                <span>美容美发</span>
+            </div>
+        </li>
+        <li>
+            <div class="hangyeList1-m1">
+                <span>休闲娱乐</span>
+            </div>
+        </li>
+        <li>
+            <div class="hangyeList1-m1">
+                <span>酒店住宿</span>
+            </div>
+        </li>
+        <li>
+            <div class="hangyeList1-m1">
+                <span>服装鞋帽</span>
+            </div>
+        </li>
+        <li>
+            <div class="hangyeList1-m1">
+                <span>手机行业</span>
+            </div>
+        </li>
+        <li>
+            <div class="hangyeList1-m1">
+                <span>其他</span>
+            </div>
+        </li>
+    </ul>
+</div><!-- hangye-m1 end -->
+<!-- 行业类目 end -->
+
+</body>
+<script type="text/javascript" src="__TMPL__Public/assets/merchants/js/jquery.js"></script>
+<script src="__TMPL__Public/assets/merchants/js/adaptive.js"></script>
+<script src="__TMPL__Public/assets/merchants/js/lareadata2.js"></script>
+<script src="__TMPL__Public/assets/merchants/js/lareadata1.js"></script>
+<script src="__TMPL__Public/assets/merchants/js/larea.js"></script>
+<script src="__TMPL__Public/assets/merchants/js/larea2.js"></script>
+<script src="__TMPL__Public/assets/merchants/js/larea3.js"></script>
+<script type="text/javascript" src="__TMPL__Public/assets/merchants/js/self.js"></script>
+<script type="text/javascript" src="__TMPL__/Public/assets/simpleboot/layer_mobile/layer.js"></script>
+<script type="text/javascript" src="__TMPL__Public/assets/merchants/js/index.js"></script>
+</html>

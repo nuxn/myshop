@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <title>会员卡充值</title>
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/card_recharge/css/index-rem.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/card_recharge/css/member.css">
+    <script src="__PUBLIC__/card_recharge/js/swiper.min.js"></script>
+    <script src="__PUBLIC__/card_recharge/js/layer_mobile/layer.js"></script>
+    <script src="__PUBLIC__/js/jquery.js"></script>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+</head>
+
+<body style="background:#f2f2f2;">
+<!-- 内容部分 -->
+<div class="conter">
+    <div class="conter_top">
+        <img class="top_img" src="{$mch_info.base_url|default='__PUBLIC__/card_recharge/imgs/conter_top.png'}" alt="">
+        <p>{$mch_info.merchant_jiancheng}</p>
+        <p>
+            <img src="__PUBLIC__/card_recharge/imgs/vip.png" alt="">
+            <span>{$code}</span>
+            <img src="__PUBLIC__/card_recharge/imgs/mobile.png" alt="">
+            <span>{$hidephone}</span>
+        </p>
+    </div>
+    <!-- 充值 -->
+    <div class="conter_recharge">
+        <h5>请选择充值金额</h5>
+        <ul class="clear prices">
+            <foreach name="price" item="v">
+                <li data-price="{$v['price']}">
+                    <if condition="$v['de_price'] gt 0">
+                        <p>{$v.price}</p>
+                        <p>送{$v.de_price}</p>
+                        <else/>
+                        <p style="line-height:0.7rem;color: #323232;font-size: .26rem">{$v.price}</p>
+                    </if>
+                </li>
+            </foreach>
+            <li class="other_price">其它金额</li>
+            <li class="code_recharge">充值码充值<input type="checkbox" readonly></li>
+        </ul>
+        <div class="navbar">
+            <input type="text" style="width: 96%" placeholder="请输入充值码" maxlength="16" id="upcode">
+            <a href="javascript:;"  onclick="btn_scanQR()" style="right: 4%"><img src="__PUBLIC__/card_recharge/imgs/scan.png" alt=""></a>
+            <!--<button onclick="search_input()">确定</button>-->
+        </div>
+        <div class="navbar1">
+            <input type="number" style="width: 96%" placeholder="请输入充值金额" id="upmoney">
+            <!--<button onclick="search()">确定</button>-->
+        </div>
+    </div>
+</div>
+<!-- 提示 -->
+<div class="title">
+    <h5>提示</h5>
+    <ul>
+        <li><span></span>充值后储值自动到账，请到微信会员卡余额中查询。</li>
+        <li><span></span>充值金额可用于线上消费和门店消费使用。</li>
+        <li><span></span>如充值遇到问题，请及时联系商家。</li>
+    </ul>
+    <p><img src="__PUBLIC__/card_recharge/imgs/footer_logo.png" alt=""></p>
+</div>
+
+<!-- 底部区域 -->
+<footer><button onclick="payment()">立即充值</button></footer>
+
+</body>
+
+</html>
+<script src="https://gw.alipayobjects.com/as/g/h5-lib/alipayjsapi/3.1.1/alipayjsapi.inc.min.js"></script>
+<script>
+    function btn_scanQR() {
+        ap.scan(function (res) {
+            $("#upcode").val(res.code);
+        });
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var li_length = $(".conter_recharge li").length; //获取li的数量
+        $('.conter_recharge li').click(function() {
+            $(this).addClass('active').siblings().removeClass('active');
+            var index = $(this).index(); //获取点击当前的下标
+            if (index == li_length - 1) { //如果这个下标 == 最后一个li,就显示，否则隐藏
+                $('.navbar').show();
+            } else {
+                $('.navbar').hide();
+            }
+            if (index == li_length - 2) { //如果这个下标 == 最后一个li,就显示，否则隐藏
+                $('.navbar1').show();
+            } else {
+                $('.navbar1').hide();
+            }
+        })
+    })
+//
+//    function search_input() { //点击充值码
+//        var upcode = $('#upcode').val();
+//    }
+//
+//    function search_input() { //点击充值金额
+//        var upmoney = $('#upmoney').val();
+//    }
+    var uid = "{$uid}";
+    var card_code = "{$code}";
+
+    function payment() { //立即支付
+        var price = 0;
+        var curr = $('.prices').find('.active');
+        if (curr.hasClass('code_recharge')) {
+            var code = $("#upcode").val();
+            if(code){
+                $.post("{:U('api/cz/entity_code_recharge')}", {
+                    'code': code,
+                    'card_code': '{$code}'
+                }, function(data) {
+                    if (data.code == 0) {
+                        alert('充值成功');
+                        window.location.href = 'http://sy.youngport.com.cn/index.php?s=api/cz/member_ok/type/1/code/'+code+'/card_code/'+card_code;
+                    } else {
+                        alert(data.msg);
+                    }
+                })
+            }else{
+                alert('请输入充值码');
+            }
+            return false;
+        }else if (curr.hasClass('other_price')) {
+            price = $('#upmoney').val();
+            if (!price){
+                alert('请输入正确金额');return false;
+            }
+            if(!isRealNum(price)){
+                alert('自定义充值金额错误');return false;
+            }
+        } else {
+            price = curr.data('price');
+        }
+        price = Math.floor(parseFloat(price) * 100) / 100;
+        $.post("{:U('ali_recharge_pay')}", {price:price,uid:uid,card_code:card_code}, function (res) {
+            console.log(res);
+            if(res.code == '0000'){
+                window.location.href = res.data;
+            } else {
+                alert(res.msg);
+            }
+        })
+    }
+    function isRealNum(val){
+        // isNaN()函数 把空串 空格 以及NUll 按照0来处理 所以先去除
+        if(val === "" || val ==null){
+            return false;
+        }
+        if(!isNaN(val)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+</script>

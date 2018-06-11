@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>预览</title>
+    <link rel="stylesheet" type="text/css" href="__ROOT__/public/simpleboot/api/css/app/record.css">
+    <link rel="stylesheet" type="text/css" href="__ROOT__/public/simpleboot/api/css/app/common.css">
+</head>
+<body style="background:#fff;">
+<div class="weixin clear">
+    <div class="bansd clear">
+        <img src="__ROOT__/public/simpleboot/api/images/app/bignh.png" class="img"/>
+        <div class="neisd clear">
+            <div class="tou"><img src="{$logoimg}"/></div>
+            <div class="cents"><h3>{$merchant_name}</h3><h4>{$cardname}</h4></div>
+            <span><img src="__ROOT__/public/simpleboot/api/images/app/erweim.png"/></span>
+        </div>
+        <div class="btnym clear">8888 8888 8888</div>
+    </div>
+    <div class="nanvc clear">
+        <ul>
+            <if condition="$jifen eq 1 ">
+                <li><h2>积分</h2>
+                    <p>111</p></li>
+            </if>
+            <if condition="$chuzhi eq 1 ">
+                <li><h2>余额</h2>
+                    <p>0.00元</p></li>
+            </if>
+
+            <if condition="$zhekou eq 1 and $type eq 1 ">
+                <li><h2>折扣</h2>
+                    <p>9.5折</p></li>
+                <elseif condition="$type eq 0"/>
+                <li class="level"><h2 style="color: #66b55d;
+    font-size: 18px;
+    font-weight: 200;
+    line-height: 25px;">等级</h2>
+                    <p>查看</p></li>
+                <else/>
+
+            </if>
+
+        </ul>
+    </div>
+    <input class="buyrns" type="button" value="快速买单"/>
+    <h1 class="pptit clear">买单可享积分抵扣</h1>
+    <div class="buttnd clear">
+        <ul>
+            <li><span>适用门店</span><a><img src="__ROOT__/public/simpleboot/api/images/app/rights.jpg"/></a></li>
+            <if condition="$chuzhi eq 1 ">
+                <li><span>会员卡充值</span><a><img src="__ROOT__/public/simpleboot/api/images/app/rights.jpg"/></a></li>
+            </if>
+            <li><span>会员卡详情</span><a><img src="__ROOT__/public/simpleboot/api/images/app/rights.jpg"/></a></li>
+        </ul>
+    </div>
+</div>
+
+</body>
+<script src="__ROOT__/public/js/jquery.js"></script>
+<script>
+    $(function () {
+        $('.buyrns,.level,.buttnd ul li').click(function () {
+            alert('不可点击!');
+        })
+    })
+</script>
+</html>

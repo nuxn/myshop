@@ -1,0 +1,14 @@
+array (
+  'service' => 'create_direct_pay_by_user',
+  'partner' => '2088421497824441',
+  'seller_id' => '2088421497824441',
+  'payment_type' => '1',
+  'notify_url' => 'http://sy.youngport.com.cn/alipay/notify_url.php',
+  'return_url' => 'http://sy.youngport.com.cn/alipay/return_url.php',
+  '_input_charset' => 'utf-8',
+  'out_trade_no' => '201792516537479',
+  'subject' => '测试',
+  'total_fee' => '0.01',
+  'show_url' => '',
+  'body' => '',
+)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header"/>
 </head>
 <body>
@@ -31,4 +32,39 @@
     input{width: 40%;}
 </style>
 </body>
+=======
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Alikoubei/index')}">口碑商户列表</a></li>
+        <li class="active"><a href="{:U('Alikoubei/add')}">添加商户</a></li>
+    </ul>
+    <form id="form1" method="post" class="form-horizontal" action="{:U('Alikoubei/add')}">
+        <input type="hidden" name="id" value="{$data.id|default=0}">
+        <div class="control-group">
+            <label class="control-label" for="mid">商户ID</label>
+            <div class="controls">
+                <input type="text" value="{$data.mch_id|default=''}" id="mch_id" name="mch_id" placeholder="请填写商户id"> <span style="color: red">*商户管理>>商户>>商户列表 下查询得到商户ID</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="koubei_url">口碑地址</label>
+            <div class="controls">
+                <input type="text" value="{$data.koubei_url|default=''}" id="koubei_url" name="koubei_url" placeholder="口碑地址"><span style="color: red">*口碑地址</span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >提交</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<style>
+    input{width: 40%;}
+</style>
+</body>
+>>>>>>> dev
 </html>

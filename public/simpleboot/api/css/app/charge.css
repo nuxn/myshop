@@ -1,0 +1,52 @@
+.charge {
+  background: #f2f2f2;
+  width: 100%;
+}
+.charge .top {
+  width: 100%;
+  background: #1e82d2;
+  height: 130px;
+  text-align: center;
+  color: #fff;
+}
+.charge .top h3 {
+  font-size: 32px;
+  color: inherit;
+  margin: 30px 0 10px 0;
+}
+.charge .top p {
+  color: inherit;
+  font-size: 13px;
+}
+.charge .bottom {
+  height: 98px;
+  width: 100%;
+  background: #fff;
+}
+.charge .bottom .col {
+  position: relative;
+  width: 33%;
+  float: left;
+  text-align: center;
+  padding: 0px 0 10px 0;
+  margin: 20px 0 0 0;
+}
+.charge .bottom .col span {
+  position: absolute;
+  height: 50px;
+  top: 4px;
+  right: 0;
+  width: 1px;
+  background: #e2e2e2;
+}
+.charge .bottom .col img {
+  width: 26px;
+  display: block;
+  margin: 0 auto 15px auto;
+}
+.charge .bottom .col p {
+  font-size: 13px;
+  color: #323232;
+  font-family: 'Microsoft Yahei';
+  font-weight: 500;
+}

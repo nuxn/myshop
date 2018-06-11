@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -66,4 +67,74 @@
 <script src="__PUBLIC__/js/common.js"></script>
 
 </body>
+=======
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Billadmin/index')}">微众对账单刘表</a></li>
+        <!--<li ><a href="{:U('Billadmin/add')}">添加商户二维码</a></li>-->
+    </ul>
+    <form class="well form-search" method="post" action="{:U('Billadmin/index')}">
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp;
+        商户编号：
+        <input type="text" name="merchant_no" style="width: 200px;" value="{$formget.merchant_no|default=''}" placeholder="请输入商户对应的编号">
+        商户名称：
+        <input type="text" name="merchant_name" style="width: 200px;" value="{$formget.merchant_name|default=''}" placeholder="请输入商户对应的名称">
+        微众订单号：
+        <input type="text" name="wz_order_zn" style="width: 200px;" value="{$formget.wz_order_zn|default=''}" placeholder="请输入商户对应的编号">
+
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Billadmin/index')}">清空</a>
+    </form>
+    <form  action="{:U('Billadmin/delete')}" method="post">
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" >ID</th>
+                <th width="70" >商户编号</th>
+                <th width="80" >商户名称</th>
+                <th width="80" >支付类型</th>
+                <th width="80" >交易状态</th>
+                <th width="70" >交易类型</th>
+                <th width="70" >微众订单号</th>
+                <th width="50" >交易金额</th>
+                <th width="80" >手续费</th>
+                <!--<th width="50" >洋仆淘收入</th>-->
+                <!--<th width="50" >代理收入</th>-->
+                <th width="70" >清算金额</th>
+                <th width="80" >添加时间</th>
+            </tr>
+            </thead>
+            <foreach name="bills" item="b">
+                <tr>
+                    <td><b>{$b.id}</b></td>
+                    <td><b>{$b.merchant_no}</b></td>
+                    <td><b>{$b.merchant_name}</b></td>
+                    <td><b>微信</b></td>
+                    <td><b>成功</b></td>
+                    <td><b>{$b.deal_type}</b></td>
+                    <td><b>{$b.wz_order_sn}</b></td>
+                    <td><b>{$b.deal_money}</b></td>
+                    <td><b>{$b.poundage}</b></td>
+                    <!--<td><b>{$b.poundage}</b></td>-->
+                    <!--<td><b>{$b.agent_bill}</b></td>-->
+                    <td><b>{$b.clearing_money}</b></td>
+                    <td>
+                        <b>{:date('Y-m-d H:i:s',$b['add_time'])}</b>
+                    </td>
+
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+>>>>>>> dev
 </html>

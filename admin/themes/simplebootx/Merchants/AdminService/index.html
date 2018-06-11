@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header"/>
 </head>
 <body>
@@ -72,4 +73,80 @@
 <style>
 </style>
 </body>
+=======
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('AdminService/index')}">开通列表</a></li>
+        <li><a href="{:U('AdminService/openList')}">商家列表</a></li>
+		<li><a href="{:U('AdminService/serverList')}">服务列表</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="">
+        商户ID:
+        <input type="text" name="id" style="width:100px;" placeholder="请输入商户ID">&nbsp;&nbsp;
+        商户名称:
+        <input type="text" name="merchant_name" placeholder="请输入商户名称">&nbsp;&nbsp;
+        开通服务:
+        <select name="order_status">
+            <option value="" selected>请选择</option>
+            <option value="1">小程序</option>
+        </select>&nbsp;&nbsp;
+        &nbsp;&nbsp;
+        到期时间:
+        <input type="text" class="js-date" value="{$start_time}" name="start_time" placeholder="开始时间" />-<input type="text" class="js-date" name="end_time" value="{$end_time}" placeholder="结束时间"  />
+        &nbsp;&nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('AdminService/index')}">清空</a>
+    </form>
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th>商户ID</th>
+            <th>商户名称</th>
+            <th>开通服务</th>
+            <th>支付金额</th>
+            <th>支付方式</th>
+            <th>开始时间</th>
+            <th>到期时间</th>
+            <th width="120">{:L('ACTIONS')}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="data_lists" item="vo">
+            <tr>
+                <td>{$vo.id}</td>
+                <td>{$vo.merchant_name}</td>
+                <td>
+                    <if condition="$vo.type eq '1'">
+                        小程序
+                        <else/>
+                        {$vo.type}
+                    </if>
+                </td>
+                <td>{$vo.order_price}</td>
+                <td>
+                    <if condition="$vo.pay_type eq 'admin'">管理员开通</if>
+                    <if condition="$vo.pay_type eq 'zfb'">支付宝</if>
+                    <if condition="$vo.pay_type eq 'wx'">微信</if>
+                    <if condition="$vo.pay_type eq 'yue'">余额</if>
+                    <if condition="$vo.pay_type eq ''">未支付</if>
+                </td>
+                <td>{$vo['start_time']|date="Y-m-d H:i:s",###}</td>
+                <td>{$vo['end_time']|date="Y-m-d H:i:s",###}</td>
+                <td>
+                    <a href='{:U("AdminService/detail",array("id"=>$vo["id"]))}'>详情</a>
+                </td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+    <div class="pagination" style="text-align: right">{$page}</div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<style>
+</style>
+</body>
+>>>>>>> dev
 </html>

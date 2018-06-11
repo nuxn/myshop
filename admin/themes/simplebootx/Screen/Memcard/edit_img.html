@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header"/>
 <script src="__PUBLIC__/js/layer/layer.js"></script>
 <script src="__PUBLIC__/js/ajaxfileupload.js"></script>
@@ -103,4 +104,111 @@
             }
         )
     }
+=======
+<admintpl file="header"/>
+<script src="__PUBLIC__/js/layer/layer.js"></script>
+<script src="__PUBLIC__/js/ajaxfileupload.js"></script>
+<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script>
+</head>
+<body>
+<div class="wrap" style="width: 800px;">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Memcard/index')}">返回</a></li>
+    </ul>
+    <div class="box3">
+        <form id="form1" method="post" class="form-horizontal" action="{:U('Memcard/edit_img')}">
+            <h3 align="center">资料</h3>
+            <div class="control-group">
+                <label class="control-label" for="cardname">会员卡名称</label>
+                <div class="controls">
+                    <input type="text" id="cardname" value="{$info.cardname}" >
+                    <input type="hidden" name="id" value="{$info.id}" >
+                    <input type="hidden" name="card_id" value="{$info.card_id}" >
+                </div>
+            </div>
+            <div class="control-group qiyea">
+                <label class="control-label" for="logoimg">头像</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="logoimg" class="logoimg">
+                            <if condition="$info['logoimg'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.logoimg}" style="height: 60px">
+                            </if>
+                            <input type="file" id="logoimg" name="logoimg" style="display: none" value="{$info.logoimg|default=''}"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">请上传头像</label>
+                </div>
+            </div>
+            <hr>
+            <div class="control-group qiyea">
+                <label class="control-label" for="bgimg">背景</label>
+                <div class="controls">
+                    <a class="file">
+                        <label for="bgimg" class="bgimg">
+                            <if condition="$info['bgimg'] eq ''">
+                                <img src="__PUBLIC__/js/o_ff6.png" style="height: 60px">
+                                <else/>
+                                <img src="{$info.bgimg}" style="height: 60px">
+                            </if>
+                            <input type="file" id="bgimg" name="bgimg" style="display: none" value="{$info.bgimg|default=''}"
+                                   onchange="ajaxFileUpload(this);"/>
+                        </label></a><br/>
+                    <label class="pic2">请上传背景</label>
+                </div>
+            </div>
+            <hr>
+            <div class="form-actions">
+                <button type="submit" onclick="return confirm('你确定需要修改该商户的会员卡的背景或头像吗？')" id="onSubmit" class="btn btn-primary js-ajax-submit">确定</button>
+                <a class="btn" href="javascript:history.back(-1);">返回</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/global.js"></script>
+<script>
+
+</script>
+<style>
+    input {
+        width: 60%;
+    }
+</style>
+</body>
+</html>
+<script type="text/javascript">
+    function ajaxFileUpload(thisobj) {
+        var fileid = $(thisobj).attr("id");
+        $.ajaxFileUpload
+        (
+            {
+                url: '{:U("Memcard/upload_into")}', //用于文件上传的服务器端请求地址
+                secureuri: false, //是否需要安全协议，一般设置为false
+                fileElementId: fileid, //文件上传域的ID
+                data: {data: fileid},
+                dataType: 'json', //返回值类型 一般设置为json 
+                success: function (data)  //服务器成功响应处理函数
+                {
+                    if (data.type == 1) {
+                        var name = data.name
+                        var path = data.path;
+                        var content = "<img src='" + path + "' style='height: 100px'>" +
+                            "<input type='hidden'  name='"+name+"' value='" + path + "'>";
+                        $('.' + name).html(content);
+                    } else if (data.type == 2) {
+                        alert(data.message);
+                    }
+                },
+                error: function ()//服务器响应失败处理函数
+                {
+                    alert('网络请求失败,请重新上传图片');
+                }
+            }
+        )
+    }
+>>>>>>> dev
 </script>

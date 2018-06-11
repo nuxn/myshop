@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -177,4 +178,185 @@
 
 </script>
 </body>
+=======
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('cateadmin/index')}">台签列表</a></li>
+        <li class="active"><a href="#">台签编辑</a></li>
+    </ul>
+    <form method="post"  action="{:U('cateadmin/edit_post')}" class="form-horizontal " enctype="multipart/form-data">
+        <fieldset>
+            <input type="hidden" name="id" value="{$shopcate['id']}">
+            <div class="control-group">
+                <label class="control-label">商户ID:</label>
+                <div class="controls">
+                    <input type="text" class="merchant_id" name="merchant_id" value="{$shopcate[merchant_id]}" placeholder="请填入商户对应的ID"><span class="form-required">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">收银员的手机号:</label>
+                <div class="controls">
+                    <input type="text" name="checker_phone" value="{$shopcate['checker_phone']}" placeholder="请填入收银员手机号"><span class="form-required">* 无需修改</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">台签名称:</label>
+                <div class="controls">
+                    <input type="text" name="cate_name"  <if condition ="$shopcate['cate_name'] eq '' ">value="" <else/>value="{$shopcate['cate_name']}" </if> placeholder="请填入收银员手机号"><span class="form-required">* 如果没有不用填</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">二维码前缀:</label>
+                <div class="controls">
+                    <input type="text" name="qz_number" value="{$shopcate[qz_number]}" placeholder="请填入商户对应的ID"><span class="form-required">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">商户简称:</label>
+                <div class="controls">
+                    <input type="text" name="post[jianchen]" value="{$shopcate['jianchen']}" placeholder="请填入商户简称"><span class="form-required">*</span>
+                </div>
+            </div>
+
+            <h2>支付宝信息填写:</h2>
+            <div class="control-group">
+                <label class="control-label">支付连接银行:</label>
+                <div class="controls">
+                <select name="ali_bank"  class="ali_bank" onChange="change_ali(this)">
+                    <option value="">选择</option>
+                    <!--<option value="2" <if condition="$shopcate.ali_bank eq 2 ">selected</if> >深圳民生银行</option>-->
+                    <option value="3" <if condition="$shopcate.ali_bank eq 3 ">selected</if> >支付宝官方</option>
+                    <!--<option value="4" <if condition="$shopcate.ali_bank eq 4 ">selected</if> >招商银行</option>-->
+                    <!--<option value="6" <if condition="$shopcate.ali_bank eq 6 ">selected</if> >济南民生银行</option>-->
+                    <option value="7" <if condition="$shopcate.ali_bank eq 7 ">selected</if> >兴业银行</option>
+                    <option value="9" <if condition="$shopcate.ali_bank eq 9 ">selected</if> >宿州李灿</option>
+                    <option value="10" <if condition="$shopcate.ali_bank eq 10 ">selected</if> >东莞中信</option>
+                    <option value="11" <if condition="$shopcate.ali_bank eq 11 ">selected</if> >新大陆</option>
+                    <option value="12" <if condition="$shopcate.ali_bank eq 12 ">selected</if> >乐刷</option>
+                    <option value="13" <if condition="$shopcate.ali_bank eq 13 ">selected</if> >平安付</option>
+                </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">支付宝商户名:</label>
+                <div class="controls">
+                    <input type="text" name="post[name]" value="{$shopcate['name']}" placeholder="请填入支付宝的商户名"><span class="form-required">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">支付宝KEY</label>
+                <div class="controls">
+                    <input type="text" class="ali_public_key" name="alipay_public_key" value="{$shopcate['alipay_public_key']}" placeholder="请填入支付宝的key"><span class="form-required">*没有的不填</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">支付宝ID:</label>
+                <div class="controls">
+                    <input type="text" class="alipay_partner" name="post[alipay_partner]" value="{$shopcate['alipay_partner']}" placeholder="请填入支付宝的ID"><span class="form-required">*</span>
+                </div>
+            </div>
+            <h2>微信的信息填写:</h2>
+            <div class="control-group">
+                <label class="control-label">微信连接银行:</label>
+                <div class="controls">
+                    <select name="wx_bank" class="wx_bank" onChange="change_wx(this)">
+                        <option value="">请选择</option>
+                        <!--<option value="1" <if condition="$shopcate.wx_bank eq 1 ">selected</if>>微众银行</option>-->
+                        <!--<option value="2" <if condition="$shopcate.wx_bank eq 2 ">selected</if> >深圳民生银行</option>-->
+                        <!--<option value="4" <if condition="$shopcate.wx_bank eq 4 ">selected</if> >招商银行</option>-->
+                        <!--<option value="5" <if condition="$shopcate.wx_bank eq 5 ">selected</if> >钱方好近支付</option>-->
+                        <!--<option value="6" <if condition="$shopcate.wx_bank eq 6 ">selected</if> >济南民生银行</option>-->
+                        <option value="3" <if condition="$shopcate.wx_bank eq 3 ">selected</if> >微信围餐</option>
+                        <option value="7" <if condition="$shopcate.wx_bank eq 7 ">selected</if> >兴业银行</option>
+                        <option value="9" <if condition="$shopcate.wx_bank eq 9 ">selected</if> >宿州李灿</option>
+                        <option value="10" <if condition="$shopcate.wx_bank eq 10 ">selected</if> >东莞中信</option>
+                        <option value="11" <if condition="$shopcate.wx_bank eq 11 ">selected</if> >新大陆</option>
+                        <option value="12" <if condition="$shopcate.wx_bank eq 12 ">selected</if> >乐刷</option>
+                        <option value="13" <if condition="$shopcate.wx_bank eq 13 ">selected</if> >平安付</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">微信商户名:</label>
+                <div class="controls">
+                    <input type="text" name="post[wx_name]" value="{$shopcate['wx_name']}" placeholder="请填入微信的商户名"><span class="form-required">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">微信KEY</label>
+                <div class="controls">
+                    <input type="text" class="wx_key" name="post[wx_key]" value="{$shopcate['wx_key']}" placeholder="请填入微信的KEY"><span class="form-required">*没有的不填</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">微信MCHID</label>
+                <div class="controls">
+                    <input type="text" class="wx_mchid" name="post[wx_mchid]" value="{$shopcate['wx_mchid']}" placeholder="请填入微信的MCHID"><span class="form-required">*</span>
+                </div>
+            </div>
+
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">提交</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+
+    function change_ali()
+    {
+        var data={
+            ali_bank :$(".ali_bank").val(),
+            merchant_id:$(".merchant_id").val()
+        };
+        $.post("{:U('AdminIndex/ali_change_bank')}", data, function(ad){
+            if(ad.status == 0){
+                alert("该商户还未进件");
+                return false;
+                $(".alipay_partner").val("");
+                $(".ali_mchid").val("");
+            }else if(ad.status == 1)
+            {
+                var ali_mchid=ad.ali_mchid;
+                var ali_public_key=ad.ali_public_key;
+                $(".alipay_partner").val(ali_mchid);
+                $(".ali_public_key").val(ali_public_key);
+            }
+        },"json");
+    }
+
+    function change_wx()
+    {
+        var data={
+            ali_bank :$(".wx_bank").val(),
+            merchant_id:$(".merchant_id").val()
+        };
+        console.log(data);
+        $.post("{:U('AdminIndex/wx_change_bank')}", data, function(ad){
+            if(ad.status == 0){
+                alert(ad.message);
+                return false;
+                $(".wx_key").val("");
+                $(".wx_mchid").val("");
+            }else if(ad.status == 1)
+            {
+                var wx_mchid=ad.wx_mchid;
+                var wx_key=ad.wx_key;
+                $(".wx_key").val(wx_key);
+                $(".wx_mchid").val(wx_mchid);
+            }
+        },"json");
+    }
+
+</script>
+</body>
+>>>>>>> dev
 </html>

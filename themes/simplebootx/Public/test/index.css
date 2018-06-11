@@ -1,0 +1,119 @@
+.title{
+    width:100%;
+    padding:15px 0 0 15px;
+}
+.success img{
+    display:block;
+    margin:10px auto 0;
+}
+.success p{
+    margin:15px 0 0 0;
+    text-align:center;
+    font-size:1rem;
+    color:rgb(49,200,63);
+}
+.success .price{
+    text-align:center;
+    padding-left:37%;
+    font-size:2rem;
+}
+.success .discount{
+    padding-left:5px;
+    font-size: 0.8rem;
+    color:rgb(175,175,175);
+}
+.title h6{
+    height:40px;
+    line-height:40px;
+    padding-left:50px;
+    background:url(./head.png)  no-repeat 0 0/40px 40px;
+}
+.borker .rect{
+    display:block;
+    margin:0 auto;
+    width:100%;
+    height:61px;
+}
+.borker{
+    position:relative;
+    margin-top:10px;
+    padding:0 12px;
+}
+.borker .juan{
+    position:absolute;
+    left:7%;
+    top:30%;
+}
+.borker p{
+    font-familly:微软雅黑;
+    position:absolute;
+    width:70%;
+    left:11%;
+    top:27%;
+    font-size:1rem;
+    color:#fff;
+    letter-spacing: 1px;
+}
+.borker a{
+    display:inline-block;
+    font-size:0.9rem;
+    padding:2px 12px;
+    border-radius: 5px;
+    background:#fff;
+    color:rgb(246,170,172);
+    position:absolute;
+    left:72%;
+    top:27%;
+}
+.recommend{
+    width:100%;
+    height:300px;
+    margin-top:15px;
+    padding:20px 0 10px 0;
+    background: linear-gradient(to bottom right, rgb(210,229,238) , rgb(147,193,229));
+}
+.line{
+    width:185px;
+    margin:0 auto;
+    border-top:1px solid #fff;
+    position:relative;
+    top:0px;
+}
+.line span{
+    color:#fff;
+    position:absolute;
+    padding:0 5px;
+    left:57px;
+    top:-12px;
+    z-index:10;
+    background:rgb(192,219,235);
+}
+.swiper-container{
+    padding:19px 0;
+}
+.swiper-slide{
+    width:84%;
+    padding:0 6px;
+}
+.swiper-slide img{
+    width:100%;
+    display:block;
+    margin:0 auto;
+}
+.swiper-container-horizontal>.swiper-pagination-bullets, .swiper-pagination-custom, .swiper-pagination-fraction{
+    bottom:-1px;
+}
+.swiper-pagination-bullet{
+    background:rgba(240,230,216,1);
+}
+.swiper-pagination-bullet-active{
+    background:rgb(53,122,174);
+}
+.footer{
+    width:100%;
+    margin:5px auto;
+}
+.footer img{
+    display:block;
+    margin:0 auto;
+}

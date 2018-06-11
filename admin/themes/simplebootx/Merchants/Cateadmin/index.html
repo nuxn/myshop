@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 <script src="__PUBLIC__/js/layer/layer.js"></script>
 </head>
@@ -161,4 +162,169 @@
 </script>
 
 </body>
+=======
+<admintpl file="header" />
+<script src="__PUBLIC__/js/layer/layer.js"></script>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('cateadmin/index')}">商户二维码列表</a></li>
+        <!--<li ><a href="{:U('cateadmin/add')}">添加商户二维码</a></li>-->
+    </ul>
+    <form class="well form-search" method="post" action="{:U('cateadmin/index')}">
+        商户电话：
+        <input type="text" name="user_phone" style="width: 200px;" value="{$formget['user_phone']|default=''}" placeholder="请输入商户对应的电话号码">
+        商户简称：
+        <input type="text" name="jianchen" style="width: 200px;" value="{$formget['jianchen']|default=''}" placeholder="请输入商户对应的简称">
+        商户ID：
+        <input type="text" name="merchant_id" style="width: 200px;" value="{$formget['merchant_id']|default=''}" placeholder="商户ID" style="width: 99px;">
+        二维码编号：
+        <input type="text" name="no_number" style="width: 200px;" value="{$formget['no_number']|default=''}" placeholder="请输入商户对应的二维码">&nbsp;&nbsp;&nbsp;
+        <br><br>
+        审核状态：
+        <select name="status" style="width: 120px;">
+            <option value=''>全部</option>
+            <option value='0'>未审核</option>
+            <option value='1'>已审核</option>
+        </select>&nbsp;
+        使用状态：
+        <select name="is_use" style="width: 120px;">
+            <option value=''>全部</option>
+            <option value='1' <if condition="$formget['is_use'] eq 1">selected</if>>未使用</option>
+            <option value='2' <if condition="$formget['is_use'] eq 2">selected</if>>已使用</option>
+        </select>&nbsp;
+        测试号：
+        <select name="is_test" style="width: 120px;">
+            <option value=''>全部</option>
+            <option value='2' <if condition="$formget['is_test'] eq 2">selected</if>>测试</option>
+            <option value='1' <if condition="$formget['is_test'] eq 1">selected</if>>非测试号</option>
+        </select>&nbsp;
+        微信通道：
+        <select name="wx_bank" style="width: 120px;">
+            <option value=''>全部</option>
+            <foreach name="wx_bank" item="vo" key="k">
+                <option value='{$k}' <if condition="$formget['wx_bank'] eq $k">selected</if>>{$vo}</option>
+            </foreach>
+        </select>&nbsp;
+        支付宝通道：
+        <select name="ali_bank" style="width: 120px;">
+            <option value=''>全部</option>
+            <foreach name="ali_bank" item="vo" key="k">
+                <option value='{$k}' <if condition="$formget['ali_bank'] eq $k">selected</if>>{$vo}</option>
+            </foreach>
+        </select>
+        <br><br>
+        所属公司：
+        <select name="who" style="width: 120px;">
+            <option value='YPT' <if condition="$formget['who'] eq 'YPT'">selected</if>>洋仆淘</option>
+            <option value='QT' <if condition="$formget['who'] eq 'QT'">selected</if>>其它</option>
+        </select>&nbsp;
+        创建时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget['start_time']|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" value="{$formget['end_time']|default=''}" style="width: 120px;" autocomplete="off"> &nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Cateadmin/index')}">清空</a>
+    </form>
+    <form  action="{:U('Cateadmin/delete')}" method="post">
+        <!--<div class="table-actions">-->
+            <!--<button class="btn btn-danger btn-md " type="submit"  data-subcheck="true" data-msg="你确定删除吗？">全选删除</button>-->
+
+        <!--</div>-->
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <!--<th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>-->
+                <!--<th width="40" >ID</th>-->
+                <th width="40" >商户ID</th>
+                <th width="50" >商户的电话</th>
+                <th width="50" >收银员的电话</th>
+                <th width="50" >商户简称</th>
+                <th width="70" >台签名称</th>
+                <th width="70" >支付宝通道</th>
+                <th width="70" >微信通道</th>
+                <!--<th width="80" >二维码编号</th>-->
+                <th width="50" >商户二维码(点击显示)</th>
+                <th width="40" >审核</th>
+                <th width="90" >创建时间</th>
+                <th width="50" >操作</th>
+            </tr>
+            </thead>
+            <foreach name="shopcates" item="s">
+                <tr>
+                    <!--<td><input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$s.id}" ></td>-->
+                    <!--<td><b>{$s.id} </b></td>-->
+                    <td><b>{$s.merchant_id}</b></td>
+                    <td><b>{$s.user_phone}</b></td>
+                    <td><b>{$s.checker_phone}</b></td>
+                    <td><b>{$s.jianchen}</b></td>
+                    <td><b><if condition="$s.cate_name eq ''">默认台签<else/>{$s.cate_name}</if></b></td>
+                    <td><b>{:bank_name($s['ali_bank'])}</b></td>
+                    <td><b>{:bank_name($s['wx_bank'])}</b></td>
+                    <!--<td><b>{$s.no_number}</b></td>-->
+                    <td data="{$s.barcode_img}" onclick="barcode_img(this);">{$s.no_number}</td>
+
+                    <!--<td>-->
+                        <!--<img src="{$s.barcode_img}" alt="" width="120px" height="20px">-->
+                    <!--</td>-->
+                    <td >
+                        <span class="change_status" data-status="{$s.status}" data-id="{$s.id}">
+                        <img src="__PUBLIC__/images/status_{$s.status}.gif" alt="改变状态" >
+                        </span>
+                        <!--{:show_status($p)}-->
+                    </td>
+                    <td>
+                        <b>{:date('Y-m-d H:i:s',$s['create_time'])}</b>
+                    </td>
+                    <td>
+                        <a href="{:U('Cateadmin/edit',array('id'=>$s['id']))}">编辑</a> |
+                        <a href="{:U('Cateadmin/detail',array('id'=>$s['id']))}">台签</a> |
+                    </td>
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+<script>
+    $(function(){
+//        改变上线状态
+        $(".change_status").click(function(){
+            var data = {
+                id : $(this).data('id')
+            };
+            console.log(data);
+            var _this = $(this);
+            $.post("{:U('Cateadmin/change_status')}", data, function(ad){
+                _this.children("img").attr("src","__PUBLIC__/images/status_"+ad+".gif")
+                console.log(ad);
+            },"json");
+        })
+//
+
+    })
+
+    function barcode_img(thisobj){
+        var img=$(thisobj).attr("data");
+        if(img==''){
+            return;
+        }
+        var content='<img style="width:100%" src="http://sy.youngport.com.cn/'+img+'">';
+        layer.open({
+            type: 1,
+            title: false,
+            offset: '100px',
+            closeBtn: 0,
+            area: '400px',
+            skin: 'layui-layer-nobg', //没有背景色
+            shadeClose: true,
+            content: content
+        });
+    }
+</script>
+
+</body>
+>>>>>>> dev
 </html>

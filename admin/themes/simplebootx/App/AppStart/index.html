@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 
 </head>
@@ -72,4 +73,80 @@
     })
 </script>
 </body>
+=======
+<admintpl file="header" />
+
+</head>
+<body>
+
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('AppStart/index')}">启动页列表</a></li>
+        <li><a href="{:U('AppStart/add')}" target="_self">新增启动页</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('AppStart/index')}">
+        名称：
+        <input type="text" name="name" style="width: 200px;" value="{$name}" placeholder="请输入图片的名称">&nbsp;
+        开始时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$start_time}" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" value="{$end_time}" style="width: 120px;" autocomplete="off"> &nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('AppStart/index')}">清空</a>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" >ID</th>
+                <th width="70" >名称</th>
+                <th width="70" >图片</th>
+                <th width="70" >开始时间</th>
+                <th width="70" >结束时间</th>
+                <th width="70" >状态</th>
+                <th width="70" >操作</th>
+            </tr>
+            </thead>
+            <foreach name="lists" item="a">
+                <tr>
+                    <td><b>{$a.id}</b></td>
+                    <td><b>{$a.name}</b></td>
+                    <td><img src="{$a.thumb}" alt="" width="80px"></td>
+                    <td><b>{$a.start_time|date='Y-m-d H:i:s',###}</b></td>
+                    <td><b>{$a.end_time|date='Y-m-d H:i:s',###}</b></td>
+                    <td >
+                        <span class="change_status" data-status="{$a.status}" data-id="{$a.id}">
+                        <img src="__PUBLIC__/images/status_{$a.status}.gif" alt="改变状态" >
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{:U('AppStart/detail',array('id'=>$a['id']))}">详情</a> |
+                        <a href="{:U('AppStart/edit',array('id'=>$a['id']))}">编辑</a> |
+                        <a href="{:U('AppStart/delete',array('id'=>$a['id']))}" onclick="javascript:if(!confirm('你确认要删除吗')){{return false}}">删除</a>
+                    </td>
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    $(function(){
+        $(".change_status").click(function(){
+            var data = {
+                id : $(this).data('id')
+            };
+            console.log(data);
+            var _this = $(this);
+            $.post("{:U('AppStart/change_status')}", data, function(ad){
+                _this.children("img").attr("src","__PUBLIC__/images/status_"+ad+".gif")
+                console.log(ad);
+            },"json");
+        })
+////
+//
+    })
+</script>
+</body>
+>>>>>>> dev
 </html>

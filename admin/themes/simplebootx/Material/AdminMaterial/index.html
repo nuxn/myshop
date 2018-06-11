@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header"/>
 </head>
 <body>
@@ -79,4 +80,87 @@
 <script src="__PUBLIC__/js/common.js"></script>
 
 </body>
+=======
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">{:L('LIST')}</a></li>
+        <li><a href="{:U('AdminMaterial/add')}" target="_self">{:L('ADD')}</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('AdminMaterial/index')}">
+        分类：
+        <select name="cate_id" style="width: 120px;">
+            <option value="">全部</option>
+            <foreach name="cate_lists" item="v" key="k">
+                <eq name="v.id" value="$cate_id">
+                    <option value="{$v.id}" selected>{$v.title}</option>
+                    <else/>
+                    <option value="{$v.id}">{$v.title}</option>
+                </eq>
+            </foreach>
+        </select> &nbsp;&nbsp;
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp; &nbsp;
+        关键字：
+        <input type="text" name="title" style="width: 200px;" value="{$formget.title|default=''}" placeholder="请输入标题...">
+        <input type="submit" class="btn btn-primary" value="搜索"/>
+        <a class="btn btn-danger" href="{:U('AdminMaterial/index')}">清空</a>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <div class="table-actions">
+            <notempty name="term">
+                <button class="btn btn-primary btn-small js-ajax-submit" type="submit" data-action="{:U('AdminPost/listorders')}">{:L('SORT')}</button>
+            </notempty>
+            <button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('AdminMaterial/delete')}" data-subcheck="true" data-msg="您确定删除吗？">{:L('DELETE')}</button>
+        </div>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>
+                <th width="20">ID</th>
+                <th width="50">分类名称</th>
+                <th width="50">二维码编号</th>
+                <th width="20">二维码图片</th>
+                <th width="20">添加时间</th>
+                <th width="20">修改时间</th>
+<!--                <th width="50">操作人</th>-->
+                <th width="50">状态</th>
+                <th width="50">操作</th>
+            </tr>
+            </thead>
+            <foreach name="data_lists" item="vo">
+                <tr>
+                    <td><input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$vo.id}" title="ID:{$vo.id}"></td>
+                    <td><b>{$vo.id}</b></td>
+                    <td>{$vo.title}</td>
+                    <td>{$vo.no_number}</td>
+                    <td width="50"><img style="height: 25%;" src="/{$vo.barcode_img}"/></td>
+                    <td>{$vo['create_time']|date="Y-m-d H:i:s",###}</td>
+                    <td>{$vo['update_time']|date="Y-m-d H:i:s",###}</td>
+<!--                    <td>{$vo.admin_id}</td>-->
+                    <td>
+                        <if condition="$vo.status eq 0">
+                            <a data-toggle="tooltip" title="正常"><i class="fa fa-check"></i></a>
+                            <else/>
+                            <a data-toggle="tooltip" title="异常"><i class="fa fa-close"></i></a>
+                        </if>
+                    </td>
+                    <td>
+<!--                        <a href="{:U('AdminMaterial/edit',array('id'=>$vo['id']))}">{:L('EDIT')}</a> |-->
+                        <a href="{:U('AdminMaterial/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:L('DELETE')}</a>
+                    </td>
+                </tr>
+            </foreach>
+
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+>>>>>>> dev
 </html>

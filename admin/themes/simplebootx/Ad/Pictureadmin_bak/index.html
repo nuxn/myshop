@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 
 </head>
@@ -110,4 +111,118 @@
     })
 </script>
 </body>
+=======
+<admintpl file="header" />
+
+</head>
+<body>
+
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">图片广告列表</a></li>
+        <li><a href="{:U('Pictureadmin/add')}" target="_self">新增图片广告</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('Pictureadmin/index')}">
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" value="" style="width: 120px;" autocomplete="off"> &nbsp;
+        通道：
+        <select name="road" style="width: 120px;">
+            <option value='0'>全部</option>
+            <option value='1'>支付宝</option>
+            <option value='2'>微信</option>
+        </select>&nbsp;
+        来源：
+        <select name="outin" style="width: 120px;">
+            <option value='0'>全部</option>
+            <option value='1'>公司内部</option>
+            <option value='2'>公司运营</option>
+        </select>
+        投放位置：
+        <select name="callstyle" style="width: 120px;">
+            <option value='0'>全部</option>
+            <option value='1'>设备上</option>
+            <option value='2'>手机上</option>
+        </select>
+        主题：
+        <input type="text" name="keyword" style="width: 200px;" value="" placeholder="请输入对应的主题">
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Pictureadmin/index')}">清空</a>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <div class="table-actions">
+            <button class="btn btn-primary btn-md js-ajax-submit" type="submit" data-action="{:U('Pictureadmin/add')}" data-subcheck="true">新增</button>
+        </div>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" >ID</th>
+                <th width="70" >跳转地址</th>
+                <th width="70" >主题</th>
+                <th width="70" >内容</th>
+                <th width="70" >图片</th>
+                <th width="70" >通道</th>
+                <th width="70" >来源</th>
+                <th width="70" >投放位置</th>
+                <th width="70" >排序</th>
+                <th width="70" >审核</th>
+                <th width="70" >开始时间</th>
+                <th width="70" >结束时间</th>
+                <th width="70" >操作</th>
+            </tr>
+            </thead>
+            <foreach name="advers" item="a">
+                <tr>
+                    <td><b>{$a.id}</b></td>
+                    <td><b>{$a.url}</b></td>
+                    <td><b>{$a.title}</b></td>
+                    <td><b>{$a.content}</b></td>
+                    <td><img src="{$a['thumb']}" alt="" width="80px"></td>
+                    <td><b>{:road_style($a['road'])}</b></td>
+                    <td><b>{:outin_style($a['outin'])}</b></td>
+                    <td><b>{:call_style($a['callstyle'])}</b></td>
+                    <td><b>{$a.sort}</b></td>
+                    <td >
+                        <span class="change_status" data-status="{$a.status}" data-id="{$a.id}">
+                        <img src="__PUBLIC__/images/status_{$a.status}.gif" alt="改变状态" >
+                        </span>
+                        <!--{:show_status($p)}-->
+                    </td>
+                    <td>
+                        <b>{:date('Y-m-d H:i:s',$a['start_time'])}</b>
+                    </td>
+                    <td>
+                        <b>{:date('Y-m-d H:i:s',$a['end_time'])}</b>
+                    </td>
+                    <td>
+                        <a href="{:U('Pictureadmin/edit',array('id'=>$a['id']))}">编辑</a> |
+                        <a href="{:U('Pictureadmin/delete',array('id'=>$a['id']))}" onclick="javascript:if(!confirm('你确认要删除吗')){{return false}}">删除</a>
+                    </td>
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    $(function(){
+//        改变广告有效性
+        $(".change_status").click(function(){
+            var data = {
+                id : $(this).data('id')
+            };
+            console.log(data);
+            var _this = $(this);
+            $.post("{:U('Pictureadmin/change_status')}", data, function(ad){
+                _this.children("img").attr("src","__PUBLIC__/images/status_"+ad+".gif")
+                console.log(ad);
+            },"json");
+        })
+////
+//
+    })
+</script>
+</body>
+>>>>>>> dev
 </html>

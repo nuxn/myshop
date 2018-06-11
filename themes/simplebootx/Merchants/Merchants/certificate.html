@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>商户证件</title>
+    <meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="wap-font-scale" content="no">
+    <meta name="viewport" content="width=375,target-densitydpi=320,user-scalable=no">
+    <!--[if IE]>
+    <script type="text/javascript" src="__TMPL__Public/assets/merchants/js/html5.js"></script>
+    <![endif]-->
+    <!--[if lt ie 9]>
+    <script type="text/javascript" src="__TMPL__Public/assets/merchants/js/css3-mediaqueries.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="__TMPL__Public/assets/merchants/css/all.css"/>
+    <link rel="stylesheet" href="__TMPL__Public/assets/merchants/css/self.css"/>
+    <link rel="stylesheet" href="__TMPL__Public/assets/merchants/css/self-xys.css"/>
+</head>
+<body class="dc-bk1 dc-pb">
+<!-- body -->
+<div id="bd">
+    <div class="page-m2">
+        <form action="{:U('merchants/index')}" method="post" onsubmit="return checkInfo()">
+            <div class="upload1-tt">
+                <ul class="zj-radioList1 TAB_CLICK" id=".cont1">
+                    <li>
+                        <label for="radid1" class="zj-inputList2-m1 rdchcked">
+                            <span class="tt"><input class="hid" type="radio" id="radid1" name="radio1" value="1"
+                                                    checked></span>
+                            <div class="txt"><span>有门头</span></div>
+                        </label>
+                    </li>
+                    <li>
+                        <label for="radid2" class="zj-inputList2-m1">
+                            <span class="tt"><input class="hid" type="radio" id="radid2" name="radio1" value="0"></span>
+                            <div class="txt"><span>没有门头</span></div>
+                        </label>
+                    </li>
+                </ul><!-- zj-radioList1 end -->
+            </div><!-- upload1-tt end -->
+            <div class="upload1-ct">
+                <div class="cont1" id="content1">
+                    <div class="clear hh15"></div>
+                    <ul class="uploadimg1">
+                        <li>
+                            <div class="uploadimg1-m1">
+                                <div class="tt">
+                                    <h3>门头照片</h3>
+                                    <small>请上传申请人和店铺门头合照,清晰勿裁剪,10M以内</small>
+                                </div>
+                                <div class="img">
+                                    <!-- 上传的照片 -->
+                                    <img class="img1" src="__TMPL__Public/assets/merchants/images/pt-img3.jpg" alt="">
+                                    <!-- 其他辅助控件 -->
+                                    <span class="dc-btn2 up-open1" id="image0"><img
+                                            src="__TMPL__Public/assets/merchants/images/pt-ico8.png" alt=""></span>
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img5.png" alt="" class="img2">
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img9.png" alt="" class="img3">
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="uploadimg1-m1">
+                                <div class="tt">
+                                    <h3>营业执照(原件)</h3>
+                                    <small>请上传营业执照原件彩色照片,10M以内</small>
+                                </div>
+                                <div class="img">
+                                    <!-- 上传的照片 -->
+                                    <img class="img1" src="__TMPL__Public/assets/merchants/images/pt-img4.jpg" alt="">
+                                    <!-- 其他辅助控件 -->
+                                    <span class="dc-btn2 up-open1" id="image1"><img
+                                            src="__TMPL__Public/assets/merchants/images/pt-ico8.png" alt=""></span>
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img5.png" alt="" class="img2">
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img9.png" alt="" class="img3">
+                                </div>
+                            </div>
+                        </li>
+                    </ul><!-- uploadimg1 end -->
+                </div><!-- cont1 end -->
+                <div class="cont1 dn" id="content0">
+                    <div class="pagem21"><span>请提供店铺3张不同内景图,清晰勿裁剪,10M以内</span></div>
+                    <ul class="uploadimg1">
+                        <li class="li-a">
+                            <div class="uploadimg1-m1">
+                                <div class="tt">
+                                    <h3>内景图1：</h3>
+                                </div>
+                                <div class="img">
+                                    <!-- 上传的照片 -->
+                                    <img class="img1" src="__TMPL__Public/assets/merchants/images/pt-img6.jpg" alt="">
+                                    <!-- 其他辅助控件 -->
+                                    <span class="dc-btn2 up-open1" id="image2"><img
+                                            src="__TMPL__Public/assets/merchants/images/pt-ico8.png" alt=""></span>
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img5.png" alt="" class="img2">
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img9.png" alt="" class="img3">
+                                </div>
+                            </div>
+                        </li>
+                        <li class="li-a">
+                            <div class="uploadimg1-m1">
+                                <div class="tt">
+                                    <h3>内景图2：</h3>
+                                </div>
+                                <div class="img">
+                                    <!-- 上传的照片 -->
+                                    <img class="img1" src="__TMPL__Public/assets/merchants/images/pt-img7.jpg" alt="">
+                                    <!-- 其他辅助控件 -->
+                                    <span class="dc-btn2 up-open1" id="image3"><img
+                                            src="__TMPL__Public/assets/merchants/images/pt-ico8.png" alt=""></span>
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img5.png" alt="" class="img2">
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img9.png" alt="" class="img3">
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="uploadimg1-m1">
+                                <div class="tt">
+                                    <h3>内景图3：</h3>
+                                </div>
+                                <div class="img">
+                                    <!-- 上传的照片 -->
+                                    <img class="img1" src="__TMPL__Public/assets/merchants/images/pt-img8.jpg" alt="">
+                                    <!-- 其他辅助控件 -->
+                                    <span class="dc-btn2 up-open1" id="image4"><img
+                                            src="__TMPL__Public/assets/merchants/images/pt-ico8.png" alt=""></span>
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img5.png" alt="" class="img2">
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img9.png" alt="" class="img3">
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="uploadimg1-m1">
+                                <div class="tt">
+                                    <h3>营业执照(原件)</h3>
+                                    <small>请上传营业执照原件彩色照片,10M以内</small>
+                                </div>
+                                <div class="img">
+                                    <!-- 上传的照片 -->
+                                    <img class="img1" src="__TMPL__Public/assets/merchants/images/pt-img4.jpg" alt="">
+                                    <!-- 其他辅助控件 -->
+                                    <span class="dc-btn2 up-open1" id="image5"><img
+                                            src="__TMPL__Public/assets/merchants/images/pt-ico8.png" alt=""></span>
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img5.png" alt="" class="img2">
+                                    <img src="__TMPL__Public/assets/merchants/images/pt-img9.png" alt="" class="img3">
+                                </div>
+                            </div>
+                        </li>
+                    </ul><!-- uploadimg1 end -->
+                </div><!-- cont1 end -->
+            </div><!-- upload1-ct end -->
+            <input type="hidden" id="uImg0">
+            <input type="hidden" id="uImg1">
+            <input type="hidden" id="uImg2">
+            <input type="hidden" id="uImg3">
+            <input type="hidden" id="uImg4">
+            <input type="hidden" id="uImg5">
+            <input type="hidden" name="header_interior_img" id="header_interior_img">
+            <input type="hidden" name="business_license" id="business_license">
+            <input type="submit" value="完成" class="dc-btn1 dc-c2">
+        </form>
+    </div><!-- page-m2 end -->
+</div>
+<!-- body end -->
+<!-- 上传方式 bg -->
+<!--<div class="upway1">-->
+<!--<div class="upway11">-->
+<!--<ul class="txtList1">-->
+<!--<li>-->
+<!--<div class="txtList1-m1">-->
+<!--<a href="javascript:void(0);">拍照</a>-->
+<!--</div>-->
+<!--</li>-->
+<!--<li>-->
+<!--<div class="txtList1-m1">-->
+<!--<a href="javascript:void(0);">从相册选择</a>-->
+<!--</div>-->
+<!--</li>-->
+<!--</ul>&lt;!&ndash; txtList1 end &ndash;&gt;-->
+<!--<span class="cancel up-close1">取消</span>-->
+<!--</div>&lt;!&ndash; upway11 end &ndash;&gt;-->
+<!--</div>&lt;!&ndash; upway1 end &ndash;&gt;-->
+<!--&lt;!&ndash; 上传方式 end &ndash;&gt;-->
+</body>
+<script type="text/javascript" src="__TMPL__Public/assets/merchants/js/jquery.js"></script>
+<script src="__TMPL__Public/assets/merchants/js/adaptive.js"></script>
+<script type="text/javascript" src="__TMPL__Public/assets/merchants/js/self.js"></script>
+<script type="text/javascript" src="__TMPL__/Public/assets/simpleboot/layer_mobile/layer.js"></script>
+<script type="text/javascript" src="__TMPL__Public/assets/merchants/js/jquery.Huploadify.js"></script>
+<script type="text/javascript" src="__TMPL__Public/assets/merchants/js/certificate.js"></script>
+</html>
+<script>
+    window.certificateURL = "{:U('merchants/uploadFile')}";
+    var isdoor_header = "{$Think.session.isdoor_header}";
+    var header_interior_img = "{$Think.session.header_interior_img}";
+    var business_license = "{$Think.session.business_license}";
+    if (isdoor_header == 1 && header_interior_img) {
+        showPic(0,header_interior_img);
+        showPic(1,business_license);
+    } else if (isdoor_header == 0 && header_interior_img) {
+        var imgPath = header_interior_img.split(",");
+        showPic(2,imgPath[0]);
+        showPic(3,imgPath[1]);
+        showPic(4,imgPath[2]);
+    }
+
+    if (business_license) {
+        $("#image5").prev("img").attr("src", "./data/upload/" + business_license);
+    }
+
+    function showPic(i,path){
+        var obj = $("#image" + i);
+        obj.prev("img").attr("src", "./data/upload/" + path);
+        obj.parent().find('>img:eq(2)').hide();
+    }
+
+    if (isdoor_header !== '') {
+        if (isdoor_header == 1) {
+            $("#radid1").parents("label").addClass("rdchcked");
+            $("#radid2").parents("label").removeClass("rdchcked");
+        } else if (isdoor_header == 0) {
+            $("#radid2").parents("label").addClass("rdchcked");
+            $("#radid1").parents("label").removeClass("rdchcked")
+        }
+
+        $(".cont1").hide();
+        $("#content" + isdoor_header).show();
+    }
+</script>

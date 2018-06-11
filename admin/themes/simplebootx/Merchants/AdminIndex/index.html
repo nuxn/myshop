@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 <script src="__PUBLIC__/js/layer/layer.js"></script>
 <style type="text/css">
@@ -364,4 +365,372 @@
     }
 </script>
 </body>
+=======
+<admintpl file="header" />
+<script src="__PUBLIC__/js/layer/layer.js"></script>
+<style type="text/css">
+    .am-active{
+        display: none;
+    }
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('adminIndex/index')}">{:L('MERCHANTS_LIST')}</a></li>
+        <li><a href="{:U('adminIndex/add')}">{:L('MERCHANTS_ADD')}</a></li>
+        <li><a href="{:U('adminIndex/add_merchant_machine')}">添加机器人商户</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('adminIndex/index')}">
+        手机号码:
+        <input type="text" name="user_phone" value="{$user_phone}" placeholder="请输入用户手机号码"> &nbsp;&nbsp;
+        商户名称:
+        <input type="text" name="merchant_name"  value="{$merchant_name}" placeholder="请输入商户名称"> &nbsp;&nbsp;
+       代理商名称:
+        <input type="text" name="agent_name"  value="{$agent_name}" placeholder="请输入代理商名称"> &nbsp;&nbsp;
+        账户类型:
+        <select name="account_type">
+            <option value="-1" <if condition="$account_type eq '-1'">selected</if>>请选择</option>
+            <option value="0" <if condition="$account_type eq 0">selected</if>>个人账户</option>
+            <option value="1" <if condition="$account_type eq 1">selected</if>>企业账户</option>
+        </select>
+        <br/><br/>
+        开通服务:
+        <select name="agency_business">
+            <option value="" >全部</option>
+            <option value="1" <if condition="$agency_business eq 1">selected</if>>仅开通台签</option>
+            <option value="2" <if condition="$agency_business eq 2">selected</if>>开通台签和双屏</option>
+        </select>
+        &nbsp;&nbsp;
+        上级商户:
+        <select name="mid" >
+            <option value="" <if condition="$data['mid'] eq 0">selected</if>>全部</option>
+            <foreach name="mids" item="m">
+                <option value="{$m.id}" <if condition="$mid eq $m[id]">selected</if> >{$m.merchant_name}</option>
+            </foreach>
+        </select>
+        <!--&nbsp;&nbsp;
+        审核:
+        <select name="status">
+            <option value="-1" <if condition="$status eq '-1'">selected</if>>请选择</option>
+            <option value="0" <if condition="$status eq 0">selected</if>>未通过</option>
+            <option value="1" <if condition="$status eq 1">selected</if>>通过</option>
+        </select>-->
+        &nbsp;&nbsp;
+        微信小程序:
+        <select name="is_miniapp">
+            <option value="" selected>请选择</option>
+            <option value="2" <if condition="$is_miniapp eq 2">selected</if>>开启</option>
+            <option value="1" <if condition="$is_miniapp eq 1">selected</if>>未开启</option>
+        </select>
+        <br/><br/>
+
+        添加时间：
+        <input type="text" class="js-date" value="{$start_time}" name="start_time" placeholder="开始时间" />-<input type="text" class="js-date" name="end_time" value="{$end_time}" placeholder="结束时间"  />
+        &nbsp;&nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('adminIndex/index')}">清空</a>
+        &nbsp;&nbsp;
+        <input type="button" class="btn btn-primary" id="show_all" value="显示所有收银员" />
+    </form>
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th width="50">商户ID</th>
+            <th>用户手机号码</th>
+            <th>商户名称</th>
+            <th>上级商户</th>
+            <th>上级代理商</th>
+            <!--<th>是否有门头</th>-->
+            <th>台签</th>
+            <th>微信通道</th>
+            <th>支付宝通道</th>
+            <th>开通服务</th>
+            <th>开启小程序</th>
+            <!--<th>洋仆淘预收款</th>-->
+            <th>帐号状态</th>
+            <th>添加时间</th>
+            <th width="120">{:L('ACTIONS')}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="merchants" item="vo">
+            <tr ondblclick="show_checker(this);" data-id="{$vo.id}" style="cursor: pointer">
+                <td class="id">{$vo.id}</td>
+                <td>{$vo.user_phone}</td>
+                <td>{$vo.merchant_name}</td>
+                <td>{$vo.m_name}</td>
+                <td>{$vo.agent_name}</td>
+                <!--<td>
+                    <if condition="$vo['isdoor_header'] eq 0">
+                        否
+                        <else />
+                        是
+                    </if>
+                </td>-->
+                <td data="{$vo.barcode_img}" onclick="barcode_img(this);">{$vo.no_number}</td>
+                <?php if($vo['no_number']){ ?>
+                <td>{$vo.wxx_name}|{$vo.wxx_number}</td>
+                <td>{$vo.ali_name}|{$vo.ali_number}</td>
+                <?php }else{ ?>
+                <td></td>
+                <td></td>
+                <?php } ?>
+              
+                <td>
+                    <if condition="$vo['agency_business'] eq 1">
+                        台签
+                        <else />
+                        台签 和 双屏
+                    </if>
+                </td>
+
+                <td>
+                    <if condition="$vo['is_miniapp'] eq 1">
+                        没开启
+                        <else />
+                        开启
+                    </if>
+                </td>
+              
+                <!--<td>
+                    <if condition="$vo['status'] eq 0">
+                       <i class="fa fa-close fa-lg" id="id_{$vo.id}" onclick="exchange(1,'{$vo.id}')"></i>
+                        <else />
+                        <i class="fa fa-check fa-lg" id="id_{$vo.id}" onclick="exchange(0,'{$vo.id}')"></i>
+                    </if>
+                </td>-->
+                <!--<td>
+                    <if condition="$vo['is_ypt'] eq 1">
+                        <span style="color:green">是</span>
+                        <else/>
+                        <span style="color:red">否</span>
+                    </if>
+                </td>-->
+                <td>
+                    <if condition="$vo['status'] eq 1">
+                        <span style="color:green">正常</span>
+                        <else/>
+                        <span style="color:red">禁用</span>
+                    </if>
+                </td>
+                <td>{$vo.add_time|date='Y-m-d',###}</td>
+                <td width="200">
+                    <a href='{:U("adminIndex/detail",array("id"=>$vo["id"]))}'>详情</a> |
+                    <a href='{:U("adminIndex/edit",array("id"=>$vo["id"]))}'>编辑</a> |
+                    <a href='{:U("adminIndex/cate_edit",array("id"=>$vo["id"],"checker_id" =>0))}'>台签设置</a> |
+                    <a href="#myModal" role="button" data-toggle="modal" class="blongto">修改手机号|</a>
+                    <!--<font style="color: rgb(26, 188, 156);" onclick="cate_bank(this);" data-id="{$vo.id}">切换通道</font>|-->
+                    <font style="color: rgb(26, 188, 156);" onclick="into_bank(this);" data-id="{$vo.id}">商户进件</font> |
+                    <a href='{:U("adminIndex/add_price_cate",array("id"=>$vo["id"],"bank"=>$vo["wx_bank"]))}' onclick="return confirm('你确认要添加套现台签吗?')">套现台签</a> |
+                    <!--<a class="js-ajax-delete" onclick="return confirm('确定删除吗？')" href="{:U('adminIndex/del',array('id'=>$vo['id']))}">{:L('DELETE')}</a>-->
+                    <a href='{:U("adminIndex/uptosame",array("id"=>$vo["id"]))}'>多门店同步</a>
+                </td>
+            </tr>
+            <foreach name="vo['checker']" item="v">
+                <tr class="am-active Xchecker Xchecker_{$vo.id}" style="background: #cbddfd">
+                    <td class="id">收银员:{$v.id}</td>
+                    <td>{$v.user_phone}</td>
+                    <td>{$v.user_name}</td>
+                    <td></td>
+                    <td></td>
+                    <if condition="$v['no_number'] eq ''">
+                       <td data="{$vo.barcode_img}" onclick="barcode_img(this);">和商家一样</td>
+                        <else />
+                    <td data="{$v.barcode_img}" onclick="barcode_img(this);">{$v.no_number}</td>
+                    </if>
+                    <?php if($vo['no_number']){ ?>
+                    <td>{$vo.wxx_name}|{$vo.wxx_number}</td>
+                    <td>{$vo.ali_name}|{$vo.ali_number}</td>
+                    <?php }else{ ?>
+                    <td></td>
+                    <td></td>
+                    <?php } ?>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{$v.add_time|date='Y-m-d',###}</td>
+                    <td width="200">
+                        <a href='{:U("adminIndex/cate_edit",array("id"=>$vo["id"],"checker_id" =>$v["id"]))}'>台签设置</a>
+                        <!--<a href='{:U("adminIndex/detail",array("id"=>$vo["id"]))}'>绑定</a> |-->
+                    </td>
+                </tr>
+            </foreach>
+        </foreach>
+        </tbody>
+    </table>
+    <div class="pagination" style="text-align: right">{$page}<input style="height: 20px;padding: 4px 6px;width: 60px;margin-right: 4px;margin-left: 10px;float:left;" type="text" name="p" id="p"><input type="button" style="float:left;margin-bottom: 10px;" onclick="jump_page()" class="btn btn-primary" value="跳转" /></div>
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <form id="form1" method="post" class="form-horizontal" action="{:U('adminIndex/update_pwd')}">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h3 id="myModalLabel">修改商户手机号</h3>
+            </div>
+            <hr/>
+            <input type="hidden" class="blongid" name="id" value="">
+            <div class="control-group">
+                <label class="control-label" for="phone">输入用户的新手机号</label>
+                <div class="controls">
+                    <input type="text" id="phone" name="phone" placeholder="请填写用户要填写的新手机号">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="change_pwd">是否修改密码</label>
+                <div class="controls">
+                    <select name="change_pwd" id="change_pwd">
+                        <option value="1">恢复为初始密码</option>
+                        <option value="2">不改变密码</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                <input type="submit" class="btn btn-primary js-ajax-submit" value="提交">
+            </div>
+        </form>
+
+    </div>
+
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<style>
+</style>
+<script>
+    $(function(){
+        $(".blongto").click(function(){
+            var id= $(this).parents().siblings(".id").text();
+            console.log(id);
+            $(".blongid").val(id);
+        });
+
+        $("#show_all").click(function () {
+            $("tr.Xchecker").toggleClass('am-active');
+            var text=$("#show_all").val();
+            if(text =="显示所有收银员"){
+                $("#show_all").val("收起所有收银员");
+            }else{
+                $("#show_all").val("显示所有收银员");
+            }
+        });
+
+    });
+
+    function show_checker(thisobj)
+    {
+        var id=$(thisobj).attr("data-id");
+//        alert("Xchecker_" + id);
+        $(".Xchecker_" + id).toggleClass('am-active');
+
+    }
+    function jump_page()
+    {
+        var p = $("#p").val();
+        window.location.href = 'http://sy.youngport.com.cn/index.php?g=merchants&m=admin_index&a=index&p='+p;
+    }
+
+
+    function exchange(status,id) {
+        $.post('{:U("adminIndex/exchangeSatatus")}',{status:status,id:id},function (data) {
+            if(data.code==1){
+                if($("#id_"+id).hasClass('fa fa-check fa-lg'))
+                {
+                    $("#id_"+id).attr('class','fa fa-close fa-lg');
+                    $("#id_"+id).attr('onclick',"exchange(1,'"+id+"')");
+                }else if($("#id_"+id).hasClass('fa fa-close fa-lg')){
+                    $("#id_"+id).attr('class','fa fa-check fa-lg');
+                    $("#id_"+id).attr('onclick',"exchange(0,'"+id+"')");
+                }
+            } else {
+                alert(data.msg);
+            }
+        });
+    }
+    function barcode_img(thisobj){
+        var img=$(thisobj).attr("data");
+        if(img==''){
+            return;
+        }
+        var content='<img style="width:100%" src="http://sy.youngport.com.cn/'+img+'">';
+        layer.open({
+          type: 1,
+          title: false,
+          offset: '100px',
+          closeBtn: 0,
+          area: '400px',
+          skin: 'layui-layer-nobg', //没有背景色
+          shadeClose: true,
+          content: content
+        });
+    }
+    function cate_bank(thisobj){
+        var id=$(thisobj).attr("data-id");
+        var url="{:U('AdminIndex/cate_bank')}";
+        $.post(url,{id:id},function(data){
+            var content='<form id="form1" class="form-horizontal"><div class="control-group"><label class="control-label" for="uid">微信通道</label><div class="controls">'+data.wxstr+'</div></div><div class="control-group"><label class="control-label" for="merchant_name">支付宝通道</label><div class="controls">'+data.mstr+'</div></div></form>';
+            layer.open({
+              title: '切换通道',
+              offset: '200px',
+              btn: ['确定','取消'],
+              area: ['550px', '240px'],
+              content: content,
+              yes: function(index){
+                    var wx_bank=$('#wx_bank').val();
+                    var ali_bank=$('#ali_bank').val();
+                    var url="{:U('AdminIndex/update_cate')}";
+                    $.post(url,{id:id,wx_bank:wx_bank,ali_bank:ali_bank},function(data){
+                        if(data==1){
+                            alert('请选择支付渠道');
+                        }else if(data==2){
+                            window.location.href = "{:U('AdminIndex/index')}";
+                        }else if(data==3){
+                            alert('请绑定台签!');
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    function into_bank(thisobj){
+        var id=$(thisobj).attr("data-id");
+        //var str="{:U('AdminInto/check_mpay',array('id'=>"+id+"))}";
+        var str="/index.php?s=Merchants/AdminInto/check_mpay/id/"+id;
+        var hdstr="/index.php?s=Merchants/AdminInto/check_hdmpay/id/"+id;
+        var ztr="/index.php?s=Merchants/Adminzsinto/zsshow/id/"+id;
+        var jnstr="/index.php?s=Merchants/Adminmsday/index/id/"+id;
+        var szlc="/index.php?s=Merchants/szlzinto/add/id/"+id;
+        var wzstr="/index.php?s=Merchants/Upwzadmin/add/id/"+id;
+        var xystr="/index.php?s=Merchants/Xybankinto/add/id/"+id;
+        var hfstr="/index.php?s=Merchants/Adminhfbank/edit/id/"+id;
+        var xdlstr="/index.php?s=Merchants/intoxdl/add/id/"+id;
+        var dgzxstr="/index.php?s=Merchants/pfbankinto/add/id/"+id;
+        var leshuastr="/index.php?s=Merchants/intoleshua/add/id/"+id;
+        var pingan="/index.php?s=Merchants/intopingan/add/id/"+id;
+        var content='<div align="center" style="margin-left:auto;margin-right:auto;margin-top:80px">' +
+            '<a href="'+wzstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">微纵银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<a href="'+str+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">洋仆淘民生银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<a href="'+hdstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">合兑民生银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<a href="'+ztr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">招商银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<a href="'+jnstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">济南民生银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<br><a href="'+xystr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">兴业银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<a href="'+hfstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">恒丰银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<a href="'+szlc+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">宿州李灿</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<a href="'+xdlstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">新大陆</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<a href="'+dgzxstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">东莞中信</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<a href="'+leshuastr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">乐刷</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<br><a href="'+pingan+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">平安付</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '</div>';
+         layer.open({
+            type:1,
+              title: '进件渠道',
+              offset: '200px',
+              shadeClose: true,
+               closeBtn: 0,
+              area: ['700px', '280px'],
+              content: content
+        });
+    }
+</script>
+</body>
+>>>>>>> dev
 </html>

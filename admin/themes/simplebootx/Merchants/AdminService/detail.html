@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 <link href="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" type="text/css" media="screen"/>
 </head>
@@ -115,4 +116,123 @@
 <script src="__PUBLIC__/js/common.js"></script>
 <script src="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.js"></script>
 </body>
+=======
+<admintpl file="header" />
+<link href="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.css" rel="stylesheet" type="text/css" media="screen"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('AdminService/index')}">开通列表</a></li>
+        <li><a href="{:U('AdminService/openList')}">商家列表</a></li>
+		<li><a href="{:U('AdminService/serverList')}">服务列表</a></li>
+        <li class="active"><a href="javascript:;">开通详情</a></li>
+    </ul>
+    <fieldset>
+        <table class="table table-bordered" >
+            <tr>
+                <td width=" 200px">id</td>
+                <td>{$data.id}</td>
+            </tr>
+            <tr>
+                <td width=" 200px">订单号</td>
+                <td>{$data.order_sn}</td>
+            </tr>
+            <tr>
+                <td width=" 200px">商户ID</td>
+                <td>{$data.mid}</td>
+            </tr>
+            <tr>
+                <td width=" 200px">商户名称</td>
+                <td>{$data.user_name}</td>
+            </tr>
+            <tr>
+                <td width=" 200px" >购买类型</td>
+                <td>
+                    <if condition="$data.type eq '1'">
+                        小程序
+                        <else/>
+                        {$data.type}
+                    </if>
+                </td>
+            </tr>
+            <if condition="$data.pay_type neq 'admin'">
+                <if condition="$data.status eq '0'">
+                    <tr>
+                        <td width=" 200px" >购买状态</td>
+                        <td>未付款</td>
+                    </tr>
+                    <else/>
+                    <tr>
+                        <td width=" 200px" >购买状态</td>
+                        <td>已付款</td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px" >支付方式</td>
+                        <td>
+                            <if condition="$data.pay_type eq 'zfb'">支付宝</if>
+                            <if condition="$data.pay_type eq 'wx'">微信</if>
+                            <if condition="$data.pay_type eq 'yue'">余额</if>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px" >支付时间</td>
+                        <td>{$data['pay_time']|date="Y-m-d H:i:s",###}</td>
+                    </tr>
+                </if>
+                <if condition="$data.pay_type neq 'admin'">
+                    <tr>
+                        <td width=" 200px" >商品价格</td>
+                        <td>{$data.goods_price}</td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px" >实付金额</td>
+                        <td>{$data.order_price}</td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px" >收到金额</td>
+                        <td>{$data.pay_price}</td>
+                    </tr>
+                </if>
+                <if condition="$data.title neq ''">
+                    <tr>
+                        <td width=" 200px">现金券名称</td>
+                        <td>{$data.title}(满{$data.up_price}减{$data.price})</td>
+                    </tr>
+                    <tr>
+                        <td width=" 200px">优惠金额</td>
+                        <td>{$data.cash_price}</td>
+                    </tr>
+                </if>
+            </if>
+            <if condition="$data.pay_type eq 'admin'">
+                <td width=" 200px" >开通方式</td>
+                <td>管理员开通</td>
+            </if>
+            <tr>
+                <td width=" 200px">开通时间</td>
+                <td>{$data['add_time']|date="Y-m-d H:i:s",###}</td>
+            </tr>
+            <tr>
+                <td width=" 200px">开始时间</td>
+                <td>{$data['start_time']|date="Y-m-d H:i:s",###}</td>
+            </tr>
+            <tr>
+                <td width=" 200px">到期时间</td>
+                <td>{$data['end_time']|date="Y-m-d H:i:s",###}</td>
+            </tr>
+            <tr>
+                <td width=" 200px" >备注</td>
+                <td>{$data.remark}</td>
+            </tr>
+        </table>
+    </fieldset>
+    <div class="form-actions">
+        <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+    </div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/plugins/magiczoomplus/magiczoomplus.js"></script>
+</body>
+>>>>>>> dev
 </html>

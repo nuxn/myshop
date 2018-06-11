@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header"/>
 <script src="__PUBLIC__/js/layer/layer.js"></script>
 <script src="__PUBLIC__/js/ajaxfileupload.js"></script>
@@ -242,4 +243,250 @@ function into(thisobj){
        
     }) 
 }
+=======
+<admintpl file="header"/>
+<script src="__PUBLIC__/js/layer/layer.js"></script>
+<script src="__PUBLIC__/js/ajaxfileupload.js"></script>
+<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script> 
+<script src="https://cdn.staticfile.org/jquery/3.1.1/jquery.min.js"></script>
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+<style type="text/css">
+    .box2{
+        width: 50%;
+        float: left;
+    }
+    .box3{
+        width: 50%;
+        float: right;
+    }
+    .clear{
+        clear: both;
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Pfbankinto/index')}">返回</a></li>
+    </ul>
+    <div class="box1">
+    <div class="box2">
+        <h3 align="center">客户资料</h3>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">用户名</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$phone.user_name}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">手机号码</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$phone.user_phone}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">商户名称</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.merchant_name}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">省</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.province}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">市</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.city}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">县</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.county}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">详细地址</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.address}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">所属行业</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.industry}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">营业执照</label>
+            <div class="controls">
+                <img src="/data/upload/{$list.business_license}" style="width: 200px">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">姓名</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.operator_name}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">身份证</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.id_number}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">账号类型</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value='<switch name="list.account_type">
+                        <case value="0">个人账户</case>
+                        <case value="1">企业账号</case></switch>' disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="expanderCd">开户银行</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.bank_account}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="expanderCd">开户支付</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.bank_account_no}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+         <div class="control-group">
+            <label class="control-label" for="expanderCd">银行账号</label>
+            <div class="controls">
+                <input type="text" name="expanderCd" id="expanderCd" value="{$list.id_number}" disabled="disabled"> &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">总费率（费率+垫资费率）</label>
+            <div class="controls">
+                <input type="text" id="yj1" value="{$data['repaidRate']+$data['wechat_cost_rate']}" > &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label" for="expanderCd">手续费总金额</label>
+            <div class="controls">
+                <input type="text" id="yj2" value="<?php echo $data['poundage']+$data['minRepaidAmount'];?>" > &nbsp;&nbsp;<span style="color: red"></span>
+            </div>
+        </div>
+    </div>
+    <script>
+    	$(function(){
+    			$('#yj1').keyup(function(){
+    						var val = $(this).val() || 0;
+	    					var val1 = parseFloat(val) - parseFloat($('#repaidRate').val());
+	    					val1 = val1.toFixed(2);
+    						$('input[name=wechat_cost_rate]').val(val1);		
+    						$('input[name=alipay_cost_rate]').val(val1);	
+    						$('input[name=qq_cost_rate]').val(val1);
+    						
+    			})
+    			$('#yj2').keyup(function(){
+    						var val = $(this).val() || 0;
+	    					var val1 = parseFloat(val) - parseFloat($('#minRepaidAmount').val());
+	    					val1 = val1.toFixed(2);
+    						$('input[name=poundage]').val(val1);
+    						$('input[name=minAmount]').val(val);
+    						
+    			})
+    	})
+    </script>
+    <div class="box3">
+    <form id="form1" method="post" class="form-horizontal" action="{:U('Pfbankinto/add')}" >
+    <h3 align="center">进件资料</h3>
+        <div class="control-group">
+            <label class="control-label" for="merchant_id">商户ID</label>
+            <div class="controls">
+                <input type="text" id="merchant_id" name="merchant_id"  value="{$id}" placeholder="请填写商户id"> <span style="color: red">*商户管理>>商户>>商户列表 下查询得到商户ID</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="mch_id">银行分配商户号</label>
+            <div class="controls">
+                <input type="text" id="mch_id" name="mch_id" placeholder="请填写银行分配商户号"> <span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="mch_key">商户密钥</label>
+            <div class="controls">
+                <input type="text" id="mch_key" name="mch_key" placeholder="请填写商户密钥"><span style="color: red">*</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="wx_code">微信费率</label>
+            <div class="controls">
+                <input type="text" id="wx_code" name="wx_code" placeholder="请填写微信费率"><span style="color: red">*%百分之几</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ali_code">支付宝费率</label>
+            <div class="controls">
+                <input type="text" id="ali_code" name="ali_code" placeholder="请填写支付宝费率"><span style="color: red">*%百分之几</span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >添加</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+
+    </form>
+    </div>
+    <div class="clear"></div>
+    </div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+</html>
+<script type="text/javascript">
+function repaidRateand(thisobj){
+    var repaidRate=$(thisobj).val();
+    if(repaidRate<0.2){
+        $("#repaidRate").val('0.2');
+    }
+}
+function minAmountand(){
+    var minAmount=$("#minAmount").val();
+    if(minAmount<0.01){
+        $("#minAmount").val('0.01');
+    }
+}
+function poundageand(){
+    var poundage=$("#poundage").val();
+    if(poundage<0.01){
+        $("#poundage").val('0.01');
+    }
+}
+function minRepaidAmountand(){
+    var minRepaidAmount=$("#minRepaidAmount").val();
+    if(minRepaidAmount<0.1){
+        $("#minRepaidAmount").val('0.1');
+    }
+}
+function into(thisobj){
+    var id=$(thisobj).attr('data-id');
+    $.ajax({
+        type:"post",
+        url:'{:U("Adminmsday/mch_into")}',
+        data:{id:id},
+        success:function(data){
+            if(data.code=="success"){
+                alert("进件成功!");
+            }else{
+                alert("进件失败!"+data.msg);
+            }
+        }
+       
+    }) 
+}
+>>>>>>> dev
 </script>

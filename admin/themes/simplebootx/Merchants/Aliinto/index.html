@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -55,4 +56,63 @@
 </script>
 
 </body>
+=======
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Aliinto/index')}">商户列表</a></li>
+        <li><a href="{:U('Aliinto/add')}">添加商户</a></li>
+    </ul>
+
+    <form class="well form-search" method="post" action="{:U('Aliinto/index')}">
+        商户的名称：
+        <input type="text" name="merchant_name" style="width: 200px;" value="{$formget.merchant_name|default=''}" placeholder="请输入对应商户的名称">
+        商户的ID：
+        <input type="text" name="mid" style="width: 200px;" value="{$formget.mid|default=''}" placeholder="请输入对应商户的ID">
+
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Aliinto/index')}">清空</a>
+    </form>
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th>商户的ID</th>
+            <th>商户名称</th>
+            <th>支付宝商户PID</th>
+            <th>添加时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="data" item="u">
+            <tr>
+                <td>{$u.mid}</td>
+                <td>{$u.merchant_name}</td>
+                <td>{$u.ali_mchid}</td>
+                <td>{$u.add_time|date='Y-m-d H:i:s', ###}</td>
+                <td>
+                    <a href='{:U("Aliinto/add",array("id"=>$u["id"]))}'>编辑</a> |
+                    <!--<a href='{:U("Aliinto/delete",array("id"=>$u["id"]))}' onClick="return confirm('确认要删除？')">删除</a>-->
+                </td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+    <div class="pagination" style="text-align: right">{$page}</div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    $(function(){
+        $(".blongto").click(function(){
+           var id= $(this).parents().siblings(".id").text();
+            console.log(id);
+            $(".blongid").val(id);
+        })
+    })
+</script>
+
+</body>
+>>>>>>> dev
 </html>

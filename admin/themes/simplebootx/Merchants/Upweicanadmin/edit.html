@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header"/>
 </head>
 <body>
@@ -54,4 +55,62 @@
 		background: #006dcc;}
 </style>
 </body>
+=======
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+	<form id="form1" class="form-horizontal" method="post" action="{:U('Upweicanadmin/edit')}">
+        <input type="hidden" name="id" value="{$data.id}">
+		<!--<div class="control-group">-->
+			<!--<label class="control-label" for="id">ID</label>-->
+			<!--<div class="controls">-->
+				<!--<input type="text" id="id" name="id" value="{$data.id}" readonly="readonly" placeholder="请填写用户id">-->
+			<!--</div>-->
+		<!--</div>-->
+        <div class="control-group">
+            <label class="control-label" for="mid">商户ID</label>
+            <div class="controls">
+                <input type="text" id="mid" name="mid" value="{$data.mid}" placeholder="请填写商户id"> <span style="color: red"></span> <span style="color: red">*商户管理>>商户>>商户列表 下查询得到商户ID</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="sub_mchid">子商户商户号</label>
+            <div class="controls">
+                <input type="text" id="sub_mchid" name="sub_mchid" value="{$data.sub_mchid}" placeholder="请填写子商户商户号"><span style="color: red">*进入微信服务商后台得到子商户号</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="cost_rate">费率</label>
+            <div class="controls">
+                <input type="text" id="cost_rate" name="cost_rate" value="{$data.cost_rate}" placeholder="费率"><span style="color: red"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="is_weican">是否围餐</label>
+            <div class="controls">
+                <select name="is_weican" id="is_weican">
+                    <option <?php echo $data['is_weican'] ? selected : '';?> value="1">是</option>
+                    <option <?php echo $data['is_weican'] ? '' : selected;?> value="0">否</option>
+                </select>
+            </div>
+        </div>
+		<div class="form-actions">
+			<button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >{:L('EDIT')}</button>
+			<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+		</div>
+	</form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/global.js"></script>
+<script>
+
+</script>
+<style>
+	input{width: 60%;}
+	.blue{
+		background: #006dcc;}
+</style>
+</body>
+>>>>>>> dev
 </html>

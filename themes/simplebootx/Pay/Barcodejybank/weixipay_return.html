@@ -1,0 +1,65 @@
+<!-- Created by zgf on 2017/1/20. -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>支付成功</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" type="text/css" href="__TMPL__Public/pay/css/reset.css" />
+    <script src="__TMPL__Public/pay/js/jquery-1.8.3.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body style="background:#f2f2f2;position:relative;height:100%;">
+<div class="topd clearfix">
+    <div class="centfs clearfix">
+        <img src="__TMPL__Public/pay/img/zhifu.jpg" class="imghj"/>
+        <h4>{$price}(元)</h4>
+        <input type="hidden" class="price" name="price" value="{$price}">
+    </div>
+    <div class="einft clearfix">
+        <span>洋仆淘优惠</span>
+        <font>-0</font>
+    </div>
+
+</div>
+<div class="jinfru clearfix">
+    <img src="__TMPL__Public/pay/images/smalllogo.png" class="sde"/>
+    <span>洋仆淘商城</span>
+    <a href="http://m.hz41319.com/wei/index.php">进入商城</a>
+</div>
+
+
+<div class="topimg clearfix"><img src="__TMPL__Public/pay/img/img1.jpg" class="imgurl" /></div>
+
+<img src="__TMPL__Public/pay/img/vutton.jpg" class="imghtrs"/>
+
+<script type="text/javascript" charset="utf-8">
+	$(function () {
+        var price = $(".price").val();
+        var ab='已完成支付' + price + '元,请勿重复支付';
+        console.log(price);
+        if (window.history && window.history.pushState)
+        { $(window).on('popstate', function() {
+            var hashLocation = location.hash;
+            var hashSplit = hashLocation.split("#!/");
+            var hashName = hashSplit[1];
+            if (hashName !== '') { var hash = window.location.hash; if (hash === '') {
+                alert(ab);
+                location = "http://m.hz41319.com/wei/index.php";
+            }
+            }
+        });
+        }
+		window.history.pushState('forward', null, './#forward');
+        window.history.forward(1);
+   	 });
+    $('.imgurl').on('click',function () {
+        location = "http://m.hz41319.com/wei/index.php";       
+    })
+</script>
+</body>
+</html>

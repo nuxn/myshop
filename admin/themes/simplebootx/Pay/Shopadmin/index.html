@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -55,4 +56,63 @@
 <script src="__PUBLIC__/js/common.js"></script>
 
 </body>
+=======
+<admintpl file="header" />
+</head>
+<body>
+
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">商户流水查询</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('Shopadmin/index')}">
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="" style="width: 120px;" autocomplete="off" placeholder="请输入开始时间">-
+        <input type="text" class="js-datetime" name="end_time" value="" style="width: 120px;" autocomplete="off" placeholder="请输入结束时间"> &nbsp; &nbsp;
+        支付类型：
+        <select name="paystyle" style="width: 120px;">
+            <option value='0'>全部</option>
+            <option value='1'>微信</option>
+            <option value='2'>支付宝</option>
+            <option value='3'>银联钱包</option>
+            <option value='4'>京东</option>
+            <option value='5'>百度钱包</option>
+        </select>&nbsp;
+        商户的电话：
+        <input type="text" name="keyword" style="width: 200px;" value="" placeholder="请输入对应的商户的电话">
+        商户的简称：
+        <input type="text" name="merchant_name" style="width: 200px;" value="" placeholder="请输入对应的商户的简称">
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Shopadmin/index')}">清空</a>
+        <a class="btn btn-danger" href="{:U('Shopadmin/excel')}">导出表格</a>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" >ID</th>
+                <th width="70" >商户电话</th>
+                <th width="70" >商户的简称</th>
+                <th width="70" >支付总额(元)</th>
+                <th width="70" >支付总笔数</th>
+
+            </tr>
+            </thead>
+            <foreach name="totals" item="t">
+                <tr>
+                    <td><b>{$t.id}</b></td>
+                    <td><b>{$t.user_phone}</b></td>
+                    <td><b>{$t.merchant_name}</b></td>
+                    <td><b>{$t.totals_price}</b></td>
+                    <td><b>{$t.number}</b></td>
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+>>>>>>> dev
 </html>

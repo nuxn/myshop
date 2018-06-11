@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -104,4 +105,112 @@
     });
 </script>
 </body>
+=======
+<admintpl file="header" />
+</head>
+<body>
+
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">代理商流水总列表</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="">
+    	<select name="is_one">
+    		<option <if condition="I('is_one')==0">selected</if> value="0">所有代理</option>
+    		<option  <if condition="I('is_one')==1">selected</if>  value="1">一级代理</option>
+    	</select>
+        &nbsp;&nbsp;
+        id:
+    	<input type="text" name="agent_id" style="width: 200px;" value="{:I('agent_id')}" placeholder="请输入代理商的id">
+        &nbsp;&nbsp;
+        代理商的名称:
+    	<input type="text" name="agent_name" style="width: 200px;" value="{:I('agent_name')}" placeholder="请输入代理商的名称">
+        &nbsp;&nbsp;
+        手机号:
+    	<input type="text" name="user_phone" style="width: 200px;" value="{:I('user_phone')}" placeholder="请输入代理商的手机号">
+        <!--时间：-->
+        <!--<input type="text" name="start_time" class="js-datetime" value="" style="width: 120px;" placeholder="开始时间" autocomplete="off">- -->
+        <!--<input type="text" class="js-datetime" name="end_time" value="" style="width: 120px;" placeholder="结束时间" autocomplete="off"> &nbsp; &nbsp;-->
+        <!--<input type="submit" class="btn btn-primary" value="搜索" />
+       <a class="btn btn-danger" href="{:U('Agentadmin/upload_excel')}">导出excel表格</a>-->
+      <input type="submit" class="btn btn-primary" value="搜索">
+        &nbsp;&nbsp;<a class="btn btn-danger" href="{:U('index')}">清空</a>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" >代理商的ID</th>
+                <th width="60" >代理商的电话</th>
+                <th width="60" >代理商的名称</th>
+                <th width="60" >角色</th>
+               <!-- <th width="70" >交易的总商户数</th>-->
+                <th width="70" >交易总笔数(上月)</th>
+                <th width="70" >交易金额(上月)</th>
+                <th width="70" >返佣值(上月)</th>
+                   <!--<th width="70" >微信交易总笔数</th>  <th width="70" >总流水(元)</th>-->
+                <!--<th width="70" >微信交易总额(元)</th>-->
+                <!--<th width="70" >支付宝交易总笔数</th>-->
+                <!--<th width="70" >支付宝交易总额(元)</th>-->
+                <!--<th width="70" >总返佣值(元)</th>-->
+                <th width="70">操作</th>
+            </tr>
+            </thead>
+            <foreach name="agents" item="a">
+                <tr>
+                    <td><b>{$a.id}</b></td>
+                    <td><b>{$a.user_phone}</b></td>
+                    <td><b>{$a.agent_name}</b></td>
+                    <td><b>
+                        <if condition="$a['juese'] eq 1">
+                    	    代理商
+                        <else />
+                    	    员工
+                    </if>
+                    </b></td>
+                    <td><b>{$a['nums']+$a['nums0']}</b></td>
+                    <!--<td><b>{$a.total.total_num}</b></td>-->
+                    <td><b>{$a['price']+$a['price0']}<br>(D1：{$a['price']|default=0})(D0：{$a['price0']|default=0})</b></td>
+                    <!--<td><b>{$a.total.per_weixin_num}</b></td>-->
+                    <td><b>{$a['rebate']+$a['rebate0']}<br>(D1：{$a['rebate']|default=0})(D0：{$a['rebate0']|default=0})</b></td>
+                    <!--<td><b>{$a.total.per_ali_num}</b></td>
+                    <td><b>{$a.total.per_ali_price}</b></td>
+                    <td><b>{$a.lastmonth.total}</b></td>-->
+                    <!--<td><b>{$a.lastmonth.agent_money}</b></td>
+                    <td><b>{$a.cost_total}</b></td>-->
+                    <td>
+                        <a href="{:U('Agentadmin/get_detail',array('id'=>$a['id']))}">流水详情</a>
+                        <if condition="$a.pay_month eq 2">
+                            已同意
+                            <elseif condition="$a.pay_month eq 1" />
+                                | <a href="javascript:;" class="change_status" data-id="{$a.id}">同意提现</a>
+                        </if>
+
+                    </td>
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    $(function () {
+        $(".change_status").click(function(){
+            var data = {
+                id : $(this).data('id')
+            };
+            var _this = $(this);
+            $.post("{:U('change_pay_month_status')}", data, function(ad){
+                console.log(ad);
+                if(ad.code==1){
+                    _this.css('color','black');
+                    _this.html('已同意');
+                }
+            },"json");
+        })
+    });
+</script>
+</body>
+>>>>>>> dev
 </html>

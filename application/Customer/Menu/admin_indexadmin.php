@@ -1,0 +1,55 @@
+<?php
+return array (
+  'app' => 'Customer',
+  'model' => 'Indexadmin',
+  'action' => 'default',
+  'data' => '',
+  'type' => '1',
+  'status' => '1',
+  'name' => '流水查看（商户）',
+  'icon' => 'bar-chart-o (alias)',
+  'remark' => '',
+  'listorder' => '99',
+  'children' => 
+  array (
+    array (
+      'app' => 'Customer',
+      'model' => 'Detailadmin',
+      'action' => 'index',
+      'data' => '',
+      'type' => '1',
+      'status' => '1',
+      'name' => '流水列表',
+      'icon' => '',
+      'remark' => '',
+      'listorder' => '0',
+    ),
+    array (
+      'app' => 'Customer',
+      'model' => 'Countadmin',
+      'action' => 'index',
+      'data' => '',
+      'type' => '1',
+      'status' => '1',
+      'name' => '商户流水汇总',
+      'icon' => '',
+      'remark' => '',
+      'listorder' => '0',
+      'children' => 
+      array (
+        array (
+          'app' => 'Customer',
+          'model' => 'Detailadmin',
+          'action' => 'upload_excel',
+          'data' => '',
+          'type' => '1',
+          'status' => '0',
+          'name' => '导出excel表格',
+          'icon' => '',
+          'remark' => '',
+          'listorder' => '0',
+        ),
+      ),
+    ),
+  ),
+);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -150,4 +151,158 @@
 
 </script>
 </body>
+=======
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li ><a href="{:U('memcard/index')}">会员卡列表</a></li>
+        <li class="active"><a href="{:U('memcard/add')}">添加会员卡</a></li>
+    </ul>
+    <form method="post"  action="{:U('Api/Member/add_memcard')}" class="form-horizontal js-ajax-forms" enctype="multipart/form-data">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label">会员卡类型:</label>
+                <div class="controls">
+                    <input type="text"   name="card_type" value="MEMBER_CARD" placeholder="请输入会员卡类型"><span class="user_tishi" style="color: red">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">商品图片:</label>
+                <div class="controls">
+                    <input type='file' name='logoimg'>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">会员卡特权说明:</label>
+                <div class="controls">
+                    <input type="text"   name="prerogative" value="MEMBER_CARD" placeholder="请输入会员卡特权说明"><span class="user_tishi" style="color: red">*</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">激活:</label>
+                <div class="controls">
+                    <input type="text"   name="auto_activate" value="MEMBER_CARD" placeholder="激活"><span class="user_tishi" style="color: red">*</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">会员卡类型:</label>
+                <div class="controls">
+                    <input type="text"   name="card_type" value="MEMBER_CARD" placeholder="请输入会员卡类型"><span class="user_tishi" style="color: red">*</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">会员卡类型:</label>
+                <div class="controls">
+                    <input type="text"   name="card_type" value="MEMBER_CARD" placeholder="请输入会员卡类型"><span class="user_tishi" style="color: red">*</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">会员卡类型:</label>
+                <div class="controls">
+                    <input type="text"   name="card_type" value="MEMBER_CARD" placeholder="请输入会员卡类型"><span class="user_tishi" style="color: red">*</span>
+                </div>
+            </div>
+                <div class="control-group" >
+                <label class="control-label">商户的logo:</label>
+                <!--            <input type='text' name='buffer' value="{$arr.buffer}">-->
+                <input type='file' name='logo'  class="logo" >
+                <input type="hidden" class="logo1" name="logo1" value="">
+
+                </div>
+            <div class="control-group">
+                <label class="control-label">卡劵颜色:</label>
+                <div class="controls">
+                    <foreach name="colors" item="c">
+                        <div style="display: inline-block">
+                        <input type="radio" name="color"  value="{$c.name}">
+                            <div style="height:40px;width:40px;background-color:{$c.value}"></div>
+                        </div>&nbsp;&nbsp;
+                    </foreach>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">优惠卷标题:</label>
+                <div class="controls">
+                    <input type="text" name="title" value="" placeholder="请输入优惠卷标题"><span class="form-required">*卡券名称不能为空且长度不超过9个汉字或18个英文字母</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">卡券面值:</label>
+                <div class="controls">
+                    <input type="text" name="total_price" value="" placeholder="请输入卡券面值"><span class="form-required">*元</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">最低消费:</label>
+                <div class="controls">
+                    <input type="text" name="de_price" value="" placeholder="请输入最低消费值"><span class="form-required">*元</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">卡劵有效时间:</label>
+                <div class="controls">
+                    <input type="text" name="begin_timestamp" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+                    <input type="text" name="end_timestamp"  class="js-datetime" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp;<span class="form-required">*只会计算年月日,不包括时分秒</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">发放总量:</label>
+                <div class="controls">
+                    <input type="text" name="quantity" value="" placeholder="请输入发放总量"><span class="form-required">*</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">客服电话:</label>
+                <div class="controls">
+                    <input type="text" name="service_phone" value="" placeholder="请输入客服电话"><span class="form-required">*</span>
+                </div>
+            </div>
+
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">添加</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    $(function(){
+        $(".user_phone").blur(function(){
+            var user_phone=$(this).val();
+            $.post("{:U('Couponadmin/check_logo')}", {'user_phone':user_phone}, function(data){
+                console.log(data);
+                if(data.status == 0){
+//                    "手机号码填写有误,不存在改商户");
+                    $(".user_tishi").text(data.msg);
+                }
+                if(data.status ==1){
+                    $(".logo").attr('disabled',true);
+                    console.log(data.msg);
+                    $(".logo1").val(data.msg)
+                }
+                if(data.status ==2){
+                    console.log(data.msg);
+                    $(".user_tishi").text("ok");
+                }
+            },"json");
+        })
+    })
+
+</script>
+</body>
+>>>>>>> dev
 </html>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -244,4 +245,252 @@
 </script>
 
 </body>
+=======
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Pictureadmin/index')}">图片广告列表</a></li>
+        <li class="active"><a href="{:U('add')}">新增图片广告</a></li>
+    </ul>
+    <form method="post"  action="{:U('pictureadmin/add_post')}" class="form-horizontal " enctype="multipart/form-data">
+
+    <fieldset>
+            <div class="control-group">
+                <label class="control-label">使用通道</label>
+                <div class="controls">
+                    <select name="road" style="width: 120px;">
+                        <option value='0'>全部</option>
+                        <option value='1'>支付宝</option>
+                        <option value='2'>微信</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">来源</label>
+                <div class="controls">
+                    <select name="outin" style="width: 120px;">
+                        <option value='0'>全部</option>
+                        <option value='1'>公司内部</option>
+                        <option value='2'>外部运营</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">投放位置</label>
+                <div class="controls">
+                    <select name="callstyle" style="width: 120px;">
+                        <option value='0'>全部</option>
+                        <option value='1'>设备上</option>
+                        <option value='2'>手机上</option>
+                        <option value='3'>双屏</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">跳转地址:</label>
+                <div class="controls">
+                    <input type="text" name="url" value="" placeholder="要求写完整地址">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">排序:</label>
+                <div class="controls">
+                    <input type="text" name="sort" value="" placeholder="0~99之间">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">主题:</label>
+                <div class="controls">
+                    <input type="text" name="post[title]" value="" placeholder="请输入主题"> <span class="form-required">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">内容</label>
+                <div class="controls">
+                    <textarea name="cotent" id="description" style="width: 30%; height: 80px;" placeholder="请填写内容"></textarea>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">上传图片</label>
+                <div class="controls">
+                    <input type="text" name="thumb" class="form-control" id="thumb" placeholder="">
+                    <button type="button" class="btn btn-success" onclick="BrowseServer('thumb','img_show')" >上传
+                    </button>
+                    <button type="button" class="btn btn-danger">删除</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">图片预览</label>
+                <div class="controls">
+                    <img src="" id="img_show" style="max-height: 120px;"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">开始时间-结束时间</label>
+                <div class="controls">
+                    <input type="text" name="start_time" class="js-datetime" value="" style="width: 120px;" autocomplete="off">-
+                    <input type="text" class="js-datetime" name="end_time" value="" style="width: 120px;" autocomplete="off"> &nbsp;
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary ">添加</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ad/ckfinder/ckfinder.js"></script>
+<script type="text/javascript">
+    $(function() {
+        $(".js-ajax-close-btn").on('click', function (e) {
+            e.preventDefault();
+            Wind.use("artDialog", function () {
+                art.dialog({
+                    id: "question",
+                    icon: "question",
+                    fixed: true,
+                    lock: true,
+                    background: "#CCCCCC",
+                    opacity: 0,
+                    content: "您确定需要关闭当前页面嘛？",
+                    ok: function () {
+                        setCookie("refersh_time", 1);
+                        window.close();
+                        return true;
+                    }
+                });
+            });
+        });
+        Wind.use('validate', 'ajaxForm', 'artDialog', function() {
+            //javascript
+
+            var form = $('form.js-ajax-forms');
+            //ie处理placeholder提交问题
+            if ($.browser && $.browser.msie) {
+                form.find('[placeholder]').each(function() {
+                    var input = $(this);
+                    if (input.val() == input.attr('placeholder')) {
+                        input.val('');
+                    }
+                });
+            }
+
+            var formloading = false;
+            //表单验证开始
+            form.validate({
+                //是否在获取焦点时验证
+                onfocusout : false,
+                //是否在敲击键盘时验证
+                onkeyup : false,
+                //当鼠标掉级时验证
+                onclick : false,
+                //验证错误
+                showErrors : function(errorMap, errorArr) {
+                    //errorMap {'name':'错误信息'}
+                    //errorArr [{'message':'错误信息',element:({})}]
+                    try {
+                        $(errorArr[0].element).focus();
+                        art.dialog({
+                            id : 'error',
+                            icon : 'error',
+                            lock : true,
+                            fixed : true,
+                            background : "#CCCCCC",
+                            opacity : 0,
+                            content : errorArr[0].message,
+                            cancelVal : '确定',
+                            cancel : function() {
+                                $(errorArr[0].element).focus();
+                            }
+                        });
+                    } catch (err) {
+                    }
+                },
+                //验证规则
+                rules : {
+                    'post[title]' : {
+                        required : 1
+                    }
+                },
+                //验证未通过提示消息
+                messages : {
+                    'post[title]' : {
+                        required : '请输入'
+                    }
+                },
+                //给未通过验证的元素加效果,闪烁等
+                highlight : false,
+                //是否在获取焦点时验证
+                onfocusout : false,
+                //验证通过，提交表单
+                submitHandler : function(forms) {
+                    if (formloading)
+                        return;
+                    $(forms).ajaxSubmit({
+                        url : form.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
+                        dataType : 'json',
+                        beforeSubmit : function(arr, $form, options) {
+                            formloading = true;
+                        },
+                        success : function(data, statusText, xhr, $form) {
+                            formloading = false;
+                            if (data.status) {
+                                setCookie("refersh_time", 1);
+                                //添加成功
+                                Wind.use("artDialog", function() {
+                                    art.dialog({
+                                        id : "succeed",
+                                        icon : "succeed",
+                                        fixed : true,
+                                        lock : true,
+                                        background : "#CCCCCC",
+                                        opacity : 0,
+                                        content : data.info,
+                                        button : [ {
+                                            name : '继续添加？',
+                                            callback : function() {
+                                                reloadPage(window);
+                                                return true;
+                                            },
+                                            focus : true
+                                        }, {
+                                            name : '返回列表页',
+                                            callback : function() {
+                                                location = "{:U('Pictureadmin/index')}";
+                                                return true;
+                                            }
+                                        } ]
+                                    });
+                                });
+                            } else {
+                                artdialog_alert(data.info);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    })
+
+    //上传图片
+    function BrowseServer(thumb, img_show) {
+        var finder = new CKFinder();
+        //当选中图片时执行的函数
+        finder.selectActionFunction = function (fileUrl) {
+            $("#" + thumb).val(fileUrl);
+            $("#" + img_show).attr("src", "" + fileUrl + "");
+        };
+
+        finder.popup();//调用窗口
+    }
+
+
+</script>
+
+</body>
+>>>>>>> dev
 </html>

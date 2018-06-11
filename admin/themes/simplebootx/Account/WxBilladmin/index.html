@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -60,4 +61,68 @@
 <script src="__PUBLIC__/js/common.js"></script>
 
 </body>
+=======
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('WxBilladmin/index')}">微众对账单刘表</a></li>
+        <!--<li ><a href="{:U('Billadmin/add')}">添加商户二维码</a></li>-->
+    </ul>
+    <form class="well form-search" method="post" action="{:U('WxBilladmin/index')}">
+        时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp;
+        商户编号：
+        <input type="text" name="merchant_no" style="width: 200px;" value="{$formget.merchant_no|default=''}" placeholder="请输入商户对应的编号">
+        商户名称：
+        <input type="text" name="merchant_name" style="width: 200px;" value="{$formget.merchant_name|default=''}" placeholder="请输入商户对应的名称">
+        微信订单号：
+        <input type="text" name="wx_order_zn" style="width: 200px;" value="{$formget.wx_order_zn|default=''}" placeholder="请输入商户对应的编号">
+
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('WxBilladmin/index')}">清空</a>
+    </form>
+    <form  action="{:U('Billadmin/delete')}" method="post">
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" >交易时间</th>
+                <th width="70" >商户编号</th>
+                <th width="80" >商户名称</th>
+                <th width="50" >交易类型</th>
+                <th width="50" >微信订单号</th>
+                <th width="90" >系统订单号</th>
+                <th width="50" >交易金额</th>
+                <th width="50" >交易状态</th>
+                <th width="80" >手续费</th>
+                <th width="80" >账单获取时间</th>
+            </tr>
+            </thead>
+            <foreach name="bills" item="b">
+                <tr>
+                    <td><b>{$b.bill_date|date='Y-m-d H:i:s',###}</b></td>
+                    <td><b>{$b.sub_mchid}</b></td>
+                    <td><b>{$b.merchant_name}</b></td>
+                    <td><b>{$b.deal_type}</b></td>
+                    <td><b>{$b.wx_order_sn}</b></td>
+                    <td><b>{$b.mch_order_sn}</b></td>
+                    <td><b><?php if($b['deal_money'] == '0.00') echo $b['pay_back_money'];else echo $b['deal_money'];?></b></td>
+                    <td><b><?php if($b[deal_status]=='SUCCESS') echo '支付成功';elseif($b[deal_status]=='REFUND') echo '已退款';else echo $b['deal_status']?></b></td>
+                    <td><b>{$b.poundage}</b></td>
+                    <td>
+                        <b>{:date('Y-m-d H:i:s',$b['add_time'])}</b>
+                    </td>
+
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+>>>>>>> dev
 </html>

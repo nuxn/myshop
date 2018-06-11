@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header"/>
 </head>
 <body>
@@ -27,4 +28,35 @@
     input{width: 40%;}
 </style>
 </body>
+=======
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <form id="form1" method="post" class="form-horizontal" action="{:U('Intoleshua/set_ip')}">
+        <input type="hidden" name="id" value="{$id|default=0}">
+        <div class="control-group">
+            <label class="control-label">商户ID</label>
+            <div class="controls">
+                <input type="text" value="{$address|default=''}">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ip_address">ip地址</label>
+            <div class="controls">
+                <input type="text" value="{$ip_address|default=''}" id="ip_address" name="ip_address">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >提交</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<style>
+    input{width: 40%;}
+</style>
+</body>
+>>>>>>> dev
 </html>

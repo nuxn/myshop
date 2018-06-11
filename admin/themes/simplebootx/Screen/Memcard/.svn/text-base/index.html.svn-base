@@ -1,0 +1,82 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('memcard/index')}">会员卡列表</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('Memcard/index')}">&nbsp;&nbsp;
+        会员卡状态:
+        <!--<input type="text" name="cardstatus"  value="{$cardstatus}" placeholder="请输入会员卡状态">-->
+        <select name="cardstatus" style = "width:100px;">
+            <option value="-1" <if condition="$cardstatus eq '-1'">selected</if>>请选择</option>
+            <option value="1" <if condition="$cardstatus eq 1">selected</if>>未审核</option>
+            <option value="2" <if condition="$cardstatus eq 2">selected</if>>审核中</option>
+            <option value="3" <if condition="$cardstatus eq 3">selected</if>>待发放</option>
+            <option value="4" <if condition="$cardstatus eq 4">selected</if>>已发放</option>
+        </select>&nbsp;&nbsp;
+        手机号:
+        <input type="text" name="userphone"  value="{$userphone}" placeholder="请输入来源商家手机号"> &nbsp;&nbsp;
+        创建时间:
+        <input type="text" class="js-date" value="{$start_time}" name="start_time" placeholder="开始时间" />-<input type="text" class="js-date" name="end_time" value="{$end_time}" placeholder="结束时间"  />
+        &nbsp;&nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        &nbsp;&nbsp;
+        <a class="btn btn-danger" href="{:U('Memcard/index')}">清空</a>
+    </form>
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th align="center" width="280">编号</th>
+            <th align="center" width="150">会员卡名称</th>
+            <th align="center" width="300">会员卡库存</th>
+            <th align="center">会员卡状态</th>
+            <th align="center">商户简称</th>
+            <th align="center">创建商户手机号</th>
+            <th align="center">创建时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <foreach name="data" item="v">
+            <tr>
+                <td>{$v.cardid}</td>
+                <td>{$v.cardname}</td>
+                <td>{$v.cardnum}</td>
+                <td>
+                    <switch  name="v.cardstatus">
+                        <case value="1" >未通过</case>
+                        <case value="2" >审核中</case>
+                        <case value="3" >待投放</case>
+                        <case value="4" >已投放</case>
+                    </switch >
+                </td>
+                <td>{$v.user_name}</td>
+                <td>{$v.userphone}</td>
+                <td>{$v.add_time|date='Y-m-d',###}</td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+    <div class="pagination" style="text-align: right">{$page}</div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<style>
+</style>
+<!--<script>
+    function exchange(status,id) {
+        $.post('{:U("adminIndex/exchangeSatatus")}',{status:status,id:id},function (data) {
+            if(data.code==1){
+                if($("#id_"+id).hasClass('fa fa-check fa-lg'))
+                {
+                    $("#id_"+id).attr('class','fa fa-close fa-lg');
+                    $("#id_"+id).attr('onclick',"exchange(1,'"+id+"')");
+                }else if($("#id_"+id).hasClass('fa fa-close fa-lg')){
+                    $("#id_"+id).attr('class','fa fa-check fa-lg');
+                    $("#id_"+id).attr('onclick',"exchange(0,'"+id+"')");
+                }
+            }
+        });
+    }
+</script>-->
+</body>
+</html>

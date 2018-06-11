@@ -1,0 +1,18 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Wxpay/check_order')}">微信对账单获取</a></li>
+        <!--<li ><a href="{:U('Countadmin/add')}">添加商户二维码</a></li>-->
+    </ul>
+    <form class="well form-search" method="post" name="" action="{:U('Wxpay/check_order')}">
+        时间：
+        <input type="text" name="time" style="width: 200px;" value="{$time|default=''}" placeholder="格式为 20170327">
+        <input type="submit" class="btn btn-primary" value="获取" /><span style="color: red"> 微信在次日9点启动生成前一天的对账单，建议商户10点后再获取</span>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+</html>

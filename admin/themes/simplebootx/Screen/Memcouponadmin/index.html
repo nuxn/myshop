@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -80,4 +81,88 @@
 
 
 </body>
+=======
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Memcouponadmin/index')}">领取列表</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('Memcouponadmin/index')}">
+        领取时间：
+        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" name="end_time"  class="js-datetime" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp;
+        使用状态：
+        <select name="status" style="width: 120px;">
+            <option value='' <if condition="$formget.status eq '' ">selected</if> >全部</option>
+            <option value='0' <if condition="$formget.status eq '0' ">selected</if> >已使用</option>
+            <option value='1' <if condition="$formget.status eq '1' ">selected</if> >未使用</option>
+        </select>&nbsp;
+        商户名称：
+        <input type="text" name="merchant_name" style="width: 200px;" value="{$formget.merchant_name|default=''}"  placeholder="请输入商户名称">&nbsp;
+        卡券名称：
+        <input type="text" name="title" style="width: 200px;" value="{$formget.title|default=''}" placeholder="请输入卡券名称">
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Memcouponadmin/index')}">清空</a>
+    </form>
+    <form  action="{:U('Memcouponadmin/delete')}" method="post">
+        <!--<div class="table-actions">-->
+        <!--<button class="btn btn-danger btn-md " type="submit"  data-subcheck="true" data-msg="你确定删除吗？">全选删除</button>-->
+        <!--</div>-->
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" >领券id</th>
+                <th width="70" >券的标题</th>
+                <th width="70" >来源商家</th>
+                <th width="70" >领取人</th>
+                <th width="70" >code序列号</th>
+                <th width="70" >使用状态</th>
+                <th width="70" >领取时间</th>
+            </tr>
+            </thead>
+            <foreach name="users" item="u">
+                <tr>
+                    <td><b>{$u.id}</b></td>
+                    <td><b>{$u.title}</b></td>
+                    <td><b>{$u.merchant_name}</b></td>
+                    <td><b>{$u.fromname}</b></td>
+                    <td><b>{$u.usercard}</b></td>
+                    <td>
+                        <b>{$u.status}</b>
+                    </td>
+                    <td>{:date('Y-m-d H:i:s',$u['create_time'])}</td>
+                </tr>
+            </foreach>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+
+<!--&lt;!&ndash;查看图片&ndash;&gt;-->
+<!--<div class="modal fade" id="look_img" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+    <!--<div class="modal-dialog">-->
+        <!--<div class="modal-content">-->
+            <!--<div class="modal-header">-->
+                <!--<button type="button" class="close" data-dismiss="modal"><span-->
+                        <!--aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>-->
+
+                <!--<h4 class="modal-title" id="myModalLabel">观看图片</h4>-->
+            <!--</div>-->
+            <!--<div class="modal-body ">-->
+                <!--<img src="" alt="" style="width:450px ;height:270px">-->
+            <!--</div>-->
+            <!--<div class="modal-footer">-->
+                <!--<button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+<script src="__PUBLIC__/js/common.js"></script>
+
+
+</body>
+>>>>>>> dev
 </html>

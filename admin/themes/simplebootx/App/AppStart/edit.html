@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -200,4 +201,208 @@
 </script>
 
 </body>
+=======
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('AppStart/index')}">启动页列表</a></li>
+        <li><a href="{:U('AppStart/add')}" target="_self">新增启动页</a></li>
+        <li class="active" ><a href="">编辑启动页</a></li>
+    </ul>
+    <form method="post"  action="{:U('AppStart/edit')}" class="form-horizontal " enctype="multipart/form-data">
+        <input type="hidden" value="{$app.id}" name="id">
+    <fieldset>
+            <div class="control-group">
+                <label class="control-label">名称</label>
+                <div class="controls">
+                    <input type="text" name="name" value="{$app.name}" placeholder="请输入启动页名称">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">上传图片</label>
+                <div class="controls">
+                    <input type="text" name="thumb" class="form-control" id="thumb" readonly = "readonly" placeholder="" value="{$app.thumb}">
+                    <button type="button" class="btn btn-success" onclick="BrowseServer('thumb','img_show')" >更改图片</button>
+                    <!--<button type="button" class="btn btn-danger" onclick="DeletePicture('thumb','img_show')">删除</button>-->
+                    <span style="color:red">*上传750*1334分辨率图片</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">图片预览</label>
+                <div class="controls">
+                    <img src="{$app.thumb}" id="img_show" style="max-width:375px;max-height:667px;"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">开始时间-结束时间</label>
+                <div class="controls">
+                    <input type="text" name="start_time" class="js-datetime" value="{:date('Y-m-d H:i:s',$app['start_time'])}" style="width: 140px;" autocomplete="off">-
+                    <input type="text" class="js-datetime" name="end_time" value="{:date('Y-m-d H:i:s',$app['end_time'])}" style="width: 140px;" autocomplete="off"> &nbsp;
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary ">编辑</button>
+            <a class="btn" href="javascript:history.back(-1);">返回</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ad/ckfinder/ckfinder.js"></script>
+<script type="text/javascript">
+    $(function() {
+        $(".js-ajax-close-btn").on('click', function (e) {
+            e.preventDefault();
+            Wind.use("artDialog", function () {
+                art.dialog({
+                    id: "question",
+                    icon: "question",
+                    fixed: true,
+                    lock: true,
+                    background: "#CCCCCC",
+                    opacity: 0,
+                    content: "您确定需要关闭当前页面嘛？",
+                    ok: function () {
+                        setCookie("refersh_time", 1);
+                        window.close();
+                        return true;
+                    }
+                });
+            });
+        });
+        Wind.use('validate', 'ajaxForm', 'artDialog', function() {
+            //javascript
+
+            var form = $('form.js-ajax-forms');
+            //ie处理placeholder提交问题
+            if ($.browser && $.browser.msie) {
+                form.find('[placeholder]').each(function() {
+                    var input = $(this);
+                    if (input.val() == input.attr('placeholder')) {
+                        input.val('');
+                    }
+                });
+            }
+
+            var formloading = false;
+            //表单验证开始
+            form.validate({
+                //是否在获取焦点时验证
+                onfocusout : false,
+                //是否在敲击键盘时验证
+                onkeyup : false,
+                //当鼠标掉级时验证
+                onclick : false,
+                //验证错误
+                showErrors : function(errorMap, errorArr) {
+                    //errorMap {'name':'错误信息'}
+                    //errorArr [{'message':'错误信息',element:({})}]
+                    try {
+                        $(errorArr[0].element).focus();
+                        art.dialog({
+                            id : 'error',
+                            icon : 'error',
+                            lock : true,
+                            fixed : true,
+                            background : "#CCCCCC",
+                            opacity : 0,
+                            content : errorArr[0].message,
+                            cancelVal : '确定',
+                            cancel : function() {
+                                $(errorArr[0].element).focus();
+                            }
+                        });
+                    } catch (err) {
+                    }
+                },
+                //验证规则
+                rules : {
+                    'post[title]' : {
+                        required : 1
+                    }
+                },
+                //验证未通过提示消息
+                messages : {
+                    'post[title]' : {
+                        required : '请输入'
+                    }
+                },
+                //给未通过验证的元素加效果,闪烁等
+                highlight : false,
+                //是否在获取焦点时验证
+                onfocusout : false,
+                //验证通过，提交表单
+                submitHandler : function(forms) {
+                    if (formloading)
+                        return;
+                    $(forms).ajaxSubmit({
+                        url : form.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
+                        dataType : 'json',
+                        beforeSubmit : function(arr, $form, options) {
+                            formloading = true;
+                        },
+                        success : function(data, statusText, xhr, $form) {
+                            formloading = false;
+                            if (data.status) {
+                                setCookie("refersh_time", 1);
+                                //添加成功
+                                Wind.use("artDialog", function() {
+                                    art.dialog({
+                                        id : "succeed",
+                                        icon : "succeed",
+                                        fixed : true,
+                                        lock : true,
+                                        background : "#CCCCCC",
+                                        opacity : 0,
+                                        content : data.info,
+                                        button : [ {
+                                            name : '继续添加？',
+                                            callback : function() {
+                                                reloadPage(window);
+                                                return true;
+                                            },
+                                            focus : true
+                                        }, {
+                                            name : '返回列表页',
+                                            callback : function() {
+                                                location = "{:U('AppStart/index')}";
+                                                return true;
+                                            }
+                                        } ]
+                                    });
+                                });
+                            } else {
+                                artdialog_alert(data.info);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    })
+
+    //上传图片
+    function BrowseServer(thumb, img_show) {
+        var finder = new CKFinder();
+        //当选中图片时执行的函数
+        finder.selectActionFunction = function (fileUrl) {
+            $("#" + thumb).val(fileUrl);
+            $("#" + img_show).attr("src", "" + fileUrl + "");
+        };
+
+        finder.popup();//调用窗口
+    }
+
+    function DeletePicture(thumb, img_show){
+        $("#" + thumb).val("");
+        $("#" + img_show).removeAttr("src");
+    }
+
+
+</script>
+
+</body>
+>>>>>>> dev
 </html>

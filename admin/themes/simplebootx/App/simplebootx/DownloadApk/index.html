@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!doctype html>
 <html lang="en">
 <head>
@@ -70,4 +71,78 @@
     <img src="__PUBLIC__/images/<?php echo $img?>.png" onclick="downloadApp()" alt="">
 </div>
 </body>
+=======
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, user-scalable=0, minimal-ui">
+    <title>下载</title>
+    <style>
+        body, div, img {
+            margin: 0;
+            padding: 0
+        }
+
+        .main {
+            width: 100%;
+        }
+
+        img {
+            width: 100%;
+        }
+    </style>
+    <script>
+        function downloadApp() {
+            if (_isIOS()) {
+                window.location.href = "<?php echo $ios_url?>";
+                return false;
+            }
+            if (_isAndroid()) {
+                if (isWeiXin()) {
+                    var img = document.getElementsByTagName('img')[0];
+                    img.src = "__PUBLIC__/images/<?php echo $_img?>.png";
+                    return false;
+                }
+                window.location.href = "<?php echo $android_url;?>";
+            }
+        }
+        function isWeiXin() {
+            var ua = window.navigator.userAgent.toLowerCase();
+            if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function _isIOS() {
+            var ua = navigator.userAgent.toLowerCase();
+            if (ua.match(/iPhone\sOS/i) == "iphone os") {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function _isAndroid() {
+            var ua = navigator.userAgent.toLowerCase();
+            if (ua.match(/Android/i) == "android") {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        window.onload = function iosDown(){
+            if (_isIOS()) {
+                window.location.href = "<?php echo $ios_url?>";
+                return false;
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="main">
+    <img src="__PUBLIC__/images/<?php echo $img?>.png" onclick="downloadApp()" alt="">
+</div>
+</body>
+>>>>>>> dev
 </html>

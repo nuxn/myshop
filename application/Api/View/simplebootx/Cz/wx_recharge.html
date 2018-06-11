@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>会员卡充值</title>
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/card_recharge/css/index-rem.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/card_recharge/css/member.css">
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="https://sy.youngport.com.cn/public/js/jquery.js"></script>
+    <script src="__PUBLIC__/card_recharge/js/swiper.min.js"></script>
+    <script src="__PUBLIC__/card_recharge/js/layer_mobile/layer.js"></script>
+    <script src="__PUBLIC__/js/jquery.js"></script>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+</head>
+
+<body style="background:#f2f2f2;">
+<!-- 内容部分 -->
+<div class="conter">
+    <div class="conter_top">
+        <img class="top_img" src="{$mch_info.logo_url|default='__PUBLIC__/card_recharge/imgs/conter_top.png'}" alt="">
+        <p>{$mch_info.merchant_jiancheng}</p>
+        <p>
+            <img src="__PUBLIC__/card_recharge/imgs/vip.png" alt="">
+            <span>{$code}</span>
+            <img src="__PUBLIC__/card_recharge/imgs/mobile.png" alt="">
+            <span>{$hidephone}</span>
+        </p>
+    </div>
+    <!-- 充值 -->
+    <div class="conter_recharge">
+        <h5>请选择充值金额</h5>
+        <ul class="clear prices">
+            <foreach name="price" item="v">
+                <li data-price="{$v['price']}">
+                    <if condition="$v['de_price'] gt 0">
+                        <p>{$v.price}</p>
+                        <p>送{$v.de_price}</p>
+                        <else/>
+                        <p style="line-height:0.7rem;color: #323232;font-size: .26rem">{$v.price}</p>
+                    </if>
+                </li>
+            </foreach>
+            <li class="other_price">其它金额</li>
+            <li class="code_recharge">充值码充值<input type="checkbox" readonly></li>
+        </ul>
+        <div class="navbar">
+            <input type="text" style="width: 96%" placeholder="请输入充值码" maxlength="16" id="upcode">
+            <a href="javascript:;" id="scanQRCode" style="right: 4%"><img src="__PUBLIC__/card_recharge/imgs/scan.png" alt=""></a>
+            <!--<button onclick="search_input()">确定</button>-->
+        </div>
+        <div class="navbar1">
+            <input type="number" style="width: 96%" placeholder="请输入充值金额" id="upmoney">
+            <!--<button onclick="search()">确定</button>-->
+        </div>
+    </div>
+</div>
+<!-- 提示 -->
+<div class="title">
+    <h5>提示</h5>
+    <ul>
+        <li><span></span>充值后储值自动到账，请到微信会员卡余额中查询。</li>
+        <li><span></span>充值金额可用于线上消费和门店消费使用。</li>
+        <li><span></span>如充值遇到问题，请及时联系商家。</li>
+    </ul>
+    <p><img src="__PUBLIC__/card_recharge/imgs/footer_logo.png" alt=""></p>
+</div>
+
+<!-- 底部区域 -->
+<footer><button id="onSubmit" onclick="payment()">立即充值</button></footer>
+
+</body>
+
+</html>
+<script type="text/javascript">
+    var openid = "{$openid}";
+    var uid = "{$uid}";
+    $(document).ready(function() {
+        var li_length = $(".conter_recharge li").length; //获取li的数量
+        $('.conter_recharge li').click(function() {
+            $(this).addClass('active').siblings().removeClass('active');
+            var index = $(this).index(); //获取点击当前的下标
+            if (index == li_length - 1) { //如果这个下标 == 最后一个li,就显示，否则隐藏
+                $('.navbar').show();
+            } else {
+                $('.navbar').hide();
+            }
+            if (index == li_length - 2) { //如果这个下标 == 最后一个li,就显示，否则隐藏
+                $('.navbar1').show();
+            } else {
+                $('.navbar1').hide();
+            }
+        });
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: '{$parm.appid}',
+            timestamp: '{$parm.timestamp}',
+            nonceStr: '{$parm.noncestr}',
+            signature:'{$parm.signature}',
+            jsApiList: ['scanQRCode'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+
+        $("#scanQRCode").click(function() {
+            wx.scanQRCode({
+                // 默认为0，扫描结果由微信处理，1则直接返回扫描结果
+                needResult: 1,
+                desc: 'scanQRCode desc',
+                success: function(res) {
+                    //扫码后获取结果参数赋值给Input
+                    var url = res.resultStr;
+                    //商品条形码，取","后面的
+                    if (url.indexOf(",") >= 0) {
+                        var tempArray = url.split(',');
+                        var tempNum = tempArray[1];
+                        $("#upcode").val(tempNum);
+                    } else {
+                        $("#upcode").val(url);
+                    }
+                }
+            });
+        });
+    });
+
+    function payment() { //立即支付
+        var price = 0;
+        var curr = $('.prices').find('.active');
+        if (curr.length == 0) {
+            alert('请选择充值金额');return false;
+        }
+        if (curr.hasClass('code_recharge')) {
+            var code = $("#upcode").val();
+            var card_code = '{$code}';
+            if(code){
+                $.post("{:U('api/cz/entity_code_recharge')}", {
+                    'code': code,
+                    'card_code': card_code
+                }, function(data) {
+                    if (data.code == 0) {
+                        //alert('充值成功');
+                        //WeixinJSBridge.call('closeWindow');
+                        window.location.href = 'http://sy.youngport.com.cn/index.php?s=api/cz/member_ok/type/1/code/'+code+'/card_code/'+card_code+'/uid/'+uid;
+                    } else {
+                        alert(data.msg);
+                    }
+                })
+            }else{
+                alert('请输入充值码');
+            }
+            return false;
+        }else if (curr.hasClass('other_price')) {
+            price = $('#upmoney').val();
+            if (!price){
+                alert('请输入自定义充值金额');return false;
+            }
+        } else {
+            price = curr.data('price');
+        }
+        $.post("{:U('api/cz/entity_create_order')}", {
+            'price': price * 100,
+            'openid': openid,
+            'card_code': '{$code}'
+        }, function (data) {
+            if (data.code == 0) {
+                if(data.data.bank == 11){
+                    param = data.data;
+                    console.log(param);
+                    window.location.href = 'http://sy.youngport.com.cn/index.php?s=api/cz/xdl_wxpay/amount/'+param.amount+'/characterset/'+param.characterset+'/mercid/'+param.mercid+'/opsys/'+param.opsys+'/orgno/'+param.orgno+'/paychannel/'+param.paychannel+'/signtype/'+param.signtype+'/signvalue/'+param.signvalue+'/total_amount/'+param.total_amount+'/tradeno/'+param.tradeno+'/trmno/'+param.trmno+'/trmtyp/'+param.trmtyp+'/txntime/'+param.txntime+'/version/'+param.version+'/openid/'+openid;
+                    //window.location.href = 'http://127.0.0.1/youngshop/index.php?s=api/cz/xdl_wxpay/amount/'+param.amount+'/characterset/'+param.characterset+'/mercid/'+param.mercid+'/opsys/'+param.opsys+'/orgno/'+param.orgno+'/paychannel/'+param.paychannel+'/signtype/'+param.signtype+'/signvalue/'+param.signvalue+'/total_amount/'+param.total_amount+'/tradeno/'+param.tradeno+'/trmno/'+param.trmno+'/trmtyp/'+param.trmtyp+'/txntime/'+param.txntime+'/version/'+param.version+'/openid/'+openid;
+                }else{
+                    param = JSON.parse(data.data);
+                    order_sn = data.order_sn;
+                    console.log(param);
+                    callpay()
+                }
+            } else {
+                alert(data.msg);
+            }
+        })
+    }
+    function callpay() {
+        if (typeof WeixinJSBridge == "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', callpay, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', callpay);
+                document.attachEvent('onWeixinJSBridgeReady', callpay);
+            }
+        } else {
+            WeixinJSBridge.invoke(
+                'getBrandWCPayRequest',
+                param,
+                function (res) {
+                    if (res.err_msg == "get_brand_wcpay_request:ok") {
+                        var card_code = '{$code}';
+                        //WeixinJSBridge.call('closeWindow');
+                        //window.location.href = "{:U('info',array('openid'=>$openid,'card_id'=>$card))}";
+                        //window.location.href = "{:U('member_ok',array('type'=>2,'order_sn'=>'"+order_sn+"','card_code'=>$code))}";
+                        window.location.href = 'http://sy.youngport.com.cn/index.php?s=api/cz/member_ok/type/2/card_code/'+card_code+'/order_sn/'+order_sn+'/uid/'+uid;
+                    } else {
+                        // alert(res.err_code+res.err_desc+res.err_msg);
+                    }
+                }
+            );
+        }
+    }
+</script>

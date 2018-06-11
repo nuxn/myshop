@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <admintpl file="header"/>
 </head>
 <body>
@@ -75,4 +76,83 @@
     });
 </script>
 </body>
+=======
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">{:L('MSG_INDEX')}</a></li>
+        <li><a href="{:U('AdminApp/add')}" target="_self">{:L('MSG_ADD')}</a></li>
+    </ul>
+    <form class="js-ajax-form" action="" method="post">
+        <div class="table-actions">
+            <button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('AdminApp/delete')}" data-subcheck="true" data-msg="您确定删除吗？">{:L('DELETE')}</button>
+        </div>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>
+                <th width="50">ID</th>
+                <th width="70">app名称</th>
+                <th width="50">客户端</th>
+                <th width="50">版本号</th>
+                <th width="50">versionCode</th>
+                <th width="450">更新日志</th>
+                <th width="70">下载地址</th>
+                <th width="90">创建时间</th>
+                <th width="90">修改时间</th>
+                <th width="70">操作用户</th>
+                <th width="70">操作</th>
+            </tr>
+            </thead>
+            <foreach name="data_lists" item="val">
+                <tr>
+                    <td><input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$val.id}" title="ID:{$vo.id}"></td>
+                    <td align="center">{$val.id}</td>
+                    <td align="center">{$val.app_name}</td>
+                    <td align="center">
+                        <if condition="$val.client eq 1 "> 安卓
+                            <else/>
+                            苹果
+                        </if>
+                    </td>
+                    <td align="center">{$val.version_name}</td>
+                    <td align="center">{$val.version_code}</td>
+                    <td align="center">{$val.change_log}</td>
+                    <td align="center">{$val.apk_url}</td>
+                    <td align="center">{$val.creat_time|date="Y-m-d H:i:s",###}</td>
+                    <td align="center">{$val.update_time|date="Y-m-d H:i:s",###}</td>
+                    <td align="center">{$val.admin}</td>
+                    <td>
+                        <a href="{:U('AdminApp/edit',array('id'=>$val['id']))}">{:L('EDIT')}</a> |
+                        <a href="{:U('AdminApp/delete',array('id'=>$val['id']))}" class="js-ajax-delete">{:L('DELETE')}</a>
+                    </td>
+                </tr>
+            </foreach>
+
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    function refersh_window() {
+        var refersh_time = getCookie('refersh_time');
+        if (refersh_time == 1) {
+            window.location = "{:U('AdminApp/index',$formget)}";
+        }
+    }
+    setInterval(function () {
+        refersh_window();
+    }, 2000);
+    $(function () {
+        setCookie("refersh_time", 0);
+        Wind.use('ajaxForm', 'artDialog', 'iframeTools', function () {
+
+        });
+    });
+</script>
+</body>
+>>>>>>> dev
 </html>

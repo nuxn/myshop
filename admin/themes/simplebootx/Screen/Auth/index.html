@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 <head>
@@ -191,4 +192,199 @@
 </script>
 
 </body>
+=======
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/layui/layui.all.js"></script>
+    <script src="__PUBLIC__/js/jquery.js"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+
+<div class="layui-tab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">权限列表</li>
+        <li>添加权限</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <blockquote class="layui-elem-quote layui-text">
+                <i class="layui-icon layui-icon-face-smile" style="font-size: 30px; color: red;"></i>
+            </blockquote>
+            <div class="layui-form">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="50">
+                        <col width="100">
+                        <col width="150">
+                        <col width="200">
+                        <col width="200">
+                        <col width="100">
+                        <col width="250">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>id</th>
+                        <th>权限名称</th>
+                        <th>上级id</th>
+                        <th>权限路径</th>
+                        <th>启用</th>
+                        <th>添加时间</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <foreach name="auth" item="val">
+                        <tr data-id="{$val.id}" class="parents" data-dis="0">
+                            <td data-id="{$val.id}" class="tdparents" data-dis="0"><i class="layui-icon" style="font-size: 18px; ">&#xe623;</i></td>
+                            <td>{$val.id}</td>
+                            <td>{$val.auth_name}</td>
+                            <td><if condition="$val.pid neq 0">{$val.pid} </if></td>
+                            <td>{$val.auth_load}</td>
+                            <td>{$val.status}</td>
+                            <td>{$val.add_time}</td>
+                            <td>
+                                <button class="layui-btn layui-btn-sm layui-btn-primary">
+                                    <i class="layui-icon">&#xe642;</i>
+                                </button>
+                                <button class="layui-btn layui-btn-sm layui-btn-danger">
+                                    <i class="layui-icon">&#xe640;</i>
+                                </button>
+                            </td>
+                        </tr>
+                        <foreach name="val.child" item="vol">
+                            <tr style="display: none" class="child-{$val.id}">
+                                <td></td>
+                                <td>{$vol.id}</td>
+                                <td>┄┄{$vol.auth_name}</td>
+                                <td>{$vol.pid}</td>
+                                <td>{$vol.auth_load}</td>
+                                <td>{$vol.status}</td>
+                                <td>{$vol.add_time}</td>
+                                <td style="font-size: 18px; ">
+                                        <button class="layui-btn layui-btn-sm layui-btn-primary">
+                                            <i class="layui-icon">&#xe642;</i>
+                                        </button>
+                                        <button class="layui-btn layui-btn-sm layui-btn-danger">
+                                            <i class="layui-icon">&#xe640;</i>
+                                        </button>
+                                </td>
+                            </tr>
+                        </foreach>
+                    </foreach>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 添加新的权限-->
+        <div class="layui-tab-item">
+
+            <div class="layui-container">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                    <legend>----</legend>
+                </fieldset>
+
+                <div class="layui-row">
+                    <div class="layui-col-xs6">
+                        <form class="layui-form" action="">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">上级</label>
+                                    <div class="layui-input-inline">
+                                        <select name="pid" lay-verify="" lay-search="">
+                                            <option value="0">无</option>
+                                            <foreach name="pauth" item="vo">
+                                                <option value="{$vo.id}">{$vo.auth_name}</option>
+                                            </foreach>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">权限名称</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="auth_name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">模块</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="module" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">控制器</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="controller" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">方法</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="method" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit="" lay-filter="addAuth">立即提交</button>
+                                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!--<div class="layui-col-xs6">-->
+
+                    <!--</div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+        form.render();
+        //监听提交
+        form.on('submit(addAuth)', function (data) {
+            var send = eval('(' + JSON.stringify(data.field) + ')');
+            $.post("{:U('add_auth')}", send, function (res) {
+                if(res.code == '0000'){
+                    layer.msg('success');
+                    location.href = "{:U('index')}";
+                } else {
+                    layer.msg('添加失败');
+                }
+            });
+            return false;
+        });
+    });
+    $("tr td.tdparents").on('click', function () {
+        var id = $(this).data('id');
+        var child_class = 'child-'+id;
+        var dis = $(this).data('dis');
+        if(dis == 0){
+            $("."+child_class).show();
+            $(this).data('dis', 1);
+            $(this).find("i").first().html("&#xe625;");
+        } else {
+            $("."+child_class).hide();
+            $(this).data('dis', 0);
+            $(this).find("i").first().html("&#xe623;");
+        }
+    });
+</script>
+
+</body>
+>>>>>>> dev
 </html>

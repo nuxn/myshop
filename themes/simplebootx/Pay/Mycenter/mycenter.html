@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=100%; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+    <link rel="stylesheet" type="text/css" href="__TMPL__Public/pay/css/xiaofei.css"/>
+    <title>个人中心</title>
+    <script src="__TMPL__Public/pay/js/jquery1.42.min.js"></script>
+</head>
+<body style="background:#f2f2f2;height:100%">
+<div class="centy clearfix">
+    <div class="topck clearfix">
+        <notempty name="mem_img">
+                <img src="{$mem_img}" style="border-radius:50%"/>
+            <else/>
+            <img src="__TMPL__Public/pay/images/login.jpg" />
+        </notempty>
+        <h4>{$mem_name}</h4>
+    </div>
+    <div class="alibk clearfix" style="text-align: center">
+        <ul>
+                <div style="width: 100%;height: auto" onclick="window.open('{:U(\'Mycenter/myred\',array(\'openid\'=>$openid))}')">
+                <li><img src="__TMPL__Public/pay/images/pack1.jpg"/><h3>我的钱包</h3>
+                </li></div>
+
+
+            <div style="width: 100%;height: auto" onclick="window.open('{:U(\'Mycenter/myrecord\',array(\'openid\'=>$openid))}')">
+                <li><img src="__TMPL__Public/pay/images/pack2.jpg"/><h3>消费记录</h3>
+                </li></div>
+
+        </ul>
+    </div>
+
+</div>
+<script>
+    $(function(){
+        $('.moneypack .heads ul li').click(function(){
+            $(this).addClass('on').siblings().removeClass('on');
+            $('.bodys .ddi').hide().eq($(this).index()).show()
+        })
+
+    })
+</script>
+</body>
+</html>

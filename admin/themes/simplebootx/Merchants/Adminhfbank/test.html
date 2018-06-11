@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {extend name="$_admin_base_layout" /}
 
 {block name="style"}
@@ -494,4 +495,502 @@ function into(id){
 <script src="__LIBS__/webuploader/webuploader.min.js"></script>
 <script src="__LIBS__/ckeditor/ckeditor.js"></script>
 <!--<script src="/public/static/libs/ckeditor/ckeditor.js"></script>-->
+=======
+{extend name="$_admin_base_layout" /}
+
+{block name="style"}
+<link rel="stylesheet" href="__LIBS__/webuploader/webuploader.css">
+{/block}
+{block name="content"}
+<script type="text/javascript">
+function register(id){
+    $.ajax({
+        type:"post",
+        url:"{:url('Intohfbank/register')}",
+        data:{id:id},
+        success:function(data){
+            if(data.code=="success"){
+                alert("注册商户成功!");
+                location=location;
+            }else{
+                alert("注册商户失败!"+data.msg);
+            }
+        }
+       
+    }) 
+}
+function get_key(id){
+    $.ajax({
+        type:"post",
+        url:"{:url('Intohfbank/get_key')}",
+        data:{id:id},
+        success:function(data){
+            if(data.code=="success"){
+                alert("获取商户秘钥成功!");
+                location=location;
+            }else{
+                alert("获取商户秘钥失败!"+data.msg);
+            }
+        }
+       
+    }) 
+}
+function into(id){
+    $.ajax({
+        type:"post",
+        url:"{:url('Intohfbank/into')}",
+        data:{id:id},
+        success:function(data){
+            if(data.code=="success"){
+                alert("商户进件成功!");
+                location=location;
+            }else{
+                alert("商户进件失败!"+data.msg);
+            }
+        }
+       
+    }) 
+}
+</script>
+<div class="wrap">
+    <div class="col-md-12">
+        <div class="row ">
+            <div class="col-md-4">
+                <div class="panel-heading" style="text-align: center;"><h3>商户信息</h3></div>
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <!--form表单-->
+                            <form class="form-horizontal form" role="form" method="post" action="">
+                                <div class="tab-content">
+                                    <div class="tab-content">
+                                        <div role="tabpanel" class="tab-pane fade in active" id="home">
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label">一级代理费率</label>
+                                                <div class="col-sm-8">
+                                                    <input disabled type="text" value="{$agent_rate.common_rate_1}" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label">平台商费率</label>
+                                                <div class="col-sm-8">
+                                                    <input disabled type="text" value="{$m.common_rate_0}" class="form-control">
+                                                </div>
+                                            </div>
+                                            <?php if ($m['common_rate_0'] > 0.6) {?>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label text-danger">提醒</label>
+                                                <div class="col-sm-8">
+                                                    <span style="color: red">平台商费率高于0.6时将走充值返佣系统，请按一级代理费率进件</span>
+                                                </div>
+                                            </div>
+                                            <?php }?>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">商户上级</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.u_name}" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">商户名称</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.merchant_name}" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">商户简称</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.u_name}" class="form-control"
+                                                           placeholder="请填写商户简称">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">联系号码</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.telphone}" class="form-control"
+                                                           placeholder="请填写联系号码">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">地区</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.province}" class="form-control"
+                                                           placeholder="请填写联系号码">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-offset-4 col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.city}" class="form-control"
+                                                           placeholder="请填写联系号码">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-offset-4 col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.county}" class="form-control"
+                                                           placeholder="请填写联系号码">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">详细地址</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.address}" class="form-control"
+                                                           placeholder="请填写详细地址">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">所属行业</label>
+                                                <div class="col-sm-8 ">
+                                                    <input type="text" class="form-control" value="{$m.industry}" class="form-control"
+                                                           placeholder="请填写联系号码">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">门头(3张)</label>
+                                                <div class="col-sm-8">
+                                                    <img src="/public/{$m.header_interior_img}" style="height: 100px;"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">营业执照</label>
+                                                <div class="col-sm-8">
+                                                    <img src="/public/{$m.business_license}" style="height: 100px;"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">经营者姓名</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.operator_name}" class="form-control"
+                                                           placeholder="请填写经营者姓名">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">身份证号</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.id_number}" class="form-control"
+                                                           placeholder="请填写身份证号">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">身份证照片</label>
+                                                <div class="col-sm-8">
+                                                    <span class="col-sm-4">正面：</span>
+                                                    <img src="/public/{$m.positive_id_card_img}" style="height: 120px;"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">身份证照片</label>
+                                                <div class="col-sm-8">
+                                                    <span class="col-sm-4">反面：</span>
+                                                    <img src="/public/{$m.id_card_img}" style="height: 120px;"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">账户类型</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{if condition="($m['account_type'] == 0) "} 个人账户{else /} 企业账户{/if}" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">账户名称/开户名称</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.account_name}" class="form-control" placeholder="请填写开户名称">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">开户银行</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.bank_account}" class="form-control"
+                                                           placeholder="请填写开户银行">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">开户支行</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.branch_account}" class="form-control"
+                                                           placeholder="请填写开户支行">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-sm-4 control-label">银行账号</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" value="{$m.bank_account_no}" class="form-control"
+                                                           placeholder="请填写银行账号">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-offset-1 col-md-7">
+             <form class="form-horizontal form" role="form" method="post"
+                                      action="{:url('Intohfbank/hfeditadd',array('id'=>$data['id']))}" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="panel-heading" style="text-align: center;"><h3>商户注册</h3></div>
+                    <div class="row">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <!--form表单-->
+                               
+                                    <div class="tab-content">
+                                         <div class="form-group">
+                                            <label class="col-sm-4 control-label" for="mchtShortName">渠道商</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="mchtShortName"  disabled="disabled" value="{$c.mch_name}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label" >账号</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="account" placeholder="请填写商户账号" value="{$data.account}"> <span style="color: red">*唯一账号可以用手机号</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label" >密码</label>
+                                            <div class="col-sm-8">
+                                                <input type="password" class="form-control"  name="password" value="{$data.password}"> <span style="color: red">*账户密码</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                               
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="row">
+                    <div class="panel-heading" style="text-align: center;"><h3>进件资料</h3></div>
+                    <div class="row">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <!--form表单-->
+                               
+                                    <div class="tab-content">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">法人姓名</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="real_name" placeholder="请填写法人姓名" value="{$data.real_name}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">商户名称</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="cmer" placeholder="请填写商户名称" value="{$data.cmer}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">商户简称</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="cmer_short" value="{$data.cmer_short}" placeholder="请填写商户简称">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">联系电话</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="phone" value="{$data.phone}" placeholder="请填写商户简称">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">商户经营类别</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" value="{$data.business_id}" name="business_id" placeholder="请填写商户经营类别">
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">微信费率</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="wx_rate" value="{$data.wx_rate}" placeholder="请填写微信费率">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">支付宝费率</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="ali_rate" value="{$data.ali_rate}" placeholder="请填写支付宝费率">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">京东费率</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="jd_rate" value="{$data.jd_rate}" placeholder="请填写京东费率">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">支付通道</label>
+                                            <div class="col-sm-8">
+                                                <select name="channel_code" class="form-control">
+                                                    <option  value="WXPAY"  {eq name="data.channel_code" value="WXPAY"}selected{/eq}>微信</option>
+                                                    <option  value="ALIPAY" {eq name="data.channel_code" value="ALIPAY"}selected{/eq}>支付宝</option>           
+                                                
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">结算方式</label>
+                                            <div class="col-sm-8">
+                                                <select name="settlement" class="form-control">
+                                                    <option  value="D0" {eq name="data.settlement" value="D0"}selected{/eq}>D0</option>
+                                                    <option  value="T1" {eq name="data.settlement" value="T1"}selected{/eq}>T1</option>    
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">区编码</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="region_code" value="{$data.region_code}" placeholder="请填写区编码">
+                                            </div>
+                                        </div>
+
+                                       
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">商户详细地址</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="address" value="{$data.address}" placeholder="请填写商户详细地址" >&nbsp;&nbsp;<span style="color: red"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">银行卡号</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="card_no" value="{$data.card_no}" placeholder="请填写银行卡号" >&nbsp;&nbsp;<span style="color: red"></span>
+                                            </div>
+                                        </div>
+                        
+                                        
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">身份证号码</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="cert_no" value="{$data.cert_no}" placeholder="请填写身份证号码" >&nbsp;&nbsp;<span style="color: red"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">开户时绑定的手机号</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="mobile" value="{$data.mobile}" placeholder="请填写开户时绑定的手机号" >&nbsp;&nbsp;<span style="color: red"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">开户城市</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="location" value="{$data.location}" placeholder="请填写开户城市" >&nbsp;&nbsp;<span style="color: red"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group  " id="form_group_cert_correct">
+                                            <label class="col-sm-4 control-label" for="cert_correct">身份证正面照片</label>
+                                            <div class="col-sm-3 js-upload-image">
+                                                <div id="file_list_cert_correct" class="uploader-list">
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <input type="hidden" name="cert_correct" data-multiple="false" data-size="0" data-ext='gif,jpg,jpeg,bmp,png' id="cert_correct" value="">
+                                                <div id="picker_cert_correct">上传身份证正面照片</div>
+                                                <div class="col-sm-8">
+                                                    <img src="/public/{$data.cert_correct}" style="height: 100px;"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group  " id="form_group_cert_opposite">
+                                            <label class="col-sm-4 control-label" for="cert_opposite">身份证反面照片</label>
+                                            <div class="col-sm-3 js-upload-image">
+                                                <div id="file_list_cert_opposite" class="uploader-list">
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <input type="hidden" name="cert_opposite" data-multiple="false" data-size="0" data-ext='gif,jpg,jpeg,bmp,png' id="cert_opposite" value="">
+                                                <div id="picker_cert_opposite">上传身份证反面照片</div>
+                                                <div class="col-sm-8">
+                                                    <img src="/public/{$data.cert_opposite}" style="height: 100px;"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                       
+
+                                        <div class="form-group  " id="form_group_card_correct">
+                                            <label class="col-sm-4 control-label" for="card_correct">银行卡正面图片</label>
+                                            <div class="col-sm-3 js-upload-image">
+                                                <div id="file_list_card_correct" class="uploader-list">
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <input type="hidden" name="card_correct" data-multiple="false" data-size="0" data-ext='gif,jpg,jpeg,bmp,png' id="card_correct" value="">
+                                                <div id="picker_card_correct">上传银行卡正面图片</div>
+                                                <div class="col-sm-8">
+                                                    <img src="/public/{$data.card_correct}" style="height: 100px;"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group  " id="form_group_card_opposite">
+                                            <label class="col-sm-4 control-label" for="card_opposite">银行卡背面图片</label>
+                                            <div class="col-sm-3 js-upload-image">
+                                                <div id="file_list_card_opposite" class="uploader-list">
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <input type="hidden" name="card_opposite" data-multiple="false" data-size="0" data-ext='gif,jpg,jpeg,bmp,png' id="card_opposite" value="">
+                                                <div id="picker_card_opposite">上传银行卡背面图片</div>
+                                                <div class="col-sm-8">
+                                                    <img src="/public/{$data.card_opposite}" style="height: 100px;"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group  " id="form_group_bl_img">
+                                            <label class="col-sm-4 control-label" for="bl_img">营业执照照片</label>
+                                            <div class="col-sm-3 js-upload-image">
+                                                <div id="file_list_bl_img" class="uploader-list">
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <input type="hidden" name="bl_img" data-multiple="false" data-size="0" data-ext='gif,jpg,jpeg,bmp,png' id="bl_img" value="">
+                                                <div id="picker_bl_img">上传营业执照照片</div>
+                                                <div class="col-sm-8">
+                                                    <img src="/public/{$data.bl_img}" style="height: 100px;"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-8">
+                                                <button type="submit" class="btn btn-success tijiao">提交</button>
+                                                <?php if($data['into_type']==0){ ?>
+                                                <a  class="btn btn-info back" onclick="register({$data.id});" >注册商户</a>
+                                                <?php }else if($data['into_type']==1){ ?>
+                                                <a  class="btn btn-info back" onclick="get_key({$data.id});" >获取秘钥</a>
+                                                <?php }else if($data['into_type']==2){ ?>
+                                                <a  class="btn btn-info back" onclick="into({$data.id});" >商户进件</a>
+                                                <?php }else if($data['into_type']==3){ ?>
+                                                <?php } ?>
+                                                <button class="btn btn-info back"
+                                                        onclick="javascript:history.back(-1);return false;">返回
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                  </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+
+{/block}
+
+{block name="script"}
+<script src="__LIBS__/webuploader/webuploader.min.js"></script>
+<script src="__LIBS__/ckeditor/ckeditor.js"></script>
+<!--<script src="/public/static/libs/ckeditor/ckeditor.js"></script>-->
+>>>>>>> dev
 {/block}

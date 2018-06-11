@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!-- Created by zgf on 2017/3/3. -->
 <admintpl file="header"/>
 </head>
@@ -36,4 +37,44 @@
 
 </style>
 </body>
+=======
+<!-- Created by zgf on 2017/3/3. -->
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('AdminWzbank/index')}">支持银行列表</a></li>
+        <li class="active"><a href="{:U('AdminWzbank/add')}">添加支持银行</a></li>
+    </ul>
+    <form id="form1" class="form-horizontal" method="post" action="{:U('AdminWzbank/add')}">
+        <div class="control-group">
+            <label class="control-label" for="bank">银行名称</label>
+            <div class="controls">
+                <input type="text" id="bank" name="bank" placeholder="请填写银行名称">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="number">银行编号</label>
+            <div class="controls">
+                <input type="text" id="number" value="" name="number" placeholder="请填写银行编号">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >{:L('ADD')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/js/global.js"></script>
+<script>
+
+</script>
+<style>
+
+</style>
+</body>
+>>>>>>> dev
 </html>

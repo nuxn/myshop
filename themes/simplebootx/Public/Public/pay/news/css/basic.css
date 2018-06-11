@@ -1,0 +1,44 @@
+@charset "utf-8";
+@font-face {
+    font-family: 'FontAwesome';
+    src : url('../js/font-awesome/fonts/fontawesome-webfont.svg');
+    src : url('../js/font-awesome/fonts/fontawesome-webfont.eot');
+    src : url('../js/font-awesome/fonts/fontawesome-webfont.ttf');
+    src : url('../js/font-awesome/fonts/fontawesome-webfont.woff');
+}
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei UI", "Microsoft YaHei", SimHei, "\5B8B\4F53", simsun, sans-serif;
+}
+#header {
+    margin: 20px auto;
+    width: 1190px;
+    height: 43px;
+}
+#header h1 {
+    text-indent: -9999px;
+    float: left;
+    width: 56px;
+    height: 43px;
+    cursor: pointer;
+    background: url("../imgs/Logo.png");
+    display: block;
+}
+#header h3 {
+    display: inline-block;
+    padding: 0 0 0 30px;
+    height: 43px;
+    line-height: 43px;
+}
+#footer {
+    margin: 25px auto;
+    width: 1190px;
+    height: 30px;
+}
+#footer p {
+    text-align: center;
+    letter-spacing: 0.5px;
+}
