@@ -54,11 +54,7 @@ class BarcodexmmsbankController extends HomebaseController
     {
 //        $message = A("Pay/Banksxf")->wx_micropay('85', '0.02', '134574746235891109', '0', 'test', '', 2);
 //        $message = A("Pay/Banksxf")->pay_back('20180611151615261939', '0.02');
-<<<<<<< Updated upstream
-        $message = A("Pay/Leshuabank")->refund('20180614135425131141');
-=======
         $message = A("Pay/Leshuabank")->refund('20180614141115624134');
->>>>>>> Stashed changes
         dump($message);
 
         $message = A("Pay/Leshuabank")->query('20180614141115624134');

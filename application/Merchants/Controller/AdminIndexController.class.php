@@ -756,7 +756,6 @@ class AdminIndexController extends AdminbaseController
             $merchant_one['is_miniapp'] = I("is_miniapp");
 //            $merchant_one['merchant_name']=$merchant_one['merchant_name'].$number;
             $merchant_one['merchant_name'] = I("merchant_name");
-            $merchant_one['merchant_jiancheng'] = $user_one['user_name'];
             $merchant_one['add_time'] = time();
             $machine_merchant = $this->merchants->add($merchant_one);
 //            机器人角色对应表添加
