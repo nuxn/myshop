@@ -19,19 +19,22 @@ class PayModel extends CommonModel
         parent::_before_write($data);
     }
 
-    protected function setParameters($key, $val)
+    public function setParameters($key, $val)
     {
         $this->parameters[$key] = $val;
     }
 
-    protected function add_pay()
+    public function add_pay()
     {
         $this->parameters['add_time'] = time();
         $this->parameters['bill_date'] = date('Ymd');
-        $this->checkParameters();
+        $this->parameters['phone_info'] = $_SERVER['HTTP_USER_AGENT'];
+//        $this->checkParameters();
+//        return $this->add($this->parameters);
+        return true;
     }
 
-    protected function checkParameters()
+    public function checkParameters()
     {
 
     }

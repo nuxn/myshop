@@ -570,7 +570,7 @@ class  AddagentController extends ApibaseController
                     }
                     $type=2;
                 }else{
-                    $data['status'] = I('status')=='6' ? '6' : '3';
+                    $data['status'] = I('status','3');
                     $msg = '提交了资料';
                     $type=1;
                 }
@@ -714,7 +714,8 @@ class  AddagentController extends ApibaseController
 
             //$data['status'] = 0;
             $data['is_merchant_certificate'] = 1;
-            $data['update_time'] = time();
+            $time = time();
+            $data['update_time'] = $time;
             $addr = $province . $city . $county . $address;
             $getLonLat = $this->addresstolatlag($addr);
             if ($getLonLat) {
@@ -745,9 +746,9 @@ class  AddagentController extends ApibaseController
                     if (M("merchants_users")->where("id=$uid")->find()) M("merchants_users")->where("id=$uid")->save($user);
                 }
                 //如果是暂存则不添加到审核动态
-                if(I('status') != 6){
+                if($data['status'] != 6){
                     #添加到审核动态
-                    M('merchants_logs')->add(array('mid'=>$uid,'msg'=>$msg,'add_time'=>time(),'type'=>$type));
+                    M('merchants_logs')->add(array('mid'=>$uid,'msg'=>$msg,'add_time'=>$time,'type'=>$type));
                 }
                 $this->ajaxReturn(array("code" => "success", "msg" => L('MERCHANTS_ADD_SUCCESS')));
             } else {
@@ -772,12 +773,12 @@ class  AddagentController extends ApibaseController
                 if($data['status']==5){
                     $msg = '待商户提交资料';
                 }
-                $data['add_time'] = time();
+                $data['add_time'] = $time;
                 if ($mid = $merchantsModel->add($data)) {
                     //如果是暂存则不添加到审核动态
-                    if(I('status') != 6){
+                    if($data['status'] != 6){
                         #添加到审核动态
-                        M('merchants_logs')->add(array('mid'=>$uid,'msg'=>$msg,'add_time'=>time(),'type'=>$type));
+                        M('merchants_logs')->add(array('mid'=>$uid,'msg'=>$msg,'add_time'=>$time,'type'=>$type));
                     }
                     $this->ajaxReturn(array("code" => "success", "msg" => L('MERCHANTS_ADD_SUCCESS')));
                 } else {

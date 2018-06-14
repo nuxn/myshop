@@ -113,8 +113,7 @@ class OrderModel extends Model
     	   			break;
     	   			
     	   	}
-            $data = array('order_status'=>$status,'update_time'=>time());
-    	   	if($this->where($where)->setField($data)){
+    	   	if($this->where($where)->setField('order_status',$status)){
     	   			return true;
     	   	}else{
     	   			return $this->err('修改状态失败');

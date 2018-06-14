@@ -253,7 +253,7 @@ function get_store_error($code)
         case '65106':
             return '门店状态必须未审核通过';
         case '65107':
-            return '未审核，不允许修改';
+            return '微信审核中，不允许修改';
         case '65109':
             return '门店名为空';
         case '65110':
@@ -282,4 +282,36 @@ function get_mch_uid($userId)
     }
 
     return $mu_id;
+}
+
+function succ_ajax($info = array())
+{
+    $data['code'] = 'success';
+    $data['msg'] = '成功';
+    if($info){
+        $data['data'] = $info;
+    }
+    header('Content-Type:application/json; charset=utf-8');
+    exit(json_encode($data));
+}
+
+
+function getTree($data, $pId)
+{
+    $tree = '';
+    foreach($data as $k => $v)
+    {
+        if($v['pid'] == $pId)
+        {
+            //父亲找到儿子
+            $subs = getTree($data, $v['id']);
+            if($subs){
+                $v['subs'] = $subs;
+            } else {
+                $v['subs'] = array();
+            }
+            $tree[] = $v;
+        }
+    }
+    return $tree;
 }

@@ -123,6 +123,7 @@ class AdminpushController extends Controller
                 ->setOptions(null, null, null, true, null)
                 ->send();//send发送
         }
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/test/','api_push_msg','数据', json_encode($result));
         //file_put_contents($path . 'pay_message.log', date("Y-m-d H:i:s") . '1.3---' . $result . PHP_EOL, FILE_APPEND | LOCK_EX);
 //        echo '<pre/>';
 //        print_r(json_decode(json_encode($result),true));

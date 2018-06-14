@@ -1,0 +1,40 @@
+
+<!doctype html>
+<html>
+<head>
+<title>开始使用layer</title>
+</head>
+<body>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+<script src="__PUBLIC__/js/layer/layer1.js"></script>
+
+<script>
+layer.open({
+  type: 1,
+  area: ['300px', '300px'],
+  skin: 'layui-layer-demo', //样式类名
+  closeBtn: 1, //不显示关闭按钮
+  anim: 2,
+  shadeClose: true, //开启遮罩关闭
+  content: '<div style="padding:20px">通知：由于银行系统升级，自2017.9.25日晚D0秒到业务暂停服务，恢复服务时间另行通知。请知悉。如有疑问请联系客服电话：400-888-3658、客服微信：ypt13510674857或者相关业务人员。带来不便敬请谅解。</div>'
+});
+
+//var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+//alert(isiOS);
+  //取消
+
+var u = navigator.userAgent;
+
+var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+
+layer.close = function(){
+	if(isAndroid){
+		android.endActivityFunction()
+	}else{
+		location.href="close";
+	}
+}
+</script>
+</body>
+</html>  

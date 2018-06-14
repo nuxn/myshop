@@ -36,14 +36,13 @@ class ApibaseController extends Controller
         "Wxpay",
         "App",
         "Goods",
-		"Employee",
-		"Xcx",
+        "Employee",
+        "Xcx",
         "Message",
         "Cloud",
         "Barcode",
         "PushMsg",
         "Product",
-        "Test",
         "Integral",
         "card_pull",
         "Shopping",
@@ -51,6 +50,7 @@ class ApibaseController extends Controller
         "Wghl",
         "Wechat",
         "Merchants",
+	"Role",
     );
     //存储无需验证签名的模块
     protected $no_need_check_sign_module = array(

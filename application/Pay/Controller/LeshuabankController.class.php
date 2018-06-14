@@ -515,6 +515,7 @@ class LeshuabankController extends HomebaseController
         $this->writeLog('query.log', ':参数', $data);
         $res = $this->httpRequst($this->url, $data);
         $res_arr = $this->xmlToArray($res);
+        $this->writeLog('query.log', ':结果', $res_arr);
 
         return $res_arr;
     }
@@ -538,15 +539,52 @@ class LeshuabankController extends HomebaseController
         $this->writeLog('refund.log', ':参数', $param);
         $res = $this->httpRequst($this->url, $param);
         $res_arr = $this->xmlToArray($res);
-        if ($res_arr['resp_code'] == '0' && $res_arr['result_code'] == '0' && $res_arr['status'] == '11') {
+        if ($res_arr['resp_code'] == '0' && $res_arr['result_code'] == '0' && ($res_arr['status'] == '11' || $res_arr['status'] == '10')) {
             $this->pay_model->where("remark='$remark'")->save(array("status" => 2, "back_status" => 1, "price_back" => $res_arr['amount'] / 100));
             $this->writeLog('refund.log', ':退款成功', $res_arr);
             return array("code" => "success", "msg" => "成功", "data" => "退款成功");
+        } else if($res_arr['status'] == '10'){
+            return $this->query_refund($param);
         } else {
             $this->writeLog('refund.log', ':退款失败', $res_arr);
             return array("code" => "error", "msg" => "error", "data" => "退款失败");
         }
 
+    }
+
+    public function query_refund($param)
+    {
+        sleep(6);
+        $data['merchant_id'] = $this->mch_id;//商户号
+        $data['service'] = 'query_status';
+        $data['third_order_id'] = $param['third_order_id'];//商户系统内部的订单号
+        $data['nonce_str'] = $this->getNonceStr();//UCHANG订单号，优先使用
+        $data['sign'] = $this->getSignVeryfy($data, $this->key);
+//        $data = $param;
+        $this->writeLog('query_refund.log', ':参数', $data);
+        $queryTimes = 6;
+        while ($queryTimes > 0) {
+            $queryTimes--;
+            sleep(5);
+            $res = $this->httpRequst($this->url, $data);
+            $query_res = $this->xmlToArray($res);
+            if ($query_res['resp_code'] == 0 && $query_res['result_code'] == 0) {
+                if ($query_res['status'] == '10') {
+                    $this->writeLog('query_refund.log', ':继续查询', $query_res);
+                    continue;
+                } else if ($query_res['status'] == '11') {
+                    $this->writeLog('query_refund.log', ':退款成功', $query_res);
+                    return array("code" => "success", "msg" => "成功", "data" => "退款成功");
+                } else {
+                    $this->writeLog('query_refund.log', ':退款失败', $query_res);
+                    return array("code" => "error", "msg" => "失败", "data" => '请重试');
+                }
+            } else {
+                $this->writeLog('query_refund.log', ':退款失败', $query_res);
+                return array("code" => "error", "msg" => "失败", "data" => '请重试');
+            }
+        }
+                return array("code" => "error", "msg" => "失败", "data" => '请重试');
     }
 
     public function myback()

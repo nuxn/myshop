@@ -23,7 +23,7 @@ class  AgentnewsController extends ApibaseController
         $this->users = M("merchants_users");
         $this->roles = M("merchants_role_users");
         $this->cates = M("merchants_cate");
-        $this->pays = M("pay");
+        $this->pays = M('pay');
         $this->payBack = M("pay_back");
     }
 
@@ -552,7 +552,7 @@ class  AgentnewsController extends ApibaseController
         $ids = explode(",", $category_ids);
         $map['merchant_id'] = array('in', $ids);
         $map['paystyle_id'] = array('in', array(1, 2));  // 修改时间 2017/10/11
-        $pays = M("pay")->where($map)->order('paytime desc')->select();
+        $pays = $this->pays->where($map)->order('paytime desc')->select();
         return $pays;
     }
 

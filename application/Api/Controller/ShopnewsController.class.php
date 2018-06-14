@@ -418,7 +418,8 @@ class  ShopnewsController extends ApibaseController
     public function find_order()
     {
         $remark = I("remark") ? I("remark") : "";
-        $pay = $this->pays->where("remark='$remark'")->find();
+        $merchant_id = M('merchants')->where(array('uid'=>$this->userId))->getField('id');
+        $pay = $this->pays->where("remark='$remark' and merchant_id=$merchant_id")->find();
         if ($pay) {
             $checker_id = $pay['checker_id'];
             if ($checker_id != 0) {
@@ -430,6 +431,33 @@ class  ShopnewsController extends ApibaseController
             $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $pay));
         } else {
             $this->ajaxReturn(array("code" => "error", "msg" => "失败", "data" => "未找到该订单"));
+        }
+    }
+
+    //  1.8.2流水中的直接查询订单
+    public function find_order1()
+    {
+        ($remark = I("remark")) || $this->ajaxReturn(array("code" => "error", "msg" => "remark is empty"));
+        $where['remark|jmt_remark'] = array('LIKE',"%$remark%");
+        if($this->userInfo['role_id']==3){
+            $where['merchant_id'] = M('merchants')->where(array('uid'=>$this->userId))->getField('id');
+        }else{
+            $where['checker_id'] = $this->userId;
+        }
+        $pay = $this->pays->where($where)->field("id,paystyle_id,checker_id,price,remark,status,paytime,ifnull(bill_date,0) as bill_date,mode,authorization")->select();
+        if ($pay) {
+            foreach($pay as &$v){
+                $checker_id = $v['checker_id'];
+                if ($checker_id != 0) {
+                    $v['checker_name'] = M('merchants_users')->where(array('id'=>$checker_id))->getField('user_name');
+                } else {
+                    $v['checker_name'] = "";
+                }
+                $v['mode_name'] = $this->numberstyle($v['mode']);
+            }
+            $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $pay));
+        } else {
+            $this->ajaxReturn(array("code" => "success", "msg" => "无数据", "data" => array()));
         }
     }
 

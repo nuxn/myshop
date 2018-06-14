@@ -156,7 +156,6 @@ class TestadminController extends Controller
         } else {
             $url = 'https://fir.im/juca';
         }
-        $url='https://fir.im/jucaiguanjia';
         header('Location:' . $url);
     }
 

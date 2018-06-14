@@ -313,6 +313,21 @@ class  PayController extends ApibaseController
                     $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "success", "msg" => "成功", "data" => $pay)));
                 }
             }
+            // 随行付支付通道
+            if ($res['wx_bank'] == "14") {
+                $message = A("Pay/Banksxf")->wx_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
+                if ($message['code'] == "error") {
+                    $this->ajaxReturn(array("code" => "error", "msg" => "支付失败"));
+                }
+                if ($message['code'] == "success") {
+                    $pay = $this->pays->where("merchant_id=$id And price=$price And status=1")->order("paytime desc")->field("id,price,paystyle_id,mode,remark,paytime,status,jmt_remark")->find();
+                    if (!$pay) {
+                        $pay = array();
+                    }
+                    if (!$pay["jmt_remark"]) $pay["jmt_remark"] = "";
+                    $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "success", "msg" => "成功", "data" => $pay)));
+                }
+            }
         } else if ($number == '28') {//支付宝支付
             #洋仆淘预收款，1.9版本
             /*if($res['is_ypt'] == 1) {
@@ -424,8 +439,20 @@ class  PayController extends ApibaseController
                     $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "success", "msg" => "成功", "data" => $pay)));
                 }
             }
+
+            // 随行付支付
+            if ($res['ali_bank'] == "14") {
+                $message = A("Pay/Leshuabank")->ali_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
+                if ($message['code'] == "error") {
+                    $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "error", "msg" => "失败", "data" => "支付失败")));
+                }
+                if ($message['code'] == "success") {
+                    $pay = $this->pays->where("merchant_id=$id And price=$price And status=1")->order("paytime desc")->field("id,price,paystyle_id,mode,remark,paytime,status,jmt_remark")->find();
+                    if (!$pay["jmt_remark"]) $pay["jmt_remark"] = "";
+                    $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "success", "msg" => "成功", "data" => $pay)));
+                }
+            }
         } else {
-            //$this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "error", "msg" => "失败", "data" => "请扫微信或支付宝支付")));
             $this->ajaxReturn(array("code" => "error", "msg" => "请扫微信或支付宝支付"));
         }
 
@@ -708,7 +735,7 @@ class  PayController extends ApibaseController
             $card = M('screen_memcard_use u')
                 ->join('join ypt_screen_memcard m on m.id=u.memcard_id')
                 ->where(array('u.id' => $recharge_info['memcard_id']))
-                ->field('u.yue,u.card_code,u.entity_card_code,m.card_id')
+                ->field('u.yue,u.card_code,u.entity_card_code,m.card_id,m.merchant_name,u.fromname')
                 ->find();
             $user_yue = $card['yue'];
             if ($user_yue < $total_yue) {
@@ -721,6 +748,7 @@ class  PayController extends ApibaseController
                     $this->ajaxReturn(array("code" => "error", "msg" => "储值订单必须全额退款"));
                 }
                 $final_yue = $user_yue - $total_yue;
+                $refund_price = 0;
             }
         } else {
             #其他使用储值订单退款处理
@@ -731,9 +759,10 @@ class  PayController extends ApibaseController
                 $card = M('screen_memcard_use u')
                     ->join('join ypt_screen_memcard m on m.id=u.memcard_id')
                     ->where(array('u.card_code|u.entity_card_code' => $order_info['card_code']))
-                    ->field('u.yue,u.card_code,u.entity_card_code,m.card_id')
+                    ->field('u.yue,u.card_code,u.entity_card_code,m.card_id,m.merchant_name,u.fromname')
                     ->find();
                 $final_yue = $card['yue'] + $order_info['user_money'];
+                $refund_price = $order_info['user_money'];
                 #判断如果是使用了代理商储值，查询商户余额够不够，把代理商余额扣除
                 $is_agent = M('screen_memcard m')->join('ypt_screen_memcard_use u on u.memcard_id=m.id')->where(array('u.card_code' => $order_info['card_code']))->getField('is_agent');
                 if ($is_agent) {
@@ -762,59 +791,16 @@ class  PayController extends ApibaseController
             }
             $this->add_order_goods_number($remark);
             $this->ajaxReturn(array("code" => "success", "msg" => "退款成功", 'back_info' => $back_info));
-        } else if ($style == 2) { //原路全额退款
-//            if($pay['bank'] == 1){ //微众银行
-//                $pay_style = $pay['paystyle_id'];
-//                if ($pay_style == 1) {//微信原路退款
-//                    if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "该笔订单仅支持全额退款"));
-//                    $result=A("Pay/Barcode")->wx_pay_back($remark);
-//                    if($result['code'] =="success"){
-//						$result['back_info'] = $this->add_pay_back($pay,98,$price_back);
-//                        if($dec_card_balance){
-//                            M('merchants_users')->where(array('id'=>$this->userId))->setDec('card_balance',$dec_card_balance);
-//                            M('balance_log')->add(array('price'=>-$dec_card_balance,'ori_price'=>-$dec_card_balance,'rate_price'=>0,'order_sn'=>$remark,'add_time'=>time(),'remark'=>'退款扣除余额','mid'=>$this->userId,'balance'=>M('merchants_users')->where(array('id'=>$this->userId))->getField('balance')));
-//                        }
-//                        $this->add_order_goods_number($remark);
-//                        if($card) $this->reduce_cz($card,$final_yue,$remark);
-//                    }
-//                    $this->ajaxReturn($result);
-//                }
-//                if ($pay_style == 2) {//支付宝原路退款
-//                    if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "该笔订单仅支持全额退款"));
-//                    $result=A("Pay/Barcode")->ali_pay_back($remark);
-//                    if($result['code'] =="success"){
-//						$result['back_info'] = $this->add_pay_back($pay,98,$price_back);
-//                        if($dec_card_balance){
-//                            M('merchants_users')->where(array('id'=>$this->userId))->setDec('card_balance',$dec_card_balance);
-//                            M('balance_log')->add(array('price'=>-$dec_card_balance,'ori_price'=>-$dec_card_balance,'rate_price'=>0,'order_sn'=>$remark,'add_time'=>time(),'remark'=>'退款扣除余额','mid'=>$this->userId,'balance'=>M('merchants_users')->where(array('id'=>$this->userId))->getField('balance')));
-//                        }
-//                        $this->add_order_goods_number($remark);
-//                        if($card) $this->reduce_cz($card,$final_yue,$remark);
-//                    }
-//                    $this->ajaxReturn($result);
-//                }
-//            }
-//            if($pay['bank'] == 2){//民生银行
-//                //if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额必须等于原有金额"));
-//                if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
-//                $result=A("Pay/Barcodembank")->pay_back($remark,$price_back);
-//                file_put_contents('./data/log/wz/weixin/ms.log', date("Y-m-d H:i:s").json_encode($result)."--3--".PHP_EOL, FILE_APPEND | LOCK_EX);
-//                if($result['code'] =="success"){
-//					$result['back_info'] = $this->add_pay_back($pay,98,$price_back);
-//                    if($dec_card_balance){
-//                        M('merchants_users')->where(array('id'=>$this->userId))->setDec('card_balance',$dec_card_balance);
-//                        M('balance_log')->add(array('price'=>-$dec_card_balance,'ori_price'=>-$dec_card_balance,'rate_price'=>0,'order_sn'=>$remark,'add_time'=>time(),'remark'=>'退款扣除余额','mid'=>$this->userId,'balance'=>M('merchants_users')->where(array('id'=>$this->userId))->getField('balance')));
-//                    }
-//                    $this->add_order_goods_number($remark);
-//                    if($card) $this->reduce_cz($card,$final_yue,$remark);
-//                }
-//                file_put_contents('./data/log/wz/weixin/ms.log', date("Y-m-d H:i:s").json_encode($result)."--2--".PHP_EOL, FILE_APPEND | LOCK_EX);
-//                $this->ajaxReturn($result);
+        } else if ($style == 2) {
+            // 使用储值全额支付
+//            $pay_mode = $pay['mode'];
+//            if(in_array($pay_mode,array(14,16,18,19,20,24))){
+//
 //            }
             // 微信支付
             if ($pay['bank'] == 3) {
                 file_put_contents('./data/log/weixin/' . date("Y_m_") . 'pay_back.log', date("Y-m-d H:i:s") . ',单号：' . $remark . '-price_back-' . $price_back . '-price-' . $price . PHP_EOL, FILE_APPEND | LOCK_EX);
-                if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
+                
                 $result = A("Pay/Wxpay")->pay_back($remark, $price_back);
                 if ($result['code'] == "success") {
                     $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
@@ -823,74 +809,12 @@ class  PayController extends ApibaseController
                         M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
                     }
                     //$this->add_order_goods_number($remark);
-                    if ($card) $this->reduce_cz($card, $final_yue, $remark);
+                    if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
                 }
                 file_put_contents('./data/log/weixin/' . date("Y_m_") . 'pay_back.log', date("Y-m-d H:i:s") . ',单号：' . $remark . ",result:" . json_encode($result) . PHP_EOL, FILE_APPEND | LOCK_EX);
                 $this->ajaxReturn($result);
             }
-//            if($pay['bank'] == 4){
-//                $pay_style = $pay['paystyle_id'];
-//                if ($pay_style == 1) {//微信原路退款
-//                    //if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额必须等于原有金额"));
-//                    if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
-//                    $result=A("Pay/Barcodezsbank")->wx_pay_back($remark,$price_back);
-//                    if($result['code'] =="success"){
-//						$result['back_info'] = $this->add_pay_back($pay,98,$price_back);
-//                        if($dec_card_balance){
-//                            M('merchants_users')->where(array('id'=>$this->userId))->setDec('card_balance',$dec_card_balance);
-//                            M('balance_log')->add(array('price'=>-$dec_card_balance,'ori_price'=>-$dec_card_balance,'rate_price'=>0,'order_sn'=>$remark,'add_time'=>time(),'remark'=>'退款扣除余额','mid'=>$this->userId,'balance'=>M('merchants_users')->where(array('id'=>$this->userId))->getField('balance')));
-//                        }
-//                        $this->add_order_goods_number($remark);
-//                        if($card) $this->reduce_cz($card,$final_yue,$remark);
-//                    }
-//                    $this->ajaxReturn($result);
-//                }
-//                if ($pay_style == 2) {//支付宝原路退款
-//                    //if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额必须等于原有金额"));
-//                    if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
-//                    $result=A("Pay/Barcodezsbank")->ali_pay_back($remark,$price_back);
-//                    if($result['code'] =="success"){
-//						$result['back_info'] = $this->add_pay_back($pay,98,$price_back);
-//                        if($dec_card_balance){
-//                            M('merchants_users')->where(array('id'=>$this->userId))->setDec('card_balance',$dec_card_balance);
-//                            M('balance_log')->add(array('price'=>-$dec_card_balance,'ori_price'=>-$dec_card_balance,'rate_price'=>0,'order_sn'=>$remark,'add_time'=>time(),'remark'=>'退款扣除余额','mid'=>$this->userId,'balance'=>M('merchants_users')->where(array('id'=>$this->userId))->getField('balance')));
-//                        }
-//                        $this->add_order_goods_number($remark);
-//                        if($card) $this->reduce_cz($card,$final_yue,$remark);
-//                    }
-//                    $this->ajaxReturn($result);
-//                }
-//            }
-//	    // 钱方支付
-//            if($pay['bank'] == 5){
-//                file_put_contents('./data/log/wz/weixin/ms.log', date("Y-m-d H:i:s").$remark. '订单号' . '付款金额不一致' . PHP_EOL, FILE_APPEND | LOCK_EX);
-//                //if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额必须等于原有金额"));
-//                if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
-//                $result=A("Pay/QianFangPay")->pay_back($remark,$price_back);
-//                if($result['code'] =="success"){
-//					$result['back_info'] = $this->add_pay_back($pay,98,$price_back);
-//                    if($dec_card_balance){
-//                        M('merchants_users')->where(array('id'=>$this->userId))->setDec('card_balance',$dec_card_balance);
-//                        M('balance_log')->add(array('price'=>-$dec_card_balance,'ori_price'=>-$dec_card_balance,'rate_price'=>0,'order_sn'=>$remark,'add_time'=>time(),'remark'=>'退款扣除余额','mid'=>$this->userId,'balance'=>M('merchants_users')->where(array('id'=>$this->userId))->getField('balance')));
-//                    }
-//                    $this->add_order_goods_number($remark);
-//                    if($card) $this->reduce_cz($card,$final_yue,$remark);
-//                }
-//                $this->ajaxReturn($result);
-//            }
-//            if($pay['bank'] == 6){//济南民生银行
-//				//济南民生属于D0通道不能退款
-//				$this->ajaxReturn(array("code" => "error", "msg" => "D0通道不能退款"));
-//				/*
-//                if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额必须等于原有金额"));
-//                $result=A("Pay/Barcodemsday")->pay_back($remark);
-//
-//                if($result['code'] =="success"){
-//					$result['back_info'] = $this->add_pay_back($pay,98,$price_back);
-//                    $this->add_order_goods_number($remark);
-//                }
-//                $this->ajaxReturn($result);*/
-//            }
+
             // 兴业银行
             if ($pay['bank'] == 7) {
 
@@ -900,8 +824,7 @@ class  PayController extends ApibaseController
                     if ($d != '1') {
                         $this->ajaxReturn(array("code" => "error", "msg" => "D0通道不能退款"));
                     }
-                    //if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额必须等于原有金额"));
-                    if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
+                    
                     $result = A("Pay/Barcodexybank")->wx_pay_back($remark, $price_back);
                     if ($result['code'] == "success") {
                         $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
@@ -910,7 +833,7 @@ class  PayController extends ApibaseController
                             M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
                         }
                         $this->add_order_goods_number($remark);
-                        if ($card) $this->reduce_cz($card, $final_yue, $remark);
+                        if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
                     }
                     $this->ajaxReturn($result);
                 }
@@ -919,8 +842,7 @@ class  PayController extends ApibaseController
                     if ($d != '1') {
                         $this->ajaxReturn(array("code" => "error", "msg" => "D0通道不能退款"));
                     }
-                    //if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额必须等于原有金额"));
-                    if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
+                    
                     $result = A("Pay/Barcodexybank")->ali_pay_back($remark, $price_back);
                     if ($result['code'] == "success") {
                         $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
@@ -929,7 +851,7 @@ class  PayController extends ApibaseController
                             M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
                         }
                         $this->add_order_goods_number($remark);
-                        if ($card) $this->reduce_cz($card, $final_yue, $remark);
+                        if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
                     }
                     $this->ajaxReturn($result);
                 }
@@ -939,7 +861,7 @@ class  PayController extends ApibaseController
                 $pay_style = $pay['paystyle_id'];
                 if ($pay_style == 1) {//微信原路退款
                     //if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额必须等于原有金额"));
-                    if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
+                    
                     $result = A("Pay/Szlzpay")->pay_back($remark, $price_back);
                     if ($result['code'] == "success") {
                         $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
@@ -948,13 +870,13 @@ class  PayController extends ApibaseController
                             M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
                         }
                         //$this->add_order_goods_number($remark);
-                        if ($card) $this->reduce_cz($card, $final_yue, $remark);
+                        if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
                     }
                     $this->ajaxReturn($result);
                 }
                 if ($pay_style == 2) {//支付宝原路退款
                     //if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额必须等于原有金额"));
-                    if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
+                    
                     $result = A("Pay/Szlzpay")->ali_pay_back($remark, $price_back);
                     if ($result['code'] == "success") {
                         $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
@@ -963,7 +885,7 @@ class  PayController extends ApibaseController
                             M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
                         }
                         //$this->add_order_goods_number($remark);
-                        if ($card) $this->reduce_cz($card, $final_yue, $remark);
+                        if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
                     }
                     $this->ajaxReturn($result);
                 }
@@ -975,7 +897,7 @@ class  PayController extends ApibaseController
                     //$d = M('merchants_pfpay')->where(array('merchant_id'=>$mid))->getField('pay_style');
                     //if($d!='1'){$this->ajaxReturn(array("code" => "error", "msg" => "D0通道不能退款"));}
                     //if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额必须等于原有金额"));
-                    if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
+                    
                     $result = A("Pay/Barcodepfbank")->wx_pay_back($remark, $price_back);
                     if ($result['code'] == "success") {
                         $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
@@ -984,7 +906,7 @@ class  PayController extends ApibaseController
                             M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
                         }
                         $this->add_order_goods_number($remark);
-                        if ($card) $this->reduce_cz($card, $final_yue, $remark);
+                        if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
                     }
                     $this->ajaxReturn($result);
                 }
@@ -992,7 +914,7 @@ class  PayController extends ApibaseController
                     //$d = M('merchants_pfpay')->where(array('merchant_id'=>$mid))->getField('pay_style');
                     //if($d!='1'){$this->ajaxReturn(array("code" => "error", "msg" => "D0通道不能退款"));}
                     //if ($price_back != $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额必须等于原有金额"));
-                    if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
+                    
                     $result = A("Pay/Barcodepfbank")->ali_pay_back($remark, $price_back);
                     if ($result['code'] == "success") {
                         $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
@@ -1001,7 +923,7 @@ class  PayController extends ApibaseController
                             M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
                         }
                         $this->add_order_goods_number($remark);
-                        if ($card) $this->reduce_cz($card, $final_yue, $remark);
+                        if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
                     }
                     $this->ajaxReturn($result);
                 }
@@ -1010,7 +932,7 @@ class  PayController extends ApibaseController
             if ($pay['bank'] == 11) {
                 $pay_style = $pay['paystyle_id'];
                 if ($pay_style == 1) {//微信原路退款
-                    if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
+                    
                     $result = A("Pay/Barcodexdlbank")->pay_back($remark, $price_back);
                     if ($result['code'] == "success") {
                         $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
@@ -1018,12 +940,12 @@ class  PayController extends ApibaseController
                             M('merchants_users')->where(array('id' => $this->userId))->setDec('card_balance', $dec_card_balance);
                             M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
                         }
-                        if ($card) $this->reduce_cz($card, $final_yue, $remark);
+                        if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
                     }
                     $this->ajaxReturn($result);
                 }
                 if ($pay_style == 2) {//支付宝原路退款
-                    if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
+                    
                     $result = A("Pay/Barcodexdlbank")->pay_back($remark, $price_back);
                     if ($result['code'] == "success") {
                         $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
@@ -1031,7 +953,7 @@ class  PayController extends ApibaseController
                             M('merchants_users')->where(array('id' => $this->userId))->setDec('card_balance', $dec_card_balance);
                             M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
                         }
-                        if ($card) $this->reduce_cz($card, $final_yue, $remark);
+                        if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
                     }
                     $this->ajaxReturn($result);
                 }
@@ -1046,13 +968,13 @@ class  PayController extends ApibaseController
                         M('merchants_users')->where(array('id' => $this->userId))->setDec('card_balance', $dec_card_balance);
                         M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
                     }
-                    if ($card) $this->reduce_cz($card, $final_yue, $remark);
+                    if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
                 }
                 $this->ajaxReturn($result);
             }
             // 平安付
             if ($pay['bank'] == 13) {
-                if ($price_back > $price) $this->ajaxReturn(array("code" => "error", "msg" => "退款金额不能大于原有金额"));
+                
                 $result = A("Pay/Barcodepabank")->pay_back($remark, $price_back);
                 if ($result['code'] == "success") {
                     $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
@@ -1060,7 +982,21 @@ class  PayController extends ApibaseController
                         M('merchants_users')->where(array('id' => $this->userId))->setDec('card_balance', $dec_card_balance);
                         M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
                     }
-                    if ($card) $this->reduce_cz($card, $final_yue, $remark);
+                    if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
+                }
+                $this->ajaxReturn($result);
+            }
+            // 随行付
+            if ($pay['bank'] == 14) {
+                
+                $result = A("Pay/Banksxf")->pay_back($remark, $price_back);
+                if ($result['code'] == "success") {
+                    $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
+                    if ($dec_card_balance) {
+                        M('merchants_users')->where(array('id' => $this->userId))->setDec('card_balance', $dec_card_balance);
+                        M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
+                    }
+                    if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
                 }
                 $this->ajaxReturn($result);
             }
@@ -1145,6 +1081,9 @@ class  PayController extends ApibaseController
                 } elseif ($role_id == 3) {//商户
                     $checker_id = 0;
                     $u_id = $user_id;
+                } else {
+                    $checker_id = $user_id;
+                    $u_id = M("merchants_users")->where("id=$user_id")->getField("pid");
                 }
                 $merchant_id = $this->merchants->where("uid=$u_id")->getField("id");
                 $cate_id = M("merchants_cate")->where(array('merchant_id' => $merchant_id, 'status' => 1, 'checker_id' => $checker_id))->getField("id");
@@ -1213,7 +1152,7 @@ class  PayController extends ApibaseController
     }
 
     #储值订单退款撤回充值的储值
-    private function reduce_cz($card, $final_yue, $remark)
+    private function reduce_cz($card, $final_yue, $remark,$refund_price)
     {
         M()->startTrans();
         $memcard_use_where = false;
@@ -1237,6 +1176,10 @@ class  PayController extends ApibaseController
             $result = json_decode($res, true);
             if ($result['errcode'] == 0) {
                 M()->commit();
+                # 使用了储值支付，需要给消费者微信推送消息
+                if($card['fromname'] && $refund_price){
+                    A('Wechat/Message')->refund($card['fromname'],$refund_price,$card['merchant_name']);
+                }
             } else {
                 M()->rollback();
             }
@@ -1554,7 +1497,7 @@ class  PayController extends ApibaseController
         if ($card_code) {
             $card = M("screen_memcard_use")->alias('u')
                 ->join('left join ypt_screen_memcard m on u.card_id=m.card_id')
-                ->field('m.id,m.credits_set,m.expense,m.level_set,m.is_agent,m.level_up,m.expense_credits,m.expense_credits_max,u.id as smu_id,u.card_code,u.entity_card_code,u.card_balance,u.yue,u.card_id,u.card_amount,u.level')
+                ->field('m.id,m.credits_set,m.expense,m.level_set,m.is_agent,m.level_up,m.expense_credits,m.expense_credits_max,m.merchant_name,u.fromname,u.id as smu_id,u.card_code,u.entity_card_code,u.card_balance,u.yue,u.card_id,u.card_amount,u.level')
                 ->where(array('card_code|entity_card_code' => $card_code))
                 ->find();
             get_date_dir($this->path, 'Pay_card_off', '核销前card信息-' . $card_code, json_encode($card));
@@ -1629,6 +1572,13 @@ class  PayController extends ApibaseController
             $ts['custom_field_value1'] = urlencode($total_yue);//会员卡储值
             request_post('https://api.weixin.qq.com/card/membercard/updateuser?access_token=' . $token, urldecode(json_encode($ts)));
             $final_order = $remark ?: $order_sn;
+
+
+            # 使用了储值支付，需要给消费者微信推送消息
+            if($yue > 0 && $card['fromname']){
+                A('Wechat/Message')->use_balance($card['fromname'],$card_code,$yue,$card['merchant_name'],$total_yue);
+            }
+
             if ($dikoufen > 0) {
                 M("screen_memcard_use")->where(array('card_code|entity_card_code' => $card_code))->setDec('card_balance', $dikoufen);
                 get_date_dir($this->path, 'Pay_card_off', 'SQl1', M()->_sql());

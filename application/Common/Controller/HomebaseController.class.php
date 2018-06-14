@@ -445,7 +445,7 @@ class HomebaseController extends AppframeController
         $coupon_data = M('screen_user_coupons')
             ->field('c.usercard,s.total_price,s.de_price')
             ->join('c left join ypt_screen_coupons s on c.coupon_id=s.id')
-            ->where(array('c.fromname' => $openid, 's.mid' => $merchant_id, 'c.status' => '1','s.status' => '4','s.card_type' => 'GENERAL_COUPON', 's.begin_timestamp' => array('LT', time()), 's.end_timestamp' => array('GT', time())))
+            ->where(array('c.fromname' => $openid, 's.mid' => $merchant_id, 'c.status' => '1','s.status' => '3','s.card_type' => 'GENERAL_COUPON', 's.begin_timestamp' => array('LT', time()), 's.end_timestamp' => array('GT', time())))
             ->order('de_price')
             ->select();
         $this->coupon_data = $coupon_data;
@@ -457,9 +457,5 @@ class HomebaseController extends AppframeController
         }
     }
 
-    protected function get_costomer_id($sub_openid, $merchant_id)
-    {
-        $this->customer_id = D("Api/ScreenMem")->add_member($sub_openid, $merchant_id);
-    }
 
 }

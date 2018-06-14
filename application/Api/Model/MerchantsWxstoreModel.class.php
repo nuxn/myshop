@@ -48,7 +48,7 @@ class MerchantsWxstoreModel extends Model
         if($mch_info['lon'] == 0 ||$mch_info['lat'] == 0 ){
             header('Content-Type:application/json; charset=utf-8');
             $return['code'] = 'error';
-            $return['msg'] = '商户信息错误';
+            $return['msg'] = '商户信息不全';
             exit(json_encode($return));
         }
     }

@@ -770,6 +770,7 @@ class AppController extends ApibaseController
     {
         $this->checkLogin();
         $device_tag = I('device_tag');
+
         $res = M("merchants_users")->where(array("id" => $this->userId))->save(array('device_tag' => $device_tag));
         if ($res) {
             $user_info = M("token")->where(array("token" => $this->token))->getField("value");

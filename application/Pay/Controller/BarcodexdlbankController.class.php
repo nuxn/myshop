@@ -829,6 +829,10 @@ class BarcodexdlbankController extends HomebaseController
                 $pay['cost_rate'] = M('merchants_xdl')->where(array('m_id'=>$order['mid']))->getField('wx_rate');
                 $this->payModel->add($pay);
             }
+            # 充值会员卡成功，需要给消费者微信推送消息
+            if($screen_memcard_use['fromname']){
+                A('Wechat/Message')->recharge($screen_memcard_use['fromname'],$order['price'],$order['send_price'],$screen_memcard['merchant_name'],$yue['yue']);
+            }
             $this->norify_succ();
         }
     }

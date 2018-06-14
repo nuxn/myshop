@@ -16,51 +16,28 @@ use think\log\driver\Test;
 
 class TestController extends ApibaseController
 {
-    function t()
+    private $pay_model;
+
+    public function __construct()
     {
-        dump(time());
+        parent::__construct();
+        $this->pay_model = M('pay');
+    }
+    
+    function t(){
+        ini_set('max_execution_time','100');
+        $this->get_merchants_maid_detail();
     }
 
-    /**
-     * 读取excel数据
-     */
-    public function read_excel()
-    {
-        vendor("PHPExcel.PHPExcel");
-
-        $inputFileName = "./test.xls";
-        date_default_timezone_set('PRC');
-// 读取excel文件
-        try {
-            $inputFileType = \PHPExcel_IOFactory::identify($inputFileName);
-            $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
-            $objPHPExcel = $objReader->load($inputFileName);
-        } catch(Exception $e) {
-            die('加载文件发生错误：'."pathinfo($inputFileName,PATHINFO_BASENAME)".':'.$e->getMessage());
-        }
-
-        $sheet = $objPHPExcel->getSheet(0);
-        $highestRow = $sheet->getHighestRow();
-        $highestColumn = $sheet->getHighestColumn();
-        $highestColumnIndex = \PHPExcel_Cell::columnIndexFromString($highestColumn);
-// 获取一行的数据
-        for ($row = 2; $row <= $highestRow; $row++){
-            for ($col = 0; $col < $highestColumnIndex; $col++){
-                $Data[$row][] =(string)$sheet->getCellByColumnAndRow($col, $row)->getValue();
-            }
-        }
-        dump($Data);
-    }
     /**
      * 获取代理下某月的交易汇总和返佣详情
      */
-    private function get_merchants_maid_detail()
+    public function get_merchants_maid_detail()
     {
         //所有代理uid
         $agent_uids = M('merchants_agent')->getField('uid',true);
         //一级代理uid
-        $one_agent_uids = M('merchants_users')->where(array('id'=>array('in',$agent_uids),'agent_id'=>array('gt',0)))->getField('id',true);
-        //dump($one_agent_uids);die;
+        $one_agent_uids = M('merchants_users')->where(array('id'=>array('in',$agent_uids),'agent_id'=>0))->getField('id',true);
         foreach ($one_agent_uids as &$agent_uid){
             $date_list = M('pay_month')->where(array('agent_id'=>$agent_uid))->order('date asc')->getField('date',true);
             $time = date('Y-m',M('merchants_agent')->where(array('uid'=>$agent_uid))->getField('add_time'));
@@ -87,7 +64,7 @@ class TestController extends ApibaseController
     private function calc_maid($map,$time_array,$agent_uid)
     {
         $map['paytime'] = array('BETWEEN',$time_array);
-        $month_pay = M('pay')->where($map)->field('price,cost_rate,paystyle_id,bank,cardtype')->select();
+        $month_pay = $this->pay_model->where($map)->field('price,cost_rate,paystyle_id,bank,cardtype')->select();
         $agent_rate = M('merchants_agent')->where(array('uid'=>$agent_uid))->field('wx_rate,ali_rate')->find();
         $rebate = '0';//费率总计
         $count = count($month_pay);//交易总笔数

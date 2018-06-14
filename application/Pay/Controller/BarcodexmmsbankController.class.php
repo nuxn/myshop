@@ -31,220 +31,93 @@ use Common\Controller\HomebaseController;
  * Class BarcodexmmsbankController
  * @package Pay\Controller
  */
+
 class BarcodexmmsbankController extends HomebaseController
 {
 
     public function __construct()
     {
-        header("Content-type: text/html; charset=utf-8");
         parent::__construct();
+        header("Content-type: text/html; charset=utf-8");
     }
 
-    private function exc()
-    {
-        vendor("PHPExcel.PHPExcel");
-        $file = './data/upload/ec.xlsx';
-//        $phpExcel = new \PHPExcel();
-        $type = 'Excel5';
-        // 判断使用哪种格式
-        $objReader = $objReader = new \PHPExcel_Reader_Excel2007();
-        $objPHPExcel = $objReader->load($file);
-        $sheet = $objPHPExcel->getSheet(0);
-        // 取得总行数
-        $highestRow = $sheet->getHighestRow();
-        // 取得总列数
-        $highestColumn = $sheet->getHighestColumn();
-        //循环读取excel文件,读取一条,插入一条
-        $user_data = array();
-        $mch_data = array();
-        //从第一行开始读取数据
-        for ($j = 3; $j <= $highestRow; $j++) {
-            $user_data[$j] = $this->user_data;
-            $mch_data[$j] = $this->mch_data;
-            //从A列读取数据
-            for ($k = 'A'; $k <= $highestColumn; $k++) {
-                // 读取单元格
-                $val = $objPHPExcel->getActiveSheet()->getCell("$k$j")->getValue();
-                if (!$val) continue;
-                switch ($k) {
-                    case 'A':
-                        $mch_data[$j]['merchant_name'] = $val;
-                        $mch_data[$j]['merchant_jiancheng'] = $val;
-                        $user_data[$j]['user_name'] = $val;
-                        $user_data[$j]['add_time'] = time();
-                        break;
-                    case 'B':
-                        $mch_data[$j]['address'] = $val;
-                        break;
-                    case 'C':
-                        $user_data[$j]['user_phone'] = "$val";
-                        break;
-                }
-            }
-            $user_data[$j]['user_pwd'] = md5(123456);
-//            $uid = M('merchants_users')->add($user_data[$j]);
-                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/test/','inser','user未插入数据', json_encode($user_data[$j]));
-//            $res = M('merchants')->add($mch_data[$j]);
-
-        }
+    /**
+     * {
+    "merchant_id":"0609007335",
+    "service":"query_status",
+    "third_order_id":"2018061311365440816",
+    "nonce_str":"DCKVKDDYX4PEN4O55B2L0EYUWS5LF3OA",
+    "sign":"D78575E9B72185E375999F3BDA97875B"
     }
-
+     */
     public function sql()
     {
+//        $message = A("Pay/Banksxf")->wx_micropay('85', '0.02', '134574746235891109', '0', 'test', '', 2);
+//        $message = A("Pay/Banksxf")->pay_back('20180611151615261939', '0.02');
+        $message = A("Pay/Leshuabank")->refund('20180614135425131141');
+        dump($message);
 
+        $message = A("Pay/Leshuabank")->query('20180614141115624134');
+        dump($message);
     }
 
-    public function create()
+    public function test()
     {
-        $token = get_weixin_token();
-        $url = "https://api.weixin.qq.com/cgi-bin/poi/updatepoi?access_token={$token}";
-        $param['business']['base_info'] = array(
-            "poi_id" => "488098370",
-            "business_name"=>urlencode("湘厨"),
-        );
-        $param = urldecode(json_encode($param));
-        $res = request_post($url, $param);
-//        $res = '487200645';
-        dump($res);
-    }
+//        $message = new \Wechat\Controller\MessageController;
+        die;
+        $message = A('Wechat/Message')->use_balance('oyaFdwCeMYLJd7r8WRrXIBqKSGWI','20','20','20',20);
+        echo $message;exit;
+        $message->setType('1');
+        $message->setOpenid('oyaFdwCeMYLJd7r8WRrXIBqKSGWI');
+        $message->setParameters('first','您的会员卡卡消费成功');
+        $message->setParameters('keyword1','338745817');
+        $message->setParameters('keyword2','20元');
+        $message->setParameters('keyword3','2018年6月12日 18:18');
+        $message->setParameters('keyword4','洋仆淘总部');
+        $message->setParameters('keyword5','186.5元');
+        $message->setParameters('remark','感谢您的光临，欢迎再次光临');
+        $return = $message->sendMessage();
+        echo $return;
 
-    public function query()
-    {
-        //487200645,487202334
-        header('content-type:application/json');
-        $token = get_weixin_token();
-        $url = 'http://api.weixin.qq.com/cgi-bin/poi/getpoi?access_token=' . $token;
-        $url = 'https://api.weixin.qq.com/cgi-bin/poi/getpoilist?access_token=' . $token;
-        $params = json_encode(array('poi_id' => 487202334));
-        $params = json_encode(array('begin' => 0, 'limit' => 50));
-        $res = request_post($url, $params);
-        echo $res;
-    }
-
-    public function createa()
-    {
-        $token = get_weixin_token();
-        $url = "http://api.weixin.qq.com/cgi-bin/poi/addpoi?access_token={$token}";
-        $param['business']['base_info'] = array(
-            "sid" => "84",
-            "business_name" => urlencode("合众世纪"),
-            "branch_name" => "",
-            "province" => urlencode("广东省"),
-            "city" => urlencode("深圳市"),
-            "district" => urlencode("宝安区"),
-            "address" => urlencode("银田路4号"),
-            "telephone" => "1520648764",
-            "categories" => array(urlencode("购物,其它购物")),
-            "offset_type" => 1,
-            "longitude" => 113.85882,
-            "latitude" => 22.58231,
-        );
-        $param = urldecode(json_encode($param));
-        $res = request_post($url, $param);
-        echo $res;
-        dump($res);
-    }
-
-#苏宁代付################################################################################################################
-    public function testwd()
-    {
-//        succ(array(
-//            "info" => array(
-//                'status' => 1,
-//                'result_code' => 'SUCCESS',
-//                'orderSn' => $this->getRemark(),
-//                'remark' => 'askjfhashf',
-//                'message' => '提现已提交',
-//            ))
-//        );
-        $send = array(
-            'receiverCardNo' => '6222021907006368927',
-            'receiverName' => urlencode('刘晓龙'),
-            'receiverType' => 'PERSON',
-            'bankName' => urlencode('中国工商银行'),
-            'bankCode' => 'ICBC',
-            'bankProvince' => urlencode('湖南省'),
-            'bankCity' => urlencode('岳阳市'),
-            'payeeBankLinesNo' => '102557060263',
-            'amount' => '10',
-            'serialNo' => getRemark(),
-        );
-        $data = array();
-        $data[] = $send;
-        $post = array(
-            'totalNum' => '1',
-            'totalAmount' => '10',
-            'load' => 'SN',
-            'mchId' => '10170023415356',
-            'timestamp' => time(),
-            'detail' => json_encode($data),
-        );
-        $key = '121ACECE85BB83A92879B8A1CB0B48C088DC21C8';
-        $post['sign'] = getSign($post, $key);
-        dump(http_build_query($post));
-        $url = 'https://api.youngport.com.cn/Api/Transfer/transfer';
-//        $res = $this->sendRequest($url,http_build_query($post));
-//        dump(json_decode($res,true));
-        $postStr = http_build_query($post);
-        $postUrl = $url . '?' . $postStr;
-        header("Location:$postUrl");
-    }
-
-    public function testquery()
-    {
-        $token = get_weixin_token();
-        $create_card_url = "https://api.weixin.qq.com/card/code/unavailable?access_token=$token";
-        $data['card_id'] = 'pyaFdwP6Eg4YTCjAUzwDIcaeZY6M';
-        $data['code'] = '235139306709';
-        $data['reason'] = 'close card';
-        $result = request_post($create_card_url, json_encode($data));
-        echo $result;
     }
 ########################################################################################################################
-    public function aaa()
+    public function wx()
     {
         $token = get_weixin_token();
         $create_card_url = "https://api.weixin.qq.com/card/update?access_token=$token";
 //        $curl_datas = '{
-//            "card_id":"pyaFdwGLKr-hhjMGdQH9bIYIUNio",
+//            "card_id":"pyaFdwLHQrMNdBIFpLFiuEQVHjGQ",
 //            "member_card":{
 //                "base_info":{
-//                    "description":"尊敬的颐生道健康中国会员您好，欢迎加入健康中国2030全民健康教育宣传推广事业，此卡可在公示的医疗保健，旅游养生，商业消费的合作单位享受相应的产品会员消费及服务，最终解释权归本单位所有！\n地址：北京市朝阳区高碑店华声天桥六号楼，中国人生科学学会健康教育专业委员会。"
+//                    "description":"水果不过夜
+//天天吃果鲜
+//
+//凡储值顾客享受本店如下优惠
+//
+//一、储值300元
+//1、免费畅饮价值220元众和乳业老酸奶两个月
+//2、凭储值金额来本店消费水果
+//二、储值1000元
+//1、免费畅饮价值1200元众和乳业老酸奶一年
+//2、凭储值金额来本店消费水果
+//三、备注
+//1、酸奶配送由我店专人配送 （节假日除外）
+//2、会员卡在微信卡包 消费余额清晰可见
+//3、会员卡长期有效
+//
+//
+//…此活动解释权果然鲜水果超市"
 //                }
 //            }
 //        }';
 
-        $curl_datas = '{"card_id":"pyaFdwJixe57X63_eIUAhzv433i0","member_card":{"base_info":{"location_id_list":[488098370]}}}';
+        $curl_datas = '{"card_id":"pyaFdwIQylOP-5T_IjS3qabfrufk","member_card":{"base_info":{"location_id_list":[488209631]}}}';
+//        $curl_datas = '{"card_id":"pyaFdwLHQrMNdBIFpLFiuEQVHjGQ","member_card":{"base_info":{"title":"水果会员卡"}}}';
         $result = request_post($create_card_url, $curl_datas);
         echo $result;
     }
 
-
-    public function activateuserform()
-    {
-        $param["card_id"] = 'pyaFdwOumLRLu35CbZlcYk70DmYw';
-        $token = get_weixin_token();
-        $arr = array(
-            "card_id" => $param["card_id"],
-            "required_form" => array(
-                "common_field_id_list" => array(
-                    "USER_FORM_INFO_FLAG_MOBILE",
-                    "USER_FORM_INFO_FLAG_NAME",
-                    "USER_FORM_INFO_FLAG_BIRTHDAY"
-                )
-            )
-        );
-            //"name": "老会员绑定",
-//            "url": "https://www.qq.com"
-            $arr['bind_old_card']['name'] = urlencode('有实体卡会员');
-            $arr['bind_old_card']['url'] = 'https://sy.youngport.com.cn/index.php?s=api/wechat/have_card';
-
-        $mem_card_query_url = "https://api.weixin.qq.com/card/membercard/activateuserform/set?access_token=$token";
-        $result = request_post($mem_card_query_url, urldecode(json_encode($arr)));
-        $result = json_decode($result, true);
-        dump($result);
-    }
-
+    # 连接shanpay数据库
     public function newdb()
     {
         $a = A('Barcode')->cardOff('28902');
@@ -253,10 +126,7 @@ class BarcodexmmsbankController extends HomebaseController
         dump($res);
     }
 
-
-
 //----------------------------------------------------------------------------------------------------------------------
-
     public function qr_weixipay()
     {
         //这里直接获得openid;

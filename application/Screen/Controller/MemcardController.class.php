@@ -101,8 +101,8 @@ class MemcardController extends AdminbaseController
             foreach($use_res as $val){
                 $data['card_id'] = $val['card_id'];
                 $data['code'] = $val['card_code'];
-                $data['reason'] = 'close card';
-                $result = request_post($create_card_url, json_encode($data));
+                $data['reason'] = urlencode('此卡停用');
+                $result = request_post($create_card_url, urldecode(json_encode($data)));
                 get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Screen/','memcard','设置卡券失效', json_encode($data).PHP_EOL.$result);
             }
         } else {

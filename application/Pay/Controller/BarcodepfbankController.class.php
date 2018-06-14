@@ -52,6 +52,8 @@ class BarcodepfbankController extends HomebaseController
             $code = M('merchants_pfpay')->where(array('merchant_id' => $merchant['merchant_id']))->find();
             $openid = $this->_get_openid($code['channel']);
             $this->getOffer($merchant, $openid);
+            $checker_id = I("checker_id");
+            $this->assign("checker_id", $checker_id);
             $this->assign('openid', $openid);
             $this->assign("merchant", $merchant);
             $this->assign('seller_id', I('id'));

@@ -2840,3 +2840,42 @@ function withdraw_status($status)
 }
 
 
+function get_sign_content($params)
+{
+    ksort($params);
+
+    $stringToBeSigned = "";
+    $i = 0;
+    foreach ($params as $k => $v) {
+        if ($i == 0) {
+            $stringToBeSigned .= "$k" . "=" . "$v";
+        } else {
+            $stringToBeSigned .= "&" . "$k" . "=" . "$v";
+        }
+        $i++;
+    }
+    unset ($k, $v);
+    return $stringToBeSigned;
+}
+
+function rsa_sign($data, $privatekey)
+{
+    $res = "-----BEGIN RSA PRIVATE KEY-----\n" .
+        wordwrap($privatekey, 64, "\n", true) .
+        "\n-----END RSA PRIVATE KEY-----";
+
+    ($res) or die('您使用的私钥格式错误，请检查RSA私钥配置');
+    openssl_sign($data, $sign, $res);
+    $sign = base64_encode($sign);
+    return $sign;
+}
+
+/**
+ * 返回订单号
+ * @return string
+ */
+function getOrderNumber()
+{
+    return date("YmdHis") . mt_rand(100000,999999);
+}
+

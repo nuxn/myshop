@@ -44,7 +44,7 @@ class PushMsgController extends HomebaseController
             $RegistrationId = $device_tag ? $device_tag : $phone;
             if ($device_tag) A("Message/adminpush")->api_push_msg($massage, "$remark", "ok", "$RegistrationId");//1.3
             else  A("Message/adminpush")->adminpush($massage, $remark, "ok", "$RegistrationId");//1.2
-            file_put_contents($path . 'pay_message.log', date("Y-m-d H:i:s") . '发送信息给' . $role_tag . ': ' . $phone . "___" . $status . "____" . $massage . ",订单号:" . "$remark" . PHP_EOL, FILE_APPEND | LOCK_EX);
+            file_put_contents($path . 'pay_message.log', date("Y-m-d H:i:s") . ',发送信息给' . $role_tag . ': ' . $phone . "___" . $status . "____" . $massage . ",pay表ID:" . "$remark"."($RegistrationId)" . PHP_EOL, FILE_APPEND | LOCK_EX);
         } else {
             file_put_contents($path . 'pay_message.log', date("Y-m-d H:i:s") . '未发送' . $phone . "未登录____订单号:  " . "$remark" . PHP_EOL, FILE_APPEND | LOCK_EX);
         }

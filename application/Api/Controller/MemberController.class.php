@@ -782,7 +782,7 @@ class MemberController extends ApibaseController
             $img_url = $img_url ? : $default_url;
         }
         $brand_name = $params['brand_name'];
-        if(empty($brand_name) || strlen($brand_name)>12){
+        if(empty($brand_name) || strlen($brand_name)>36){
             $brand_name = $mch_info['merchant_jiancheng'];
             if(empty($brand_name)){
                 $brand_name = $user_info['user_name'];
@@ -893,6 +893,10 @@ class MemberController extends ApibaseController
                 )
             )
         );
+        $poi_id = M('merchants_wxstore')->where("mu_id=$this->userId")->getField('poi_id');
+        if($poi_id){
+            $curl_datas['card']['member_card']['base_info']['location_id_list'] = array($poi_id);
+        }
         if($post['integral_mall']){
             $curl_datas['card']['member_card']['base_info']['custom_url'] = 'https://sy.youngport.com.cn/index.php?g=Api&m=Integral&a=index';
             $curl_datas['card']['member_card']['base_info']['custom_url_name'] = urlencode('积分商城');

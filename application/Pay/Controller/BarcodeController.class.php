@@ -131,30 +131,24 @@ class BarcodeController extends HomebaseController
                 }
             }
         }
-        if ((int) $res['status'] != 1) {
+        if ((int)$res['status'] != 1) {
             echo "<title>微信支付</title><div style='margin: 10px auto;font-size: 30px;width:80%;color:red'>商家未上线</div>";
             exit;
         }
         if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
-//跳转微信
-            $httpUrl   = $http . "://" . $_SERVER['HTTP_HOST'];
+            $httpUrl = $http . "://" . $_SERVER['HTTP_HOST'];
             $twoPayStr = $id . "&price=" . $price . "&checker_id=" . $checker_id . "&order_id=" . $order_id . "&jmt_remark=" . $jmt_remark;
-            $wxPayStr  = $id . "&price=" . $price . "&checker_id=" . $checker_id . "&jmt_remark=" . $jmt_remark . "&order_sn=" . $order_sn . "&mode=" . $mode;
+            $wxPayStr = $id . "&price=" . $price . "&checker_id=" . $checker_id . "&jmt_remark=" . $jmt_remark . "&order_sn=" . $order_sn . "&mode=" . $mode;
 
             # 判断是否走洋仆淘支付
             if ($res['is_ypt'] == "1" && in_array($id, array(7, 11))) {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=ypt_two_wz_pay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=ypt_wz_pay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=ypt_qr_weixipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
 
@@ -166,32 +160,22 @@ class BarcodeController extends HomebaseController
             if ($res['wx_bank'] == "1") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcode&a=two_wz_pay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcode&a=wz_pay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcode&a=qr_weixipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             // 民生支付跳转
             if ($res['wx_bank'] == "2") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodembank&a=two_wz_pay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodembank&a=wz_pay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodembank&a=qr_weixipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
 
                 header("Location: $url");
             }
@@ -200,96 +184,66 @@ class BarcodeController extends HomebaseController
             if ($res['wx_bank'] == "3") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Wxpay&a=two_wxpay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Wxpay&a=wx_pay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Wxpay&a=wxpay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //招行支付跳转
             if ($res['wx_bank'] == "4") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodezsbank&a=two_wz_pay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodezsbank&a=wz_pay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodezsbank&a=qr_weixipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             // 钱方微信支付跳转
             if ($res['wx_bank'] == "5") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=QianFangPay&a=twoWxpay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=QianFangPay&a=qianFangPay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=QianFangPay&a=wxpay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //民生D0支付跳转
             if ($res['wx_bank'] == "6") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodemsday1&a=two_wz_pay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodemsday1&a=wz_pay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodemsday1&a=qr_weixipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //兴业
             if ($res['wx_bank'] == "7") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=two_wz_pay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=wz_pay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=qr_weixipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             // 恒丰久运昌
             if ($res['wx_bank'] == '8') {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodejybank&a=twoscree_pay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodejybank&a=wxpay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodejybank&a=qr_wxpay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
 
@@ -297,48 +251,33 @@ class BarcodeController extends HomebaseController
             if ($res['wx_bank'] == "9") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Szlzpay&a=two_wxpay&id=" . $id . "&price=" . $price . "&checker_id=" . $checker_id . "&order_id=" . $order_id . "&mode=" . $mode . "&jmt_remark=" . $jmt_remark;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Szlzpay&a=wx_pay&id=" . $id . "&price=" . $price . "&checker_id=" . $checker_id . "&jmt_remark=" . $jmt_remark . "&order_sn=" . $order_sn;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Szlzpay&a=wxpay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //浦发
             if ($res['wx_bank'] == "10") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepfbank&a=two_wz_pay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepfbank&a=wz_pay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepfbank&a=qr_weixipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //新大陆
             if ($res['wx_bank'] == "11") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexdlbank&a=two_wx_pay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexdlbank&a=wx_pay&seller_id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexdlbank&a=qr_weixipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
 
@@ -346,55 +285,40 @@ class BarcodeController extends HomebaseController
             if ($res['wx_bank'] == "12") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Leshuabank&a=two_wx_pay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Leshuabank&a=wx_pay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Leshuabank&a=qr_weixipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //平安付
             if ($res['wx_bank'] == "13") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepabank&a=two_wx_pay&id=" . $twoPayStr;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepabank&a=wx_pay&id=" . $wxPayStr;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepabank&a=qr_weixipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
 
         } elseif (strpos($_SERVER['HTTP_USER_AGENT'], 'AlipayClient') !== false) {
             # ======================  支付宝支付  =======================================================================
-            $httpUrl   = $http . "://" . $_SERVER['HTTP_HOST'];
+            $httpUrl = $http . "://" . $_SERVER['HTTP_HOST'];
             $screenStr = "seller_id={$id}&price={$price}&checker_id={$checker_id}&type={$type}&order_id={$order_id}&jmt_remark={$jmt_remark}";
-            $priceStr  = "seller_id={$id}&price={$price}&checker_id={$checker_id}&type={$type}&jmt_remark={$jmt_remark}&order_sn={$order_sn}&mode={$mode}";
+            $priceStr = "seller_id={$id}&price={$price}&checker_id={$checker_id}&type={$type}&jmt_remark={$jmt_remark}&order_sn={$order_sn}&mode={$mode}";
 
             # 判断是否走洋仆淘支付
             if ($res['is_ypt'] == "1" && in_array($id, array(7, 11))) {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=ypt_screen_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=yptqr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=ypt_qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
 
@@ -405,196 +329,147 @@ class BarcodeController extends HomebaseController
             if ($res['ali_bank'] == "1") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcode&a=screen_wz_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcode&a=qr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcode&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             // 民生支付跳转
             if ($res['ali_bank'] == "2") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodembank&a=screen_wz_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodembank&a=qr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodembank&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             // 支付宝官方支付
             if ($res['ali_bank'] == "3") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Alipay&a=screen_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Alipay&a=qr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Alipay&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //招行支付跳转
             if ($res['ali_bank'] == "4") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodezsbank&a=screen_wz_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodezsbank&a=qr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodezsbank&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //民生d0
             if ($res['ali_bank'] == "6") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodemsday1&a=screen_wz_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodemsday1&a=qr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodemsday1&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //兴业
             if ($res['ali_bank'] == "7") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=screen_wz_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=qr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexybank&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             // 恒丰久运昌
             if ($res['ali_bank'] == "8") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodejybank&a=screen_wz_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodejybank&a=qr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodejybank&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             // 宿州李总支付宝
             if ($res['ali_bank'] == "9") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Szlzpay&a=screen_alipay&id=" . $id . "&price=" . $price . "&checker_id=" . $checker_id . "&order_id=" . $order_id . "&jmt_remark=" . $jmt_remark;
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Szlzpay&a=qr_to_alipay&id=" . $id . "&price=" . $price . "&checker_id=" . $checker_id . "&jmt_remark=" . $jmt_remark . "&order_sn=" . $order_sn;
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Szlzpay&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //浦发
             if ($res['ali_bank'] == "10") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepfbank&a=screen_wz_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepfbank&a=qr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepfbank&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //新大陆
             if ($res['ali_bank'] == "11") {
                 if ($order_id) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexdlbank&a=two_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexdlbank&a=qr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodexdlbank&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
             //乐刷
             if ($res['ali_bank'] == "12") {
-                if ($order_id) {
+                if ($order_id) {//双屏端扫码支付收款
                     $url = $httpUrl . "/index.php?g=Pay&m=Leshuabank&a=two_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {//手机端扫码支付收款
                     $url = $httpUrl . "/index.php?g=Pay&m=Leshuabank&a=qr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {//台签收款
                     $url = $httpUrl . "/index.php?g=Pay&m=Leshuabank&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
+
                 header("Location: $url");
             }
             //平安
             if ($res['ali_bank'] == "13") {
-                if ($order_id) {
+                if ($order_id) {//双屏端扫码支付收款
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepabank&a=two_alipay&{$screenStr}";
-                }
-//双屏端扫码支付收款
-                else if ($price) {
+                } else if ($price) {//手机端扫码支付收款
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepabank&a=qr_to_alipay&{$priceStr}";
-                }
-//手机端扫码支付收款
-                else {
+                } else {//台签收款
                     $url = $httpUrl . "/index.php?g=Pay&m=Barcodepabank&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
                 }
-//台签收款
                 header("Location: $url");
             }
-        } else {
-//扫码失败
+            // 随行付
+            if ($res['ali_bank'] == "14") {
+                if ($order_id) {//双屏端扫码支付收款
+                    $url = $httpUrl . "/index.php?g=Pay&m=Banksxf&a=two_alipay&{$screenStr}";
+                } else if ($price) {//手机端扫码支付收款
+                    $url = $httpUrl . "/index.php?g=Pay&m=Banksxf&a=qr_to_alipay&{$priceStr}";
+                } else {//台签收款
+                    $url = $httpUrl . "/index.php?g=Pay&m=Banksxf&a=qr_alipay&id=" . $id . "&checker_id=" . $checker_id;
+                }
+                header("Location: $url");
+            }
+        } else {//扫码失败
             echo "请用微信或者支付宝扫码~";
             exit;
         }
@@ -807,7 +682,7 @@ class BarcodeController extends HomebaseController
             }
         }
         //获取本次消费是否能够领取会员卡1
-        $memcard = $this->_get_memcard($mid, $price);
+        $memcard = $this->_get_memcard($mid, $price,$remark);
         //判断该用户是否领过该商户的会员卡
         if ($memcard) {
             if ($this->_has_memcard($openid, $memcard['card_id'])) {
@@ -817,7 +692,7 @@ class BarcodeController extends HomebaseController
             }
         }
         //获取本次消费是否能够领取代理商联名卡
-        $agent_memcard = $this->_get_agent_card($mid, $price);
+        $agent_memcard = $this->_get_agent_card($mid, $price,$remark);
         if ($agent_memcard) {
             if ($this->_has_memcard($openid, $agent_memcard['card_id'])) {
                 $count += 0;
@@ -934,18 +809,36 @@ class BarcodeController extends HomebaseController
     }
 
     //获取本次消费是否能够领取会员卡
-    public function _get_memcard($mid, $price)
+    public function _get_memcard($mid, $price,$remark='')
     {
+        if($remark){
+            $mode = $this->pay_model->where(array('remark'=>$remark))->getField('mode');
+            #判断订单类型，检查该类型的订单会员卡设置的时候是否投放
+            if($mode==11){//小程序
+                $where['sc.delivery_xcx'] = 1;
+            }elseif ($mode==0){//台签
+                $where['sc.delivery_taiqian'] = 1;
+            }elseif (in_array($mode,array(3,4,17,18))){//双屏
+                $where['sc.delivery_shuangping'] = 1;
+            }elseif (in_array($mode,array(6,7,8,9,19))){//POS机
+                $where['sc.delivery_pos'] = 1;
+            }
+        }
+        $where['m.id'] = $mid;
+        $where['cardstatus'] = 4;
+        $where['delivery_rules'] = 1;
+        $where['delivery_cash'] = array('elt',$price);
         $data = M('screen_memcard')->alias('sm')
             ->join('join ypt_merchants m on sm.mid=m.uid')
             ->join('join ypt_screen_cardset sc on sm.id=sc.c_id')
-            ->where("m.id=$mid and (cardnum-drawnum)>0 and cardstatus=4 and delivery_rules=1 and delivery_cash<=$price")
+            ->where($where)
+            ->where("(cardnum-drawnum)>0")
             ->find();
         return $data;
     }
 
     //获取本次消费是否能够领代理商联名卡
-    public function _get_agent_card($mid, $price)
+    public function _get_agent_card($mid, $price,$remark='')
     {
         $uid      = M('merchants')->where(array('id' => $mid))->getField('uid');
         $agent_id = M('merchants')->alias('m')
@@ -955,9 +848,27 @@ class BarcodeController extends HomebaseController
         if ($agent_id == 0) {
             return false;
         } else {
+            if($remark){
+                $mode = $this->pay_model->where(array('remark'=>$remark))->getField('mode');
+                #判断订单类型，检查该类型的订单会员卡设置的时候是否投放
+                if($mode==11){//小程序
+                    $where['sc.delivery_xcx'] = 1;
+                }elseif ($mode==0){//台签
+                    $where['sc.delivery_taiqian'] = 1;
+                }elseif (in_array($mode,array(3,4,17,18))){//双屏
+                    $where['sc.delivery_shuangping'] = 1;
+                }elseif (in_array($mode,array(6,7,8,9,19))){//POS机
+                    $where['sc.delivery_pos'] = 1;
+                }
+            }
+            $where['sm.mid'] = $agent_id;
+            $where['cardstatus'] = 4;
+            $where['delivery_rules'] = 1;
+            $where['delivery_cash'] = array('elt',$price);
             $card = M('screen_memcard')->alias('sm')
                 ->join('join ypt_screen_cardset sc on sm.id=sc.c_id')
-                ->where("sm.mid=$agent_id and (cardnum-drawnum)>0 and cardstatus=4 and delivery_rules=1 and delivery_cash<=$price")
+                ->where($where)
+                ->where("(cardnum-drawnum)>0")
                 ->find();
             if ($card) {
                 $use_merchants = explode(',', $card['use_merchants']);
@@ -1180,7 +1091,7 @@ class BarcodeController extends HomebaseController
                     "phone_info"  => $_SERVER['HTTP_USER_AGENT'],
                     "mode"        => 16,
                     "merchant_id" => $merchant_id,
-                    "checker_id"  => $checker_id,
+                    "checker_id"  => I('checker_id')?:$checker_id,
                     "paystyle_id" => 1,
                     "price"       => $pay_yue,
                     "status"      => 1,
@@ -1386,7 +1297,7 @@ class BarcodeController extends HomebaseController
         if ($card_code) {
             $card = M("screen_memcard_use")->alias('u')
                 ->join('left join ypt_screen_memcard m on u.card_id=m.card_id')
-                ->field('m.id,m.is_agent,m.credits_set,m.expense,m.expense_credits,m.expense_credits_max,u.card_balance,u.yue,u.card_id,u.card_amount,m.level_set,m.level_up,u.id as smu_id,u.level')
+                ->field('m.id,m.is_agent,m.credits_set,m.expense,m.expense_credits,m.expense_credits_max,m.merchant_name,u.fromname,u.card_balance,u.yue,u.card_id,u.card_amount,m.level_set,m.level_up,u.id as smu_id,u.level')
                 ->where("u.card_code='$card_code'")
                 ->find();
             //会员卡消费送积分
@@ -1443,25 +1354,30 @@ class BarcodeController extends HomebaseController
             }
 
             //card_balance，会员卡剩余积分
-            $data['card_balance'] = $card['card_balance'] + $send - $dikoufen;
+            $member_data['card_balance'] = $card['card_balance'] + $send - $dikoufen;
             //card_balance，会员卡总积分
-            $data['card_amount'] = $card['card_amount'] + $send;
+            $member_data['card_amount'] = $card['card_amount'] + $send;
             if ($yue && $card['yue'] != 0) {
-                $data['yue'] = ($card['yue'] * 100 - $yue * 100) / 100;
-                if ($data['yue'] < 0) {
-                    $data['yue'] = 0;
+                $member_data['yue'] = ($card['yue'] * 100 - $yue * 100) / 100;
+                if ($member_data['yue'] < 0) {
+                    $member_data['yue'] = 0;
                 }
 
             } else {
-                $data['yue'] = 0;
+                $member_data['yue'] = 0;
             }
-            $card_off                  = M("screen_memcard_use")->where("card_code='$card_code'")->save($data);
+            $card_off                  = M("screen_memcard_use")->where("card_code='$card_code'")->save($member_data);
             $ts['code']                = urlencode($card_code);
             $ts['card_id']             = urlencode($card['card_id']);
-            $ts['custom_field_value1'] = urlencode($data['yue']); //会员卡余额
-            //$ts['custom_field_value2'] = urlencode(M('screen_memcard_level')->where("c_id=$card[id] and level_integral<=$card[card_amount]")->order('level desc')->getField('level_name'));//会员卡名称
+            $ts['custom_field_value1'] = urlencode($member_data['yue']); //会员卡余额
             $token = get_weixin_token();
             request_post('https://api.weixin.qq.com/card/membercard/updateuser?access_token=' . $token, urldecode(json_encode($ts)));
+
+            # 使用了储值支付，需要给消费者微信推送消息
+            if($yue > 0 && $card['fromname']){
+                A('Wechat/Message')->use_balance($card['fromname'],$card_code,$yue,$card['merchant_name'],$member_data['yue']);
+            }
+
             if ($dikoufen > 0) {
                 $ts["add_bonus"]                                              = urlencode('-' . $dikoufen); //增加的积分，负数为减
                 $ts["record_bonus"]                                           = urlencode('台卡消费使用积分'); //增加的积分，负数为减

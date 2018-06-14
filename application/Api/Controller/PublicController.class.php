@@ -526,32 +526,13 @@ class  PublicController extends ApibaseController
                 }
                 $users['token'] = $TOKEN;
                 unset($users['token_add_time']);
-                //检查订单
-                $this->checkOrder($users['uid']);
+
                 $this->ajaxReturn(array("code" => "success", "msg" => L('LOGIN_SUCCESS'), 'userInfo' => $users));
             } else {
                 $this->ajaxReturn(array("code" => "error", "msg" => L('LOGIN_FAIL')));
             }
         } else {
             $this->ajaxReturn(array("code" => "error", "msg" => L('HACKER_MSG')));
-        }
-    }
-
-    /**
-     * 检查订单是否发货   604800
-     * @return [type] [description]
-     */
-    private function checkOrder($uid)
-    {
-        $order = M('order')->where(array('user_id'=>$uid,'type'=>1,'order_status'=>3))->field('update_time,order_sn,order_id')->select();
-        $time = time();
-        foreach ($order as $key => $value) {
-            if (($time-$value['update_time'])>=604800) {
-                M('order')->where(array('user_id'=>$uid,'type'=>1,'order_status'=>3,'order_id'=>$value['order_id']))->setField('order_status',4);
-                $path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/order/';
-                $data = array('user_id'=>$uid,'type'=>1,'order_status'=>3,'order_id'=>$value['order_id']);
-                get_date_dir($path, 'order_status', '更改订单状态为4', json_encode($data));
-            }
         }
     }
 

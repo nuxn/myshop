@@ -259,10 +259,11 @@ class WeixinbaseController extends Controller
             case "poi_check_notify":
                 $poi_id = $object->PoiId;
                 $result = $object->result;
+                $path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/weixin_responseMsg/';
                 if($result == 'fail'){
                     M('merchants_wxstore')->where("poi_id=$poi_id")->save(array('status'=>2,'errmsg'=>$object->msg));
+                    get_date_dir($path,$object->Event,$object->Event,json_encode($object));
                 } else {
-                    $path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/weixin_responseMsg/';
                     get_date_dir($path,$object->Event,$object->Event,json_encode($object));
                 }
                 break;

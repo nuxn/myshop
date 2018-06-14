@@ -228,7 +228,11 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
 
         //	$merchants  = M('merchants')->where(array('uid'=>$screen_memcard['mid']))->find();
         //var_dump($screen_memcard['mid']);
-        ($screen_cardset = M('screen_cardset')->where(array('c_id' => $screen_memcard['id']))->find()) || $this->err('没有设置');
+        $screen_cardset = M('screen_cardset')->where(array('c_id' => $screen_memcard['id']))->find();
+        if(!$screen_cardset){
+            header('Content-Type: text/html; charset=utf-8');
+            exit('<script type="text/javascript">alert("会员卡已失效!")</script>');
+        }
 
         if ($screen_cardset['recharge_1'] > 0) $price[]['price'] = $screen_cardset['recharge_1'];
         if ($screen_cardset['recharge_2'] > 0) $price[]['price'] = $screen_cardset['recharge_2'];
@@ -858,8 +862,29 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
                     exit("金额过低");
                 }*/
                 $params['bank']=11;
-                $params['signKey']=$this->signKey;
+                $params['signKey'] = $this->signKey;
                 return $params;
+                break;
+            case 12:
+                $merchants_leshua = M('merchants_leshua')->where(array('m_id' => $order['mid']))->find();
+                $param['service'] = 'get_tdcode';
+                $param['pay_way'] = 'WXZF';
+                $param['merchant_id'] = $merchants_leshua['merchantId'];//商户号
+                $param['third_order_id'] = $order['order_sn'];//商户订单号
+                $param['amount'] = ($order['price'] * 100);//金额
+                $param['jspay_flag'] = 1;
+                $param['sub_openid'] = $openid;
+                $param['client_ip'] = $merchants_leshua['ip_address'] ?: $_SERVER['REMOTE_ADDR'];
+                $param['notify_url'] = "https://sy.youngport.com.cn/notify/cz/ls.php";//回调地址
+                $param['t0'] = $merchants_leshua['is_t0'];
+                $param['body'] = '充值';
+                $param['nonce_str'] = $this->getNonceStr();//随机字符串
+                $param['sign'] = $this->getSignVeryfy_pay($param, $merchants_leshua['key']);//签名
+                $url = "https://mobilepos.yeahka.com/cgi-bin/lepos_pay_gateway.cgi";
+                $res = $this->httpRequst_pay($url, $param);
+                $res_arr = $this->xmlToArray($res);
+
+                return $res_arr['jspay_info'];
                 break;
             default:
                 $this->err('不存在该支付方式');
@@ -1273,6 +1298,11 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
                 $paytype == 1 ? $rate = 'wx_rate' : $rate = 'ali_rate';
                 return M('merchants_xdl')->where(array('m_id' => $mid))->getField($rate);
                 break;
+			case 12:
+                $paytype == 1 ? $rate = 'wx_rate' : $rate = 'ali_rate';
+				$into_data = M('merchants_leshua')->where(array('m_id' => $mid))->find();
+                return $into_data['is_t0'] ? $into_data['wx_t0_rate'] : $into_data['wx_t1_rate'];
+                break;
         }
     }
 
@@ -1392,6 +1422,17 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
             $this->common($data['TxnLogId'], $data['TxnAmt'] , $data['OfficeId'], 11);
         }
     }
+	
+    public function ls_notify()
+    {
+        $this->add_log(file_get_contents('php://input', 'r'));
+        $this->add_log(json_encode($this->xmlToArray(file_get_contents('php://input', 'r'))));
+        $data = $this->xmlToArray(file_get_contents('php://input', 'r'));
+        //暂时没有验证签名
+        if($data['error_code'] == '0' && $data['status'] == '2'){
+            $this->common($data['third_order_id'], $data['amount'] / 100 , $data['leshua_order_id'], 12);
+        }
+    }
 
     //支付成功而且验证成功
     public function common($order_sn, $price, $transid, $bank)
@@ -1481,7 +1522,11 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
         //M()->commit();
         get_date_dir($this->path,'charge','common_order',json_encode($order));
         //开启推送
-        //request_post('http://sy.youngport.com.cn/index.php?s=api/base/ts', '');
+        # 充值会员卡成功，需要给消费者微信推送消息
+        if($screen_memcard_use['fromname']){
+            A('Wechat/Message')->recharge($screen_memcard_use['fromname'],$order['price'],$order['send_price'],$screen_memcard['merchant_name'],$yue['yue']);
+        }
+
         if($screen_memcard_use['card_code']){
             $this->ts();
             $this->mem_card1($order['memcard_id']);

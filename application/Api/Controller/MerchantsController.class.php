@@ -161,7 +161,7 @@ class  MerchantsController extends  ApibaseController
 
     # 获取开通贷款的价格
     public function getPrice()
-    {
+    {  $this->userInfo['']
         ($type = I('type')) || $this->err('type is empty');
         if($type == 'loan'){
             $price = '99.00';
@@ -398,6 +398,14 @@ class  MerchantsController extends  ApibaseController
                 $this->err("商户已存在门店");
 
             $input = I('');
+            $a = strpos($input['categories'],'--');
+            if($a){
+                $input['categories'] = substr($input['categories'],0,$a-1);
+            }
+            get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/','Merchants_wxstore','创建门店参数', json_encode($input));
+//            if($this->userId == '494'){
+//                $this->err("测试账户");
+//            }
             // 从商户在洋仆淘系统中的进件信息中获取创建门店所需
             $mch_info = $wxstore->get_mch_info($this->userId);
             if(!$mch_info)

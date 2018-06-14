@@ -1,0 +1,912 @@
+<?php
+
+namespace Pay\Controller;
+
+use Common\Controller\HomebaseController;
+
+/**
+ *                       _ooOoo_
+ *                      o8888888o
+ *                      88" . "88
+ *                      (| -_- |)
+ *                      O\  =  /O
+ *                   ____/`---'\____
+ *                 .'  \\|     |//  `.
+ *                /  \\|||  :  |||//  \
+ *               /  _||||| -:- |||||-  \
+ *               |   | \\\  -  /// |   |
+ *               | \_|  ''\---/''  |   |
+ *               \  .-\__  `-`  ___/-. /
+ *             ___`. .'  /--.--\  `. . __
+ *          ."" '<  `.___\_<|>_/___.'  >'"".
+ *         | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+ *         \  \ `-.   \_ __\ /__ _/   .-` /  /
+ *    ======`-.____`-.___\_____/___.-`____.-'======
+ *                       `=---='
+ *    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ *                佛祖保佑       永无BUG
+ */
+/**
+ * Class BarcodexmmsbankController
+ * @package Pay\Controller
+ */
+class BarcodexmmsbankController extends HomebaseController
+{
+    private $test_host;
+    private $privatekeypath;
+    private $publickeypath;
+    private $notify;
+    private $request_data;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->test_host        = "http://110.80.39.174:9013/nbp-smzf-hzf";
+//        $this->test_host        = "https://sy.youngport.com.cn/index.php?s=Pay/Barcodexmmsbank/index";
+        $this->privatekeypath   = './data/xmms_key/pkcs8_rsa_private_key_2048.pem';
+        $this->publickeypath    = "./data/xmms_key/ms_rsa_public_key_2048.pem";
+        $this->notify           = "https://" . $_SERVER["SERVER_NAME"] . "/notify/xmms_notify.php";
+    }
+
+
+
+########################################################################################################################
+    public function testwd()
+    {
+//        succ(array(
+//            "info" => array(
+//                'status' => 1,
+//                'result_code' => 'SUCCESS',
+//                'orderSn' => $this->getRemark(),
+//                'remark' => 'askjfhashf',
+//                'message' => '提现已提交',
+//            ))
+//        );
+        $data = array();
+        $send = array(
+            'receiverCardNo' => '6222021907006368927',
+            'receiverName' => urlencode('刘晓龙'),
+            'receiverType' => 'PERSON',
+            'bankName' => urlencode('中国工商银行'),
+            'bankCode' => 'ICBC',
+            'bankProvince' => urlencode('湖南省'),
+            'bankCity' => urlencode('岳阳市'),
+            'payeeBankLinesNo' => '102557060263',
+            'amount' => '10',
+            'serialNo' => $this->getRemark(),
+        );
+        $data[] = $send;
+        $post = array(
+            'totalNum' => '1',
+            'totalAmount' => '10',
+            'load' => 'SN',
+            'mchId' => '10170023415356',
+            'timestamp' => time(),
+            'detail' => json_encode($data),
+        );
+//        $key = '121ACECE85BB83A92879B8A1CB0B48C088DC21C8';
+//        $post['sign'] = $this->getSign1($post, $key);
+//        $url = 'https://api.youngport.com.cn/Api/Transfer/transfer';
+//        dump(http_build_query($post));
+//        $res = $this->sendRequest1($url,http_build_query($post));
+//        dump(json_decode($res,true));
+//        $postStr = http_build_query($post);
+//        $postUrl = $url .'?'.$postStr;
+//        header("Location:$postUrl");
+    }
+    public function testquery()
+    {
+        $post = array(
+            'load' => 'SN',
+            'mchId' => '10170023415356',
+            'timestamp' => time(),
+            'serialNo' => '20180119104610762997'
+
+        );
+        $key = '121ACECE85BB83A92879B8A1CB0B48C088DC21C8';
+        $post['sign'] = $this->getSign1($post, $key);
+        $url = 'https://api.youngport.com.cn/Api/Transfer/query';
+//        dump(http_build_query($post));
+//        $res = $this->sendRequest1($url,http_build_query($post));
+//        dump(json_decode($res,true));
+        $postStr = http_build_query($post);
+        $postUrl = $url .'?'.$postStr;
+        $res = file_get_contents("$postUrl");
+        dump(json_decode($res,true));
+    }
+
+    public function snnotify()
+    {
+        $notify_data = file_get_contents("php://input");
+        $this->writeLog('nofify.log','data', $notify_data,0);
+        $this->writeLog('nofify.log','$_POST', $_POST);
+        $this->writeLog('nofify.log','$_GET', $_GET);
+        $this->writeLog('nofify.log','$_REQUEST', $_REQUEST);
+        exit('true');
+    }
+    private function sendRequest1($url, $post_data, $time = 10)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $time);               //设置超时
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $data = curl_exec($ch);
+        if ($data) {
+            curl_close($ch);
+            return $data;
+        } else {
+            $error = curl_errno($ch);
+            echo $error;
+            curl_close($ch);
+            return false;
+        }
+        return $data;
+    }
+    function getSign1($arr, $key)
+    {
+        //过滤null和空
+        $Parameters = array_filter($arr, function ($v) {
+            if ($v === null || $v === '') {
+                return false;
+            }
+            return true;
+        });
+
+        //签名步骤一：按字典序排序参数
+        ksort($Parameters);
+        $String = $this->formatBizQueryParaMap1($Parameters, false);
+
+        //签名步骤二：在string后加入KEY
+        $String = $String . "&key=" . $key;
+        //签名步骤三：MD5加密
+        $String = md5($String);
+
+        //签名步骤四：所有字符转为大写
+        $result_ = strtoupper($String);
+
+        return $result_;
+    }
+    function formatBizQueryParaMap1($paraMap, $urlencode)
+    {
+        $buff = "";
+        ksort($paraMap);
+        foreach ($paraMap as $k => $v) {
+            if ($urlencode) {
+                $v = json_encode($v);
+            }
+            //$buff .= strtolower($k) . "=" . $v . "&";
+            $buff .= $k . "=" . $v . "&";
+        }
+        $reqPar = '';
+        if (strlen($buff) > 0) {
+            $reqPar = substr($buff, 0, strlen($buff) - 1);
+        }
+
+        return $reqPar;
+    }
+
+    private function writeLog($file_name, $title, $param, $json=true)
+    {
+        $path = $this->get_date_dir();
+        if($json){
+            $param = json_encode($param);
+        }
+        file_put_contents($path . $file_name, date("-d H:i:s") . $title.':'. $param . PHP_EOL . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    private function get_date_dir($path = '/data/log/SuNing/')
+    {
+        $Y = $_SERVER['DOCUMENT_ROOT'] . $path . date("Y-m");
+        $d = $Y . '/' . date("m-d");
+        if (!file_exists($Y)) mkdir($Y, 0777, true);
+        if (!file_exists($d)) mkdir($d, 0777, true);
+
+        return $d . '/';
+    }
+########################################################################################################################
+
+
+
+
+
+
+
+
+
+    public function index()
+    {
+        file_put_contents('./xmms_test.log', date("Y-m-d H:i:s") . ' POST::' . json_encode($_POST) . PHP_EOL, FILE_APPEND | LOCK_EX);
+        dump("success");
+    }
+
+	public function pay($type){
+			$Xmms = D('Xmms');
+			switch($type){
+					case 'smzf':
+					$url = $Xmms->zf();
+					header("Location:$url"); 
+					die;
+					break;
+			}
+	}
+    /**
+     * 商户入驻
+     */
+    public function register()
+    {
+		//2017082308172870 89 2017082308172930
+		
+        $request_data = array(
+            'payWay'            => 'ZFBZF',//支付通道WXZF,ZFBZF
+            'merchantId'        => '88',//合作方对商户的自定义编码
+            'merchantName'      => '深圳前海迅捷敏达电子商务有限公司测试2',//要求与营业执照上的名称一致，如为个体、无营业执照的，则填写为：个体户***（如个体户张三）
+            'shortName'         => '迅捷敏达2',//支付宝渠道：会显示在用户app订单信息中    微信渠道：会显示在用户app订单信息中。
+            'merchantAddress'   => '深圳市前海深港合作区前湾一路1号A栋201室',//商户地址。
+            'provinceCode'      => '440000',//省份编号
+            'cityCode'          => '440300',//城市编号
+            'districtCode'      => '440305',//区县编号
+            'servicePhone'      => ' 18124514390',//客服电话
+//            'orgCode'           => '1',//组织机构代码
+            'contactName'       => '郭卫栋',//联系人名称
+            'contactType'       => '01',//联系人类型 01-法人，02-实际控制人，03-代理人，00-其他
+            'contactPhone'      => ' 18124514390',//联系人电话 非必选
+//            'contactMobile'     => '',//联系人手机 非必选
+//            'contactEmail'      => '',//联系人邮箱 非必选
+            'category'          => '2016062900190337',//参见附录的经营类目
+            'idCard'            => '142431197406040055',// 存在法人则使用法人身份证，若无，请使用个人经营者身份证
+            'merchantLicense'   => '914403003500257698',// 存在营业执照，则必须上送，个体户可不用上送
+            'accNo'             => '6226220909980343',// 收款人账户号  直清必填，T0只允许kbin范围内个人卡
+            'accName'           => '郭卫栋',//收款人账户名 直清必填，
+            'bankType'          => '305161009135',//收款人账户联行号 T0只支持在kbin（请见附录）范围的银行个人卡;T0允许不上送联行号。
+            //T1不在kbin范围的银行个人卡以及对公户、存折，必须上送开户行联行号。T1在kbin范围的银行个人卡可以不上送联行号。
+            'bankName'          => '中国民生银行',//收款人账户开户行名称
+            't0drawFee'         => '0.8',//T0单笔提现手续费 直清T0提现必填，如0.2元/笔则填0.2
+            't0tradeRate'       => '0.009',//T0交易手续费扣率 直清T0提现必填，如0.6%笔则填0.006
+            't1drawFee'         => '0.8',//T1单笔提现手续费 直清必填，如0.2元/笔则填0.2
+            't1tradeRate'       => '0.009',//T1交易手续费扣率 直清必填，如0.6%笔则填0.006
+//            'remark'            => '',//选填 备注说明 介绍商户营业内容等
+        );       
+		dump($request_data);
+
+        $result = $this->sendRequest($request_data);
+        dump($result);
+//        $this->assign('postdata', $postdata);
+//        $this->assign('url', $this->test_host);
+//        $this->display();
+    }
+
+    /**
+     * 支付H5界面
+     */
+    public function wxPayPage()
+    {
+        // 这里直接获得openid;
+        if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
+            $id = I("id");
+            $checker_id = I("checker_id");
+            $merchant = M("merchants_cate")->where(array('id' => $id))->find();
+            $openid = $this->getOpenId();
+            $this->assign("checker_id", $checker_id);
+            $this->assign('openid', $openid);
+            $this->assign("merchant", $merchant);
+            $this->assign('seller_id', I("id"));
+            $this->display();
+        }
+    }
+
+    /**S
+     * 微信H5支付
+     */
+    public function wxPay()
+    {
+        // 先获取openid防止 回调
+        if (I("seller_id") == "") {
+            $id = I("id");
+            $price = I("price");
+            $sub_openid = $this->getOpenId();
+            $cate_res = M('merchants_cate')->where("id=$id")->find();
+            $data['mode'] = 1;
+        }
+        if (I('seller_id') !== "") {
+            $sub_openid = I('openid');
+            $id = I('seller_id');
+            $cate_res = M('merchants_cate')->where("id=$id")->find();
+            $price = I('price');
+            $data['checker_id'] = $cate_res['checker_id'];
+            $data['mode'] = 0;
+        }
+        if (!$sub_openid)  exit;
+
+        $data['bank'] = 8;
+        if (I("checker_id")) {
+            //app上的台签带上收银员的信息
+            $data['checker_id'] = I("checker_id");
+        }
+        $data['bill_date'] = date("Ymd");
+        $remark = $this->getRemark();
+        // 插入数据库的数据
+        $data['merchant_id'] = $cate_res['merchant_id'];
+        $data['customer_id'] = $sub_openid;
+        $data['paystyle_id'] = 1;
+        $data['price']       = $price;
+        $data['remark']      = $remark;
+        $data['status']      = 0;
+        $data['cate_id']     = $cate_res['id'];
+        $data['phone_info']  = $_SERVER['HTTP_USER_AGENT'];
+        $data['add_time']    = time();
+        $data['back_status'] = 0;
+        $data['subject']     = "向" . $cate_res['jianchen'] . "支付" . $price . "元";;
+        $this->pay_model->add($data);
+
+        $request_data = array(
+            'merchantCode'  => '',              //民生银行商户编码，请通过入驻接口获取
+            'totalAmount'   => $data['price'] * 100,    //订单金额
+            'subject'       => $data['subject'],    //显示在用户app上的订单信息
+//            'desc'          => $data['subject'],        //对订单的描述
+//            'operatorId'    => '510100',        // 可选填 如员工编号
+            'storeId'       => '15773001191',       //商户的门店编号。与机具终端号，二选一上送
+//            'terminalId'    => '1',           //商户的机具终端编号。与门店编号，二选一上送
+//            'limitPay'      => '刘晓龙',       //1-限定不能使用信用卡，支付宝下特殊使用标识 2-限定不使用花呗 3-限制信用支付类型（信用卡、花呗）
+            'subAppid'      => '',       //合作方微信公众账号ID 微信支付必须上送
+            'userId'        => '',       //1.支付宝支付时，要求上送用户在支付宝的唯一用户号 2.微信支付时，要求上送用户在合作方subAppid下唯一标识
+//            'source'        => '',      //支付宝渠道可选上送，该参数是支付宝分配给下游的pid识别号，2088开头对应支付宝的sys_service_provider_id字段
+//            'goodsTag'      => '',      //微信渠道可选上送，代金券或立减优惠功能参数，对应微信的goods_tag字段
+
+        );
+        $result = $this->sendRequest($request_data);
+        dump($result);
+    }
+
+    public function notify()
+    {
+        file_put_contents('../xmms_notify.log', date("Y-m-d H:i:s") . ' data' . json_encode($_REQUEST) . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+    /**
+     * 解密报文
+     * @param string $result 报文
+     * @return array
+     */
+    public function decryptResponse()
+    {
+        $result = "{\"encryptData\":\"QMtB3qMixWnXGeEHUc2Xg5CJ1OxN1XYOzfrys8x\/jCYpeo7o+UjibeOaHssZRQAytjZ1BK1AbVLV+THoIX6\/JOHKIHX1ok64Jr7vCtH8dkQVNw40xNd+uW7VrumalC0JzmETnV6NBWeXWMrkYAZylVai\/QPw\/lA+H1UjqgnPIzSdtaIvnv2OmMp5azaq27Au1m42se1EdvTYir2F024Lk0RLHltP\/CSZcO7uuFJIhdkCEs\/zUDUTf23g+Ht98zaciiyKEM1VgiKIb7bqQW2j8HO0KldR27FY6AFF73mEc4BDIfhlk2rC7ZPyGyaIvVOIDl8Fh+rVbQQyq4KZtVQ+2XlJNNS4sGIFawN7r+yZwTaMYrDOTVw\/vSD9abHbKv81uJuypAYrpf6nJHcUiN93U\/z4WIEp9n07KSSwmHgmJUSUsl217O4cF3P8x+Cix9qxwbiUb72dqpj6XdLrFuKxhEGuV5RxOuQd53x6Vn0sF5+5JCDs48awWZEtKQzUkbwfNyMqaUCAenb+TbMo1uD79vufJildQlhiPtx\/HjbQOkhqdlm\/gdTBCfSVYYIX+fWF1dTyU63JqmFwel1shmzxUliuwlkxyRmZjK3v+21pLHdOxllQmC+43qDvU+meBXWsCk1edcPw5aAST1DKVbwWCIksPrrLvPEWkVHVMcLQ\/IIsxv\/Bkwx23b2hfl54CuRoiJiaqqialrGZGdWTWdo5LZpJxpiNhlZnRaUC9DongQ+mk\/MV\/Jql8mdAhtO\/9LnYnCxM76G7uEcAB7ea3fDdoGMR9baMuxpHaUAmg8l8ydVapTA4nsbbsT29p\/Bui3SygfiDUcs18fPBaKJV4LxNchcCtydGQQy797uNQnU0VrR8lbedHJuMb+glOmrNRYIeToH6\/rlakqQDOz0ztjS6HYlmMzFxiSCbxnwj8cT7zJBI2qywCSiM\/j3mzStyk\/m5zoA3xvtfO1JMktExE+kLHCA\/xDGTwaUQW5TKcLI2BMibsZF9t3kXUhQKqtXgV3ppfeA4IMCKiTVcwx6+w+YBGi4x9knF87cKxGNSCtASA0e3nDykvgYXtFKLiSy76nPL2IG6LBrTdWvtwoVxDjRq7Q9r9eOW1+9ud5cC5RivPYXZ+1AsUJjmTAFIMkDm7sgEQxWq6EClj0D9eSS6flgsMlYfitPdg22Qn1lvAtN1vMh0iWef6XJ34UA1A2OBzxHB09dTNl\/Js588bLTRBC9aaAzNk1g7uiCh8K07iTXo8M+RFA5MA6Bi9MeaC1hHo62PPBX4I5xUSWbMKTKyWMKTc1Mpl2HULxfCSP8SMzujeWIpRuMuvY7jSot\/p9QFi0eZ0C6Ru9TT\/m0H1x2YDBm0pLtFiXXcWhQuNGu+edzC9EW4kh1aK9QLRtC13O1Ipjnr2UKr6xzG\/ZggKBVtMDcEkWxZGq5oDDGiaEoZhLu0EWKa+wDk6oTkfSxjxs\/EHOLbRW35AXCZ2hkGC200QAElfTLFKdSh86OX3OZAux+qlpczWMpTn\/ShJrm2KO1xKmnz3q3TJa4MsfMvOFXmE5d6g8BZTU0Rn3JB1H1aX2KQ39hb8\/nOC38g7GzQSO3l\/h5XBmxwOkDlZT+YIvdlrdJI0q+BcGmu3FfkFNgUlaNR0wNIv3E+ahgSAHUYRNfzBviBS5CL0sYW0\/mW2ksgwWmcpFx1Jwv90kcn2yAmDuduAH+XzpjKBkOYcizaIX+PUQaAFR9COfTsvmAPYRM1llOc9ME\/Ekopa\/ssfyXugzHUgFkSkSoMiein5a2\/2sb4cZw9hvno54CeCoE7bmIHaTss2Z4+x6vszLNqJIJRKacdtKDVlDxmtf7D8AKA2Kwc+fe3d0PmQRJEz+RJhchmvfZxOx\/XHHjwbvDAkTtLAgZLmdlyBwx5WvAGKQQg2pGzFhP7qt4x77ddsNdb4WsA0qzLZA==\",\"encryptKey\":\"j2abgCBWbfkStACodo31ty3JEaN8UDDxE1L8ZTeWqsLwRRye0eFS1XwLWL4g\/MnHBM\/xQ5s5sFtUkt6FAEGPJc8XS4QuGCugHn\/UStfjDnhtuOBf4e0RRMcTQZK+wTLsri5Z+pLPCJn72PYWcHhczkRQKLV0H67rBA36Pxgsp7fNzjYjxj0KC9\/JwPovp21XLITWPK\/nT\/kGs2hljZY\/ryH2\/gNa53hj7+L\/83vpFJSYFOqBvHTJLduwJqh3JgW6FaArdPIM6bi4u9KjIvyP061PVyA2VDAIAGvOVTzXXlJGldrIU89y22Q9xlZsiL856nql2tUKnvJVNf1A6AP59w==\",\"tranCode\":\"SMZF028\",\"reqMsgId\":\"85\",\"cooperator\":\"SMZF_HNBCX_T1\",\"signData\":\"4bIr6q2stYv4I7jqah2q\/Wzerou6EmjTI6lJKkaGBVMM2X7IVTqgx1bEGlYru\/zfAclO55sAW82lU57CS1s7ECmJlIxoZUH07ZAeRJJOnAR3ElkSREvUVixy9POg+4LGPGj3+YNlusbQTnW6A0U4i+Gt0TqONeyyFgXTyqGhrnHrRdjFMeAg15BarDzAkEkDbjzWcHEbPnPL+2zZ\/85OlNqGV389NPOkuSkr6mKKgy6ekh\/nwdTWEKHs4oh+LTgaXftoT7F6Ih4R0qzDH0soFvIVvvMKvKDIa7V8kMNuNk\/P\/zslBRJ1P1Z+3R+npkL\/gLfRjLzmtuif88pryR1ncQ==\"}";
+       
+		$arr = json_decode($result, true);
+        $key = $this->decryptAESKey($arr['encryptKey'], $this->privatekeypath);
+        $str = $this->decryptAES($arr['encryptData'], $key);
+        $sign = $this->decryptRSASign($str, base64_decode($arr['signData']), $this->publickeypath);
+        if(!$sign) die("RSA sign error");
+        $response = $this->xmlToArray($str);
+	//	var_dump($response);
+        return $response;
+    }
+
+    /**
+     * 刷卡支付
+     */
+    public function microWxpay($id, $price, $code, $checker_id, $type = 'wx')
+    {
+        if (empty($res['merchant_id'])) return array("code" => "error", "msg" => "失败", "data" => "还未申请支付业务");
+
+        $res = M('merchants_cate')->where("merchant_id=$id")->find();
+        $remark  = $this->getRemark();
+        $product = "向" . $res['jianchen'] . "支付" . $price . "元";
+        $mch_id  = $res['wx_mchid'];
+        // 插入数据库的数据
+        $data['merchant_id']    = $res['merchant_id'];
+        $data['checker_id']     = $checker_id;
+        $data['paystyle_id']    = 1;
+        $data['price']          = $price;
+        $data['remark']         = $remark;
+        $data['status']         = 0;
+        $data['cate_id']        = 1;
+        $data['mode']           = 2;
+        $data['add_time']       = time();
+        $data['bank']           = 8;
+        $data['bill_date']      = date("Ymd");
+        $data['phone_info']     = $_SERVER['HTTP_USER_AGENT'];
+        $data['subject']        = $product;
+        $this->pay_model->add($data);
+
+        $request_data = array(
+            'merchantCode'  => $mch_id,         //民生银行商户编码，请通过入驻接口获取
+            'scene'         => '1',             //支付场景,1-条码支付，2-声波支付
+            'authCode'      => $code,           //通过扫码枪/声波获取设备获取
+            'totalAmount'   => $price *100,     //订单金额
+            'subject'       => $product,        //显示在用户app上的订单信息
+            'subAppid'      => '',              //合作方微信公众账号ID 微信支付中在商户已绑定公众号的前提下才可以上送
+            'storeId'       => '',              //商户的门店编号。与机具终端号，二选一上送
+//            'terminalId'    => '',              //商户的机具终端编号。与门店编号，二选一上送
+//            'limitPay'      => '',              //1-限定不能使用信用卡，支付宝下特殊使用标识 2-限定不使用花呗 3-限制信用支付类型（信用卡、花呗）
+//            'source'        => '',              //支付宝渠道可选上送，该参数是支付宝分配给下游的pid识别号，2088开头对应支付宝的sys_service_provider_id字段
+//            'goodsTag'      => '',              //微信渠道可选上送，代金券或立减优惠功能参数，对应微信的goods_tag字段
+        );
+        $result = $this->sendRequest($request_data);
+        dump($result);
+    }
+
+    /**
+     * 获取订单编号
+     * @return string
+     */
+    private function getRemark()
+    {
+        $str = date("YmdHis") . rand(100000, 999999);
+
+        return $str;
+    }
+
+    /**
+     * 获取AES key
+     * @return string
+     */
+    private function getAESKey()
+    {
+        $chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+        $str = "";
+        for ($i = 0; $i < 16; $i++) {
+            $str .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
+        }
+
+//        return strtoupper($str);
+        return "aaaabbbbb1111111";
+    }
+
+    /**
+     * AES加密请求报文
+     * @param $str
+     * @param $screct_key
+     * @return string
+     */
+    private function encryptAES($str, $screct_key)
+    {
+        $str = trim($str);
+        $str = $this->addPKCS7Padding($str);
+        $encrypt_str = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $screct_key, $str, MCRYPT_MODE_ECB);
+
+        return base64_encode($encrypt_str);
+    }
+
+    /**
+     * AES解密请求报文
+     * @param $str
+     * @param $screct_key
+     * @return string
+     */
+    private function decryptAES($str, $screct_key)
+    {
+        $str = base64_decode($str);
+        $encrypt_str = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $screct_key, $str, MCRYPT_MODE_ECB);
+        $encrypt_str = trim($encrypt_str);
+        $encrypt_str = $this->stripPKSC7Padding($encrypt_str);
+
+        return $encrypt_str;
+    }
+
+    /**
+     * 填充算法
+     * 在AES 的使用中，pkcs#5填充和pkcs#7填充没有任何区别
+     * @param $source
+     * @return string
+     */
+    private function addPKCS7Padding($source)
+    {
+        $source = trim($source);
+        $block = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+        $pad = $block - (strlen($source) % $block);
+        if ($pad <= $block) {
+            $char = chr($pad);
+            $source .= str_repeat($char, $pad);
+        }
+
+        return $source;
+    }
+
+    /**
+     * 移去填充算法
+     * @param $source
+     * @return bool|string
+     */
+    private function stripPKSC7Padding($source)
+    {
+        $source = trim($source);
+        $char = substr($source, -1);
+        $num = ord($char);
+        if ($num == 62) return $source;
+        $source = substr($source, 0, -$num);
+
+        return $source;
+    }
+
+    /**
+     * RSA请求报文签名
+     * @param $data
+     * @param $keyPath
+     * @return bool|string
+     */
+    private function encryptRSASign($data, $keyPath)
+    {
+        if (empty($data)) {
+            return False;
+        }
+
+        $private_key = file_get_contents($keyPath);
+        if (empty($private_key)) {
+            echo "Private Key error!";
+            return False;
+        }
+
+        $pkeyid = openssl_get_privatekey($private_key);
+        if (empty($pkeyid)) {
+            echo "private key resource identifier False!";
+            return False;
+        }
+
+        openssl_sign($data, $signature, $pkeyid);
+        openssl_free_key($pkeyid);
+
+        return base64_encode($signature);
+    }
+
+    /**
+     * RSA验证签名
+     * @param string $data 数据
+     * @param string $signature 签名
+     * @param $keyPath 公钥路径
+     * @return bool
+     */
+    private function decryptRSASign($data = '', $signature = '', $keyPath)
+    {
+        if (empty($data) || empty($signature)) {
+            return False;
+        }
+
+        $public_key = file_get_contents($keyPath);
+        if (empty($public_key)) {
+            echo "Public Key error!</br>";
+            return False;
+        }
+
+        $pkeyid = openssl_get_publickey($public_key);
+        if (empty($pkeyid)) {
+            echo "public key resource identifier False!</br>";
+            return False;
+        }
+
+        $ret = openssl_verify($data, $signature, $pkeyid);
+        openssl_free_key($pkeyid);
+        if ($ret == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 公钥加密AES对称密钥
+     * @param $data
+     * @param $keyPath
+     * @return string
+     */
+    private function encryptAESKey($data, $keyPath)
+    {
+        $key = openssl_pkey_get_public(file_get_contents($keyPath));
+        $r = openssl_public_encrypt($data, $encryptData, $key, OPENSSL_PKCS1_PADDING);
+        if ($r) {
+            $ciphertext = $encryptData;
+        }
+
+        return base64_encode($ciphertext);
+    }
+
+    /**
+     * 私钥解密AES对称密钥
+     * @param $encrypted
+     * @param $keyPath
+     * @return string
+     */
+    private function decryptAESKey($encrypted, $keyPath)
+    {
+        $key = openssl_get_privatekey(file_get_contents($keyPath));
+        openssl_private_decrypt(base64_decode($encrypted), $decrypted, $key);//私钥解密
+
+        return $decrypted;
+    }
+
+    /**
+     * 作用：array转xml
+     * @param $arr
+     */
+    private function arrayToXml($arr)
+    {
+        $reqDate = date("YmdHis");
+        $xml = "<?xml version='1.0' encoding='UTF-8'?>
+            <merchant><head><version>1.0.0</version><msgType>01</msgType><reqDate>{$reqDate}</reqDate></head><body>";
+
+        foreach ($arr as $key => $val) {
+            if (is_numeric($val)) {
+                $xml .= "<" . $key . ">" . $val . "</" . $key . ">";
+
+            } else
+                $xml .= "<" . $key . "><![CDATA[" . $val . "]]></" . $key . ">";
+        }
+        $xml .= "</body></merchant>";
+
+        $this->request_data = $xml;
+    }
+
+    /**
+     * 将xml转为array
+     * @param  string $xml xml字符串
+     * @return array       转换得到的数组
+     */
+    private function xmlToArray($xml)
+    {
+        //禁止引用外部xml实体
+        libxml_disable_entity_loader(true);
+        $result = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
+
+        return $result;
+    }
+
+    /**
+     * 请求数据
+     * @return array
+     */
+    private function createPostData($remark = "")
+    {
+        $key = $this->getAESKey();
+        if($remark == ""){
+            $remark = $this->getRemark();
+        }
+        $post_data = array(
+            'encryptData'   => $this->encryptAES($this->request_data, $key),      // AES对称密钥加密请求报文
+            'encryptKey'    => $this->encryptAESKey($key, $this->publickeypath),        // 公钥加密合作方AES对称密钥
+            'signData'      => $this->encryptRSASign($this->request_data, $this->privatekeypath),     // RSA私钥签名请求报文
+            'cooperator'    => "SMZF_HNBCX_T1",     // 合作方标识   T0直清的合作方标识 SMZF_HNBCX_T0，T1直清的合作方标识 SMZF_HNBCX_T1
+            'tranCode'      => "SMZF001",           // 交易服务码
+            'callBack'      => $this->notify,       // 回调地址
+            'reqMsgId'      => "$remark",           // 请求流水号（即订单号）
+//            'ext'           => ''                   // 备用域
+        );
+        $post_str = $this->createStr($post_data);
+
+        return $post_str;
+    }
+
+    /**
+     * 请求数据
+     * @param $param array
+     * @return bool|string
+     */
+    private function createStr($param)
+    {
+        $str = "";
+        foreach($param as $k => $v) {
+            $str .= $k . '=' . urlencode($v) . '&';
+        }
+        $str = substr($str, 0, -1);
+
+        return $str;
+    }
+
+    /**
+     * 获取微信openId
+     * @return mixed
+     */
+    private function getOpenId()
+    {
+        // 获取配置项
+        $config = C('WEIXINPAY_CONFIG');
+        // 如果没有get参数没有code；则重定向去获取openid；
+        if (!isset($_GET['code'])) {
+            // 返回的url
+            $redirect_uri = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            echo $redirect_uri;
+            $redirect_uri = urlencode($redirect_uri);
+            $url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' . $config['APPID'] . '&redirect_uri=' . $redirect_uri . '&response_type=code&scope=snsapi_base#wechat_redirect';
+            redirect($url);
+        } else {
+            //如果有code参数；则表示获取到openid
+            $code = I('get.code');
+            //组合获取prepay_id的url
+            $url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' . $config['APPID'] . '&secret=' . $config['APPSECRET'] . '&code=' . $code . '&grant_type=authorization_code';
+            //curl获取
+            $result = $this->curlGetContents($url);
+            $result = json_decode($result, true);
+            return $result['openid'];
+        }
+    }
+
+    /**
+     * 发送请求
+     * @param $request 请求数据
+     * @param string $remark    订单号
+     * @return array|bool|mixed|string
+     */
+    private function sendRequest($request, $remark = '')
+    {
+	
+		$this->arrayToXml($request);
+	
+        $post_str = $this->createPostData($remark);
+        $result = $this->requestPost($this->test_host, $post_str);
+        $result = $this->decryptResponse($result);
+        file_put_contents('./xmms_test.log', date("Y-m-d H:i:s") . ' data:' . $post_str . PHP_EOL, FILE_APPEND | LOCK_EX);
+
+        return $result;
+    }
+
+    private function requestPost($url, $data, $second = 10)
+    {
+//        $header = array("Content-type:application/x-www-form-urlencoded");
+        //初始化curl
+        $curl = curl_init();
+        //设置超时
+        curl_setopt($curl, CURLOPT_TIMEOUT, $second);
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+//        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+        //post提交方式
+        curl_setopt($curl, CURLOPT_POST, TRUE);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+//        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        //运行curl
+        $res = curl_exec($curl);
+        //返回结果
+        if ($res) {
+            curl_close($curl);
+            return $res;
+        } else {
+            $error = curl_errno($curl);
+            echo "curl出错，错误码:$error" . "<br>";
+            echo "<a href='http://curl.haxx.se/libcurl/c/libcurl-errors.html'>错误原因查询</a></br>";
+            curl_close($curl);
+            return false;
+        }
+    }
+
+    /**
+     * 使用curl获取远程数据
+     * @param  string $url url连接
+     * @return string      获取到的数据
+     */
+    private function curlGetContents($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);                //设置访问的url地址
+        // curl_setopt($ch,CURLOPT_HEADER,1);               //是否显示头部信息
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);               //设置超时
+        curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);   //用户访问代理 User-Agent
+        curl_setopt($ch, CURLOPT_REFERER, $_SERVER['HTTP_HOST']);        //设置 referer
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);          //跟踪301
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        //返回结果
+        $r = curl_exec($ch);
+        curl_close($ch);
+
+        return $r;
+    }
+
+    public function excel()
+    {
+        if($_REQUEST['tokena'] != '13028854874'){
+            exit();
+        }
+        $title = '商户'.date('Ymd');
+        header("Content-type:application/octet-stream");
+        header("Accept-Ranges:bytes");
+        header("Content-type:applicationnd.ms-excel");
+        header("Content-Disposition:attachment;filename={$title}.xls");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+        $str1 = '<html xmlns:o="urn:schemas-microsoft-com:office:office"
+           xmlns:x="urn:schemas-microsoft-com:office:excel"
+           xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+           <meta http-equiv="expires" content="Mon, 06 Jan 1999 00:00:01 GMT">
+           <meta http-equiv=Content-Type content="textml; charset=GBK">
+           <!--[if gte mso 9]><xml>
+           <x:ExcelWorkbook>
+           <x:ExcelWorksheets>
+             <x:ExcelWorksheet>
+             <x:Name></x:Name>
+             <x:WorksheetOptions>
+               <x:DisplayGridlines/>
+             </x:WorksheetOptions>
+             </x:ExcelWorksheet>
+           </x:ExcelWorksheets>
+           </x:ExcelWorkbook>
+           </xml><![endif]-->
+        </head>';
+        //echo iconv('UTF-8', 'GBK', $str1);
+        $_pre = array(
+            'id' => '序号',
+            'merchant_name' => '商户名称',
+            'merchant_jiancheng' => '商户简称',
+            'industry' => '行业类别',
+            'province' => '省份',
+            'city' => '城市',
+            'county' => '区/县',
+            'address' => '联系地址',
+            'operator_name' => '联系人',
+            'user_phone' => '联系电话',
+            'operator_name' => '法人/负责人姓名',
+            'id_number' => '法人／负责人身份证号码',
+            'rate' => '商户费率（‰）',
+            'account_name' => '结算账号户名',
+            'bank_account' => '结算账户开户行',
+            'bank_no' => '人行支行联行号',
+            'bank_account_no' => '结算账号',
+            'id_number' => '开户人身份证号（若为个人账号则填，若为对公账户则空）',
+            'business_license_number' => '商户营业执执照号码',
+        );
+        $style  = "style='text-align:center;'";
+        $header = "
+            <tr>
+            <td {$style} >序号</td>
+            <td {$style} >商户名称</td>
+            <td {$style} >商户简称</td>
+            <td {$style} >行业类别</td>
+            <td {$style} >省份</td>
+            <td {$style} >城市</td>
+            <td {$style} >区/县</td>
+            <td {$style} >联系地址</td>
+            <td {$style} >联系人</td>
+            <td {$style} >联系电话</td>
+            <td {$style} >法人/负责人姓名</td>
+            <td {$style} >法人／负责人身份证号码</td>
+            <td {$style} >商户费率（‰）</td>
+            <td {$style} >结算账号户名</td>
+            <td {$style} >结算账户开户行</td>
+            <td {$style} >人行支行联行号</td>
+            <td {$style} >结算账号</td>
+            <td {$style} >开户人身份证号（若为个人账号则填，若为对公账户则空）</td>
+            <td {$style} >商户营业执执照号码</td>
+            </tr>
+        ";
+        $arr = M('merchants')
+            ->join('m left join ypt_merchants_users u on u.id=m.uid')
+            ->join('left join ypt_merchants_zspay zs on m.id=zs.merchant_id')
+            ->field('m.*,u.user_phone,zs.bank_no')->select();
+
+        $str = '';
+        foreach($arr as $k=>$v){
+            $kaihu = '';
+            if($v['account_type'] == 0){
+                $kaihu = decrypt($v['id_number']);
+            }
+            $str .= '
+                <tr>
+                <td>'.$v['id'].'</td>
+                <td>'.$v['merchant_name'].'</td>
+                <td>'.$v['merchant_jiancheng'].'</td>
+                <td>'.$v['industry'].'</td>
+                <td>'.$v['province'].'</td>
+                <td>'.$v['city'].'</td>
+                <td>'.$v['county'].'</td>
+                <td>'.$v['address'].'</td>
+                <td>'.$v['operator_name'].'</td>
+                <td>'.$v['user_phone'].'</td>
+                <td>'.$v['operator_name'].'</td>
+                <td style="vnd.ms-excel.numberformat:@">'.decrypt($v['id_number']).'</td>
+                <td></td>
+                <td>'.$v['account_name'].'</td>
+                <td style="vnd.ms-excel.numberformat:@">'.$v['bank_account'].'</td>
+                <td style="vnd.ms-excel.numberformat:@">'.$v['bank_no'].'</td>
+                <td style="vnd.ms-excel.numberformat:@">'.decrypt($v['bank_account_no']).'</td>
+                <td style="vnd.ms-excel.numberformat:@">'.$kaihu.'</td>
+                <td style="vnd.ms-excel.numberformat:@">'.decrypt($v['business_license_number']).'</td>
+                </tr>
+            ';
+        }
+        $content = iconv('UTF-8', 'GBK', $header) . iconv('UTF-8', 'GBK//IGNORE', $str); // $header.$str;
+        echo '<table border="1">' . $content . '</table>';
+        exit;
+    }
+
+}
