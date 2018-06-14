@@ -115,6 +115,7 @@ $configs= array(
             'PwdTemplateId'=>'157589', //修改密码短信模板Id,
             'ChangePhoneTemplateId'=>'180395', //更换手机号码模板id
             'setPayPwdTemplateId'=>'188595', //设置支付密码
+            'universalTemplateId'=>'245484', //通用模板
         ),
         //合众微信配置文件
         'WEIXINPAY_CONFIG'       => array(

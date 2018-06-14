@@ -15,7 +15,7 @@
             user-select:none;
             margin:0;padding:0;
         }
-        body{font-family:'微软雅黑';font-size:12px;}
+        body{font-family:'微软雅黑';font-size:12px;background-color: #fff}
         a{text-decoration:none;}
         li{list-style:none;}
         body,html{width:100%;height:auto;}
@@ -420,6 +420,7 @@
 
         // 计算积分抵扣金额
         integral_discount = 0;
+        use_integral = 0;
         if($(".dikoujf a.on").length == 1){
             var clsName = $(".dikoujf a.on").parents("li").attr("class");
             var times = 0;
@@ -449,7 +450,7 @@
                 use_integral = use_times*mch_integral_use;
             }
         };
-
+        console.log(use_integral);
         // 使用会员卡储值
         var use_yue = 0;
         pay_yue = 0;
@@ -477,7 +478,8 @@
 
     $('.tbgds').on('click', function () {
         var total = $("#ontgj").val();
-        if(realprice == 0 && parseFloat(total) != 0){
+        total = parseFloat(total);
+        if(realprice == 0 && total != 0 && !isNaN(total)){
             $('.mima').css('display', 'block');
             $(".ui-input").val("").focus();
             $("#tankd").show();
@@ -550,6 +552,7 @@
             var openid = $("input[name=openid]").val();
             var checker_id = $("input[name=checker_id]").val();
             var memo = $("input[name=memo]").val();
+            console.log(checker_id);
 //            console.log({
 //                order_amount:0,
 //                dikoufen:use_integral,
@@ -585,6 +588,7 @@
                     coupon_code:coupon_code,
                     card_code:card_code,
                     mch_id:mch_id,
+                    checker_id:checker_id,
                     memo:memo
                 },
                 success: function (data) {

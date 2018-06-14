@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <admintpl file="header" />
 
 </head>
@@ -63,7 +62,34 @@
         <select name="mode" style="width: 120px;">
             <option value='' <if condition="$formget.mode eq '' ">selected</if> >全部</option>
             <option value='0' <if condition="$formget.mode eq '0' ">selected</if> >台签</option>
+            <option value='1' <if condition="$formget.mode eq '1' ">selected</if> >APP被扫支付</option>
             <option value='2'  <if condition="$formget.mode eq '2' ">selected</if> >APP扫付款码</option>
+            <option value='3'  <if condition="$formget.mode eq '3' ">selected</if> >双屏收银支付</option>
+            <option value='4'  <if condition="$formget.mode eq '4' ">selected</if> >双屏现金支付</option>
+            <option value='5'  <if condition="$formget.mode eq '5' ">selected</if> >pos机主扫</option>
+            <option value='6'  <if condition="$formget.mode eq '6' ">selected</if> >pos机被扫</option>
+            <option value='7'  <if condition="$formget.mode eq '7' ">selected</if> >pos机现金支付</option>
+            <option value='8'  <if condition="$formget.mode eq '8' ">selected</if> >pos机其他支付</option>
+            <option value='9'  <if condition="$formget.mode eq '9' ">selected</if> >pos机刷银行卡</option>
+            <option value='10'  <if condition="$formget.mode eq '10' ">selected</if> >快速支付</option>
+            <option value='11'  <if condition="$formget.mode eq '11' ">selected</if> >小程序</option>
+            <option value='12'  <if condition="$formget.mode eq '12' ">selected</if> >会员充值</option>
+            <option value='13'  <if condition="$formget.mode eq '13' ">selected</if> >收银APP现金支付</option>
+            <option value='14'  <if condition="$formget.mode eq '14' ">selected</if> >收银APP余额支付</option>
+            <option value='15'  <if condition="$formget.mode eq '15' ">selected</if> >小白盒</option>
+            <option value='16'  <if condition="$formget.mode eq '16' ">selected</if> >台卡余额</option>
+            <option value='17'  <if condition="$formget.mode eq '17' ">selected</if> >双屏主扫</option>
+            <option value='18'  <if condition="$formget.mode eq '18' ">selected</if> >双屏余额</option>
+            <option value='19'  <if condition="$formget.mode eq '19' ">selected</if> >pos余额</option>
+            <option value='20'  <if condition="$formget.mode eq '20' ">selected</if> >小程序余额</option>
+            <option value='21'  <if condition="$formget.mode eq '21' ">selected</if> >波普刷卡</option>
+            <option value='22'  <if condition="$formget.mode eq '22' ">selected</if> >波普扫码</option>
+            <option value='23'  <if condition="$formget.mode eq '23' ">selected</if> >波普银行卡</option>
+            <option value='24'  <if condition="$formget.mode eq '24' ">selected</if> >波普余额</option>
+            <option value='25'  <if condition="$formget.mode eq '25' ">selected</if> >商+宝主扫</option>
+            <option value='26'  <if condition="$formget.mode eq '26' ">selected</if> >api接口订单</option>
+            <option value='27'  <if condition="$formget.mode eq '27' ">selected</if> >商+宝余额</option>
+            <option value='all_pos'  <if condition="$formget.mode eq 'all_pos' ">selected</if> >pos机统计</option>
         </select>&nbsp;
         商户电话：
         <input type="text" name="user_phone" style="width: 200px;" value="{$formget.user_phone|default=''}" placeholder="请输入对应商户的电话">
@@ -172,179 +198,4 @@
     })
 </script>
 </body>
-=======
-<admintpl file="header" />
-
-</head>
-<body>
-
-<div class="wrap js-check-wrap">
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="javascript:;">流水列表</a></li>
-        <!--<li><a href="{:U('Contentadmin/add')}" target="_self">新增支付</a></li>-->
-    </ul>
-    <form class="well form-search" method="post" action="{:U('Contentadmin/index')}">
-        时间：
-        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off" placeholder="开始时间">-
-        <input type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off" placeholder="结束时间"> &nbsp;
-        时间类型:
-        <select name="timestyle"  class="timestyle" style="width: 120px;">
-            <option value='' <if condition="$formget.timestyle eq '' ">selected</if> >全部</option>
-            <option value='1' <if condition="$formget.timestyle eq 1 ">selected</if> >今日</option>
-            <option value='2' <if condition="$formget.timestyle eq 2 ">selected</if> >昨日</option>
-            <option value='3' <if condition="$formget.timestyle eq 3 ">selected</if> >本周</option>
-            <option value='4' <if condition="$formget.timestyle eq 4 ">selected</if> >本月</option>
-            <option value='5' <if condition="$formget.timestyle eq 5 ">selected</if> >上周</option>
-            <option value='6' <if condition="$formget.timestyle eq 6 ">selected</if> >上月</option>
-        </select>&nbsp;&nbsp;&nbsp;
-        支付类型：
-        <select name="paystyle" style="width: 120px;">
-            <option value='' <if condition="$formget.paystyle eq '' ">selected</if> >全部</option>
-            <option value='1' <if condition="$formget.paystyle eq 1 ">selected</if> >微信</option>
-            <option value='2' <if condition="$formget.paystyle eq 2 ">selected</if> >支付宝</option>
-            <option value='3' <if condition="$formget.paystyle eq 3 ">selected</if> >银联钱包</option>
-            <option value='4' <if condition="$formget.paystyle eq 4 ">selected</if> >京东</option>
-            <option value='5' <if condition="$formget.paystyle eq 5 ">selected</if> >现金</option>
-        </select>&nbsp;&nbsp;&nbsp;
-        支付状态：
-        <select name="status" style="width: 120px;">
-            <option value='-1' <if condition="$formget.status eq '-1' ">selected</if> >全部</option>
-            <option value='-2' <if condition="$formget.status eq '-2' ">selected</if> >支付失败</option>
-            <option value='0' <if condition="$formget.status eq '0' ">selected</if> >未支付</option>
-            <option value='1' <if condition="$formget.status eq '1' ">selected</if> >支付成功</option>
-            <option value='2' <if condition="$formget.status eq '2' ">selected</if> >退款成功</option>
-        </select>&nbsp;
-        支付银行：
-        <select name="bank" style="width: 120px;">
-            <option value='' <if condition="$formget.bank eq '' ">selected</if> >全部</option>
-            <option value='1' <if condition="$formget.bank eq '1' ">selected</if> >微众银行</option>
-            <option value='2' <if condition="$formget.bank eq '2' ">selected</if> >深圳民生银行</option>
-            <option value='3' <if condition="$formget.bank eq '3' ">selected</if> >微信官方</option>
-            <option value='4' <if condition="$formget.bank eq '4' ">selected</if> >招商银行</option>
-            <option value='5' <if condition="$formget.bank eq '5' ">selected</if> >钱方银行</option>
-            <option value='6' <if condition="$formget.bank eq '6' ">selected</if> >济南民生银行</option>
-            <option value='7' <if condition="$formget.bank eq '7' ">selected</if> >兴业银行</option>
-            <option value='9' <if condition="$formget.bank eq '9' ">selected</if> >宿州李灿</option>
-            <option value='10' <if condition="$formget.bank eq '10' ">selected</if> >东莞中信</option>
-            <option value='11' <if condition="$formget.bank eq '11' ">selected</if> >新大陆</option>
-            <option value='12' <if condition="$formget.bank eq '12' ">selected</if> >乐刷</option>
-            <option value='13' <if condition="$formget.bank eq '13' ">selected</if> >平安付</option>
-        </select>&nbsp;
-        流水号：
-        <input type="text" name="remark" style="width: 200px;" value="{$formget.remark|default=''}" placeholder="请输入流水号">&nbsp;
-        <br/><br/>
-        支付方式：
-        <select name="mode" style="width: 120px;">
-            <option value='' <if condition="$formget.mode eq '' ">selected</if> >全部</option>
-            <option value='0' <if condition="$formget.mode eq '0' ">selected</if> >台签</option>
-            <option value='2'  <if condition="$formget.mode eq '2' ">selected</if> >APP扫付款码</option>
-        </select>&nbsp;
-        商户电话：
-        <input type="text" name="user_phone" style="width: 200px;" value="{$formget.user_phone|default=''}" placeholder="请输入对应商户的电话">
-        商户的简称：
-        <input type="text" name="merchant_name" style="width: 200px;" value="{$formget.merchant_name|default=''}" placeholder="请输入对应商户的的简称">
-
-        <input type="submit" class="btn btn-primary" value="搜索" />
-        <a class="btn btn-danger" href="{:U('Contentadmin/index')}">清空</a>
-        <a class="btn btn-info" href="{:U('Contentadmin/upload_excel')}" onclick="javascript:if(!confirm('导出时间可能过长,是否确认导出')){{return false}}">导出表格</a>
-    </form>
-    <form class="js-ajax-form" action="{:U('Contentadmin/delete')}" method="post">
-        <!--<div class="table-actions">-->
-            <!--&lt;!&ndash;<button class="btn btn-primary btn-md js-ajax-submit" type="submit" data-action="{:U('Contentadmin/add')}" data-subcheck="true">新增</button>&ndash;&gt;-->
-        <!--</div>-->
-        <table class="table table-hover table-bordered table-list">
-            <thead>
-            <tr>
-                <th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>
-
-                <th width="50" >ID</th>
-                <th width="60" >商户的电话</th>
-                <th width="70" >商户的名称</th>
-                <th width="50" >支付方式</th>
-                <th width="50" >使用银行</th>
-                <th width="70" >支付金额</th>
-                <th width="50" >商户费率</th>
-                <th width="70" >支付样式</th>
-                <th width="70" >流水号</th>
-                <th width="60" >商户订单号</th>
-                <th width="70" >支付状态</th>
-                <th width="70">支付时间</th>
-                <th width="50" >操作</th>
-            </tr>
-            </thead>
-            <foreach name="pays" item="p">
-                <tr>
-                    <td><input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$p.id}" ></td>
-                    <td><b>{$p.id}</b></td>
-                    <td><b>{$p.user_phone}</b></td>
-                    <td><b>{$p.merchant_name}</b></td>
-                    <td><b>{:paystyle($p['paystyle_id'])}</b></td>
-                    <td><b>{:bank_name($p['bank'])}</b></td>
-                    <td><b>{$p.price}</b></td>
-                    <td><b>{$p.cost_rate}</b></td>
-                    <td><b>{:numberstyle($p['mode'])}</b></td>
-                    <td><b>{$p.remark}</b></td>
-                    <td><b>{$p.jmt_remark}</b></td>
-
-                    <td >
-                        <b>{:pay_status($p['status'])}</b>
-                        <!--<span class="change_status" data-status="{$p.status}" data-id="{$p.id}">-->
-                        <!--<img src="__PUBLIC__/images/status_{$p.status}.gif" alt="改变状态" >-->
-                        <!--</span>-->
-                        <!--{:show_status($p)}-->
-                    </td>
-                    <td>
-                        <if condition="$p['paytime'] neq 0">
-                            {:date('Y-m-d H:i:s',$p['paytime'])}
-                        </if>
-                    </td>
-                    <td>
-                        <a href="{:U('Contentadmin/check_pay',array('id'=>$p['id']))}">检查</a> |
-                        <a href="{:U('Contentadmin/delete',array('id'=>$p['id']))}" onclick="return confirm('确定将此记录删除?')">删除</a>
-
-                    </td>
-                </tr>
-            </foreach>
-        </table>
-        <div class="pagination">{$page}</div>
-    </form>
-</div>
-<script src="__PUBLIC__/js/common.js"></script>
-<script >
-    $(function(){
-        $(".timestyle").change(function () {
-            $(".js-datetime").attr("disabled",true);
-        });
-//        改变上线状态
-        $(".change_status").click(function(){
-//            var ab = $(this).data('status') == 1 ? 0 :1;
-            var data = {
-//                status : $(this).data('status'),
-                id : $(this).data('id')
-            };
-            console.log(data);
-            var _this = $(this);
-            $.post("{:U('Contentadmin/change_status')}", data, function(ad){
-                _this.children("img").attr("src","__PUBLIC__/images/status_"+ad+".gif")
-                console.log(ad);
-            },"json");
-        })
-////        改变支付状态
-//        $(".change_status").click(function(){
-//            var data = {
-//                status : !$(this).data('status'),
-//                id : $(this).data('id')
-//            };
-//            var _this = $(this);
-//            $.post("{:U('Contentadmin/change_status')}", data, function(data){
-//                console.log(data);
-//                _this.toggleClass('fa-check  fa-close');
-//            });
-//        })
-////
-//
-    })
-</script>
-</body>
->>>>>>> dev
 </html>

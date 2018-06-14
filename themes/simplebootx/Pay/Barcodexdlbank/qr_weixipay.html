@@ -15,7 +15,7 @@
             user-select:none;
             margin:0;padding:0;
         }
-        body{font-family:'微软雅黑';font-size:12px;}
+        body{font-family:'微软雅黑';font-size:12px;background-color: #fff}
         a{text-decoration:none;}
         li{list-style:none;}
         body,html{width:100%;height:auto;}
@@ -420,6 +420,7 @@
 
         // 计算积分抵扣金额
         integral_discount = 0;
+        use_integral = 0;
         if($(".dikoujf a.on").length == 1){
             var clsName = $(".dikoujf a.on").parents("li").attr("class");
             var times = 0;
@@ -477,7 +478,8 @@
 
     $('.tbgds').on('click', function () {
         var total = $("#ontgj").val();
-        if(realprice == 0 && parseFloat(total) != 0){
+        total = parseFloat(total);
+        if(realprice == 0 && total != 0 && !isNaN(total)){
             $('.mima').css('display', 'block');
             $(".ui-input").val("").focus();
             $("#tankd").show();

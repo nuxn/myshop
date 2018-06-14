@@ -392,6 +392,57 @@ class  AgentnewsController extends ApibaseController
     }
 
     /**
+     * 代理申请提现
+     */
+    public function withdraw()
+    {
+        //申请提现的日期，格式2018-06
+        ($date = I('date')) || $this->ajaxReturn(array('code'=>'error','msg'=>'date is empty'));
+        (substr_count($date,'-') == 1 && strlen($date) == 7) || $this->ajaxReturn(array('code'=>'error','msg'=>'date格式错误'));
+
+        ($bank_id = I('bank_id')) || $this->ajaxReturn(array('code'=>'error','msg'=>'bank_id is empty'));
+
+        $pay_month_id = M('pay_month')->where(array('agent_id'=>$this->userId,'date'=>$date))->getField('id');
+        if($pay_month_id){
+            #如果pay_month表有该条数据则改status
+            M('pay_month')->where(array('id'=>$pay_month_id))->save(array('status'=>1,'bank_id'=>$bank_id));
+            $this->ajaxReturn(array("code" => "success", "msg" => "提现申请已提交"));
+        }else{
+            $uid = M()->query('select getchild('.$this->userId.') as uids');
+            $uids = $uid[0]['uids'];
+            $mer_ids = $this->get_merchant_id($uids); //获取商户id
+            $map['merchant_id'] = array('in',$mer_ids);
+            $map['status'] = '1';
+            if($mer_ids){
+                $info = $this->calc_maid($map,$this->get_appoint_month($date));
+                if($info){
+                    $add_data = array(
+                        'agent_id'=>$this->userId,
+                        'date'=>$date,
+                        'price'=>$info['price'],
+                        'nums'=>$info['num'],
+                        'rebate'=>$info['rebate'],
+                        'price0'=>'0.00',
+                        'nums0'=>'0',
+                        'rebate0'=>'0.00000',
+                        'status'=>1,
+                        'add_time'=>time()
+                    );
+                    $res = M('pay_month')->add($add_data);
+                    if ($res) {
+                        $this->ajaxReturn(array("code" => "success", "msg" => "提现申请已提交"));
+                    } else {
+                        $this->ajaxReturn(array("code" => "error", "msg" => "提现申请提交失败"));
+                    }
+                }
+            }else{
+                $this->ajaxReturn(array("code" => "error", "msg" => "无数据"));
+            }
+
+        }
+    }
+
+    /**
      * @param $id 用户表里面的id
      * @param string $time 按时间区分
      * @param int $is_detail 是否需要微信和支付宝支付的细节

@@ -6,13 +6,17 @@ use Common\Controller\AdminbaseController;
 class PcsyController extends AdminbaseController
 {
     protected $pcsy;
+    protected $pcsy_log;
     protected $wghl;
+    protected $wghl_log;
 
     function _initialize()
     {
         parent::_initialize();
         $this->pcsy = M("merchants_pcsy");
+        $this->pcsy_log = M("merchants_pcsy_log");
         $this->wghl = M("merchants_wghl");
+        $this->wghl_log = M("merchants_wghl_log");
     }
 
     #插件绑定列表
@@ -96,8 +100,9 @@ class PcsyController extends AdminbaseController
             if(!$mid){
                 $this->error('商户ID不能为空');
             }
-            $res = $this->pcsy->add(array('device_no'=>$device_no,'mid'=>$mid));
+            $res = $this->pcsy->add(array('device_no'=>$device_no,'mid'=>$mid,'add_time'=>time()));
             if($res){
+                $this->pcsy_log->add(array('device_no'=>$device_no,'mid'=>$mid,'add_time'=>time(),'action'=>1,'type'=>3));
                 $this->success('添加成功',U('index'));
             }else{
                 $this->error('添加失败');
@@ -113,11 +118,13 @@ class PcsyController extends AdminbaseController
         if(!$id){
             $this->error('id不能为空');
         }
+        $info = $this->pcsy->where('id='.$id)->find();
         $res = $this->pcsy->where('id='.$id)->delete();
         if($res){
-            $this->success('删除成功',U('index'));
+            $this->pcsy_log->add(array('device_no'=>$info['device_no'],'mid'=>$info['mid'],'add_time'=>time(),'action'=>2,'type'=>3));
+            $this->success('解绑成功',U('index'));
         }else{
-            $this->error('删除失败');
+            $this->error('解绑失败');
         }
     }
 
@@ -217,8 +224,9 @@ class PcsyController extends AdminbaseController
             if(!$merchant_id){
                 $this->error('商户ID不能为空');
             }
-            $res = $this->wghl->add(array('sn'=>'ypt'.$sn,'merchant_id'=>$merchant_id));
+            $res = $this->wghl->add(array('sn'=>'ypt'.$sn,'merchant_id'=>$merchant_id,'add_time'=>time()));
             if($res){
+                $this->wghl_log->add(array('sn'=>'ypt'.$sn,'merchant_id'=>$merchant_id,'add_time'=>time(),'action'=>1,'type'=>3));
                 $this->success('添加成功',U('wg_index'));
             }else{
                 $this->error('添加失败');
@@ -234,11 +242,13 @@ class PcsyController extends AdminbaseController
         if(!$id){
             $this->error('id不能为空');
         }
+        $info = $this->wghl->where('id='.$id)->find();
         $res = $this->wghl->where('id='.$id)->delete();
         if($res){
-            $this->success('删除成功',U('wg_index'));
+            $this->wghl_log->add(array('sn'=>$info['sn'],'merchant_id'=>$info['merchant_id'],'add_time'=>time(),'action'=>2,'type'=>3));
+            $this->success('解绑成功',U('wg_index'));
         }else{
-            $this->error('删除失败');
+            $this->error('解绑失败');
         }
     }
 }

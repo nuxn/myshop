@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <admintpl file="header"/>
 </head>
 <body>
@@ -66,73 +65,4 @@
     })
 </script>
 </body>
-=======
-<admintpl file="header"/>
-</head>
-<body>
-<div class="wrap js-check-wrap">
-    <ul class="nav nav-tabs">
-        <li><a href="{:U('AdminService/index')}">开通列表</a></li>
-        <li><a href="{:U('AdminService/openList')}">商家列表</a></li>
-        <li class="active"><a href="{:U('AdminService/serverList')}">服务列表</a></li>
-    </ul>
-    <table class="table table-hover table-bordered">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>小程序名称</th>
-            <th>封面图</th>
-            <th>详情图</th>
-            <th>是否开启</th>
-            <th>小程序描述</th>
-            <th width="120">{:L('ACTIONS')}</th>
-        </tr>
-        </thead>
-        <tbody>
-        <foreach name="data" item="vo">
-            <tr>
-                <td>{$vo.id}</td>
-                <td>{$vo.title}</td>
-                <td width="200"><img src="{$vo.face_img}" style="max-height: 200px;"></td>
-                <td>
-                    <if condition="$vo.img1 neq ''"><img src="{$vo.img1}" style="height: 100px;width:200px;"></if>
-                    <if condition="$vo.img2 neq ''"><img src="{$vo.img2}" style="height: 100px;width:200px;"></if>
-                    <if condition="$vo.img3 neq ''"><img src="{$vo.img3}" style="height: 100px;width:200px;"></if>
-                </td>
-                <td>
-                    <span class="change_status" data-status="{$vo.is_show}" data-id="{$vo.id}">
-                        <img src="__PUBLIC__/images/status_{$vo.is_show}.gif" alt="改变状态" >
-                    </span>
-                </td>
-                <td>{$vo.describe}</td>
-                <td>
-                    <a href='{:U("AdminService/serverDetail",array("id"=>$vo["id"]))}'>详情</a>
-                    <a href='{:U("AdminService/serverEdit",array("id"=>$vo["id"]))}'>修改</a>
-                </td>
-            </tr>
-        </foreach>
-        </tbody>
-    </table>
-    <div class="pagination" style="text-align: right">{$page}</div>
-</div>
-<script src="__PUBLIC__/js/common.js"></script>
-<script>
-    $(function(){
-        $(".change_status").click(function(){
-            var data = {
-                id : $(this).data('id')
-            };
-            console.log(data);
-            var _this = $(this);
-            $.post("{:U('change_status')}", data, function(ad){
-                _this.children("img").attr("src","__PUBLIC__/images/status_"+ad+".gif")
-                console.log(ad);
-            },"json");
-        })
-////
-//
-    })
-</script>
-</body>
->>>>>>> dev
 </html>

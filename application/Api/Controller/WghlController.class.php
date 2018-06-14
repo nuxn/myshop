@@ -15,6 +15,7 @@ class  WghlController extends ApibaseController
     private $params;
     private $merchant_id;
     private $uid;
+    private $pay_model;
 
     public function __construct()
     {
@@ -25,6 +26,7 @@ class  WghlController extends ApibaseController
         get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/wghl/', 'pay', 'get_params', json_encode($this->params));
         $this->merchant_id = 0;
         $this->uid = 0;
+        $this->pay_model = M('pay');
         #验证签名
         if($this->params['sn']!='ypt000001') $this->checkSign($this->params);
         //$this->checkSign($this->params);
@@ -243,8 +245,16 @@ class  WghlController extends ApibaseController
     //退款码退款
     public function refunds_code()
     {
-        $refunds_code = I('refunds_code');
-        $price = I('price');
+        $refunds_code = $this->params['refunds_code'];
+        $pay_info = $this->pay_model
+            ->where(array('merchant_id'=>$this->merchant_id,'status'=>1,'wx_remark|new_order_sn|transId'=>$refunds_code))
+            ->field('remark,price')->find();
+        if(!$pay_info){
+            get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/wghl/', 'refunds', '退款未查到该笔订单: ','参数', json_encode($this->params));
+            $this->succ(array("code" => "error", "msg" => "未查到该笔订单"));
+        }
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/wghl/', 'refunds', '退款: ','参数', json_encode($this->params));
+        redirect(U("base/pay_back",array("mid"=>$this->merchant_id,'style'=>'2','remark'=>$pay_info['remark'],'price_back'=>$pay_info['price']*100,'sign'=>'5e022b44a15a90c01')));
     }
 
     //扫码收款【商户被扫】
@@ -276,7 +286,7 @@ class  WghlController extends ApibaseController
      */
     private function create_no_number($cate_id)
     {
-        $no_number = M('pay')->where(array("cate_id" => $cate_id))->order("id desc")->getField('no_number');
+        $no_number = $this->pay_model->where(array("cate_id" => $cate_id))->order("id desc")->getField('no_number');
         $no_number = substr($no_number, -7) + 1;
         $seven = "000000" . $no_number;
         $cate_name = 'SJ';
@@ -294,7 +304,7 @@ class  WghlController extends ApibaseController
         $remark = I("order_sn");
 
         $where['remark'] = $remark;
-        $pay = M('pay')->where($where)->find();
+        $pay = $this->pay_model->where($where)->find();
         if ($pay['merchant_id'] != $this->merchant_id) {
             $return = array("code" => "error", "msg" => "不能查询非本商户流水");
         } elseif ($pay['status'] == 1) {
@@ -390,7 +400,7 @@ class  WghlController extends ApibaseController
                     "paytime" => time(),
                     "bill_date" => date('Ymd')
                 );
-                $pay_id = M('pay')->add($pay_info);
+                $pay_id = $this->pay_model->add($pay_info);
                 if ($pay_id) {
                     $this->card_off($order_sn);
                     $this->succ(array("code" => "success", "msg" => "交易成功", "price" => '0',  "result_code" => '2', 'order_sn' => $order_sn));
@@ -472,7 +482,7 @@ class  WghlController extends ApibaseController
                         "paytime" => time(),
                         "bill_date" => date('Ymd')
                     );
-                    M('pay')->add($pay_info);
+                    $this->pay_model->add($pay_info);
                     $this->card_off($order_sn);
                     $this->succ(array("code" => "success", "msg" => "交易成功", "price" => '0',  "result_code" => '2', 'order_sn' => $order_sn));
                 }
@@ -527,7 +537,7 @@ class  WghlController extends ApibaseController
                             "paytime" => time(),
                             "bill_date" => date('Ymd')
                         );
-                        M('pay')->add($pay_info);
+                        $this->pay_model->add($pay_info);
                         $this->card_off($order_sn);
                         $this->succ(array("code" => "success", "msg" => "交易成功", "price" => '0',  "result_code" => '2', 'order_sn' => $order_sn));
                     }
@@ -587,7 +597,7 @@ class  WghlController extends ApibaseController
                 "paytime" => time(),
                 "bill_date" => date('Ymd')
             );
-            $pay_id = M('pay')->add($pay_info);
+            $pay_id = $this->pay_model->add($pay_info);
             if ($pay_id) {
                 $this->card_off($order_sn);
                 $this->succ(array("code" => "success", "msg" => "支付成功"));

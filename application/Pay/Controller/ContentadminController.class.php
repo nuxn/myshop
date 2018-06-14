@@ -88,7 +88,11 @@ class ContentadminController extends AdminbaseController
             $map['remark'] = $remark;
         }
         if (I("mode")!= "") {
-            $map['mode'] = I("mode");
+            if(I('mode')=='all_pos'){
+                $map['mode'] = array('in','5,6,7,8,9,19');
+            }else{
+                $map['mode'] = I("mode");
+            }
         }
         if (!$timestyle_id) {
             if ($start_time && $end_time) {
@@ -121,7 +125,7 @@ class ContentadminController extends AdminbaseController
             ->limit($page->firstRow, $page->listRows)
             ->order("id desc")
             ->select();
-        if (F("map") !== $map && $end_time &&$start_time) {
+        if (F("map") !== $map) {
             $this->data_cache_delete();
             $this->data_cache_add($count, $map);
         }

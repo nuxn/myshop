@@ -89,13 +89,17 @@ class  PopPayController extends ApibaseController
 
         #根据设备sn号查对应商户id
         $id = M('merchants_pop')->where(array('sn' => $this->params['sn']))->getField('merchant_id');
-        if (!$id) $this->ajaxReturn(array("code" => "error", "msg" => "未绑定商户"));
+        if (!$id) {
+            get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'micropay', '未绑定商户,订单号:' . $order_sn . ',参数', json_encode($this->params));
+            $this->ajaxReturn(array("code" => "error", "msg" => "未绑定商户"));
+        }
 
         $res = M('merchants_cate')->field('status,wx_bank,ali_bank,is_ypt')->where(array("merchant_id" => $id, 'status' => 1, 'checker_id' => $checker_id))->find();
         if ($number == "10" || $number == "11" || $number == "12" || $number == "13" || $number == "14" || $number == "15" && strlen($code) == 18) {//微信支付
             // 微信支付
             if ($res['wx_bank'] == "3") {
                 $message = A("Pay/Wxpay")->micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'wx_return', '订单号:' . $order_sn . ',微信返回', json_encode($message));
                 if ($message['code'] == "error") {
                     $this->ajaxReturn(array("code" => "error", "msg" => "交易失败"));
                 }
@@ -107,6 +111,7 @@ class  PopPayController extends ApibaseController
             //兴业银行
             if ($res['wx_bank'] == "7") {
                 $message = A("Pay/Barcodexybank")->wz_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'xy_return', '订单号:' . $order_sn . ',微信返回', json_encode($message));
                 if ($message['code'] == "error") {
                     $this->ajaxReturn(array("code" => "error", "msg" => "交易失败"));
                 }
@@ -118,6 +123,7 @@ class  PopPayController extends ApibaseController
             // 宿州李灿
             if ($res['wx_bank'] == "9") {
                 $message = A("Pay/Szlzpay")->micropay($id, $price, $code, $checker_id, $order_sn, $mode);
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'szlz_return', '订单号:' . $order_sn . ',微信返回', json_encode($message));
                 if ($message['code'] == "error") {
                     $this->ajaxReturn(array("code" => "error", "msg" => "交易失败"));
                 }
@@ -129,6 +135,7 @@ class  PopPayController extends ApibaseController
             //东莞中信
             if ($res['wx_bank'] == "10") {
                 $message = A("Pay/Barcodepfbank")->wz_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'pf_return', '订单号:' . $order_sn . ',微信返回', json_encode($message));
                 if ($message['code'] == "error") {
                     $this->ajaxReturn(array("code" => "error", "msg" => "交易失败"));
                 }
@@ -139,6 +146,7 @@ class  PopPayController extends ApibaseController
             }
             if ($res['wx_bank'] == "11") {//新大陆
                 $message = A("Pay/Barcodexdlbank")->wx_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'xdl_return', '订单号:' . $order_sn . ',微信返回', json_encode($message));
                 if ($message['code'] == "error") {
                     $this->ajaxReturn(array("code" => "error", "msg" => "交易失败"));
                 }
@@ -148,6 +156,7 @@ class  PopPayController extends ApibaseController
                 }
             } elseif ($res['wx_bank'] == "12") {// 乐刷支付
                 $message = A("Pay/Leshuabank")->wx_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'ls_return', '订单号:' . $order_sn . ',微信返回', json_encode($message));
                 if ($message['code'] == "error") {
                     $this->ajaxReturn(array("code" => "error", "msg" => "交易失败"));
                 }
@@ -156,6 +165,7 @@ class  PopPayController extends ApibaseController
                     $this->ajaxReturn(array("code" => "success", "msg" => "交易成功"));
                 }
             } else {
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'no_return', '订单号:' . $order_sn . ',微信返回', json_encode(array()));
                 $this->ajaxReturn(array("code" => "error", "msg" => "暂不支持该商户通道"));
             }
         } else if ($number == '28') {//支付宝支付
@@ -165,11 +175,13 @@ class  PopPayController extends ApibaseController
                     $this->card_off($order_sn);
                     $this->ajaxReturn(array("code" => "success", "msg" => "交易成功"));
                 } else
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'xy_return', '订单号:' . $order_sn . ',支付宝返回', json_encode($message));
                     $this->ajaxReturn(array("code" => "error", "msg" => "交易失败"));
             }
             if ($res['ali_bank'] == "9") {//宿州李灿
                 $message = A("Pay/Szlzpay")->ali_micropay($id, $price, $code, $checker_id, $order_sn, $mode);
                 if ($message['code'] == "error") {
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'szlc_return', '订单号:' . $order_sn . ',支付宝返回', json_encode($message));
                     $this->ajaxReturn(array("code" => "error", "msg" => "交易失败"));
                 }
                 if ($message['code'] == "success") {
@@ -179,6 +191,7 @@ class  PopPayController extends ApibaseController
             }
             if ($res['ali_bank'] == "10") { //东莞中信
                 $message = A("Pay/Barcodepfbank")->ali_barcode_pay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'pf_return', '订单号:' . $order_sn . ',支付宝返回', json_encode($message));
                 if ($message['code'] == 'success') {
                     $this->card_off($order_sn);
                     $this->ajaxReturn(array("code" => "success", "msg" => "交易成功"));
@@ -187,6 +200,7 @@ class  PopPayController extends ApibaseController
             }
             if ($res['ali_bank'] == "11") {//新大陆
                 $message = A("Pay/Barcodexdlbank")->ali_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'xdl_return', '订单号:' . $order_sn . ',支付宝返回', json_encode($message));
                 if ($message['code'] == "error") {
                     $this->ajaxReturn(array("code" => "error", "msg" => "交易失败"));
                 }
@@ -196,6 +210,7 @@ class  PopPayController extends ApibaseController
                 }
             } elseif ($res['ali_bank'] == "12") {//乐刷支付
                 $message = A("Pay/Leshuabank")->ali_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'ls_return', '订单号:' . $order_sn . ',支付宝返回', json_encode($message));
                 if ($message['code'] == "error") {
                     $this->ajaxReturn(array("code" => "error", "msg" => "交易失败"));
                 }
@@ -204,6 +219,7 @@ class  PopPayController extends ApibaseController
                     $this->ajaxReturn(array("code" => "success", "msg" => "交易成功"));
                 }
             } else {
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'no_return', '订单号:' . $order_sn . ',支付宝返回', json_encode(array()));
                 $this->ajaxReturn(array("code" => "error", "msg" => "暂不支持该商户通道"));
             }
         } else {
@@ -313,10 +329,22 @@ class  PopPayController extends ApibaseController
                 ->where(array("c.id" => $data['coupon_id'], 'c.card_type' => 'GENERAL_COUPON'))
                 ->field('c.total_price,c.de_price,c.begin_timestamp,c.end_timestamp,mu.id')
                 ->find();
-            if (!$res) $this->ajaxReturn(array("code" => "error", "msg" => "该优惠券不可使用"));
-            if ($res['id'] != $mch_uid) $this->ajaxReturn(array("code" => "error", "msg" => "该优惠券不是本店优惠券"));
-            if ($res['total_price'] > $price) $this->ajaxReturn(array("code" => "error", "msg" => "消费金额未达到优惠券需求金额！"));
-            if (time() < $res['begin_timestamp'] || time() > $res['end_timestamp']) $this->ajaxReturn(array("code" => "error", "msg" => "该优惠券不在使用时间范围"));
+            if (!$res){
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'cancel_card_coupons', ':该优惠券不可使用', json_encode($this->params));
+                $this->ajaxReturn(array("code" => "error", "msg" => "该优惠券不可使用"));
+            }
+            if ($res['id'] != $mch_uid) {
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'cancel_card_coupons', ':该优惠券不是本店优惠券', json_encode($this->params));
+                $this->ajaxReturn(array("code" => "error", "msg" => "该优惠券不是本店优惠券"));
+            }
+            if ($res['total_price'] > $price) {
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'cancel_card_coupons', ':消费金额未达到优惠券需求金额！', json_encode($this->params));
+                $this->ajaxReturn(array("code" => "error", "msg" => "消费金额未达到优惠券需求金额！"));
+            }
+            if (time() < $res['begin_timestamp'] || time() > $res['end_timestamp']) {
+                get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'cancel_card_coupons', ':该优惠券不在使用时间范围', json_encode($this->params));
+                $this->ajaxReturn(array("code" => "error", "msg" => "该优惠券不在使用时间范围"));
+            }
 
             $real_price = $price - $res['de_price'];
             $order_sn = date('YmdHis') . mt_rand(100000, 999999);
@@ -348,19 +376,21 @@ class  PopPayController extends ApibaseController
                 }
             }
             $this->ajaxReturn(array("code" => "success", "msg" => "验证优惠券成功", "price" => strval(round($real_price, 2)), 'order_sn' => $order_sn));
-        } elseif ($d = M("screen_memcard_use")->where(array("card_code" => $code, "status" => 1))->find()) {
+        } elseif ($d = M("screen_memcard_use")->where(array("entity_card_code|card_code" => $code, "status" => 1))->find()) {
             #会员卡
             $res = M('screen_memcard')->alias('m')
                 ->join('join ypt_screen_memcard_use u on m.id=u.memcard_id')
-                ->where(array("u.card_code" => $code))
+                ->where(array("u.entity_card_code|u.card_code" => $code))
                 ->field('u.card_amount,u.memid,u.yue,u.level,u.card_id,u.card_balance,m.id,m.max_reduce_bonus,m.credits_set,m.integral_dikou,m.max_reduce_bonus,m.credits_use,m.credits_discount,m.discount_set,m.discount,m.mid,m.level_set')
                 ->find();
+            get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/pop/', 'cancel_card', ':会员卡信息', json_encode($res));
+
             if ($res['mid'] != $mch_uid && $res['mid'] != $agent_id) $this->ajaxReturn(array("code" => "error", "msg" => "该会员卡不能在本店使用"));
             if ($res['mid'] == $agent_id) {
                 $use_merchants = M('screen_memcard')->alias('m')
                     ->join('join ypt_screen_memcard_use u on m.id=u.memcard_id')
                     ->join('join ypt_screen_cardset s on s.c_id=m.id')
-                    ->where(array("u.card_code" => $code))
+                    ->where(array("u.entity_card_code|u.card_code" => $code))
                     ->getField('s.use_merchants');
                 $arr = explode(',', $use_merchants);
                 if (!in_array($mch_uid, $arr)) $this->ajaxReturn(array("code" => "error", "msg" => "该联名会员卡不能在本店使用"));
@@ -513,7 +543,7 @@ class  PopPayController extends ApibaseController
         if ($card_code) {
             $card = M("screen_memcard_use")->alias('u')
                 ->join('left join ypt_screen_memcard m on u.card_id=m.card_id')
-                ->field('m.id,m.credits_set,m.expense,m.level_set,m.is_agent,m.level_up,m.expense_credits,m.expense_credits_max,u.id as smu_id,u.card_balance,u.yue,u.card_id,u.card_amount,u.level')
+                ->field('m.id,m.credits_set,m.expense,m.level_set,m.is_agent,m.level_up,m.expense_credits,m.expense_credits_max,u.id as smu_id,u.card_code,u.entity_card_code,u.card_balance,u.yue,u.card_id,u.card_amount,u.level')
                 ->where(array('u.card_code|u.entity_card_code' => $card_code))
                 ->find();
             //会员卡消费送积分
@@ -538,16 +568,32 @@ class  PopPayController extends ApibaseController
                 }
             }
             //yue，会员卡余额
-            $data['yue'] = $card['yue'] - $yue;
-
-            M("screen_memcard_use")->where(array('card_code|entity_card_code' => $card_code))->save($data);
+            $total_yue = $card['yue'] - $yue;//计算后的储值
+            M("screen_memcard_use")->where(array('id'=>$card['smu_id']))->save(array('yue'=>$total_yue));
+            if($card['card_code']){
+                $token = get_weixin_token();
+                $ts['code'] = urlencode($card_code);//卡号
+                $ts['card_id'] = urlencode($card['card_id']);//卡id
+                $ts['custom_field_value1'] = urlencode($total_yue);//会员卡储值
+                request_post('https://api.weixin.qq.com/card/membercard/updateuser?access_token=' . $token, urldecode(json_encode($ts)));
+            }
 
             //获取商户的等级信息,level_set等级设置，level_up是否可升级
             if ($card['level_set'] == 1 && $card['level_up'] == 1) {
                 //获取该会员的单次消费expense_single，累计消费expense，累计积分card_amount
                 $field = 'ifnull(sum(order_amount),0) as expense,ifnull(max(order_amount),0) as expense_single';
-                $mem_info = M('order')->where(array('card_code' => $card_code, 'order_status' => '5'))->field($field)->find();
-                $mem_info['card_amount'] = M("screen_memcard_use")->where("card_code='$card_code'")->getField('card_amount');
+                $mem_info_where['order_status'] = '5';
+                if($card['card_code'] && $card['entity_card_code']){
+                    $mem_info_where['card_code'] = array(array('eq',$card['card_code']),array('eq',$card['entity_card_code']),'or');
+                }else{
+                    if ($card['card_code']) {
+                        $mem_info_where['card_code'] = $card['card_code'];
+                    }elseif ($card['entity_card_code']) {
+                        $mem_info_where['card_code'] = $card['entity_card_code'];
+                    }
+                }
+                $mem_info = M('order')->where($mem_info_where)->field($field)->find();
+                $mem_info['card_amount'] = M("screen_memcard_use")->where(array('id'=>$card['smu_id']))->getField('card_amount');
                 //会员卡所有等级列表
                 #充值记录信息，recharge累计充值金额，recharge_single单次充值最大金额
                 $recharge_info = M('user_recharge')
@@ -570,45 +616,43 @@ class  PopPayController extends ApibaseController
                 }
             }
             if ($current_level && $current_level > $card['level']) {
-                M("screen_memcard_use")->where(array('card_code|entity_card_code' => $card_code))->setField(array('level' => $current_level));
+                M("screen_memcard_use")->where(array('id'=>$card['smu_id']))->setField(array('level' => $current_level));
                 $ts['custom_field_value2'] = urlencode($current_level_name);//会员卡名称
             }
-            $total_yue = $card['yue'] - $yue;//计算后的储值
-            $token = get_weixin_token();
-            $ts['code'] = urlencode($card_code);//卡号
-            $ts['card_id'] = urlencode($card['card_id']);//卡id
-            $ts['custom_field_value1'] = urlencode($total_yue);//会员卡储值
-            request_post('https://api.weixin.qq.com/card/membercard/updateuser?access_token=' . $token, urldecode(json_encode($ts)));
             $final_order = $order_sn;
             if ($dikoufen > 0) {
-                M("screen_memcard_use")->where("card_code='$card_code'")->setDec('card_balance', $dikoufen);
-                $card_balance = M("screen_memcard_use")->where("card_code='$card_code'")->getField('card_balance');
-                $ts["add_bonus"] = urlencode('-' . $dikoufen);//增加的积分，负数为减
-                $ts["record_bonus"] = urlencode('消费使用积分');//增加的积分，负数为减
-                $dikoufen_ts_res = request_post('https://api.weixin.qq.com/card/membercard/updateuser?access_token=' . $token, urldecode(json_encode($ts)));
-                $dikoufen_ts_result = json_decode($dikoufen_ts_res, true);
-                $dikoufen_ts_result['errcode'] == 0 ? $dikoufen_ts_result_msg = 1 : $dikoufen_ts_result_msg = 0;
-                get_date_dir($this->path, 'card_coupon', '核销', "消费使用，订单号{$final_order}，会员卡code:{$card_code}");
-                get_date_dir($this->path, 'card_coupon', '核销', '使用积分:' . $dikoufen);
-                get_date_dir($this->path, 'card_coupon', '核销', '请求参数:' . json_encode($ts));
-                get_date_dir($this->path, 'card_coupon', '核销', '返回结果:' . $dikoufen_ts_res);
+                M("screen_memcard_use")->where(array('id'=>$card['smu_id']))->setDec('card_balance', $dikoufen);
+                $card_balance = M("screen_memcard_use")->where(array('id'=>$card['smu_id']))->getField('card_balance');
+                if($card['card_code']){
+                    $ts["add_bonus"] = urlencode('-' . $dikoufen);//增加的积分，负数为减
+                    $ts["record_bonus"] = urlencode('消费使用积分');//增加的积分，负数为减
+                    $dikoufen_ts_res = request_post('https://api.weixin.qq.com/card/membercard/updateuser?access_token=' . $token, urldecode(json_encode($ts)));
+                    $dikoufen_ts_result = json_decode($dikoufen_ts_res, true);
+                    $dikoufen_ts_result['errcode'] == 0 ? $dikoufen_ts_result_msg = 1 : $dikoufen_ts_result_msg = 0;
+                    get_date_dir($this->path, 'card_coupon', '核销', "消费使用，订单号{$final_order}，会员卡code:{$card_code}");
+                    get_date_dir($this->path, 'card_coupon', '核销', '使用积分:' . $dikoufen);
+                    get_date_dir($this->path, 'card_coupon', '核销', '请求参数:' . json_encode($ts));
+                    get_date_dir($this->path, 'card_coupon', '核销', '返回结果:' . $dikoufen_ts_res);
+                }
                 M('screen_memcard_log')->add(array('add_time' => time(), 'update_time' => time(), 'value' => '-' . $dikoufen, 'balance' => $card_balance, 'ts' => json_encode($ts), 'order_sn' => $order_sn, 'code' => $card_code, 'ts_status' => $dikoufen_ts_result_msg, 'msg' => $dikoufen_ts_res, 'record_bonus' => '消费使用积分'));
             }
             if ($send > 0) {
                 //card_balance，会员卡剩余积分
-                M("screen_memcard_use")->where("card_code='$card_code'")->setInc('card_balance', $send);
+                M("screen_memcard_use")->where(array('id'=>$card['smu_id']))->setInc('card_balance', $send);
                 //card_balance，会员卡总积分
-                M("screen_memcard_use")->where("card_code='$card_code'")->setInc('card_amount', $send);
-                $card_balance = M("screen_memcard_use")->where("card_code='$card_code'")->getField('card_balance');
-                $ts["add_bonus"] = urlencode($send);//增加的积分，负数为减
-                $ts["record_bonus"] = urlencode('消费赠送积分');//增加的积分，负数为减
-                $send_ts_res = request_post('https://api.weixin.qq.com/card/membercard/updateuser?access_token=' . $token, urldecode(json_encode($ts)));
-                $send_ts_result = json_decode($send_ts_res, true);
-                $send_ts_result['errcode'] == 0 ? $send_ts_result_msg = 1 : $send_ts_result_msg = 0;
-                get_date_dir($this->path, 'card_coupon', '核销', "消费使用，订单号{$final_order}，会员卡code:{$card_code}");
-                get_date_dir($this->path, 'card_coupon', '核销', '赠送积分:' . $send);
-                get_date_dir($this->path, 'card_coupon', '核销', '请求参数:' . json_encode($ts));
-                get_date_dir($this->path, 'card_coupon', '核销', '返回结果:' . $send_ts_res);
+                M("screen_memcard_use")->where(array('id'=>$card['smu_id']))->setInc('card_amount', $send);
+                $card_balance = M("screen_memcard_use")->where(array('id'=>$card['smu_id']))->getField('card_balance');
+                if($card['card_code']){
+                    $ts["add_bonus"] = urlencode($send);//增加的积分，负数为减
+                    $ts["record_bonus"] = urlencode('消费赠送积分');//增加的积分，负数为减
+                    $send_ts_res = request_post('https://api.weixin.qq.com/card/membercard/updateuser?access_token=' . $token, urldecode(json_encode($ts)));
+                    $send_ts_result = json_decode($send_ts_res, true);
+                    $send_ts_result['errcode'] == 0 ? $send_ts_result_msg = 1 : $send_ts_result_msg = 0;
+                    get_date_dir($this->path, 'card_coupon', '核销', "消费使用，订单号{$final_order}，会员卡code:{$card_code}");
+                    get_date_dir($this->path, 'card_coupon', '核销', '赠送积分:' . $send);
+                    get_date_dir($this->path, 'card_coupon', '核销', '请求参数:' . json_encode($ts));
+                    get_date_dir($this->path, 'card_coupon', '核销', '返回结果:' . $send_ts_res);
+                }
                 M('screen_memcard_log')->add(array('add_time' => time(), 'update_time' => time(), 'value' => $send, 'balance' => $card_balance, 'ts' => json_encode($ts), 'order_sn' => $order_sn, 'code' => $card_code, 'ts_status' => $send_ts_result_msg, 'msg' => $send_ts_res, 'record_bonus' => '消费赠送积分'));
             }
         }

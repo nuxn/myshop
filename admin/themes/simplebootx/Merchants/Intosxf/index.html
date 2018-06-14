@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/layui/layui.all.js"></script>
+    <script src="__PUBLIC__/js/jquery.js"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+
+<div class="layui-tab">
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <blockquote class="layui-elem-quote layui-text">
+                <i class="layui-icon layui-icon-face-smile" style="font-size: 30px; color: red;"></i>
+            </blockquote>
+            <div class="layui-form">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="50">
+                        <col width="100">
+                        <col width="150">
+                        <col width="200">
+                        <col width="250">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>id</th>
+                        <th>权限名称</th>
+                        <th>上级id</th>
+                        <th>权限路径</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <foreach name="info" item="val">
+                        <tr data-id="{$val.id}" class="parents" data-dis="0">
+                            <td data-id="{$val.id}" class="tdparents" data-dis="0"></td>
+                            <td>{$val.id}</td>
+                            <td>{$val.merchant_name}</td>
+                            <td>{$val.status}</td>
+                            <td>{$val.add_time}</td>
+                            <td>
+                                <div class="layui-table-cell laytable-cell-1-10">
+                                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="{:U('add',array('id'=>84))}">修改</a>
+                                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </foreach>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+</script>
+
+</body>
+</html>

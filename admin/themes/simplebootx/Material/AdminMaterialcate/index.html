@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <admintpl file="header"/>
 </head>
 <body>
@@ -68,75 +67,4 @@
 </div>
 <script src="__PUBLIC__/js/common.js"></script>
 </body>
-=======
-<admintpl file="header"/>
-</head>
-<body>
-<div class="wrap js-check-wrap">
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="javascript:;">{:L('INDEX')}</a></li>
-        <li><a href="{:U('AdminMaterialcate/add')}" target="_self">{:L('ADD')}</a></li>
-    </ul>
-    <form class="well form-search" method="post" action="{:U('AdminMaterialcate/index')}">
-        时间：
-        <input type="text" name="start_time" class="js-datetime" value="{$formget.start_time|default=''}" style="width: 120px;" autocomplete="off">-
-        <input type="text" class="js-datetime" name="end_time" value="{$formget.end_time|default=''}" style="width: 120px;" autocomplete="off"> &nbsp; &nbsp;
-        关键字：
-        <input type="text" name="title" style="width: 200px;" value="{$formget.title|default=''}" placeholder="请输入标题...">
-        <input type="submit" class="btn btn-primary" value="搜索"/>
-        <a class="btn btn-danger" href="{:U('AdminMaterialcate/index')}">清空</a>
-    </form>
-    <form class="js-ajax-form" action="" method="post">
-        <div class="table-actions">
-            <button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('AdminMaterialcate/delete')}" data-subcheck="true" data-msg="您确定删除吗？">{:L('DELETE')}</button>
-        </div>
-        <table class="table table-hover table-bordered table-list">
-            <thead>
-            <tr>
-                <th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>
-                <th width="50">ID</th>
-                <th width="50">分类名称</th>
-                <th width="50">分类代号</th>
-                <th width="50">分类描述</th>
-                <th width="50">物料数量(件)</th>
-                <th width="50">添加时间</th>
-                <th width="50">修改时间</th>
-                <th width="50">状态</th>
-                <th width="70">操作</th>
-            </tr>
-            </thead>
-            <foreach name="data_lists" item="vo">
-                <tr>
-                    <td><input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$vo.id}" title="ID:{$vo.id}"></td>
-                    <td><b>{$vo.id}</b></td>
-                    <td>{$vo.title}</td>
-                    <td>{$vo.name}</td>
-                    <td>{$vo.desc}</td>
-                    <td>共{$vo.num}(其中:
-                        <a href="{:U('Pay/Cateadmin/index',array('name'=>$vo['name']))}">绑定商户添加{$vo.num1}</a> |
-                        <a href="{:U('AdminMaterial/index',array('cate_id'=>$vo['id']))}">手动增加{$vo.num2}</a>)
-                    </td>
-                    <td>{$vo['create_time']|date="Y-m-d H:i:s",###}</td>
-                    <td>{$vo['update_time']|date="Y-m-d H:i:s",###}</td>
-                    <td>
-                        <if condition="$vo.status eq 0">
-                            <a data-toggle="tooltip" title="正常"><i class="fa fa-check"></i></a>
-                            <else/>
-                            <a data-toggle="tooltip" title="异常"><i class="fa fa-close"></i></a>
-                        </if>
-                    </td>
-                    <td>
-                        <a href="{:U('AdminMaterialcate/edit',array('id'=>$vo['id']))}">{:L('EDIT')}</a> |
-                        <a href="{:U('AdminMaterialcate/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:L('DELETE')}</a>
-                    </td>
-                </tr>
-            </foreach>
-
-        </table>
-        <div class="pagination">{$page}</div>
-    </form>
-</div>
-<script src="__PUBLIC__/js/common.js"></script>
-</body>
->>>>>>> dev
 </html>

@@ -723,6 +723,9 @@ class  AddagentController extends ApibaseController
                 $data['lat'] = $getLonLat["lat"];
             }
 
+            //门店类型,0是大商户，2是单店
+            $data['mid'] = I('store_type','2');
+
             $count_data = $merchantsModel->field("id")->where(array('uid' => $uid))->find();
 
             //编辑商户
@@ -886,7 +889,7 @@ class  AddagentController extends ApibaseController
             }
             $data = M('merchants m')
                 ->join('ypt_merchants_users u on u.id=m.uid','left')
-                ->field('m.id,uid,u.user_phone,m.status,merchant_name,merchant_jiancheng,province,city,county,address,industry,referrer,header_interior_img,interior_img,business_license,business_license_number,operator_name,id_number,positive_id_card_img,id_card_img,account_type,account_name,bank_account,branch_account,bank_account_no,bank_type,bank_rate,hand_positive_id_card_img,hand_id_card_img,positive_bank_card_img,bank_card_img,uni_positive_id_card_img,uni_id_card_img,uni_id_number,uni_ls_auth,uni_xdl_auth,xdl_auth')
+                ->field('m.id,m.mid as store_type,uid,u.user_phone,m.status,merchant_name,merchant_jiancheng,province,city,county,address,industry,referrer,header_interior_img,interior_img,business_license,business_license_number,operator_name,id_number,positive_id_card_img,id_card_img,account_type,account_name,bank_account,branch_account,bank_account_no,bank_type,bank_rate,hand_positive_id_card_img,hand_id_card_img,positive_bank_card_img,bank_card_img,uni_positive_id_card_img,uni_id_card_img,uni_id_number,uni_ls_auth,uni_xdl_auth,xdl_auth')
                 ->where(array('uid' => $uid))
                 ->find();
             $data = $this->_unsetNull($data);

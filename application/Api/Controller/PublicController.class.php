@@ -218,6 +218,8 @@ class  PublicController extends ApibaseController
             if ($pwd == '123456') $this->ajaxReturn(array("code" => "error", "msg" => "密码不能改为123456"));
             if ($sms != S($phone)) {
                 $this->ajaxReturn(array("code" => "error", "msg" => L('SMS_ERROR')));
+            }else{
+                S($phone,null);
             }
             $data = array();
             $data['user_phone'] = $phone;
@@ -478,11 +480,25 @@ class  PublicController extends ApibaseController
                         $pid = M("merchants_users")->where(array('user_phone'=>$phone))->getField('pid');
                         $users['merchant_phone'] = M('merchants_users')->where(array('id'=>$pid))->getField('user_phone');
                         $users['is_miniapp'] = M('merchants')->where(array('uid' => $pid))->getField('is_miniapp');
+                        //如果是代理的员工，查看员工发展的商户是否有多门店模式的商户
+                        $agent_uids = M('merchants_users')->where(array('pid'=>$users['uid']))->getField('id',true);
+                        if($agent_uids){
+                            $users['big_store_count'] = M('merchants')->where(array('uid'=>array('in',$agent_uids),'mid'=>array('neq',2)))->count();
+                        }else{
+                            $users['big_store_count'] = '0';
+                        }
                     }else{
                         $uid = M("merchants_users")->where(array('user_phone'=>$phone))->getField('id');
                         //修改时间 2018/3/5
                         $users['card_auth'] = M('merchants_agent')->where(array('uid'=>$uid))->getField('card_auth');
                         $users['merchant_phone'] = $phone;
+                        //获取代理下的所有商户是否有多门店模式的商户
+                        $agent_uids = M('merchants_users')->where(array('agent_id'=>$uid))->getField('id',true);
+                        if($agent_uids){
+                            $users['big_store_count'] = M('merchants')->where(array('uid'=>array('in',$agent_uids),'mid'=>array('neq',2)))->count();
+                        }else{
+                            $users['big_store_count'] = '0';
+                        }
                     }
                 }
 

@@ -409,7 +409,7 @@ class IndexController extends PostbaseController
         } else {
             $uid = $user_id;
         }
-        $goods_id = M("goods")->where("bar_code=$bar_code AND mid=$uid")->getField("goods_id");
+        $goods_id = M("goods")->where("bar_code=$bar_code AND mid=$uid AND trade =2")->getField("goods_id");
         //p(M()->_sql());
 //        $goods_list = M("goods g")
 //            ->join("__GOODS_SKU__ gs on g.goods_id=gs.goods_id")
@@ -458,13 +458,14 @@ class IndexController extends PostbaseController
             $mid = $user_id;
         }
         $map['mid'] = $mid;
+        $map['trade'] =2;
         if ($group_id) $map['group_id'] = $group_id;
         $list = M('goods g')->field('g.goods_id,g.goods_name,g.goods_img1,g.shop_price')->where($map)->page($p . ',10')->select();
         //p($list[1]['goods_img1']);
         //$img1= array_column($list,'goods_img1');
-        foreach ($list as $k => $v) {
+    /*    foreach ($list as $k => $v) {
             $list[$k]['goods_img1'] = $this->http . "://" . $_SERVER['HTTP_HOST'] . substr($v['goods_img1'], 1);
-        }
+        }*/
         //p($list);
         $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $list));
     }
@@ -491,13 +492,15 @@ class IndexController extends PostbaseController
             }
             //$list = $User->where('status=1')->order('create_time')->page($_GET['p'].',25')->select();
             $map['mid'] = $mid;
+            $map['trade'] = 2;//默认餐饮
+
             //p($group_id);
             $goods = M("goods g")->where($map)->field('g.goods_id,g.goods_name,g.goods_img1,g.shop_price')->select();
             //p(M()->_sql());
             //p($goods);
-            foreach ($goods as $k => $v) {
+     /*       foreach ($goods as $k => $v) {
                 $goods[$k]['goods_img1'] = $this->http . "://" . $_SERVER['HTTP_HOST'] . substr($v['goods_img1'], 1);
-            }
+            }*/
             //p(M()->_sql());
             //p($goods);
             $g_info['goods_info'] = $goods;
@@ -705,14 +708,13 @@ class IndexController extends PostbaseController
             $uid = $user_id;
         }
         $map['mid'] = $uid;
+        $map['trade'] =2;//默认餐饮的
         if ($is_hot == '1') $map['is_hot'] = $is_hot;
         if ($group_id) $map['group_id'] = $group_id;
         $goods = M("goods g")
             ->where($map)->field('g.goods_id,g.goods_name,g.goods_img1,g.shop_price')
             ->select();
-        foreach ($goods as $k => $v) {
-            $goods[$k]['goods_img1'] = $this->http . "://" . $_SERVER['HTTP_HOST'] . substr($v['goods_img1'], 1);
-        }
+
         //$goods_id =array_column($goods,'goods_id');
         //p($goods_id );
         /*$where['goods_id']=array('in',array_column($goods,'goods_id'));

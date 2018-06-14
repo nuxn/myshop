@@ -904,7 +904,7 @@ class  ShopnewsController extends ApibaseController
         $role_id = $this->roles->where(array("uid" => $this->id))->getField("role_id");
         $cate_name = I("cate_name");
         $cate_id = I("cate_id");
-        $checker_id = I("checker_id") ? I("checker_id") : 0;
+        $checker_id = I("checker_id",0);
         if (!$cate_name) $this->ajaxReturn(array("code" => "error", "msg" => "未填写台签名称"));
         if ($role_id == 3) { //商户
             $mid = $this->merchants->where(array("uid" => $this->id))->getField("id");
@@ -1005,7 +1005,61 @@ class  ShopnewsController extends ApibaseController
                     $this->ajaxReturn(array("code" => "success", "msg" => "添加成功"));
                 }
             }
-
+        } elseif ($role_id == 2 || $this->userInfo['pid']==2) {//代理或者代理员工给商户添加台签
+            ($mid = I('mid')) || $this->ajaxReturn(array("code" => "error", "msg" => "mid is empty"));
+            $cate_m = $this->cates->where(array("merchant_id" => $mid, 'status' => 1, 'checker_id' => 0))->find();
+            if (!$cate_m) {
+                $agent_id = $role_id==2 ? $this->userId : M('merchants_users')->where(array('id'=>$this->userId))->getField('agent_id');
+                if (!in_array($agent_id, array(0, 1))) {
+                    $cate_m['is_ypt'] = 1;
+                }
+                $cate_now = $this->cates->where(array("id" => $cate_id))->find();
+                $cate_m['merchant_id'] = $mid;
+                $cate_m['cate_name'] = $cate_name;
+                $cate_m['checker_id'] = $checker_id;
+                $cate_m['qz_number'] = $cate_now['qz_number'];
+                $cate_m['no_number'] = $cate_now['no_number'];
+                $cate_m['barcode_img'] = $cate_now['barcode_img'];
+                $cate_m['update_time'] = time();
+                $cate_m['status'] = 1;
+                $cate_m['create_time'] = time();
+                $this->cates->where(array("id" => $cate_id))->save($cate_m);
+                $this->ajaxReturn(array("code" => "success", "msg" => "添加成功"));
+            }
+            unset($cate_m['id']);
+            if ($cate_id) {//区分是否是扫台签
+                $cate_now = $this->cates->where(array("id" => $cate_id))->find();
+                $cate_m['merchant_id'] = $mid;
+                $cate_m['cate_name'] = $cate_name;
+                $cate_m['checker_id'] = $checker_id;
+                $cate_m['qz_number'] = $cate_now['qz_number'];
+                $cate_m['no_number'] = $cate_now['no_number'];
+                $cate_m['barcode_img'] = $cate_now['barcode_img'];
+                $cate_m['update_time'] = time();
+                $cate_m['status'] = 1;
+                $cate_m['create_time'] = time();
+                $this->cates->where(array("id" => $cate_id))->save($cate_m);
+                $this->ajaxReturn(array("code" => "success", "msg" => "添加成功"));
+            } else {
+                $cate_c_id = $this->cates->order("id desc")->getField("id") + 1;
+                $seven = "000000" . $cate_c_id;
+                $no_number = "YPTTQ" . substr($seven, -7);
+                $path_url = "data/upload/pay/" . $no_number . ".png";
+                $cate_m['id'] = $cate_c_id;
+                $cate_m['checker_id'] = $checker_id;
+                $cate_m['merchant_id'] = $mid;
+                $cate_m['no_number'] = $no_number;
+                $cate_m['cate_name'] = $cate_name;
+                $cate_m['barcode_img'] = $path_url;
+                $cate_m['status'] = 1;
+                $cate_m['update_time'] = time();;
+                $cate_m['create_time'] = time();
+                $this->add_cate_png($cate_c_id, $no_number);
+                if ($this->cates->add($cate_m)) {
+                    $this->ajaxReturn(array("code" => "success", "msg" => "添加成功"));
+                }
+            }
+            $this->ajaxReturn(array("code" => "error", "msg" => "绑定失败"));
         } else {
             $this->ajaxReturn(array("code" => "error", "msg" => "角色验证失败"));
 
@@ -2135,6 +2189,176 @@ class  ShopnewsController extends ApibaseController
         return $r;
     }
 
+    /**
+     * 硬件设备绑定
+     */
+    public function pc_list()
+    {
+        if($this->userInfo['role_id'] == 3){
+            $id = M('merchants')->where(array('uid'=>$this->userId))->getField('id');
+        }else{
+            //店铺id
+            ($id = I('id')) || $this->ajaxReturn(array('code'=>'error','msg'=>'id is empty'));
+        }
+        //意锐插件
+        $pcsy = M('merchants_pcsy')->where(array('mid'=>$id))->field('id,device_no as sn,1 as type,add_time')->select();
+        //商+宝
+        $wghl = M('merchants_wghl')->where(array('merchant_id'=>$id))->field('id,substring(sn,-6,6) sn,2 as type,add_time')->select();
+        //聚财宝
+        $pop = M('merchants_pop')->where(array('merchant_id'=>$id))->field('id,sn,3 as type,add_time')->select();
+        $data = array_merge($pcsy,$wghl,$pop);
+        array_multisort(array_column($data,'add_time'),SORT_DESC,$data);
+        $this->ajaxReturn(array('code'=>'success','msg'=>'成功','data'=>$data));
+    }
+
+    /**
+     * 绑定设备
+     */
+    public function bind_pc()
+    {
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'bind_pc', ':绑定设备参数', json_encode(I('')));
+        ($sn = I('sn')) || $this->ajaxReturn(array('code'=>'error','msg'=>'device_no is empty'));
+        ($type = I('type')) || $this->ajaxReturn(array('code'=>'error','msg'=>'type is empty'));
+        ($mid = I('id')) || $this->ajaxReturn(array('code'=>'error','msg'=>'id is empty'));
+        $mer_count = M('merchants')->where(array('id'=>$mid))->count();
+        if($mer_count == 0) $this->ajaxReturn(array('code'=>'error','msg'=>'id is error'));
+        $type = $this->userInfo['role_id'] == 3 ? 1 : 2;
+        switch ($type) {
+            case 1:
+                if(M('merchants_pcsy')->where(array('device_no'=>$sn))->find()) {
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'该设备已经被绑定'));
+                }
+                M()->startTrans();
+                $res = M('merchants_pcsy')->add(array('device_no'=>$sn,'mid'=>$mid,'add_time'=>time()));
+                $log_res = M('merchants_pcsy_log')->add(array('device_no'=>$sn,'mid'=>$mid,'add_time'=>time(),'action'=>1,'type'=>$type));
+                if($res && $log_res){
+                    M()->commit();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'bind_pc', ':绑定小白盒成功', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'success','msg'=>'绑定成功','id'=>$res));
+                }else{
+                    M()->rollback();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'bind_pc', ':绑定小白盒失败', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'绑定失败'));
+                }
+                break;
+            case 2:
+                if(strlen($sn) != 6 && !is_numeric($sn)){
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'sn is error'));
+                }
+                if(M('merchants_wghl')->where(array('sn'=>'ypt'.$sn))->find()) {
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'该设备已经被绑定'));
+                }
+                M()->startTrans();
+                $res = M('merchants_wghl')->add(array('sn'=>'ypt'.$sn,'merchant_id'=>$mid,'add_time'=>time()));
+                $log_res = M('merchants_wghl_log')->add(array('sn'=>'ypt'.$sn,'merchant_id'=>$mid,'add_time'=>time(),'action'=>1,'type'=>$type));
+                if($res && $log_res){
+                    M()->commit();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'bind_pc', ':绑定商+宝成功', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'success','msg'=>'绑定成功','id'=>$res));
+                }else{
+                    M()->rollback();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'bind_pc', ':绑定商+宝失败', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'绑定失败'));
+                }
+                break;
+            case 3:
+                if(M('merchants_pop')->where(array('sn'=>$sn))->find()) {
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'该设备已经被绑定'));
+                }
+                M()->startTrans();
+                $res = M('merchants_pop')->add(array('sn'=>$sn,'merchant_id'=>$mid,'add_time'=>time()));
+                $log_res = M('merchants_pop_log')->add(array('sn'=>$sn,'merchant_id'=>$mid,'add_time'=>time(),'action'=>1,'type'=>$type));
+                if($res && $log_res){
+                    M()->commit();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'bind_pc', ':绑定聚财宝成功', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'success','msg'=>'绑定成功','id'=>$res));
+                }else{
+                    M()->rollback();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'bind_pc', ':绑定聚财宝失败', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'绑定失败'));
+                }
+                break;
+            default:
+                $this->ajaxReturn(array('code'=>'error','msg'=>'type error'));
+        }
+    }
+
+    /**
+     * 解绑设备
+     */
+    public function unbind_pc()
+    {
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'unbind_pc', ':解绑设备参数', json_encode(I('')));
+        ($this->userInfo['role_id'] == 3) || $this->ajaxReturn(array('code'=>'error','msg'=>'商户才能解绑设备'));
+        ($type = I('type')) || $this->ajaxReturn(array('code'=>'error','msg'=>'type is empty'));
+        ($id = I('id')) || $this->ajaxReturn(array('code'=>'error','msg'=>'id is empty'));
+        $merchant_id = M('merchants')->where(array('uid'=>$this->userId))->getField('id');
+        switch ($type) {
+            case 1:
+                if(!$info = M('merchants_pcsy')->where(array('id'=>$id,'mid'=>$merchant_id))->find()) {
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'未找到该设备'));
+                }
+                M()->startTrans();
+                $res = M('merchants_pcsy')->where(array('id'=>$id))->delete();
+                $log_res = M('merchants_pcsy_log')->add(array('device_no'=>$info['device_no'],'mid'=>$merchant_id,'add_time'=>time(),'action'=>2,'type'=>1));
+                if($res && $log_res){
+                    M()->commit();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'unbind_pc', ':解绑小白盒成功', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'success','msg'=>'解绑成功'));
+                }else{
+                    M()->rollback();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'unbind_pc', ':解绑小白盒失败', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'解绑失败'));
+                }
+                break;
+            case 2:
+                if(!$info = M('merchants_wghl')->where(array('id'=>$id,'merchant_id'=>$merchant_id))->find()) {
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'未找到该设备'));
+                }
+                M()->startTrans();
+                $res = M('merchants_wghl')->where(array('id'=>$id))->delete();
+                $log_res = M('merchants_wghl_log')->add(array('sn'=>$info['sn'],'merchant_id'=>$merchant_id,'add_time'=>time(),'action'=>2,'type'=>1));
+                if($res && $log_res){
+                    M()->commit();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'unbind_pc', ':解绑小白盒成功', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'success','msg'=>'解绑成功'));
+                }else{
+                    M()->rollback();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'unbind_pc', ':解绑小白盒失败', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'解绑失败'));
+                }
+                break;
+            case 3:
+                if(!$info = M('merchants_pop')->where(array('id'=>$id,'merchant_id'=>$merchant_id))->find()) {
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'未找到该设备'));
+                }
+                M()->startTrans();
+                $res = M('merchants_pop')->where(array('id'=>$id))->delete();
+                $log_res = M('merchants_pop_log')->add(array('sn'=>$info['sn'],'merchant_id'=>$merchant_id,'add_time'=>time(),'action'=>2,'type'=>1));
+                if($res && $log_res){
+                    M()->commit();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'unbind_pc', ':解绑小白盒成功', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'success','msg'=>'解绑成功'));
+                }else{
+                    M()->rollback();
+                    get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'unbind_pc', ':解绑小白盒失败', json_encode(I('')));
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'解绑失败'));
+                }
+                break;
+            default:
+                $this->ajaxReturn(array('code'=>'error','msg'=>'type error'));
+        }
+    }
+
+
+    /**
+     * 商+宝wifi绑定配置地址
+     */
+    public function wifi()
+    {
+        $this->display();
+    }
+
 
     /**
      * 获取jssdk需要用到的数据
@@ -2224,7 +2448,7 @@ class  ShopnewsController extends ApibaseController
     {
         //新增图片到数据库
         $value = "https://sy.youngport.com.cn/index.php?g=Pay&m=Barcode&a=qrcode&type=0&id=" . $cate_c_id;
-        $errorCorrectionLevel = 'L';//容错级别
+        $errorCorrectionLevel = 'H';//容错级别
         $matrixPointSize = 10;//生成图片大小
         //生成二维码图片
         $path_url = "data/upload/pay/" . $no_number . ".png";

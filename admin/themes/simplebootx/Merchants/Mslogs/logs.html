@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <admintpl file="header" />
 </head>
 <body>
@@ -76,83 +75,4 @@
 <script src="__PUBLIC__/js/common.js"></script>
 
 </body>
-=======
-<admintpl file="header" />
-</head>
-<body>
-<div class="wrap js-check-wrap">
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="{:U('Billadmin/index')}">民生银行对账单刘表</a></li>
-        <!--<li ><a href="{:U('Billadmin/add')}">添加商户二维码</a></li>-->
-    </ul>
-    <form class="well form-search" method="post" action="{:U('Mslogs/logs')}">
-        时间：
-        <input type="text" name="start_time" class="js-datetime" value="{$start_time}" style="width: 120px;" autocomplete="off">-
-        <input type="text" class="js-datetime" name="end_time" value="{$end_time}" style="width: 120px;" autocomplete="off"> &nbsp;
-        拓展商号：
-        <input type="text" name="merchant_no" style="width: 200px;" value="{$merchant_no}" placeholder="请输入商户对应的编号">
-        商户名称：
-        <input type="text" name="merchant_name" style="width: 200px;" value="{$merchant_name}" placeholder="请输入商户对应的名称">
-        民生平台流水号：
-        <input type="text" name="transId" style="width: 200px;" value="{$transId}" placeholder="请输入民生平台流水单号">
-        <input type="submit" class="btn btn-primary" value="搜索" />
-    </form>
-    <form  action="{:U('Mslogs/logs')}" method="post">
-        <table class="table table-hover table-bordered table-list">
-            <thead>
-            <tr>
-                <th width="70" >ID</th>
-                <th width="70" >民生拓展商号</th>
-                <th width="80" >商户名称</th>
-                <th width="70">交易状态</th>
-                <th width="70" >支付类型</th>
-                <th width="70">交易状态</th>
-                <th width="70" >订单号</th>
-                <th width="70">平台订单号</th>
-                <th width="50" >交易金额</th>
-                <th width="80" >手续费</th>
-                <th width="70" >清算金额</th>
-                <th width="80" >添加时间</th>
-                <th width="80">平台交易时间</th>
-            </tr>
-            </thead>
-            <foreach name="data" item="b">
-                <tr>
-                    <td><b>{$b.id}</b></td>
-                    <td><b>{$b.bankMchtId}</b></td>
-                    <td><b>{$b.merchant_name}</b></td>
-                    <td><b><switch name="b.pay_status">
-                        <case value="1">消费</case>
-                        <case value="2">撤销</case>
-                        <case value="3">退款</case>
-                    </switch></b></td>
-                    <td><b><switch name="b.pay_type">
-                        <case value="alipay">支付宝</case>
-                        <case value="wechat">微信</case>
-                    </switch></b></td>
-                    <td><b><switch name="b.type">
-                        <case value="0">失败</case>
-                        <case value="1">失败</case>
-                        <case value="2">成功</case>
-                    </switch></b></td>
-                    <td><b>{$b.order_sn}</b></td>
-                    <td><b>{$b.transId}</b></td>
-                    <td><b>{$b.pay_price}</b></td>
-                    <td><b>{$b.pay_reprice}</b></td>
-                    <td><b>{$b.price}</b></td>
-                    <td><b>{$b.pay_time}</b></td>
-                    <td>
-                        <b>{$b.refund_time}</b>
-                    </td>
-
-                </tr>
-            </foreach>
-        </table>
-        <div class="pagination">{$page}</div>
-    </form>
-</div>
-<script src="__PUBLIC__/js/common.js"></script>
-
-</body>
->>>>>>> dev
 </html>

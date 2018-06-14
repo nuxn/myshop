@@ -10,7 +10,7 @@
 <body>
 <div class="bigRTie clear">
     <div class="toipsl clear">支付异常</div>
-    <div class="centsucd clear"> <h4 style="color: #b6b6b6">{$err_msg}</h4></div>
+    <div class="centsucd clear"><h4 style="color: #b6b6b6">{$err_msg}</h4></div>
     <div class="peice clear"></div>
 </div>
 <div class="newback clear">
@@ -53,6 +53,7 @@
         WeixinJSBridge.call('closeWindow');//根据自己的需求实现自己的功能
     }, false);
     pushHistory();
+
     function pushHistory() {
         var state = {
             title: "title",

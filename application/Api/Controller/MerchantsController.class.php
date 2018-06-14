@@ -403,9 +403,15 @@ class  MerchantsController extends  ApibaseController
                 $input['categories'] = substr($input['categories'],0,$a-1);
             }
             get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/','Merchants_wxstore','创建门店参数', json_encode($input));
+<<<<<<< Updated upstream
 //            if($this->userId == '494'){
 //                $this->err("测试账户");
 //            }
+=======
+            if($this->userId == '494'){
+                $this->err("测试账户");
+            }
+>>>>>>> Stashed changes
             // 从商户在洋仆淘系统中的进件信息中获取创建门店所需
             $mch_info = $wxstore->get_mch_info($this->userId);
             if(!$mch_info)

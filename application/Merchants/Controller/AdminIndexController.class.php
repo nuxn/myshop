@@ -529,7 +529,6 @@ class AdminIndexController extends AdminbaseController
                 $data['xdl_auth'] = $xdl_auth;
 
                 if ($model->add($data)) {
-                    D('Merchants')->addDefaultRole($uid);
                     M('merchants_users')->where(array('id' => $uid))->save(array('user_name' => $merchant_jiancheng));
                     M('merchants_logs')->add(array('mid'=>$uid,'msg'=>'审核通过：将在1～3个工作日内开通支付！','add_time'=>time(),'type'=>3));
                     $this->ajaxReturn(array('code' => '1', 'msg' => '添加成功'));
@@ -886,14 +885,15 @@ class AdminIndexController extends AdminbaseController
             if (empty($bank_account_no)) {
                 $this->ajaxReturn(array("code" => '17', 'msg' => '请填写银行账号'));
             }
-            $interior_img = '';
-            if(I('interior_img_one') && I('interior_img_three')){
-                $interior_img = I('interior_img_one').','.I('interior_img_three');
-            }elseif (I('interior_img_one')) {
-                $interior_img = I('interior_img_one');
-            }elseif (I('interior_img_three')) {
-                $interior_img = I('interior_img_three');
+            $interior_img = M('merchants')->where(array('uid'=>$uid))->getField('interior_img');
+            $interior_img = explode(',',$interior_img);
+            if (I('interior_img_one')) {
+                $interior_img[0] = I('interior_img_one');
             }
+            if (I('interior_img_three')) {
+                $interior_img[1] = I('interior_img_three');
+            }
+            $interior_img = implode(',',$interior_img);
 
             $user_phone = I("referrer","","trim");
             if (empty($user_phone)) {

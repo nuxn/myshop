@@ -420,6 +420,7 @@
 
         // 计算积分抵扣金额
         integral_discount = 0;
+        use_integral = 0;
         if($(".dikoujf a.on").length == 1){
             var clsName = $(".dikoujf a.on").parents("li").attr("class");
             var times = 0;
@@ -512,7 +513,7 @@
                                 if(data.code == 'success'){
                                     var order_id = data.data;
                                     var price = realprice+"/id/"+ id+"/order_id/"+ order_id+"/mode/0/openid/"+openid+"/checker_id/"+checker_id+"/random/"+random+"/memo/"+memo+"/ok";
-                                    location = "https://sy.youngport.com.cn/index.php?s=/Pay/Leshuabank/two_wx_pay/price/" + price;
+                                    location = "https://sy.youngport.com.cn/index.php?s=/Pay/Banksxf/two_wx_pay/price/" + price;
                                 } else {
                                     alert(data.msg)
                                 }
@@ -524,7 +525,7 @@
                         });
                     } else{
                         var price = parseFloat(realprice)+"/seller_id/"+ id + "/openid/"+openid+"/checker_id/"+checker_id+"/random/"+random+"/memo/"+memo+"/ok";
-                        location = "https://sy.youngport.com.cn/index.php?s=/Pay/Leshuabank/wx_pay/price/" + price;
+                        location = "https://sy.youngport.com.cn/index.php?s=/Pay/Banksxf/wx_pay/price/" + price;
                     }
                 }
             }
