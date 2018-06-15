@@ -27,7 +27,7 @@ class MerchantsUpsxfModel extends CommonModel
         parent::__construct();
         $this->microUrl  = 'https://icm-test.suixingpay.com/management/qr/reverseScan';
         $this->scanUrl   = 'https://icm-test.suixingpay.com/management/qr/activeScan';
-        $this->jspayUrl  = 'https://icm-test.suixingpay.com/management/qr/jsScan';
+        $this->jspayUrl  = 'https://icm-test.suixingpay.com/management/qr/jsapiScan';
         $this->refundUrl = 'https://icm-test.suixingpay.com/management/qr/refund';
         $this->queryUrl  = 'https://icm-test.suixingpay.com/management/qr/query';
 
@@ -103,7 +103,7 @@ class MerchantsUpsxfModel extends CommonModel
 
     public function getPayInfo()
     {
-        $result = $this->send($this->jspayUrl,'getPayUrl');
+        $result = $this->send($this->jspayUrl,'getPayInfo');
         if($result['code'] == 'SXF0000'){
             $return = $result['respData'];
             if($return['bizCode'] == '0000'){

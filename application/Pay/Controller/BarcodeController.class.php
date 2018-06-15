@@ -303,6 +303,17 @@ class BarcodeController extends HomebaseController
                 }
                 header("Location: $url");
             }
+            // 随行付支付
+            if ($res['wx_bank'] == "14") {
+                if ($order_id) {
+                    $url = $httpUrl . "/index.php?g=Pay&m=Banksxf&a=two_wx_pay&id=" . $twoPayStr;
+                } else if ($price) {
+                    $url = $httpUrl . "/index.php?g=Pay&m=Banksxf&a=wx_pay&id=" . $wxPayStr;
+                } else {
+                    $url = $httpUrl . "/index.php?g=Pay&m=Banksxf&a=qr_weixipay&id=" . $id . "&checker_id=" . $checker_id;
+                }
+                header("Location: $url");
+            }
 
         } elseif (strpos($_SERVER['HTTP_USER_AGENT'], 'AlipayClient') !== false) {
             # ======================  支付宝支付  =======================================================================

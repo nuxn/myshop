@@ -108,35 +108,22 @@ class BanksxfController extends HomebaseController
         $db_res = $this->add_db();
         if($db_res){
             // 请求服务器获取js支付参数
-            $res_arr = $this->wx_jspay($sub_openid, $this->price);
-            // 判断返回结果
-            if ($this->check_sign($res_arr)) {
-                if ($res_arr['resp_code'] == 0 && $res_arr['result_code'] == 0) {
-                    $body = $res_arr['jspay_info'];
-                    $this->assign('body', $body);
-                    $this->assign('price', $this->price);
-                    $this->assign('openid', $sub_openid);
-                    $this->assign('remark', $this->remark);
-                    $this->assign('mid', $this->merchant_id);
-                    $this->display(":wx_pay");
-                } else {
-                    $this->alert_err($res_arr['error_msg']);
-                }
-            } else {
-                $this->alert_err('签名异常');
-            }
+            $res_arr = $this->wx_jspay($sub_openid);
+
         } else {
             $this->alert_err();
         }
     }
 
-    private function wx_jspay()
+    private function wx_jspay($openId)
     {
-        $this->sxfModel->setParameters('mno', $this->mno);        // 商户入驻返回的商户编号
         $this->sxfModel->setParameters('ordNo', $this->remark);      // 商户订单号
+        $this->sxfModel->setParameters('mno', $this->mno);        // 商户入驻返回的商户编号
         $this->sxfModel->setParameters('amt', $this->price);        // 订单总金额，单位为元，
-        $this->sxfModel->setParameters('payType', $this->pay_type);    // 取值范围：WECHAT--微信扫码、ALIPAY--支付宝扫码、UNIONPAY--银联扫码
+        $this->sxfModel->setParameters('payType', 'JSAPI');        // JSAPI公众号 或 FWC--支付 宝服务窗
         $this->sxfModel->setParameters('subject', $this->subject);    // 订单标题
+        $this->sxfModel->setParameters('subOpenid', $openId);
+        $this->sxfModel->setParameters('subAppid', 'wx3fa82ee7deaa4a21');
         $this->sxfModel->setParameters('notifyUrl', $this->notify_url);  // 回调地址
 
         return $this->sxfModel->getPayInfo();
