@@ -1,7 +1,7 @@
 <admintpl file="header"/>
 <script src="__PUBLIC__/js/layer/layer.js"></script>
 <script src="__PUBLIC__/js/ajaxfileupload.js"></script>
-<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script> 
+<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script>
 <script src="https://cdn.staticfile.org/jquery/3.1.1/jquery.min.js"></script>
 <meta http-equiv="Access-Control-Allow-Origin" content="*">
 <style type="text/css">
@@ -125,10 +125,10 @@
     						var val = $(this).val() || 0;
 	    					var val1 = parseFloat(val) - parseFloat($('#repaidRate').val());
 	    					val1 = val1.toFixed(2);
-    						$('input[name=wechat_cost_rate]').val(val1);		
-    						$('input[name=alipay_cost_rate]').val(val1);	
+    						$('input[name=wechat_cost_rate]').val(val1);
+    						$('input[name=alipay_cost_rate]').val(val1);
     						$('input[name=qq_cost_rate]').val(val1);
-    						
+
     			})
     			$('#yj2').keyup(function(){
     						var val = $(this).val() || 0;
@@ -136,7 +136,7 @@
 	    					val1 = val1.toFixed(2);
     						$('input[name=poundage]').val(val1);
     						$('input[name=minAmount]').val(val);
-    						
+
     			})
     	})
     </script>

@@ -1,3 +1,4 @@
-.idea/
+.idea
 *.log
-/.idea
+/index.php
+data/
