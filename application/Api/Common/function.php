@@ -277,7 +277,7 @@ function get_mch_uid($userId)
 {
     $role_id = M('merchants_role_users')->where("uid=$userId")->getField('role_id');
     $mu_id = $userId;
-    if($role_id != 3){
+    if(!in_array($role_id,array(2,3))){
         $mu_id = M('merchants_users')->where("id=$userId")->getField('boss_id');
     }
 

@@ -101,7 +101,6 @@ class RoleController extends ApibaseController
             if (!$role_id) err('请选择角色');
             $role = $this->role_user_model->where(array('uid' => $this->mch_uid))->getField('role_id');
             $data = $this->app_auth->field('id,auth_name,auth,pid')->where(array('role' => $role))->select();
-
             $app_auths = $this->role_model->where(array("id" => $role_id))->getField('app_auth');
             if($app_auths){
                 $old_auth_arr = explode(";", $app_auths);

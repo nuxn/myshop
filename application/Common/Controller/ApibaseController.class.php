@@ -50,7 +50,7 @@ class ApibaseController extends Controller
         "Wghl",
         "Wechat",
         "Merchants",
-	"Role",
+	    "Role",
     );
     //存储无需验证签名的模块
     protected $no_need_check_sign_module = array(
