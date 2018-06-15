@@ -33,7 +33,15 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">输入框</label>
                             <div class="layui-input-block">
-                                <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input" style="width: 400px;">
+                                <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">输入框</label>
+                            <div class="layui-input-block">
+
+                                <button type="button" class="layui-btn" id="test4"><i class="layui-icon"></i>压缩文件上传</button>
+
                             </div>
                         </div>
                         <div class="layui-form-item pane">
@@ -92,6 +100,24 @@
             layer.msg(JSON.stringify(data.field));
             return false;
         });
+    });
+    layui.use('upload', function(){
+        var upload = layui.upload;
+
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#test4' //绑定元素
+            ,url: '/upload/' //上传接口
+            // ,accept: 'file' //普通文件
+            ,done: function(res){
+                //上传完毕回调
+            }
+            ,error: function(){
+                //请求异常回调
+                console.log(123)
+            }
+        });
+
     });
 </script>
 

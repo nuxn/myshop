@@ -13,6 +13,7 @@ class IntosxfController extends AdminbaseController
     protected $merchants;
     protected $merchants_users;
     protected $merchants_sxf;
+    protected $sxfModel;
 
     function _initialize()
     {
@@ -20,6 +21,7 @@ class IntosxfController extends AdminbaseController
         $this->merchants = M("merchants");
         $this->merchants_users =M("merchants_users");
         $this->merchants_sxf =M("merchants_intosxf");
+        $this->sxfModel =D("MerchantsUpsxf");
     }
 
     /**
@@ -109,6 +111,7 @@ class IntosxfController extends AdminbaseController
 
     public function get_address()
     {
-
+        $this->sxfModel->get_address();
     }
+
 }
