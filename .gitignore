@@ -1,0 +1,4 @@
+.idea
+*.log
+/index.php
+data/

@@ -107,4 +107,8 @@ class IntosxfController extends AdminbaseController
         }
     }
 
+    public function get_address()
+    {
+
+    }
 }
