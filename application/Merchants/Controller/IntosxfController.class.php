@@ -12,7 +12,6 @@ class IntosxfController extends AdminbaseController
 {
     protected $merchants;
     protected $merchants_users;
-    protected $merchants_sxf;
     protected $sxfModel;
 
     function _initialize()
@@ -20,7 +19,6 @@ class IntosxfController extends AdminbaseController
         parent::_initialize();
         $this->merchants = M("merchants");
         $this->merchants_users =M("merchants_users");
-        $this->merchants_sxf =M("merchants_intosxf");
         $this->sxfModel =D("MerchantsUpsxf");
     }
 
@@ -29,10 +27,10 @@ class IntosxfController extends AdminbaseController
      */
     public function index()
     {
-        $count = $this->merchants_sxf->join('b left join ypt_merchants m on b.mch_id=m.id')->count();
+        $count = $this->sxfModel->join('b left join ypt_merchants m on b.mch_id=m.id')->count();
 
         $page = $this->page($count, 20);
-        $info = $this->merchants_sxf
+        $info = $this->sxfModel
             ->field('b.id,b.mch_id,b.status,b.add_time,m.merchant_name')
             ->join('b left join ypt_merchants m on b.mch_id=m.id')
             ->order('b.id desc')
@@ -54,7 +52,7 @@ class IntosxfController extends AdminbaseController
             if(!$data['m_id']){
                 $this->error('参数不全');
             }
-            $check = $this->merchants_sxf->where(array('m_id' => $data['m_id']))->find();
+            $check = $this->sxfModel->where(array('m_id' => $data['m_id']))->find();
             $find = $this->merchants->where(array('id'=>$data['m_id']))->find();
             if($check){
                 $this->error('已存在');
@@ -62,25 +60,49 @@ class IntosxfController extends AdminbaseController
             if(!$find){
                 $this->error('系统中不存在该商户');
             }
-            $res = $this->merchants_sxf->add($data);
+            $res = $this->sxfModel->add($data);
             if($res){
                 $this->redirect(U('Intoxdl/index'));
             } else{
                 $this->success('未作改动');
             }
         }else{
-            $merchant_id=$_GET['id'];
-            //$merchant_id=53;
-            $list=M('Merchants')->where("id='{$merchant_id}'")->find();
-            $uid=$list['uid'];
-            $phone=M('Merchants_users')->where("id='{$uid}'")->find();
-            $this->assign('phone',$phone);
-            $this->assign('list',$list);
-            $this->assign('id',$merchant_id);
-            $merchants_mpay_data=M('merchants_mdaypay')->where(array('merchant_id'=>$merchant_id))->find();
-            $this->assign('data',$merchants_mpay_data);
+            $merchant_id = $_GET['id'];
+            $province = $this->get_province();
+            $list = M('Merchants')->where("id='{$merchant_id}'")->find();
+            $this->assign('list', $list);
+            $this->assign('id', $merchant_id);
+            $this->assign('province', $province);
             $this->display();
         }
+    }
+
+    public function get_province()
+    {
+        $this->sxfModel->setParameters('addressType', '01');
+        $this->sxfModel->setParameters('blackFlag', '00');
+        $result = $this->sxfModel->get_address();
+        return $result['respData']['data'];
+    }
+
+    public function get_city()
+    {
+        $prov = I('data');
+        $this->sxfModel->setParameters('addressType', '02');
+        $this->sxfModel->setParameters('addressCode', $prov);
+        $this->sxfModel->setParameters('blackFlag', '00');
+        $result = $this->sxfModel->get_address();
+        $this->ajaxReturn(array('code'=>'0000', 'data'=>$result['respData']['data']));
+    }
+
+    public function get_area()
+    {
+        $prov = I('data');
+        $this->sxfModel->setParameters('addressType', '03');
+        $this->sxfModel->setParameters('addressCode', $prov);
+        $this->sxfModel->setParameters('blackFlag', '00');
+        $result = $this->sxfModel->get_address();
+        $this->ajaxReturn(array('code'=>'0000', 'data'=>$result['respData']['data']));
     }
 
     /**
@@ -95,23 +117,19 @@ class IntosxfController extends AdminbaseController
                 $this->error('参数不全');
             }
             unset($data['id']);
-            if($this->merchants_sxf->where(array('id'=>$id))->save($data)){
+            if($this->sxfModel->where(array('id'=>$id))->save($data)){
                 $this->redirect(U('Intoxdl/index'));
             } else {
                 $this->error('未修改');
             }
         } else {
             $id = I('id');
-            $info = $this->merchants_sxf->where(array('id' => $id))->find();
+            $info = $this->sxfModel->where(array('id' => $id))->find();
             $this->assign('data', $info);
             $this->assign('id', $id);
             $this->display();
         }
     }
 
-    public function get_address()
-    {
-        $this->sxfModel->get_address();
-    }
 
 }

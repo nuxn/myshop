@@ -15,10 +15,6 @@ class MerchantsUpsxfModel extends CommonModel
     private $public_key;
 
     private $getAddressUrl;
-    private $scanUrl;
-    private $refundUrl;
-    private $queryUrl;
-    private $jspayUrl;
 
     private $path;
 
@@ -26,10 +22,6 @@ class MerchantsUpsxfModel extends CommonModel
     {
         parent::__construct();
         $this->getAddressUrl  = 'https://icm-test.suixingpay.com/management/mer/getAddress';
-        $this->scanUrl   = 'https://icm-test.suixingpay.com/management/qr/activeScan';
-        $this->jspayUrl  = 'https://icm-test.suixingpay.com/management/qr/jsScan';
-        $this->refundUrl = 'https://icm-test.suixingpay.com/management/qr/refund';
-        $this->queryUrl  = 'https://icm-test.suixingpay.com/management/qr/query';
 
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/Banksxf/';
         $this->private_key = "MIICXAIBAAKBgQC+2v20Ci5VLz7r9si0AuYz3wFLWLE2Vucr1qTWpUY7smlDycOaa/WpasvKssg5lUdgK62JHvFQF2UTqZ2gBm3+atpCUvJFVC29OH4cah7qg0ryUgphEroDsas+zFjQf46EhkE37hem+UhNPcSnMahta+Jnusqftgj2fuHBUaXtzwIDAQABAoGAXC3e3ScRq7ju9f6yfybrUmBB+scyiCE+89BuuvEGU+zepIv9ekbsVtAq75Kb3Bv6ZjuSTCjyuhEik3WXmOOiGapaBmaXl9kkx0UtQsfjpV8dQIAGGskPkn5fkZGFzwmG5VB46B2a1kuR/OpNojIS7Z6Kd+32+KVfKcn1xLH1mykCQQDqBuBqPPwMk3wrXmPXrzZ7li3mO0K4SZTDKT2xfe6rGOprLGCxaXp01OOhWxmXEeW+I1P0b6qL8V+HgzjZjNtDAkEA0MZvoPyJC5Y09/ZSBM0S2izntJ4kGB39rASxpo0CXTDLCIz6k35/abwgCOmX9V8XXnx4og76FDdp3DTNp02shQJBAMUPj07GFXM9iZQ3QhlvN5BvkCzK/86QXwzLIGDh6uP18gbW8oDRkcTpMtg/DthPwMYPl3U/xjtav5crXuaJnmMCQCO6AXpMHOulrbTNKyX1Lge17YTEFyslXrakKv50XPYzllsFPRAmcolWjyjXSJDN0AL0S/R3maYCAZSUWKkLqr0CQGZ2zZVJn4NLv3r9uwJMUljQr+5CoToDp7eahWgN9vO389H0u0Kbhgg0326B4h7DwVl20w7qVwkpnWqTLwz/yqY=";
@@ -87,13 +79,11 @@ class MerchantsUpsxfModel extends CommonModel
         $this->requestParams['sign'] = $this->getSign();
         $send = json_encode($this->requestParams);
 
-
         $result = $this->requestPost($url,$send);
         if($file_name){
             get_date_dir($this->path,$file_name,'请求数据', $send);
             get_date_dir($this->path,$file_name,'返回', $result);
         }
-
         return json_decode($result, true);
     }
 

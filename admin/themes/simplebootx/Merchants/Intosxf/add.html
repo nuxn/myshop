@@ -24,12 +24,18 @@
         <div class="layui-col-md5">
             <div class="grid-demo grid-demo-bg1">7/12</div>
         </div>
-        <div class="layui-col-md5 layui-col-md-offset1">
+        <div class="layui-col-md6 layui-col-md-offset1">
 
             <fieldset class="layui-elem-field layui-field-title">
                 <legend>进件资料填写</legend>
                 <div class="layui-field-box">
                     <form class="layui-form layui-form-pane" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">商户id</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="merchant_id" required readonly lay-verify="required" value="{$id}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">输入框</label>
                             <div class="layui-input-block">
@@ -39,30 +45,28 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">输入框</label>
                             <div class="layui-input-block">
-
                                 <button type="button" class="layui-btn" id="test4"><i class="layui-icon"></i>压缩文件上传</button>
-
                             </div>
                         </div>
-                        <div class="layui-form-item pane">
-                            <label class="layui-form-label">选择框</label>
-                            <div class="layui-input-block">
-                                <select name="city" lay-verify="required">
-                                    <option value=""></option>
-                                    <option value="0">北京</option>
-                                    <option value="1">上海</option>
-                                    <option value="2">广州</option>
-                                    <option value="3">深圳</option>
-                                    <option value="4">杭州</option>
+                        <div class="layui-form-item ">
+                            <label class="layui-form-label">行政区</label>
+                            <div class="layui-input-inline">
+                                <select lay-filter="province" name="regProvCd">
+                                    <option value="">请选择省</option>
+                                    <foreach name="province" item="pval">
+                                        <option value="{$pval.areaId}" >{$pval.areaNm }</option>
+                                    </foreach>
                                 </select>
                             </div>
-                        </div>
-                        <div class="layui-form-item" pane>
-                            <label class="layui-form-label">复选框</label>
-                            <div class="layui-input-block">
-                                <input type="checkbox" name="like[write]" title="写作">
-                                <input type="checkbox" name="like[read]" title="阅读" checked>
-                                <input type="checkbox" name="like[dai]" title="发呆">
+                            <div class="layui-input-inline">
+                                <select lay-filter="city" name="regCityCd">
+                                    <option value="">请选择市区</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <select name="regDistCd">
+                                    <option value="">请选择区县</option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-form-item" pane>
@@ -100,6 +104,32 @@
             layer.msg(JSON.stringify(data.field));
             return false;
         });
+        // 监听选择框
+        form.on('select(province)', function(data){
+            $.post("{:U('get_city')}",{data:data.value}, function (res) {
+                if(res.code == '0000'){
+                    var _str = '<option>请选择</option>';
+                    $.each(res.data, function (k, v) {
+                        _str += '<option value="'+v.areaId+'">'+v.areaNm+'</option>'
+                    })
+                    $("select[name=regCityCd]").html(_str);
+                    form.render();
+                }
+            });
+        });
+        // 监听选择框
+        form.on('select(city)', function(data){
+            $.post("{:U('get_area')}",{data:data.value}, function (res) {
+                if(res.code == '0000'){
+                    var _str = '<option>请选择</option>';
+                    $.each(res.data, function (k, v) {
+                        _str += '<option value="'+v.areaId+'">'+v.areaNm+'</option>'
+                    })
+                    $("select[name=regDistCd]").html(_str);
+                    form.render();
+                }
+            });
+        });
     });
     layui.use('upload', function(){
         var upload = layui.upload;
@@ -119,6 +149,7 @@
         });
 
     });
+
 </script>
 
 </body>
