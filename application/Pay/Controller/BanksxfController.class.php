@@ -118,7 +118,7 @@ class BanksxfController extends HomebaseController
                 $this->assign('openid', $this->openid);
                 $this->assign('remark', $this->remark);
                 $this->assign('mid', $this->merchant_id);
-                $this->display(":wx_pay");
+                $this->display("wx_pay");
             } else {
                 $this->alert_err();
             }
@@ -165,7 +165,7 @@ class BanksxfController extends HomebaseController
                     $this->assign('openid', $this->openid);
                     $this->assign('remark', $this->remark);
                     $this->assign('mid', $this->merchant_id);
-                    $this->display(":wx_pay");
+                    $this->display("wx_pay");
                 } else {
                     $this->alert_err();
                 }

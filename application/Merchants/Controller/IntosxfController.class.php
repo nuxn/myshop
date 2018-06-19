@@ -27,12 +27,12 @@ class IntosxfController extends AdminbaseController
      */
     public function index()
     {
-        $count = $this->sxfModel->join('b left join ypt_merchants m on b.mch_id=m.id')->count();
+        $count = $this->sxfModel->join('b left join ypt_merchants m on b.merchant_id=m.id')->count();
 
         $page = $this->page($count, 20);
         $info = $this->sxfModel
-            ->field('b.id,b.mch_id,b.status,b.add_time,m.merchant_name')
-            ->join('b left join ypt_merchants m on b.mch_id=m.id')
+            ->field('b.id,b.merchant_id,b.status,b.add_time,m.merchant_name')
+            ->join('b left join ypt_merchants m on b.merchant_id=m.id')
             ->order('b.id desc')
             ->limit($page->firstRow , $page->listRows)
             ->select();
@@ -83,6 +83,15 @@ class IntosxfController extends AdminbaseController
         $this->sxfModel->setParameters('blackFlag', '00');
         $result = $this->sxfModel->get_address();
         return $result['respData']['data'];
+    }
+
+    // 获取 MCC 行业大类信息
+    public function getIdtTyps()
+    {
+        $this->sxfModel->setParameters('idtType', '02');
+        $this->sxfModel->setParameters('idtTypCode', '4');
+        $result = $this->sxfModel->getIdtTyps();
+        dump($result);
     }
 
     public function get_city()
