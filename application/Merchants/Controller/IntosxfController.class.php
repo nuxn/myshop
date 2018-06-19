@@ -1,4 +1,5 @@
 <?php
+
 namespace Merchants\Controller;
 
 use Common\Controller\AdminbaseController;
@@ -18,13 +19,11 @@ class IntosxfController extends AdminbaseController
     {
         parent::_initialize();
         $this->merchants = M("merchants");
-        $this->merchants_users =M("merchants_users");
-        $this->sxfModel =D("MerchantsUpsxf");
+        $this->merchants_users = M("merchants_users");
+        $this->sxfModel = D("MerchantsUpsxf");
     }
 
-    /**
-     * 进件列表
-     */
+    #进件列表
     public function index()
     {
         $count = $this->sxfModel->join('b left join ypt_merchants m on b.merchant_id=m.id')->count();
@@ -34,39 +33,37 @@ class IntosxfController extends AdminbaseController
             ->field('b.id,b.merchant_id,b.status,b.add_time,m.merchant_name')
             ->join('b left join ypt_merchants m on b.merchant_id=m.id')
             ->order('b.id desc')
-            ->limit($page->firstRow , $page->listRows)
+            ->limit($page->firstRow, $page->listRows)
             ->select();
         $this->assign("page", $page->show('Admin'));
-        $this->assign("info",$info);
+        $this->assign("info", $info);
         $this->display();
     }
 
 
-    /**
-     * 添加进件
-     */
+    # 添加进件
     public function add()
     {
         if (IS_POST) {
             $data = I("post.");
-            if(!$data['m_id']){
+            if (!$data['m_id']) {
                 $this->error('参数不全');
             }
             $check = $this->sxfModel->where(array('m_id' => $data['m_id']))->find();
-            $find = $this->merchants->where(array('id'=>$data['m_id']))->find();
-            if($check){
+            $find = $this->merchants->where(array('id' => $data['m_id']))->find();
+            if ($check) {
                 $this->error('已存在');
             }
-            if(!$find){
+            if (!$find) {
                 $this->error('系统中不存在该商户');
             }
             $res = $this->sxfModel->add($data);
-            if($res){
+            if ($res) {
                 $this->redirect(U('Intoxdl/index'));
-            } else{
+            } else {
                 $this->success('未作改动');
             }
-        }else{
+        } else {
             $merchant_id = $_GET['id'];
             $province = $this->get_province();
             $list = M('Merchants')->where("id='{$merchant_id}'")->find();
@@ -79,6 +76,7 @@ class IntosxfController extends AdminbaseController
 
     public function get_province()
     {
+        $this->sxfModel->setNull();
         $this->sxfModel->setParameters('addressType', '01');
         $this->sxfModel->setParameters('blackFlag', '00');
         $result = $this->sxfModel->get_address();
@@ -88,45 +86,78 @@ class IntosxfController extends AdminbaseController
     // 获取 MCC 行业大类信息
     public function getIdtTyps()
     {
+        $idtTypCode = I('data');
+        $this->sxfModel->setNull();
         $this->sxfModel->setParameters('idtType', '02');
-        $this->sxfModel->setParameters('idtTypCode', '4');
+        $this->sxfModel->setParameters('idtTypCode', $idtTypCode);
         $result = $this->sxfModel->getIdtTyps();
+        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
+    }
+
+    //  获取开户银行省市
+    public function getOpenbankProv()
+    {
+        $this->sxfModel->setNull();
+        $this->sxfModel->setParameters('addressType', '01');
+        $result = $this->sxfModel->getOpenbankAddress();
+        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
+    }
+
+    //  获取开户银行省市
+    public function getOpenbankCity()
+    {
+        $prov = I('data');
+        $this->sxfModel->setNull();
+        $this->sxfModel->setParameters('addressType', '02');
+        $this->sxfModel->setParameters('provCd', $prov);
+        $result = $this->sxfModel->getOpenbankAddress();
+        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
+    }
+
+    //  获取开户银行省市
+    public function getTaskCode()
+    {
+        $this->sxfModel->setNull();
+        $this->sxfModel->setParameters('file', '@D:/phpStudy/WWW/gityoungshop/data/123.zip');
+        $this->sxfModel->setParameters('orgId', '07296653');
+        $this->sxfModel->setParameters('reqId', md5(getOrderNumber()));
+        $result = $this->sxfModel->getTaskCode();
         dump($result);
     }
 
     public function get_city()
     {
         $prov = I('data');
+        $this->sxfModel->setNull();
         $this->sxfModel->setParameters('addressType', '02');
         $this->sxfModel->setParameters('addressCode', $prov);
         $this->sxfModel->setParameters('blackFlag', '00');
         $result = $this->sxfModel->get_address();
-        $this->ajaxReturn(array('code'=>'0000', 'data'=>$result['respData']['data']));
+        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
     }
 
     public function get_area()
     {
         $prov = I('data');
+        $this->sxfModel->setNull();
         $this->sxfModel->setParameters('addressType', '03');
         $this->sxfModel->setParameters('addressCode', $prov);
         $this->sxfModel->setParameters('blackFlag', '00');
         $result = $this->sxfModel->get_address();
-        $this->ajaxReturn(array('code'=>'0000', 'data'=>$result['respData']['data']));
+        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
     }
 
-    /**
-     * 编辑
-     */
+    # 编辑
     public function edit()
     {
-        if(IS_POST){
+        if (IS_POST) {
             $data = I('post.');
             $id = I('id');
-            if(!$data['m_id']){
+            if (!$data['m_id']) {
                 $this->error('参数不全');
             }
             unset($data['id']);
-            if($this->sxfModel->where(array('id'=>$id))->save($data)){
+            if ($this->sxfModel->where(array('id' => $id))->save($data)) {
                 $this->redirect(U('Intoxdl/index'));
             } else {
                 $this->error('未修改');

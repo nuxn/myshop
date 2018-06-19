@@ -9,10 +9,7 @@
     <link rel="stylesheet" type="text/css" href="__PUBLIC__/layui/css/layui.css">
     <script src="__PUBLIC__/layui/layui.all.js"></script>
     <script src="__PUBLIC__/js/jquery.js"></script>
-    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
-    <style>
-        .layui-col-md5{border:solid 1px #0a6ea7}
-    </style>
+
 </head>
 <body>
 
@@ -22,36 +19,56 @@
 
     <div class="layui-row layui-col-space30">
         <div class="layui-col-md5">
-            <div class="grid-demo grid-demo-bg1">7/12</div>
+            <div class="grid-demo grid-demo-bg1">
+                <fieldset class="layui-elem-field">
+                    <legend>商户资料</legend>
+                    <div class="layui-field-box">
+                        你可以在这里放任何内容，比如表单神马的
+                    </div>
+                </fieldset>
+            </div>
         </div>
-        <div class="layui-col-md6 layui-col-md-offset1">
-
-            <fieldset class="layui-elem-field layui-field-title">
-                <legend>进件资料填写</legend>
+        <div class="layui-col-md6">
+            <fieldset class="layui-elem-field ">
+                <legend>随行付进件资料填写</legend>
                 <div class="layui-field-box">
-                    <form class="layui-form layui-form-pane" action="">
+                    <form class="layui-form" action="">
                         <div class="layui-form-item">
                             <label class="layui-form-label">商户id</label>
                             <div class="layui-input-block">
                                 <input type="text" name="merchant_id" required readonly lay-verify="required" value="{$id}" autocomplete="off" class="layui-input">
                             </div>
                         </div>
+
                         <div class="layui-form-item">
-                            <label class="layui-form-label">输入框</label>
-                            <div class="layui-input-block">
-                                <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">输入框</label>
+                            <label class="layui-form-label">文件上传</label>
                             <div class="layui-input-block">
                                 <button type="button" class="layui-btn" id="test4"><i class="layui-icon"></i>压缩文件上传</button>
                             </div>
                         </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">签购单名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="mecDisNm" lay-verify="required" placeholder="签购单名称" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">手机号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="mblNo" lay-verify="required" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">结算身份证号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="stmManIdNo" lay-verify="required" placeholder="请输入结算人身份证号" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
                         <div class="layui-form-item ">
-                            <label class="layui-form-label">行政区</label>
+                            <label class="layui-form-label">装机地址</label>
                             <div class="layui-input-inline">
-                                <select lay-filter="province" name="regProvCd">
+                                <select lay-filter="mecProvCd" name="mecProvCd">
                                     <option value="">请选择省</option>
                                     <foreach name="province" item="pval">
                                         <option value="{$pval.areaId}" >{$pval.areaNm }</option>
@@ -59,7 +76,97 @@
                                 </select>
                             </div>
                             <div class="layui-input-inline">
-                                <select lay-filter="city" name="regCityCd">
+                                <select lay-filter="mecCityCd" name="mecCityCd">
+                                    <option value="">请选择市区</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <select name="mecDistCd">
+                                    <option value="">请选择区县</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">装机详细地址</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="busAddr" lay-verify="required" placeholder="请输入装机详细地址" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">商户总分店标识</label>
+                            <div class="layui-input-block">
+                                <select lay-filter="mecTypeFlag" name="mecTypeFlag">
+                                    <option value="00">普通户</option>
+                                    <option value="01">连锁店</option>
+                                    <option value="02">连锁分店</option>
+                                    <option value="03">1+n 总店</option>
+                                    <option value="04">1+n 分店</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!--<div class="layui-form-item">-->
+                            <!--<label class="layui-form-label">证件类型</label>-->
+                            <!--<div class="layui-input-block">-->
+                                <!--<select lay-filter="identityTyp" name="identityTyp">-->
+                                    <!--<option value="00">身份证</option>-->
+                                    <!--<option value="03">军人证</option>-->
+                                    <!--<option value="04">警察证</option>-->
+                                    <!--<option value="05">港澳居民往来内地通行证</option>-->
+                                    <!--<option value="06">台湾居民来往大陆通行证</option>-->
+                                    <!--<option value="07">护照</option>-->
+                                    <!--<option value="98">单位证件</option>-->
+                                    <!--<option value="99">其他</option>-->
+                                <!--</select>                            </div>-->
+                        <!--</div>-->
+                        <!--<div class="layui-form-item">-->
+                            <!--<label class="layui-form-label">证件号码</label>-->
+                            <!--<div class="layui-input-block">-->
+                                <!--<input type="text" name="identityNo" lay-verify="required" placeholder="请输入证件号码" autocomplete="off" class="layui-input">-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">证件姓名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="identityName" lay-verify="required" placeholder="请输入证件姓名" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">注册名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="cprRegNmCn" lay-verify="required" placeholder="请输入注册名称" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">营业执照号码</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="operLicNo" lay-verify="required" placeholder="请输入营业执照号码" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">注册地址</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="cprRegAddr" lay-verify="required" placeholder="请输入注册地址" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">经营范围</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="operScope" lay-verify="required" placeholder="请输入经营范围" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item ">
+                            <label class="layui-form-label">注册地址</label>
+                            <div class="layui-input-inline">
+                                <select lay-filter="regProvCd" name="regProvCd">
+                                    <option value="">请选择省</option>
+                                    <foreach name="province" item="pval">
+                                        <option value="{$pval.areaId}" >{$pval.areaNm }</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <select lay-filter="regCityCd" name="regCityCd">
                                     <option value="">请选择市区</option>
                                 </select>
                             </div>
@@ -69,19 +176,78 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="layui-form-item" pane>
-                            <label class="layui-form-label">开关</label>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">注册号码</label>
                             <div class="layui-input-block">
-                                <input type="checkbox" name="switch" lay-skin="switch">
+                                <input type="text" name="registCode" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                <span>营业执照号 | 统一信用编码 最大为 80 位数字</span>
                             </div>
                         </div>
-                        <div class="layui-form-item" pane>
-                            <label class="layui-form-label">单选框</label>
-                            <div class="layui-input-block">
-                                <input type="radio" name="sex" value="男" title="男">
-                                <input type="radio" name="sex" value="女" title="女" checked>
+                        <div class="layui-form-item ">
+                            <label class="layui-form-label">行业大类别</label>
+                            <div class="layui-input-inline">
+                                <select lay-filter="idtTypOa" name="idtTypOa">
+                                    <option value="">请选择行业类别</option>
+                                    <option value="1001">餐娱类</option>
+                                    <option value="3001">一般类</option>
+                                    <option value="2001">民生类</option>
+                                    <option value="1002">房产汽车类</option>
+                                    <option value="3002">批发类</option>
+                                    <option value="4001">公益类</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <select lay-filter="mccCd" name="mccCd">
+                                    <option value="">请选择MCC编码</option>
+                                </select>
                             </div>
                         </div>
+
+                        <fieldset class="layui-elem-field">
+                            <legend>结算卡</legend>
+                            <div class="layui-field-box">
+                                <div class="layui-form-item" >
+                                    <label class="layui-form-label">是否默认卡</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="stmMetNo" value="01" title="默认" checked>
+                                        <input type="radio" name="stmMetNo" value="00" title="非默认">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">结算账户名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="actNm" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">结算卡号</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="actNo" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" >
+                                    <label class="layui-form-label">账户类型</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="actTyp" value="01" title="对私" checked>
+                                        <input type="radio" name="actTyp" value="00" title="对公">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">开户支行的联行行号</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="lbnkNo" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" >
+                                    <label class="layui-form-label">结算类型</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="settlementType" value="01" title="对私结算" checked>
+                                        <input type="radio" name="settlementType" value="00" title="对公结算">
+                                    </div>
+                                </div>                            </div>
+                        </fieldset>
+
+
                         <div class="layui-form-item">
                             <div class="layui-input-block">
                                 <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
@@ -97,15 +263,14 @@
 <script>
     layui.use('form', function () {
         var form = layui.form;
-
         form.render();
         //监听提交
         form.on('submit(formDemo)', function (data) {
-            layer.msg(JSON.stringify(data.field));
+            console.log(JSON.stringify(data.field));
             return false;
         });
         // 监听选择框
-        form.on('select(province)', function(data){
+        form.on('select(regProvCd)', function(data){
             $.post("{:U('get_city')}",{data:data.value}, function (res) {
                 if(res.code == '0000'){
                     var _str = '<option>请选择</option>';
@@ -118,7 +283,20 @@
             });
         });
         // 监听选择框
-        form.on('select(city)', function(data){
+        form.on('select(mecProvCd)', function(data){
+            $.post("{:U('get_city')}",{data:data.value}, function (res) {
+                if(res.code == '0000'){
+                    var _str = '<option>请选择</option>';
+                    $.each(res.data, function (k, v) {
+                        _str += '<option value="'+v.areaId+'">'+v.areaNm+'</option>'
+                    })
+                    $("select[name=mecCityCd]").html(_str);
+                    form.render();
+                }
+            });
+        });
+        // 监听选择框
+        form.on('select(regCityCd)', function(data){
             $.post("{:U('get_area')}",{data:data.value}, function (res) {
                 if(res.code == '0000'){
                     var _str = '<option>请选择</option>';
@@ -130,7 +308,34 @@
                 }
             });
         });
+        // 监听选择框
+        form.on('select(mecCityCd)', function(data){
+            $.post("{:U('get_area')}",{data:data.value}, function (res) {
+                if(res.code == '0000'){
+                    var _str = '<option>请选择</option>';
+                    $.each(res.data, function (k, v) {
+                        _str += '<option value="'+v.areaId+'">'+v.areaNm+'</option>'
+                    })
+                    $("select[name=mecDistCd]").html(_str);
+                    form.render();
+                }
+            });
+        });
+        // 监听选择框
+        form.on('select(idtTypOa)', function(data){
+            $.post("{:U('getIdtTyps')}",{data:data.value}, function (res) {
+                if(res.code == '0000'){
+                    var _str = '<option>请选择</option>';
+                    $.each(res.data, function (k, v) {
+                        _str += '<option value="'+v.mccCd+'">'+v.mccNm+'</option>'
+                    })
+                    $("select[name=mccCd]").html(_str);
+                    form.render();
+                }
+            });
+        });
     });
+
     layui.use('upload', function(){
         var upload = layui.upload;
 
