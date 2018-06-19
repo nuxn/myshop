@@ -107,7 +107,13 @@ class MerchantsUpsxfModel extends CommonModel
         if($result['code'] == 'SXF0000'){
             $return = $result['respData'];
             if($return['bizCode'] == '0000'){
-                return array('code'=>'0000','pay_info'=>$return['pay_info']);
+                $pay_info['timeStamp'] = $return['payTimeStamp'];
+                $pay_info['package'] = $return['payPackage'];
+                $pay_info['paySign'] = $return['paySign'];
+                $pay_info['appId'] = $return['payAppId'];
+                $pay_info['signType'] = $return['paySignType'];
+                $pay_info['nonceStr'] = $return['paynonceStr'];
+                return array('code'=>'0000','pay_info'=>json_encode($pay_info));
             } else {
                 return array('code'=>'0001','msg'=>$return['bizMsg']);
             }

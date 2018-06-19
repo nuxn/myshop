@@ -15,6 +15,7 @@ class BanksxfController extends HomebaseController
     private $rate;
     private $mno;
     private $price;
+    private $openid;
     private $remark;
     private $subject;
     private $cate_id = 0;
@@ -81,13 +82,13 @@ class BanksxfController extends HomebaseController
     {
         // 先获取openid
         if (I("seller_id") == "") {
-            $sub_openid = get_wx_openid();
+            $this->openid = get_wx_openid();
             $this->mode = 1;
             $this->cate_id = I("id");
             $cate_info = get_cate_info($this->cate_id);
             $this->checker_id = I("checker_id");
         } else {
-            $sub_openid = I('openid');
+            $this->openid = I('openid');
             $this->mode = 0;
             $this->cate_id = I('seller_id');
             $cate_info = get_cate_info($this->cate_id);
@@ -98,7 +99,7 @@ class BanksxfController extends HomebaseController
             $this->alert_err("订单已存在");
         }
         $this->merchant_id = $cate_info['merchant_id'];
-        $this->get_costomer_id($sub_openid, $this->merchant_id);  // 获取会员ID
+        $this->get_costomer_id($this->openid, $this->merchant_id);  // 获取会员ID
         $this->get_into(1);
         $this->price = I('price');
         $this->jmt_remark = I('memo','')?:I("jmt_remark",'');
@@ -108,21 +109,88 @@ class BanksxfController extends HomebaseController
         $db_res = $this->add_db();
         if($db_res){
             // 请求服务器获取js支付参数
-            $res_arr = $this->wx_jspay($sub_openid);
-
+            $res_arr = $this->wx_jspay();
+            // 判断返回结果
+            if ($res_arr['code'] == '0000') {
+                $body = $res_arr['jspay_info'];
+                $this->assign('body', $body);
+                $this->assign('price', $this->price);
+                $this->assign('openid', $this->openid);
+                $this->assign('remark', $this->remark);
+                $this->assign('mid', $this->merchant_id);
+                $this->display(":wx_pay");
+            } else {
+                $this->alert_err();
+            }
         } else {
             $this->alert_err();
         }
+        die;
     }
 
-    private function wx_jspay($openId)
+    public function two_wx_pay()
+    {
+        $this->order_id = I("order_id");
+        $this->mode = I("mode", 3);
+        $this->openid = I("openid", '');
+        if ($this->order_id) {
+            if (!$this->openid) {
+                $this->openid = get_wx_openid();
+            }
+            $this->cate_id = I("id");
+            $cate_info = get_cate_info($this->cate_id);
+            $order_info = M("order")->where(array('order_id'=>$this->order_id))->find();
+            if ($this->pay_model->where(array('order_id'=>$this->order_id))->getField('id')) {
+                $this->alert_err('订单已存在');
+            }
+            // 插入数据库的数据
+            $this->checker_id = I("checker_id");
+            $this->merchant_id = $cate_info['merchant_id'];
+            $this->remark = $order_info['order_sn'];
+            $this->price = $order_info['order_amount'];
+            $this->jmt_remark = I('memo', '') ?: I("jmt_remark", '');
+            $this->get_costomer_id($this->openid, $this->merchant_id);  // 获取会员ID
+            $this->get_into(1);
+            $this->subject = $cate_info['jianchen'];
+            $this->paystyle_id = 1;
+            $db_res = $this->add_db();
+            if ($db_res) {
+                // 请求服务器获取js支付参数
+                $res_arr = $this->wx_jspay();
+                // 判断返回结果
+                if ($res_arr['code'] == '0000') {
+                    $body = $res_arr['jspay_info'];
+                    $this->assign('body', $body);
+                    $this->assign('price', $this->price);
+                    $this->assign('openid', $this->openid);
+                    $this->assign('remark', $this->remark);
+                    $this->assign('mid', $this->merchant_id);
+                    $this->display(":wx_pay");
+                } else {
+                    $this->alert_err();
+                }
+            } else {
+                $this->alert_err();
+            }
+        } else {
+            $this->alert_err('订单号为空');
+        }
+        die;
+
+    }
+
+    public function payPag($res_arr)
+    {
+    }
+    
+    private function wx_jspay()
     {
         $this->sxfModel->setParameters('ordNo', $this->remark);      // 商户订单号
         $this->sxfModel->setParameters('mno', $this->mno);        // 商户入驻返回的商户编号
         $this->sxfModel->setParameters('amt', $this->price);        // 订单总金额，单位为元，
         $this->sxfModel->setParameters('payType', 'JSAPI');        // JSAPI公众号 或 FWC--支付 宝服务窗
         $this->sxfModel->setParameters('subject', $this->subject);    // 订单标题
-        $this->sxfModel->setParameters('subOpenid', $openId);
+        $this->sxfModel->setParameters('subOpenid', $this->openid);
         $this->sxfModel->setParameters('subAppid', 'wx3fa82ee7deaa4a21');
         $this->sxfModel->setParameters('notifyUrl', $this->notify_url);  // 回调地址
 
