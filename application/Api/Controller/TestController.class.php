@@ -18,7 +18,7 @@ class TestController extends ApibaseController
 {
     function t()
     {
-		echo 'tet';
+		echo 'tettt';
         //redirect(U("base/pay_back",array("mid"=>1)));
     }
 
