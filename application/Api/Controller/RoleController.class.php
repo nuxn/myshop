@@ -11,6 +11,7 @@ class RoleController extends ApibaseController
     private $mch_uid;
     private $app_auth;
     private $role_model;
+    private $pos_auth;
     private $screen_auth;
     private $role_user_model;
 
@@ -21,6 +22,7 @@ class RoleController extends ApibaseController
         $this->role_user_model = M('merchants_role_users');
         $this->role_model = M('merchants_role');
         $this->screen_auth = M('screen_auth');
+        $this->pos_auth = M('pos_auth');
         $this->app_auth = M('app_auth');
 
         $this->mch_uid = get_mch_uid($this->userId);
@@ -144,7 +146,7 @@ class RoleController extends ApibaseController
                 $this->get_screen_auth();
                 break;
             case 'pos':
-                succ_ajax(array());
+                $this->get_pos_auth();
                 break;
             default:
                 err('未知设备');
@@ -166,7 +168,7 @@ class RoleController extends ApibaseController
                 $this->set_screen_auth();
                 break;
             case 'pos':
-                succ_ajax();
+                $this->set_pos_auth();
                 break;
             default:
                 err('未知设备');
@@ -219,7 +221,36 @@ class RoleController extends ApibaseController
         }
     }
 
+    private function get_pos_auth()
+    {
+        if (IS_POST) {
+            $role_id = I('role_id');
+            if (!$role_id) err('请选择角色');
+            $data = $this->pos_auth->field('id,auth_name,pid')->where(array('status' => '1'))->select();
+            $pos_auth = $this->role_model->where(array("id" => $role_id))->getField('pos_auth');
+            $pos_auth = explode(',', $pos_auth);
+            foreach ($data as &$val) {
+                $val['status'] = in_array($val['id'], $pos_auth) ? '1' : '0';
+            }
+            $data = getTree($data, 0);
+            succ_ajax($data);
+        }
+    }
+
     public function set_screen_auth()
+    {
+        if (IS_POST) {
+            $screen_ids = I('auth_ids');
+            $role_id = I('role_id');
+            if (!$screen_ids) err('未选择权限');
+            if (!$role_id) err('请选择角色');
+            $this->role_model->where(array("id" => $role_id))->save(array('screen_auth' => $screen_ids));
+
+            succ_ajax();
+        }
+    }
+
+    public function set_pos_auth()
     {
         if (IS_POST) {
             $screen_ids = I('auth_ids');

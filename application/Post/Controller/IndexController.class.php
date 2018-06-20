@@ -133,7 +133,7 @@ class IndexController extends PostbaseController
         $token['value'] = json_decode($token['value']);
         $user = M("merchants_users")->where("id=$uid")->find();
         $role_id = M("merchants_role_users")->where("uid=$uid")->getField("role_id");
-        if ($role_id == 7) {
+        if ($role_id != '3') {
             $merchant_id = $user['pid'];
             $merchant_name = M("merchants_users")->where("id=$merchant_id")->getField('user_name');
             $user_name = $user['user_name'];
@@ -144,11 +144,14 @@ class IndexController extends PostbaseController
             $user_name = "";
             $user_id = "";
         }
+        $auth = $this->getAuth($role_id);
+        $token['value']['auth'] = $auth;
         $data = array(
             "merchant_name" => $merchant_name,
             "user_name" => $user_name,
             "user_id" => $user_id,
             "mac_id" => $mac_id,
+            "auth" => $auth,
             "token" => $token
         );
         if ($token) $this->ajaxReturn(array("code" => "success", "msg" => "登录成功", "data" => $data));
@@ -237,22 +240,12 @@ class IndexController extends PostbaseController
             $mac_id = M("screen_pos")->where("mac='$mac'")->getField("id");
 
             $users = $this->users->alias("u")
-                //->field("ru.uid,ru.role_id,r.role_name,u.user_phone,u.user_pwd")
                 ->field("ru.uid,ru.role_id,u.user_phone,u.user_pwd,u.voice_open,u.auth")
-                ->join("left join " . C('DB_PREFIX') . "merchants_role_users as ru on ru.uid=u.id")
-                //->join("left join ".C('DB_PREFIX')."merchants_role as r on ru.role_id=r.id")
+                ->join("left join ypt_merchants_role_users as ru on ru.uid=u.id")
                 ->where(array("user_phone" => $phone))
                 ->find();
             $_SESSION['uid'] = $users['uid'] ? $users['uid'] : $this->userId;
             if ($users['user_pwd'] == md5($pwd)) {
-                /*switch ($users['role_id']) {
-                    case 2:  // 代理
-                        $users['userInfo'] = M('merchants_agent')->where(array('uid' => $users['uid']))->find();
-                        break;
-                    case 3: // 商户
-                        $users['userInfo'] = M('merchants')->where(array('uid' => $users['uid']))->find();
-                        break;
-                }*/
 
                 if ($users['role_id'] == 3) {
                     $res = $this->merchants->field("id,status")->where(array('uid' => $users['uid']))->find(); //查看是否已经填写过商户资料
@@ -272,50 +265,24 @@ class IndexController extends PostbaseController
                 } else {
                     $users['reset_pwd'] = "0";
                 }
-                /* $user=M("merchants_users")->where("id=$uid")->find();
-                $role_id=M("merchants_role_users")->where("uid=$uid")->getField("role_id");
-                if($role_id ==7){
-                    $merchant_id=$user['pid'];
-                    $merchant_name=M("merchants_users")->where("id=$merchant_id")->find();
-                    $user_name=$user['user_name'];
-                    $user_id=$user['id'];
-                }
-                if($role_id ==3){
-                    $merchant_name=$user['user_name'];
-                    $user_name="";
-                    $user_id="";
-                }
-                $data=array(
-                    "merchant_name" =>$merchant_name,
-                    "user_name" =>$user_name,
-                    "user_id" =>$user_id,
-                    "mac_id" =>$mac_id,
-                    "token" =>$token
-                );*/
 
                 //返回当前商家或代理的名称
                 $users["role_full_name"] = $this->get_role_full_name($users['role_id'], $users['uid']);
                 if (!$users["role_full_name"]) $users["role_full_name"] = '';
 
-                //返回员工权限
-                //$this->check_employee_auth($users);
                 unset($users['user_pwd']);
 
+                //返回员工权限
+                $auth = $this->getAuth($users['role_id']);
+                $users['auth'] = $auth;
                 //存储登录信息
                 $users['mac_id'] = $mac_id;
                 $users['token_add_time'] = time();
                 $TOKEN = $this->build_token($users);
-                //session($TOKEN, $users);
                 $token_info = M("post_token")->where(array("uid" => $users['uid']))->find();
 
                 if (!$token_info) M("post_token")->add(array("uid" => $users['uid'], "token" => $TOKEN, "time_start" => $users['token_add_time'], "value" => json_encode($users)));
                 else {
-//                    Vendor('Cache.MyRedis');
-//                    $redis = new \MyRedis();
-//                    $Ip = get_client_ip();
-//                    $IpLocation = new \Org\Net\IpLocation('UTFWry.dat'); // 实例化类 参数表示IP地址库文件
-//                    $area = $IpLocation->getlocation($Ip); // 获取某个IP地址所在的位置
-//                    $redis->set($token_info['token'], json_encode(array("login_ip" => $Ip, "login_time" => date("Y-m-d H:i:s"), "address" => $area['country'], "network" => $area['area'])));
                     M("post_token")->where(array("uid" => $users['uid']))->save(array("token" => $TOKEN, "time_start" => $users['token_add_time'], "value" => json_encode($users)));
                 }
                 $users['token'] = $TOKEN;
@@ -328,6 +295,25 @@ class IndexController extends PostbaseController
         } else {
             $this->ajaxReturn(array("code" => "error", "msg" => L('HACKER_MSG')));
         }
+    }
+    private function getAuth($role_id)
+    {
+        $auth = M('pos_auth')->getField('auth,id', true);
+        if($role_id == '3'){
+            $auth = array_map(function (){
+                return '1';
+            }, $auth);
+            return $auth;
+        }
+        $role_auth = M('merchants_role')->where("id=$role_id")->getField('pos_auth');
+        $pos_auth = explode(',', $role_auth);
+        if(!$role_auth || !in_array('1', $pos_auth)){
+            $this->ajaxReturn(array("code" => "error", "msg" => '没有权限登录'));
+        }
+        $auth = array_map(function ($val) use ($pos_auth){
+            return in_array($val,$pos_auth) ? '1' : '0';
+        }, $auth);
+        return $auth;
     }
 
     //随机流水号
@@ -458,14 +444,14 @@ class IndexController extends PostbaseController
             $mid = $user_id;
         }
         $map['mid'] = $mid;
-        $map['trade'] =2;
+        $map['trade'] = 2;
         if ($group_id) $map['group_id'] = $group_id;
         $list = M('goods g')->field('g.goods_id,g.goods_name,g.goods_img1,g.shop_price')->where($map)->page($p . ',10')->select();
         //p($list[1]['goods_img1']);
         //$img1= array_column($list,'goods_img1');
-    /*    foreach ($list as $k => $v) {
-            $list[$k]['goods_img1'] = $this->http . "://" . $_SERVER['HTTP_HOST'] . substr($v['goods_img1'], 1);
-        }*/
+        /*    foreach ($list as $k => $v) {
+                $list[$k]['goods_img1'] = $this->http . "://" . $_SERVER['HTTP_HOST'] . substr($v['goods_img1'], 1);
+            }*/
         //p($list);
         $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $list));
     }
@@ -498,9 +484,9 @@ class IndexController extends PostbaseController
             $goods = M("goods g")->where($map)->field('g.goods_id,g.goods_name,g.goods_img1,g.shop_price')->select();
             //p(M()->_sql());
             //p($goods);
-     /*       foreach ($goods as $k => $v) {
-                $goods[$k]['goods_img1'] = $this->http . "://" . $_SERVER['HTTP_HOST'] . substr($v['goods_img1'], 1);
-            }*/
+            /*       foreach ($goods as $k => $v) {
+                       $goods[$k]['goods_img1'] = $this->http . "://" . $_SERVER['HTTP_HOST'] . substr($v['goods_img1'], 1);
+                   }*/
             //p(M()->_sql());
             //p($goods);
             $g_info['goods_info'] = $goods;
@@ -708,7 +694,7 @@ class IndexController extends PostbaseController
             $uid = $user_id;
         }
         $map['mid'] = $uid;
-        $map['trade'] =2;//默认餐饮的
+        $map['trade'] = 2;//默认餐饮的
         if ($is_hot == '1') $map['is_hot'] = $is_hot;
         if ($group_id) $map['group_id'] = $group_id;
         $goods = M("goods g")

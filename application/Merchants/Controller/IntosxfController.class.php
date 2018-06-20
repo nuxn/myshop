@@ -117,6 +117,7 @@ class IntosxfController extends AdminbaseController
     //  获取开户银行省市
     public function getTaskCode()
     {
+        die;
         $this->sxfModel->setNull();
         $this->sxfModel->setParameters('file', '@D:/phpStudy/WWW/gityoungshop/data/123.zip');
         $this->sxfModel->setParameters('orgId', '07296653');
