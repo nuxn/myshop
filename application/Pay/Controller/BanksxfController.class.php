@@ -112,7 +112,7 @@ class BanksxfController extends HomebaseController
             $res_arr = $this->wx_jspay();
             // 判断返回结果
             if ($res_arr['code'] == '0000') {
-                $body = $res_arr['jspay_info'];
+                $body = $res_arr['pay_info'];
                 $this->assign('body', $body);
                 $this->assign('price', $this->price);
                 $this->assign('openid', $this->openid);
@@ -159,7 +159,7 @@ class BanksxfController extends HomebaseController
                 $res_arr = $this->wx_jspay();
                 // 判断返回结果
                 if ($res_arr['code'] == '0000') {
-                    $body = $res_arr['jspay_info'];
+                    $body = $res_arr['pay_info'];
                     $this->assign('body', $body);
                     $this->assign('price', $this->price);
                     $this->assign('openid', $this->openid);
@@ -402,6 +402,13 @@ class BanksxfController extends HomebaseController
         get_date_dir($this->path,'refund_notify','数据1', json_encode($_REQUEST));
     }
 
+    public function mer_notify()
+    {
+        $json_str = file_get_contents('php://input', 'r');
+        get_date_dir($this->path,'refund_notify','数据', $json_str);
+        get_date_dir($this->path,'refund_notify','数据1', json_encode($_REQUEST));
+    }
+    
     public function pay_back($remark, $price)
     {
         $pay = $this->pay_model->field('merchant_id,transId,price')->where(array("remark" => $remark))->find();

@@ -4,7 +4,6 @@
     <title>微信安全支付</title>
     <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <script type="text/javascript" src="http://libs.baidu.com/jquery/1.11.3/jquery.js"></script>
-    <!--<script type="text/javascript" src="__PUBLIC__/js/jquery.js"></script>-->
     <script type="text/javascript">
         //调用微信JS api 支付
         function jsApiCall() {
@@ -12,21 +11,24 @@
                 'getBrandWCPayRequest',
                 {$body},
                 function (res) {
-                   WeixinJSBridge.log(res.err_msg);
-                   alert(res.err_code+res.err_desc+res.err_msg);
+
+//                    WeixinJSBridge.log(res.err_msg);
+//                    alert(res.err_code+res.err_desc+res.err_msg);
                     if (res.err_msg == "get_brand_wcpay_request:ok") {
 //                        成功的时候返回的界面
+//                        alert({$price});
                         //$.post( "{:U('Barcode/weixipay_order_confirm')}", {remark:'{$remark}'} );
-                        location.href = "https://sy.youngport.com.cn/index.php?s=/Pay/Barcode/weixipay_return000/price/" + '{$price*100}'+ '/openid/' + '{$openid}'+'/remark/' + '{$remark}'+'/mid/' + '{$mid}';
+                        location.href = "https://sy.youngport.com.cn/index.php?s=/Pay/Barcode/weixipay_return000/price/" + '{$price*100}' + '/openid/' + '{$openid}' + '/remark/' + '{$remark}' + '/mid/' + '{$mid}';
 
                     } else {
 //                        错误的时候返回的界面
                         alert("支付失败,请重新付款");
-                        WeixinJSBridge.call('closeWindow');//根据自己的需求实现自己的功能
+                        history.back(-1);
                     }
                 }
             );
         }
+
         function callpay() {
             if (typeof WeixinJSBridge == "undefined") {
                 if (document.addEventListener) {
@@ -39,13 +41,15 @@
                 jsApiCall();
             }
         }
+
         callpay();
 
-        window.addEventListener("popstate", function(e) {
+        window.addEventListener("popstate", function (e) {
             WeixinJSBridge.call('closeWindow');//根据自己的需求实现自己的功能
         }, false);
 
         pushHistory();
+
         function pushHistory() {
             var state = {
                 title: "title",

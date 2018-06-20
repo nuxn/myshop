@@ -145,14 +145,15 @@ class IndexController extends PostbaseController
             $user_id = "";
         }
         $auth = $this->getAuth($role_id);
-        $token['value']['auth'] = $auth;
+//        $token['value']['permission'] = $auth;
         $data = array(
             "merchant_name" => $merchant_name,
             "user_name" => $user_name,
             "user_id" => $user_id,
             "mac_id" => $mac_id,
-            "auth" => $auth,
-            "token" => $token
+            "auth" => '',
+            "permission" => $auth,
+            "token" => $token,
         );
         if ($token) $this->ajaxReturn(array("code" => "success", "msg" => "登录成功", "data" => $data));
         else $this->ajaxReturn(array("code" => "error", "msg" => "登录失败"));
@@ -274,7 +275,7 @@ class IndexController extends PostbaseController
 
                 //返回员工权限
                 $auth = $this->getAuth($users['role_id']);
-                $users['auth'] = $auth;
+                $users['permission'] = $auth;
                 //存储登录信息
                 $users['mac_id'] = $mac_id;
                 $users['token_add_time'] = time();

@@ -249,6 +249,7 @@ class RoleController extends ApibaseController
             succ_ajax();
         }
     }
+    
 
     public function set_pos_auth()
     {

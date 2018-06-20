@@ -3,6 +3,7 @@
 namespace Merchants\Controller;
 
 use Common\Controller\AdminbaseController;
+use \ZipArchive;
 
 /**
  * 商户进件(入驻)
@@ -14,6 +15,8 @@ class IntosxfController extends AdminbaseController
     protected $merchants;
     protected $merchants_users;
     protected $sxfModel;
+    protected $input;
+    protected $merUrl;
 
     function _initialize()
     {
@@ -21,6 +24,7 @@ class IntosxfController extends AdminbaseController
         $this->merchants = M("merchants");
         $this->merchants_users = M("merchants_users");
         $this->sxfModel = D("MerchantsUpsxf");
+        $this->merUrl = 'https://sy.youngport.com.cn/Pay/Banksxf/mer_notify';
     }
 
     #进件列表
@@ -45,23 +49,25 @@ class IntosxfController extends AdminbaseController
     public function add()
     {
         if (IS_POST) {
-            $data = I("post.");
-            if (!$data['m_id']) {
-                $this->error('参数不全');
-            }
-            $check = $this->sxfModel->where(array('m_id' => $data['m_id']))->find();
-            $find = $this->merchants->where(array('id' => $data['m_id']))->find();
-            if ($check) {
-                $this->error('已存在');
-            }
-            if (!$find) {
-                $this->error('系统中不存在该商户');
-            }
-            $res = $this->sxfModel->add($data);
-            if ($res) {
-                $this->redirect(U('Intoxdl/index'));
+            $this->input = I("post.");
+//            $taskCode = $this->getTaskCode();
+            $input = array_filter($this->input);
+            unset($input['img']);
+            $input['taskCode'] = 'SXF012018062017031592616709762';
+            $input['merUrl'] = $this->merUrl;
+
+            $this->sxfModel->setNull();
+            $this->sxfModel->setInfoParams($input);
+            $result = $this->sxfModel->batchFeedInfo();
+            if($result['code'] == 'SXF0000'){
+                $return = $result['respData'];
+                if($return['bizCode'] == '00'){
+                    $this->ajaxReturn(array('code'=> '0000','msg'=>''));
+                } else {
+                    $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg']));
+                }
             } else {
-                $this->success('未作改动');
+                $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']));
             }
         } else {
             $merchant_id = $_GET['id'];
@@ -81,49 +87,6 @@ class IntosxfController extends AdminbaseController
         $this->sxfModel->setParameters('blackFlag', '00');
         $result = $this->sxfModel->get_address();
         return $result['respData']['data'];
-    }
-
-    // 获取 MCC 行业大类信息
-    public function getIdtTyps()
-    {
-        $idtTypCode = I('data');
-        $this->sxfModel->setNull();
-        $this->sxfModel->setParameters('idtType', '02');
-        $this->sxfModel->setParameters('idtTypCode', $idtTypCode);
-        $result = $this->sxfModel->getIdtTyps();
-        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
-    }
-
-    //  获取开户银行省市
-    public function getOpenbankProv()
-    {
-        $this->sxfModel->setNull();
-        $this->sxfModel->setParameters('addressType', '01');
-        $result = $this->sxfModel->getOpenbankAddress();
-        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
-    }
-
-    //  获取开户银行省市
-    public function getOpenbankCity()
-    {
-        $prov = I('data');
-        $this->sxfModel->setNull();
-        $this->sxfModel->setParameters('addressType', '02');
-        $this->sxfModel->setParameters('provCd', $prov);
-        $result = $this->sxfModel->getOpenbankAddress();
-        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
-    }
-
-    //  获取开户银行省市
-    public function getTaskCode()
-    {
-        die;
-        $this->sxfModel->setNull();
-        $this->sxfModel->setParameters('file', '@D:/phpStudy/WWW/gityoungshop/data/123.zip');
-        $this->sxfModel->setParameters('orgId', '07296653');
-        $this->sxfModel->setParameters('reqId', md5(getOrderNumber()));
-        $result = $this->sxfModel->getTaskCode();
-        dump($result);
     }
 
     public function get_city()
@@ -146,6 +109,28 @@ class IntosxfController extends AdminbaseController
         $this->sxfModel->setParameters('blackFlag', '00');
         $result = $this->sxfModel->get_address();
         $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
+    }
+
+    // 获取 MCC 行业大类信息
+    public function getIdtTyps()
+    {
+        $idtTypCode = I('data');
+        $this->sxfModel->setNull();
+        $this->sxfModel->setParameters('idtType', '02');
+        $this->sxfModel->setParameters('idtTypCode', $idtTypCode);
+        $result = $this->sxfModel->getIdtTyps();
+        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
+    }
+
+    public function getTaskCode()
+    {
+        $path = $this->getZip();
+        $this->sxfModel->setNull();
+        $this->sxfModel->setParameters('file', "@$path");
+        $this->sxfModel->setParameters('orgId', '07296653');
+        $this->sxfModel->setParameters('reqId', md5(getOrderNumber()));
+        $result = $this->sxfModel->getTaskCode();
+        return $result['respData']['data'];
     }
 
     # 编辑
@@ -172,5 +157,40 @@ class IntosxfController extends AdminbaseController
         }
     }
 
+    public function getZip()
+    {
+        $imgs = $this->input['img'];
+        $filename = "./data/upload/sxf/imagefile.zip";
+        $zip = new \ZipArchive();
+        $zip->open($filename,ZipArchive::CREATE);   //打开压缩包
+        foreach ($imgs as $key => $val) {
+            $path = "./data/upload/sxf/{$key}.jpg";
+            if($val){
+                copy($val, $path);
+                $zip->addFile($path,basename($path));   //向压缩包中添加文件
+                $this->input[$key] = $val;
+            }
+        }
+        $zip->close();  //关闭压缩包
+        return $filename;
+    }
 
+    public function upload()
+    {
+        $upload = new \Think\Upload();// 实例化上传类
+        $upload->maxSize = 1048576;// 设置附件上传大小
+        $upload->exts = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+        $upload->rootPath = './data/upload/'; // 设置附件上传根目录
+        $upload->savePath = 'merchants/'; // 设置附件上传（子）目录
+        $upload->saveName = time().mt_rand();
+        // 上传文件
+        $info = $upload->upload();
+        if ($info) {
+            $url = './data/upload/' . $info['file']['savepath'] . $info['file']['savename'];
+            $this->ajaxReturn(array('code' => '0', 'msg' => '上传成功', 'data' => $url));
+        } else {
+            $message = $upload->getError();
+            $this->ajaxReturn(array('code' => '10', 'msg' => $message));
+        }
+    }
 }

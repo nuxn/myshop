@@ -288,9 +288,7 @@ function succ_ajax($info = array())
 {
     $data['code'] = 'success';
     $data['msg'] = '成功';
-    if($info){
-        $data['data'] = $info;
-    }
+    $data['data'] = $info;
     header('Content-Type:application/json; charset=utf-8');
     exit(json_encode($data));
 }
