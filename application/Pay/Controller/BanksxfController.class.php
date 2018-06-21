@@ -405,8 +405,8 @@ class BanksxfController extends HomebaseController
     public function mer_notify()
     {
         $json_str = file_get_contents('php://input', 'r');
-        get_date_dir($this->path,'refund_notify','数据', $json_str);
-        get_date_dir($this->path,'refund_notify','数据1', json_encode($_REQUEST));
+        get_date_dir($this->path,'mer_notify','数据', $json_str);
+        get_date_dir($this->path,'mer_notify','数据1', json_encode($_REQUEST));
     }
     
     public function pay_back($remark, $price)

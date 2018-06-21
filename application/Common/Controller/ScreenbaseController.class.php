@@ -18,7 +18,6 @@ use Think\Controller;
 class ScreenbaseController extends Controller
 {
     public $userId = 0;//用户id
-    public $mch_uid = 0;//商户的用户id
     public $token = '';//接口令牌
     public $client;//客户端类型(来源)android or ios
     public $userInfo;//用户信息

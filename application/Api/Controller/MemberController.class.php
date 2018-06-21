@@ -480,6 +480,7 @@ class MemberController extends ApibaseController
                 $data['level_name'] = M('screen_memcard_level')->where(array('c_id'=>$data['id'],'level'=>$data['level']))->getField('level_name');
             }
 			if(!$data['level_name']) $data['level_name']='无';
+			if(!$data['card_code']) $data['card_code']='';
 			if(!$data['memimg']) $data['memimg']='http://sy.youngport.com.cn/public/images/headerimg.png';
             $this->ajaxReturn(array("code" => "success", "msg" => "获取会员信息成功", "data" => $data));
         } else {

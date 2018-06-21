@@ -789,6 +789,7 @@ class  PayController extends ApibaseController
                 M('merchants_users')->where(array('id' => $this->userId))->setDec('card_balance', $dec_card_balance);
                 M('balance_log')->add(array('price' => -$dec_card_balance, 'ori_price' => -$dec_card_balance, 'rate_price' => 0, 'order_sn' => $remark, 'add_time' => time(), 'remark' => '退款扣除余额', 'mid' => $this->userId, 'balance' => M('merchants_users')->where(array('id' => $this->userId))->getField('balance')));
             }
+            if ($card) $this->reduce_cz($card, $final_yue, $remark, $refund_price);
             $this->add_order_goods_number($remark);
             $this->ajaxReturn(array("code" => "success", "msg" => "退款成功", 'back_info' => $back_info));
         } else if ($style == 2) {

@@ -28,7 +28,7 @@ class  WghlController extends ApibaseController
         $this->uid = 0;
         $this->pay_model = M('pay');
         #验证签名
-        if($this->params['sn']!='ypt000001') $this->checkSign($this->params);
+        if($this->params['sn']!='ypt999999') $this->checkSign($this->params);
         //$this->checkSign($this->params);
         #检查设备绑定
         $this->checkSn();
@@ -243,7 +243,7 @@ class  WghlController extends ApibaseController
     }
 
     //退款码退款
-    public function refunds_code()
+    public function refund()
     {
         $refunds_code = $this->params['refunds_code'];
         $pay_info = $this->pay_model
@@ -254,7 +254,8 @@ class  WghlController extends ApibaseController
             $this->succ(array("code" => "error", "msg" => "未查到该笔订单"));
         }
         get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/wghl/', 'refunds', '退款: ','参数', json_encode($this->params));
-        redirect(U("base/pay_back",array("mid"=>$this->merchant_id,'style'=>'2','remark'=>$pay_info['remark'],'price_back'=>$pay_info['price']*100,'sign'=>'5e022b44a15a90c01')));
+        request_post('http://sy.youngport.com.cn/Api/Pay/pay_back',array("mid"=>$this->merchant_id,'style'=>'2','remark'=>$pay_info['remark'],'price_back'=>$pay_info['price']*100,'sign'=>'5e022b44a15a90c0'));
+        //$a = request_post('http://sy.youngport.com.cn/Api/Base/pay_back',array("mid"=>$this->merchant_id,'style'=>'2','remark'=>$pay_info['remark'],'price_back'=>$pay_info['price']*100,'sign'=>'5e022b44a15a90c01'));
     }
 
     //扫码收款【商户被扫】

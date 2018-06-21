@@ -46,8 +46,8 @@ class RoleController extends ApibaseController
     {
         if (IS_POST) {
             $role_name = I('role_name');
-            $role_desc = I('role_desc');
-            if (!$role_name || !$role_desc) err('参数不能为空');
+            $role_desc = I('role_desc','');
+            if (!$role_name) err('参数不能为空');
             $data['role_name'] = $role_name;
             $data['role_desc'] = $role_desc;
             $data['add_time'] = time();

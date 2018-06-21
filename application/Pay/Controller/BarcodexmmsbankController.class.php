@@ -90,13 +90,12 @@ class BarcodexmmsbankController extends HomebaseController
 
     public function sql()
     {
-//        $message = A("Pay/Banksxf")->wx_micropay('85', '0.02', '134574746235891109', '0', 'test', '', 2);
+        $message = A("Pay/Banksxf")->wx_micropay('85', '0.02', '134516658141608265', '0', 'test', '', 2);
 //        $message = A("Pay/Banksxf")->pay_back('20180611151615261939', '0.02');
-        $message = A("Pay/Leshuabank")->refund('20180614141115624134');
         dump($message);
 
-        $message = A("Pay/Leshuabank")->query('20180614141115624134');
-        dump($message);
+//        $message = A("Pay/Banksxf")->query('20180614141115624134');
+//        dump($message);
     }
 
     public function test()

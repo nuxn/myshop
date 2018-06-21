@@ -32,16 +32,19 @@ class AddstoreController extends ApibaseController
             if (IS_POST) {
                 M()->startTrans();
    /*             $mid = I('mid') || $this->ajaxReturn(array('code' => 'error', 'msg' => '总店id为空'));*/
+
                 ($uid=I('uid')) || $this->ajaxReturn(array('code' => 'error', 'msg' => '商户id不存在'));
                 $merchant_one = $this->merchants->where("uid = $uid")->find();
                 if ($merchant_one['mid'] != 0 || empty($merchant_one)) $this->ajaxReturn(array('code' => 'error', 'msg' => '多门店模式错误'));
                 $mid = $merchant_one['id'];
+                $status=$merchant_one['status'] == 1?1:0;
                 $user_one = $this->users->where("id=" . $merchant_one['uid'])->find();
 
                 $number = $this->merchants->where("mid = $mid")->count("id");
                 $number = $number + 1;
                 ($telephone = I('telephone')) ||   $this->ajaxReturn(array('code' => 'error', 'msg' =>'手机号码为空'));
-
+                $phone_exist = $this->users->where(array('user_phone'=>$telephone))->getfield('id');
+                if ($phone_exist) $this->ajaxReturn(array('code' => 'error', 'msg' =>'手机号码已注册'));
                 //$phone_begin = substr($user_one['user_phone'], 0, 7);
                // $phone_end = substr("00000" . $number, -4);
 //            机器用户添加
@@ -64,7 +67,9 @@ class AddstoreController extends ApibaseController
                     'address' => I("address"),
                     'industry' => I("industry"),
                     'account_type' => I("account_type"),
-                    'is_miniapp' => I("is_miniapp")
+                    'is_miniapp' => I("is_miniapp"),
+                    'status' => $status,
+                    'add_time' =>time()
                 );
                 $machine_merchant = $this->merchants->add($merchant);
 
@@ -101,7 +106,7 @@ class AddstoreController extends ApibaseController
                     //同步到进件
                     $this->uptosame($machine_merchant);
                     M()->commit();
-                    $this->ajaxReturn(array('code' => 'success', 'msg' =>'添加门店成功'));
+                    $this->ajaxReturn(array('code' => 'success', 'msg' =>'添加门店成功','merchant_id'=>$machine_merchant));
 
 
                 } else {
@@ -136,7 +141,9 @@ class AddstoreController extends ApibaseController
         $big_merchant =$this->merchants->where(array('id'=>$small_merchant['mid']))->find();
         $big_cate =$this->cates->where(array('merchant_id'=>$big_merchant['id'],'status'=>1,'checker_id'=>0))->find();
         if(!$big_merchant) E('未找到上级大商户');
-        if(!$big_cate) E('大商户还未绑定台签');
+        //大商户没有绑定台签直接创建门店，不同步进件信息
+        //if(!$big_cate) E('大商户还未绑定台签');
+        if(!$big_cate) return;
         #如果商户已经有台签，改台签进件信息
         if($small_cate){
             $cate_m['name'] = $big_cate['name'];
@@ -366,14 +373,14 @@ class AddstoreController extends ApibaseController
         if (IS_POST) {
             ($uid = I('uid'))  || $this->ajaxReturn(array('code'=>'error','msg'=>'没有商户id'));
             $merchant_one = $this->merchants->alias('mer')->join('ypt_merchants_users yus on yus.id = mer.uid')->where(array('mer.uid'=>$uid))->field('mer.id,mer.uid,mer.mid,mer.merchant_name,yus.user_phone')->find();//先查出该商户的总店
-            if (empty($merchant_one) || $merchant_one['mid']!=0)   $this->ajaxReturn(array('code'=>'error','msg'=>'不是多门店商户'));
+            if (empty($merchant_one) || $merchant_one['mid']!=0)   $this->ajaxReturn(array('code'=>'success','msg'=>'不是多门店商户'));
 
                 $merchant_one['name'] = '总店';
                 $merchant_one_arr[]=$merchant_one;
                 $mid = $merchant_one['id'];
 
 
-            $merchant_list = $this->merchants->alias('mer')->join('ypt_merchants_users yus on yus.id = mer.uid')->where('mer.mid='.$mid)->field('mer.id,mer.uid,mer.mid,mer.merchant_name,yus.user_phone')->select();
+            $merchant_list = $this->merchants->alias('mer')->join('ypt_merchants_users yus on yus.id = mer.uid')->where('mer.mid='.$mid)->field('mer.id,mer.uid,mer.mid,mer.merchant_name,yus.user_phone')->order('mer.add_time desc')->select();
             if (is_array($merchant_list) && count($merchant_list)>0) {
                 foreach ($merchant_list as $key => &$val) {
                     $num=$key+1;
@@ -381,7 +388,7 @@ class AddstoreController extends ApibaseController
                 }
 
             }
-            $data = array_merge($merchant_list,$merchant_one_arr);
+            $data = array_merge($merchant_one_arr,$merchant_list);
             $this->ajaxReturn(array('code'=>'success','msg'=>'请求成功','data'=>$data));
 
         } else {
@@ -467,12 +474,12 @@ class AddstoreController extends ApibaseController
         } elseif ($userInfo['auth_own_merchants'] == 1&& $userInfo['auth_all_merchants'] == 1) {//具备俩个权限
             if ($merchant_user ['is_employee']) {//是员工
                 $data = $this->users->alias('meu')->join('ypt_merchants mer on mer.uid=meu.id')->where(
-                    "meu.agent_id ={$merchant_user['agent_id']} and meu.id !={$uid}{$where_sel}")->field('meu.user_name,mer.mid,meu.id,meu.user_phone')->select();
+                    "meu.agent_id ={$merchant_user['agent_id']} and meu.id !={$uid}{$where_sel} and mer.mid in (0,2) and status in (0,1,2)")->field('mer.merchant_name as user_name,mer.mid,meu.id,meu.user_phone,mer.id as merchant_id')->order('meu.add_time desc')->select();
 
 
             } else {
                 $data = $this->users->alias('meu')->join('ypt_merchants mer on mer.uid=meu.id')->where(
-                    "meu.agent_id={$merchant_user['id']} and meu.id != {$uid}{$where_sel}")->field('meu.user_name,mer.mid,meu.id,meu.user_phone')->select();
+                    "meu.agent_id={$merchant_user['id']} and meu.id != {$uid}{$where_sel} and mer.mid in (0,2) and status in (0,1,2)")->field('mer.merchant_name as user_name,mer.mid,meu.id,meu.user_phone,mer.id as merchant_id')->order('meu.add_time desc')->select();
 
             }
 
@@ -483,12 +490,12 @@ class AddstoreController extends ApibaseController
 
             if ($merchant_user ['is_employee']) {//是员工
                 $data = $this->users->alias('meu')->join('ypt_merchants mer on mer.uid=meu.id')->where(
-                    "meu.pid ={$merchant_user['id']} and meu.id !={$uid}{$where_sel}")->field('meu.user_name,mer.mid,meu.id,meu.user_phone')->select();
+                    "meu.pid ={$merchant_user['id']} and meu.id !={$uid}{$where_sel} and mer.mid in (0,2) and status in (0,1,2)")->field('mer.merchant_name as user_name,mer.mid,meu.id,meu.user_phone,mer.id as merchant_id')->order('meu.add_time desc')->select();
 
 
             } else {
                 $data = $this->users->alias('meu')->join('ypt_merchants mer on mer.uid=meu.id')->where(
-                    "meu.agent_id ={$merchant_user['id']} and meu.id!={$uid}{$where_sel}")->field('meu.user_name,mer.mid,meu.id,meu.user_phone')->select();
+                    "meu.agent_id ={$merchant_user['id']} and meu.id!={$uid}{$where_sel} and mer.mid in (0,2) and status in (0,1,2)")->field('mer.merchant_name as user_name,mer.mid,meu.id,meu.user_phone,mer.id as merchant_id')->order('meu.add_time desc')->select();
 
             }
 
@@ -498,11 +505,11 @@ class AddstoreController extends ApibaseController
         } elseif ($userInfo['auth_own_merchants'] == 0&& $userInfo['auth_all_merchants'] == 1){
             if ($merchant_user ['is_employee']) {//是员工
                 $data = $this->users->alias('meu')->join('ypt_merchants mer on mer.uid=meu.id')->where(
-                    "meu.agent_id={$merchant_user['agent_id']} and meu.id !={$uid}{$where_sel}")->field('meu.user_name,mer.mid,meu.id,meu.user_phone')->select();
+                    "meu.agent_id={$merchant_user['agent_id']} and meu.id !={$uid}{$where_sel} and mer.mid in (0,2) and status in (0,1,2)")->field('mer.merchant_name as user_name,mer.mid,meu.id,meu.user_phone,mer.id as merchant_id')->order('meu.add_time desc')->select();
 
             } else {
                 $data = $this->users->alias('meu')->join('ypt_merchants mer on mer.uid=meu.id')->where(
-                    "meu.agent_id={$merchant_user['id']}  and meu.id !={$uid}$where_sel")->where($where_sel)->field('meu.user_name,mer.mid,meu.id,meu.user_phone')->select();
+                    "meu.agent_id={$merchant_user['id']}  and meu.id !={$uid}$where_sel and mer.mid in (0,2) and status in (0,1,2)")->field('mer.merchant_name as user_name,mer.mid,meu.id,meu.user_phone,mer.id as merchant_id')->order('meu.add_time desc')->select();
 
             }
 

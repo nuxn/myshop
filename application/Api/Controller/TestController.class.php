@@ -18,8 +18,10 @@ class TestController extends ApibaseController
 {
     function t()
     {
-		echo 'tettt123';
-        //redirect(U("base/pay_back",array("mid"=>1)));
+        $succ_mer0 = M('merchants')->where(array('status'=>1,'mid'=>0,'id'=>array('neq',2)))->getField('id',true);
+        foreach ($succ_mer0 as &$v) {
+            M('merchants')->where(array('mid'=>$v))->setField('status',1);
+        }
     }
 
     /**

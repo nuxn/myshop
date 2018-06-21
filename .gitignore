@@ -1,0 +1,9 @@
+
+log
+*.log
+.idea
+*.txt
+db.php
+
+data/runtime
+upload

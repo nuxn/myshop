@@ -343,22 +343,43 @@ class  ShopnewsController extends ApibaseController
         $paystyle = I("paystyle", "");
         $status_type = I("status", "");
         $checker_id = I("checker_id", "");
-        //$page=I("page",0);
         $mode = I("mode", '');
         $cz_style = I("cz_style", '');//储值类型，1商户储值，2代理储值
         $status_type = $this->get_status($status_type);
         $mode_type = $this->get_mode($mode);
-
+        $bg_time = I("begin_time");
+        $ed_time = I("end_time");
+        if($this->is_pos){
+            $role_id = M('merchants_role_users')->where('uid='. $this->userId)->getField('role_id');
+            if(!in_array($role_id, array(2,3))){
+                $auth = M('merchants_role')->where("id=$role_id")->getField('pos_auth');
+                if($auth){
+                    $auth = explode(',', $auth);
+                    if(in_array(6,$auth)){
+                        
+                    } else {
+                        if(in_array(7,$auth)){
+                            $bg_time = date("Y-m-d");
+                            $ed_time = date("Y-m-d",strtotime("+1 day"));
+                        } else {
+                            $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array('total' => array(), 'detail' => array())));
+                        }
+                    }
+                } else {
+                    $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array('total' => array(), 'detail' => array())));
+                }
+            }
+        }
         if ($type == 7)  //不区分时分秒
         {
-            $begin_time = strtotime(I("begin_time"));  //今天开始0点
-            $end_time = strtotime(I("end_time"));
+            $begin_time = strtotime($bg_time);  //今天开始0点
+            $end_time = strtotime($ed_time);
             $number = ($end_time - $begin_time) / 24 / 60 / 60 + 1;
             $time = $end_time + 24 * 60 * 60 - 1;              //今天结束23:59:59
             $time_detail = array($begin_time, $time);
         } elseif ($type == 8) {//时分秒的
-            $begin_time = strtotime(I("begin_time"));  //今天开始0点
-            $end_time = strtotime(I("end_time"));
+            $begin_time = strtotime($bg_time);  //今天开始0点
+            $end_time = strtotime($ed_time);
             if (date("Y-m-d", $begin_time) == date("Y-m-d", $end_time)) {
                 $number = 1;
             } else {
@@ -1006,7 +1027,7 @@ class  ShopnewsController extends ApibaseController
                 }
             }
         } elseif ($role_id == 2 || $this->userInfo['pid']==2) {//代理或者代理员工给商户添加台签
-            ($mid = I('mid')) || $this->ajaxReturn(array("code" => "error", "msg" => "mid is empty"));
+            ($mid = I('merchant_id')) || $this->ajaxReturn(array("code" => "error", "msg" => "merchant_id is empty"));
             $cate_m = $this->cates->where(array("merchant_id" => $mid, 'status' => 1, 'checker_id' => 0))->find();
             if (!$cate_m) {
                 $agent_id = $role_id==2 ? $this->userId : M('merchants_users')->where(array('id'=>$this->userId))->getField('agent_id');
@@ -1085,13 +1106,20 @@ class  ShopnewsController extends ApibaseController
         $this->checkLogin();
         $role_id = $this->roles->where(array("uid" => $this->id))->getField("role_id");
         $cate_id = I("cate_id");
-        $cate = $this->cates->where(array("id" => $cate_id))->field("id,no_number,status")->find();
+        $where = array();
+        if(is_numeric($cate_id)){
+            $where['id'] = $cate_id;
+        }elseif (strstr($cate_id,'YPTTQ')){
+            $where['no_number'] = $cate_id;
+        }else{
+            $this->ajaxReturn(array("code" => "error", "msg" => "台签编号有误"));
+        }
+        $cate = $this->cates->where($where)->field("id,no_number,status")->find();
         if (!$cate) {
             $this->ajaxReturn(array("code" => "error", "msg" => "请使用有效的二维码"));
         } else if ($cate['merchant_id']) {
             $this->ajaxReturn(array("code" => "error", "msg" => "该台签已被绑定"));
-        } else if ($role_id != 3 && $role_id != 7) {
-
+        } else if ($role_id != 3 && $role_id != 7 && $role_id != 2 && $this->userInfo['pid'] != 2) {
             $this->ajaxReturn(array("code" => "error", "msg" => "权限不足"));
         } else {
             $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $cate));
@@ -2200,14 +2228,42 @@ class  ShopnewsController extends ApibaseController
             //店铺id
             ($id = I('id')) || $this->ajaxReturn(array('code'=>'error','msg'=>'id is empty'));
         }
+
         //意锐插件
         $pcsy = M('merchants_pcsy')->where(array('mid'=>$id))->field('id,device_no as sn,1 as type,add_time')->select();
         //商+宝
         $wghl = M('merchants_wghl')->where(array('merchant_id'=>$id))->field('id,substring(sn,-6,6) sn,2 as type,add_time')->select();
         //聚财宝
         $pop = M('merchants_pop')->where(array('merchant_id'=>$id))->field('id,sn,3 as type,add_time')->select();
-        $data = array_merge($pcsy,$wghl,$pop);
+        $type = I('type');
+        if($type){
+            if($type == 1) $data = $pcsy;
+            if($type == 2) $data = $wghl;
+            if($type == 3) $data = $pop;
+        }else{
+            $data = array_merge($pcsy,$wghl,$pop);
+        }
         array_multisort(array_column($data,'add_time'),SORT_DESC,$data);
+        $this->ajaxReturn(array('code'=>'success','msg'=>'成功','data'=>$data));
+    }
+    /**
+     * 硬件设备绑定记录
+     */
+    public function pc_list_log()
+    {
+        if($this->userInfo['role_id'] != 3) {
+            $this->ajaxReturn(array('code' => 'error', 'msg' => 'role is empty'));
+        }
+        $id = M('merchants')->where(array('uid'=>$this->userId))->getField('id');
+        ($type = I('type')) || $this->ajaxReturn(array('code' => 'error', 'msg' => 'type is empty'));
+        $data = array();
+        //意锐插件
+        if($type == 1) $data = M('merchants_pcsy_log')->where(array('mid'=>$id))->order('add_time desc')->field('device_no as sn,action,type,add_time')->select();
+        //商+宝
+        if($type == 2) $data = M('merchants_wghl_log')->where(array('merchant_id'=>$id))->order('add_time desc')->field('substring(sn,-6,6) sn,action,type,add_time')->select();
+        //聚财宝
+        if($type == 3) $data = M('merchants_pop_log')->where(array('merchant_id'=>$id))->order('add_time desc')->field('sn,action,type,add_time')->select();
+
         $this->ajaxReturn(array('code'=>'success','msg'=>'成功','data'=>$data));
     }
 
@@ -2217,12 +2273,20 @@ class  ShopnewsController extends ApibaseController
     public function bind_pc()
     {
         get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'bind_pc', ':绑定设备参数', json_encode(I('')));
-        ($sn = I('sn')) || $this->ajaxReturn(array('code'=>'error','msg'=>'device_no is empty'));
+        ($sn = I('sn')) || $this->ajaxReturn(array('code'=>'error','msg'=>'编号不能为空'));
         ($type = I('type')) || $this->ajaxReturn(array('code'=>'error','msg'=>'type is empty'));
-        ($mid = I('id')) || $this->ajaxReturn(array('code'=>'error','msg'=>'id is empty'));
-        $mer_count = M('merchants')->where(array('id'=>$mid))->count();
-        if($mer_count == 0) $this->ajaxReturn(array('code'=>'error','msg'=>'id is error'));
-        $type = $this->userInfo['role_id'] == 3 ? 1 : 2;
+        //如果是代理商或者代理商员工要传商户id
+        if($this->userInfo['role_id'] == 2 || $this->userInfo['pid'] == 2){
+            ($mid = I('id')) || $this->ajaxReturn(array('code'=>'error','msg'=>'id is empty'));
+            $mer_count = M('merchants')->where(array('id'=>$mid))->count();
+            if($mer_count == 0) $this->ajaxReturn(array('code'=>'error','msg'=>'id is error'));
+            $log_type = 2;
+        }else{
+            //商户
+            $mid = M('merchants')->where(array('uid'=>$this->userId))->getField('id');
+            if(!$mid) $this->ajaxReturn(array('code'=>'error','msg'=>'role is error'));
+            $log_type = 1;
+        }
         switch ($type) {
             case 1:
                 if(M('merchants_pcsy')->where(array('device_no'=>$sn))->find()) {
@@ -2230,7 +2294,7 @@ class  ShopnewsController extends ApibaseController
                 }
                 M()->startTrans();
                 $res = M('merchants_pcsy')->add(array('device_no'=>$sn,'mid'=>$mid,'add_time'=>time()));
-                $log_res = M('merchants_pcsy_log')->add(array('device_no'=>$sn,'mid'=>$mid,'add_time'=>time(),'action'=>1,'type'=>$type));
+                $log_res = M('merchants_pcsy_log')->add(array('device_no'=>$sn,'mid'=>$mid,'add_time'=>time(),'action'=>1,'type'=>$log_type));
                 if($res && $log_res){
                     M()->commit();
                     get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'bind_pc', ':绑定小白盒成功', json_encode(I('')));
@@ -2250,7 +2314,7 @@ class  ShopnewsController extends ApibaseController
                 }
                 M()->startTrans();
                 $res = M('merchants_wghl')->add(array('sn'=>'ypt'.$sn,'merchant_id'=>$mid,'add_time'=>time()));
-                $log_res = M('merchants_wghl_log')->add(array('sn'=>'ypt'.$sn,'merchant_id'=>$mid,'add_time'=>time(),'action'=>1,'type'=>$type));
+                $log_res = M('merchants_wghl_log')->add(array('sn'=>'ypt'.$sn,'merchant_id'=>$mid,'add_time'=>time(),'action'=>1,'type'=>$log_type));
                 if($res && $log_res){
                     M()->commit();
                     get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'bind_pc', ':绑定商+宝成功', json_encode(I('')));
@@ -2267,7 +2331,7 @@ class  ShopnewsController extends ApibaseController
                 }
                 M()->startTrans();
                 $res = M('merchants_pop')->add(array('sn'=>$sn,'merchant_id'=>$mid,'add_time'=>time()));
-                $log_res = M('merchants_pop_log')->add(array('sn'=>$sn,'merchant_id'=>$mid,'add_time'=>time(),'action'=>1,'type'=>$type));
+                $log_res = M('merchants_pop_log')->add(array('sn'=>$sn,'merchant_id'=>$mid,'add_time'=>time(),'action'=>1,'type'=>$log_type));
                 if($res && $log_res){
                     M()->commit();
                     get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/', 'bind_pc', ':绑定聚财宝成功', json_encode(I('')));
