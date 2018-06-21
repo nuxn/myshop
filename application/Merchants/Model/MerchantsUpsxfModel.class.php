@@ -130,11 +130,6 @@ class MerchantsUpsxfModel extends CommonModel
 
     private function sendFile($url)
     {
-        $this->requestParams['reqId'] = md5(getOrderNumber());    // 请求唯一编号
-        $this->requestParams['timestamp'] = date('YmdHis');    // 请求时间
-        $this->requestParams['reqData'] = json_encode($this->parameters);
-        $this->requestParams['sign'] = $this->getSign();
-
         $send = $this->parameters;
         $result = $this->request_post($url,$send);
         $this->get_date_log('sendFile','结果', $result);

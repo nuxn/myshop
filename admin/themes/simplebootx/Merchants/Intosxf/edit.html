@@ -1,88 +1,597 @@
-<admintpl file="header"/>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/layui/css/layui.css">
+    <script src="__PUBLIC__/layui/layui.all.js"></script>
+    <script src="__PUBLIC__/js/jquery.js"></script>
+
 </head>
 <body>
-<div class="wrap" style="width: 800px;">
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="{:U('Intoxdl/index')}">返回</a></li>
-    </ul>
-	<form id="form1" class="form-horizontal" method="post" action="{:U('Intoxdl/edit')}">
-        <input type="hidden" name="id" value="{$id}">
-        <div class="control-group">
-            <label class="control-label" for="m_id">商户ID</label>
-            <div class="controls">
-                <input type="text" id="m_id" name="m_id" value="{$data.m_id|default=''}" placeholder="请填写商户id"> <span style="color: red">*</span>
-                <input type="hidden" id="orgNo" name="orgNo"  value="7170">
-            </div>
+
+<div class="layui-container" style="width: 100%">
+    <blockquote class="layui-elem-quote">注意：</blockquote>
+
+
+    <div class="layui-row layui-col-space30">
+        <div class="layui-col-md7">
+            <fieldset class="layui-elem-field ">
+                <legend>随行付进件资料填写</legend>
+                <div class="layui-field-box">
+                    <form class="layui-form" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">商户id</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="merchant_id" required lay-verify="required"
+                                       value="{$data.merchant_id}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">商户简称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="mecDisNm" lay-verify="required" value="{$data.mecDisNm}"
+                                       autocomplete="off" class="layui-input">
+                                (6-10字)显示给消费者看的商户名称，会显示在支付页面中
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">手机号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="mblNo" lay-verify="required" value="{$data.mblNo}"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">商户类型</label>
+                            <div class="layui-input-block">
+                                <select lay-filter="mecTypeFlag" name="mecTypeFlag">
+                                    <option value="00">普通户</option>
+                                    <option value="01">连锁店</option>
+                                    <option value="02">连锁分店</option>
+                                    <option value="03">1+n 总店</option>
+                                    <option value="04">1+n 分店</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">所属总店商户编号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="parentMno" value="{$data.parentMno}" autocomplete="off"
+                                       class="layui-input">
+                                非必传
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">门头照片</label>
+                            <div class="layui-input-block">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="img3">上传图片</button>
+                                    文件大小 <= 1M
+                                    <input type="hidden" name="img[storePic]" value="{$data.storePic}">
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="view3" width="100" src="{$data.storePic}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">营业执照</label>
+                            <div class="layui-input-block">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="img6">上传图片</button>
+                                    文件大小 <= 1M
+                                    <input type="hidden" name="img[licensePic]" value="{$data.licensePic}">
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="view6" width="100" src="{$data.licensePic}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">营业执照注册名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="cprRegNmCn" lay-verify="required" value="{$data.cprRegNmCn}"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">注册号码</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="registCode" lay-verify="required" value="{$data.registCode}"
+                                       autocomplete="off" class="layui-input">
+                                <span>营业执照号 | 统一信用编码 最大为 80 位数字</span>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">注册地址</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="cprRegAddr" lay-verify="required" value="{$data.cprRegAddr}"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item ">
+                            <label class="layui-form-label">注册省市区</label>
+                            <div class="layui-input-inline">
+                                <select lay-filter="regProvCd" name="regProvCd" lay-verify="required">
+                                    <option value="">请选择省</option>
+                                    <foreach name="province" item="pval">
+                                        <option value="{$pval.id}">{$pval.name }</option>
+                                    </foreach>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <select lay-filter="regCityCd" name="regCityCd" lay-verify="required">
+                                    <option value="">请选择市区</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <select name="regDistCd" lay-verify="required">
+                                    <option value="">请选择区县</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">MCC类目</label>
+                            <div class="layui-input-block">
+                                <select lay-filter="idtTypOa">
+                                    <option value="">请选择</option>
+                                    <option value="1000">餐娱类</option>
+                                    <option value="2000">民生类</option>
+                                    <option value="3000">一般类</option>
+                                    <option value="4000">公益类</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">MCC编码</label>
+                            <div class="layui-input-block">
+                                <select name="mccCd" lay-verify="required" lay-search>
+                                    <option value="">先选择MCC类目</option>
+                                </select>
+                                <!--<input type="text" name="mccCd" lay-verify="required" value="{$data.mccCd}" autocomplete="off" class="layui-input">-->
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">法人姓名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="identityName" lay-verify="required"
+                                       value="{$data.identityName}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">法人证件类型</label>
+                            <div class="layui-input-block">
+                                <select lay-filter="identityTyp" name="identityTyp">
+                                    <option value="00">身份证</option>
+                                    <option value="03">军人证</option>
+                                    <option value="04">警察证</option>
+                                    <option value="05">港澳居民往来内地通行证</option>
+                                    <option value="06">台湾居民来往大陆通行证</option>
+                                    <option value="07">护照</option>
+                                    <option value="98">单位证件</option>
+                                    <option value="99">其他</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">法人证件号码</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="identityNo" lay-verify="required" value="{$data.identityNo}"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">法人身份证正面</label>
+                            <div class="layui-input-block">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="img1">上传图片</button>
+                                    文件大小 <= 1M
+                                    <input type="hidden" name="img[legalPersonidPositivePic]"
+                                           value="{$data.legalPersonidPositivePic}">
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="view1" width="100"
+                                             src="{$data.legalPersonidPositivePic}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">法人身份证反面</label>
+                            <div class="layui-input-block">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="img2">上传图片</button>
+                                    文件大小 <= 1M
+                                    <input type="hidden" name="img[legalPersonidOppositePic]"
+                                           value="{$data.legalPersonidOppositePic}">
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="view2" width="100"
+                                             src="{$data.legalPersonidOppositePic}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <fieldset class="layui-elem-field">
+                            <legend>结算卡</legend>
+                            <div class="layui-field-box">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">结算账户名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="actNm" lay-verify="required" value="{$data.actNm}"
+                                               autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">账户类型</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="actTyp" value="01" title="对私" checked>
+                                        <input type="radio" name="actTyp" value="00" title="对公">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">结算身份证号</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="stmManIdNo" lay-verify="" value="{$data.stmManIdNo}"
+                                               autocomplete="off" class="layui-input">
+                                        对私结算时，此项必传
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">结算卡号</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="actNo" lay-verify="required" value="{$data.actNo}"
+                                               autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">开户支行的联行行号</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="lbnkNo" lay-verify="required" value="{$data.lbnkNo}"
+                                               autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">开户许可证</label>
+                                    <div class="layui-input-block">
+                                        <div class="layui-upload">
+                                            <button type="button" class="layui-btn" id="img4">上传图片</button>
+                                            （对公 结算必传) 文件大小 <= 1M
+                                            <input type="hidden" name="img[openingAccountLicensePic]"
+                                                   value="{$data.openingAccountLicensePic}">
+                                            <div class="layui-upload-list">
+                                                <img class="layui-upload-img" id="view4" width="100"
+                                                     src="{$data.openingAccountLicensePic}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">银行卡正面</label>
+                                    <div class="layui-input-block">
+                                        <div class="layui-upload">
+                                            <button type="button" class="layui-btn" id="img5">上传图片</button>
+                                            （对私 结算必传) 文件大小 <= 1M
+                                            <input type="hidden" name="img[bankCardPositivePic]"
+                                                   value="{$data.bankCardPositivePic}">
+                                            <div class="layui-upload-list">
+                                                <img class="layui-upload-img" id="view5" width="100"
+                                                     src="{$data.bankCardPositivePic}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">结算人身份证正面</label>
+                                    <div class="layui-input-block">
+                                        <div class="layui-upload">
+                                            <button type="button" class="layui-btn" id="img7">上传图片</button>
+                                            （对私 结算必传账户人身份证）文件大小 <= 1M
+                                            <input type="hidden" name="img[settlePersonIdcardOpposite]"
+                                                   value="{$data.settlePersonIdcardOpposite}">
+                                            <div class="layui-upload-list">
+                                                <img class="layui-upload-img" id="view7" width="100"
+                                                     src="{$data.settlePersonIdcardOpposite}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">结算人身份证反面</label>
+                                    <div class="layui-input-block">
+                                        <div class="layui-upload">
+                                            <button type="button" class="layui-btn" id="img8">上传图片</button>
+                                            （对私 结算必传账户人身份证）文件大小 <= 1M
+                                            <input type="hidden" name="img[settlePersonIdcardPositive]"
+                                                   value="{$data.settlePersonIdcardPositive}">
+                                            <div class="layui-upload-list">
+                                                <img class="layui-upload-img" id="view8" width="100"
+                                                     src="{$data.settlePersonIdcardPositive}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">非法人结算授权函</label>
+                                    <div class="layui-input-block">
+                                        <div class="layui-upload">
+                                            <button type="button" class="layui-btn" id="img9">上传图片</button>
+                                            （非法人对私 结算，即结算账户类型为对私结算，且结算人身份证号不法人身份证号不一致时必传）文件大小 <= 1M
+                                            <input type="hidden" name="img[letterOfAuthPic]"
+                                                   value="{$data.letterOfAuthPic}">
+                                            <div class="layui-upload-list">
+                                                <img class="layui-upload-img" id="view9" width="100"
+                                                     src="{$data.letterOfAuthPic}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </fieldset>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">立即提交</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
         </div>
-        <div class="control-group">
-            <label class="control-label" for="trmNo">终端设备号</label>
-            <div class="controls">
-                <input type="text" id="trmNo" name="trmNo"  value="{$data.trmNo|default=''}" placeholder="终端设备号"> <span style="color: red">*</span>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="mercId">新大陆商户号</label>
-            <div class="controls">
-                <input type="text" id="mercId" name="mercId"  value="{$data.mercId|default=''}" placeholder="新大陆商户号"> <span style="color: red">*</span>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="signKey">新大陆商户密钥</label>
-            <div class="controls">
-                <input type="text" id="signKey" name="signKey" value="{$data.signKey|default=''}" placeholder="费率"><span style="color: red">*</span>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="wx_rate">微信费率</label>
-            <div class="controls">
-                <input type="text" id="wx_rate" name="wx_rate" value="{$data.wx_rate|default=''}" placeholder="费率"><span style="color: red">*</span>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="ali_rate">支付宝费率</label>
-            <div class="controls">
-                <input type="text" id="ali_rate" name="ali_rate" value="{$data.ali_rate|default=''}" placeholder="费率"><span style="color: red">*</span>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="debit_rate">借记卡费率</label>
-            <div class="controls">
-                <input type="text" id="debit_rate" name="debit_rate" value="{$data.debit_rate|default=''}" placeholder="费率"><span style="color: red">*</span>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="credit_rate">信用卡费率</label>
-            <div class="controls">
-                <input type="text" id="credit_rate" name="credit_rate" value="{$data.credit_rate|default=''}" placeholder="费率"><span style="color: red">*</span>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="appId">公众号appid</label>
-            <div class="controls">
-                <input type="text" id="appId" name="appId" value="{$data.appId|default=''}" placeholder="公众号appid">
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="appIdKey">公众号密钥</label>
-            <div class="controls">
-                <input type="text" id="appIdKey" name="appIdKey" value="{$data.appIdKey|default=''}" placeholder="公众号密钥">
-            </div>
-        </div>
-        <div class="form-actions">
-            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit" >保存</button>
-            <a class="btn" href="javascript:history.back(-1);">返回</a>
-        </div>
-	</form>
+    </div>
 </div>
-<script src="__PUBLIC__/js/common.js"></script>
-<script src="__PUBLIC__/js/global.js"></script>
 <script>
+    layui.use('form', function () {
+        var form = layui.form;
+        form.render();
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            var send = JSON.stringify(data.field);
+            send = eval('(' + send + ')')
+            var index = layer.load(0, {
+                shade: [0.3, '#000'] //0.1透明度的白色背景
+            });
+            $.post("{:U('add')}", send, function (res) {
+                layer.close(index);
+                if (res.code == '0000') {
+                    location.href = "{:U('index')}";
+                } else {
+                    layer.open({
+                        title: '进件失败'
+                        , content: res.msg
+                    });
+                }
+            });
+            layer.close(index);
+            return false;
+        });
+        // 监听选择框
+        form.on('select(regProvCd)', function (data) {
+            $.post("{:U('get_city')}", {data: data.value}, function (res) {
+                if (res.code == '0000') {
+                    var _str = '<option>请选择</option>';
+                    $.each(res.data, function (k, v) {
+                        _str += '<option value="' + v.id + '">' + v.name + '</option>'
+                    })
+                    $("select[name=regCityCd]").html(_str);
+                    form.render();
+                }
+            });
+        });
+        // 监听选择框
+        form.on('select(regCityCd)', function (data) {
+            $.post("{:U('get_city')}", {data: data.value}, function (res) {
+                if (res.code == '0000') {
+                    var _str = '<option>请选择</option>';
+                    $.each(res.data, function (k, v) {
+                        _str += '<option value="' + v.id + '">' + v.name + '</option>'
+                    })
+                    $("select[name=regDistCd]").html(_str);
+                    form.render();
+                }
+            });
+        });
+        // 监听选择框
+        form.on('select(idtTypOa)', function (data) {
+            $.post("{:U('getIdtTyps')}", {data: data.value}, function (res) {
+                if (res.code == '0000') {
+                    var _str = '<option value=""></option>';
+                    $.each(res.data, function (k, v) {
+                        _str += '<option value="' + v.mccCd + '">' + v.mccNm + '</option>'
+                    })
+                    $("select[name=mccCd]").html(_str);
+                    form.render();
+                }
+            });
+        });
+    });
+
+    layui.use('upload', function () {
+        var $ = layui.jquery
+            , upload = layui.upload;
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#img1'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view1').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[legalPersonidPositivePic]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view1').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+        upload.render({
+            elem: '#img2'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view2').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[legalPersonidOppositePic]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view2').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+        upload.render({
+            elem: '#img3'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view3').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[storePic]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view3').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+        upload.render({
+            elem: '#img4'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view4').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[openingAccountLicensePic]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view4').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+        upload.render({
+            elem: '#img5'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view5').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[bankCardPositivePic]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view5').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+
+        upload.render({
+            elem: '#img6'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view6').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[licensePic]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view6').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+        upload.render({
+            elem: '#img7'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view7').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[settlePersonIdcardOpposite]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view7').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+        upload.render({
+            elem: '#img8'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view8').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[settlePersonIdcardPositive]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view8').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+        upload.render({
+            elem: '#img9'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view9').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[letterOfAuthPic]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view9').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+    });
 
 </script>
-<style>
-	input{width: 60%;}
-	.blue{
-		background: #006dcc;}
-</style>
+
 </body>
 </html>

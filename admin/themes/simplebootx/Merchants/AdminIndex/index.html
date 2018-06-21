@@ -326,31 +326,34 @@
     function into_bank(thisobj){
         var id=$(thisobj).attr("data-id");
         //var str="{:U('AdminInto/check_mpay',array('id'=>"+id+"))}";
-        var str="/index.php?s=Merchants/AdminInto/check_mpay/id/"+id;
-        var hdstr="/index.php?s=Merchants/AdminInto/check_hdmpay/id/"+id;
-        var ztr="/index.php?s=Merchants/Adminzsinto/zsshow/id/"+id;
-        var jnstr="/index.php?s=Merchants/Adminmsday/index/id/"+id;
-        var szlc="/index.php?s=Merchants/szlzinto/add/id/"+id;
-        var wzstr="/index.php?s=Merchants/Upwzadmin/add/id/"+id;
+        // var str="/index.php?s=Merchants/AdminInto/check_mpay/id/"+id;
+        // var hdstr="/index.php?s=Merchants/AdminInto/check_hdmpay/id/"+id;
+        // var ztr="/index.php?s=Merchants/Adminzsinto/zsshow/id/"+id;
+        // var jnstr="/index.php?s=Merchants/Adminmsday/index/id/"+id;
+        // var wzstr="/index.php?s=Merchants/Upwzadmin/add/id/"+id;
+        // var hfstr="/index.php?s=Merchants/Adminhfbank/edit/id/"+id;
         var xystr="/index.php?s=Merchants/Xybankinto/add/id/"+id;
-        var hfstr="/index.php?s=Merchants/Adminhfbank/edit/id/"+id;
+        var szlc="/index.php?s=Merchants/szlzinto/add/id/"+id;
         var xdlstr="/index.php?s=Merchants/intoxdl/add/id/"+id;
         var dgzxstr="/index.php?s=Merchants/pfbankinto/add/id/"+id;
         var leshuastr="/index.php?s=Merchants/intoleshua/add/id/"+id;
         var pingan="/index.php?s=Merchants/intopingan/add/id/"+id;
+        var sxf="/index.php?s=Merchants/intosxf/add/id/"+id;
+
         var content='<div align="center" style="margin-left:auto;margin-right:auto;margin-top:80px">' +
-            '<a href="'+wzstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">微纵银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
-            '<a href="'+str+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">洋仆淘民生银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
-            '<a href="'+hdstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">合兑民生银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
-            '<a href="'+ztr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">招商银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
-            '<a href="'+jnstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">济南民生银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
-            '<br><a href="'+xystr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">兴业银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
-            '<a href="'+hfstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">恒丰银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            // '<a href="'+wzstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">微纵银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            // '<a href="'+str+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">洋仆淘民生银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            // '<a href="'+hdstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">合兑民生银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            // '<a href="'+ztr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">招商银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            // '<a href="'+jnstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;">济南民生银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<a href="'+xystr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">兴业银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            // '<a href="'+hfstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">恒丰银行</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
             '<a href="'+szlc+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">宿州李灿</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
             '<a href="'+xdlstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">新大陆</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
             '<a href="'+dgzxstr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">东莞中信</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
             '<a href="'+leshuastr+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">乐刷</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
             '<br><a href="'+pingan+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">平安付</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
+            '<a href="'+sxf+'" style=" display: inline-block;height: 38px;line-height: 38px;padding: 0 18px;background-color: #009688;color: #fff;white-space: nowrap;text-align: center;font-size: 14px;border: none;border-radius: 2px;cursor: pointer;opacity: .9;margin-top: 5px">随行付</a>&nbsp;&nbsp;&nbsp;&nbsp;' +
             '</div>';
          layer.open({
             type:1,

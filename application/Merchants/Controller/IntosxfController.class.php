@@ -50,10 +50,13 @@ class IntosxfController extends AdminbaseController
     {
         if (IS_POST) {
             $this->input = I("post.");
-//            $taskCode = $this->getTaskCode();
+            $taskCode = $this->getTaskCode();
             $input = array_filter($this->input);
+            $this->input['task_code'] = $taskCode;
+            $this->adddb();
             unset($input['img']);
-            $input['taskCode'] = 'SXF012018062017031592616709762';
+//            $input['taskCode'] = 'SXF012018062017031592616709762';
+            $input['taskCode'] = $taskCode;
             $input['merUrl'] = $this->merUrl;
 
             $this->sxfModel->setNull();
@@ -70,7 +73,7 @@ class IntosxfController extends AdminbaseController
                 $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']));
             }
         } else {
-            $merchant_id = $_GET['id'];
+            $merchant_id = I('id');
             $province = $this->get_province();
             $list = M('Merchants')->where("id='{$merchant_id}'")->find();
             $this->assign('list', $list);
@@ -80,46 +83,35 @@ class IntosxfController extends AdminbaseController
         }
     }
 
+    public function adddb()
+    {
+        $merchant_id = $this->input['merchant_id'];
+        $id = $this->sxfModel->where(array('merchant_id'=>$merchant_id))->getField('id');
+        if($id){
+            $this->sxfModel->where(array('id'=>$id))->save($this->input);
+        } else {
+            $this->sxfModel->add($this->input);
+        }
+    }
+
     public function get_province()
     {
-        $this->sxfModel->setNull();
-        $this->sxfModel->setParameters('addressType', '01');
-        $this->sxfModel->setParameters('blackFlag', '00');
-        $result = $this->sxfModel->get_address();
-        return $result['respData']['data'];
+        return M('address_sxf')->where("pid=1")->select();
     }
 
     public function get_city()
     {
         $prov = I('data');
-        $this->sxfModel->setNull();
-        $this->sxfModel->setParameters('addressType', '02');
-        $this->sxfModel->setParameters('addressCode', $prov);
-        $this->sxfModel->setParameters('blackFlag', '00');
-        $result = $this->sxfModel->get_address();
-        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
-    }
-
-    public function get_area()
-    {
-        $prov = I('data');
-        $this->sxfModel->setNull();
-        $this->sxfModel->setParameters('addressType', '03');
-        $this->sxfModel->setParameters('addressCode', $prov);
-        $this->sxfModel->setParameters('blackFlag', '00');
-        $result = $this->sxfModel->get_address();
-        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
+        $result = M('address_sxf')->where(array('pid'=>$prov))->select();
+        $this->ajaxReturn(array('code' => '0000', 'data' => $result));
     }
 
     // 获取 MCC 行业大类信息
     public function getIdtTyps()
     {
         $idtTypCode = I('data');
-        $this->sxfModel->setNull();
-        $this->sxfModel->setParameters('idtType', '02');
-        $this->sxfModel->setParameters('idtTypCode', $idtTypCode);
-        $result = $this->sxfModel->getIdtTyps();
-        $this->ajaxReturn(array('code' => '0000', 'data' => $result['respData']['data']));
+        $result = M('mcc_sxf')->field('mccCd,mccNm')->where(array('type'=>$idtTypCode))->select();
+        $this->ajaxReturn(array('code' => '0000', 'data' => $result));
     }
 
     public function getTaskCode()
@@ -130,24 +122,41 @@ class IntosxfController extends AdminbaseController
         $this->sxfModel->setParameters('orgId', '07296653');
         $this->sxfModel->setParameters('reqId', md5(getOrderNumber()));
         $result = $this->sxfModel->getTaskCode();
-        return $result['respData']['data'];
+        if($result['code'] == 'SXF0000'){
+            $return = $result['respData'];
+            if($return['bizCode'] == '00'){
+                return $result['respData']['data'];
+            } else {
+                $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg']));
+            }
+        } else {
+            $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']));
+        }
     }
 
     # 编辑
     public function edit()
     {
         if (IS_POST) {
-            $data = I('post.');
-            $id = I('id');
-            if (!$data['m_id']) {
-                $this->error('参数不全');
+            $input = I("post.");
+            $imgs = $input['img'];
+            foreach ($imgs as $key => $val) {
+                if($val){
+                    $input[$key] = $val;
+                }
             }
-            unset($data['id']);
-            if ($this->sxfModel->where(array('id' => $id))->save($data)) {
-                $this->redirect(U('Intoxdl/index'));
+            $input = array_filter($input);
+            $merchant_id = $input['merchant_id'];
+            if(!$merchant_id){
+                $this->ajaxReturn(array('code'=> '1000','msg'=>'商户id为空'));
+            }
+            $id = $this->sxfModel->where(array('merchant_id'=>$merchant_id))->getField('id');
+            if($id){
+                $this->sxfModel->where(array('id'=>$id))->save($input);
             } else {
-                $this->error('未修改');
+                $this->sxfModel->add($input);
             }
+            $this->ajaxReturn(array('code'=> '0000'));
         } else {
             $id = I('id');
             $info = $this->sxfModel->where(array('id' => $id))->find();
@@ -159,8 +168,11 @@ class IntosxfController extends AdminbaseController
 
     public function getZip()
     {
-        $imgs = $this->input['img'];
-        $filename = "./data/upload/sxf/imagefile.zip";
+        $imgs = array_filter($this->input['img']);
+        if(empty($imgs)){
+            $this->ajaxReturn(array('code'=> '1000','msg'=>'图片上传失败'));
+        }
+        $filename = "./data/upload/sxf/image.zip";
         $zip = new \ZipArchive();
         $zip->open($filename,ZipArchive::CREATE);   //打开压缩包
         foreach ($imgs as $key => $val) {

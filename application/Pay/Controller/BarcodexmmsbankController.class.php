@@ -41,15 +41,53 @@ class BarcodexmmsbankController extends HomebaseController
         header("Content-type: text/html; charset=utf-8");
     }
 
-    /**
-     * {
-    "merchant_id":"0609007335",
-    "service":"query_status",
-    "third_order_id":"2018061311365440816",
-    "nonce_str":"DCKVKDDYX4PEN4O55B2L0EYUWS5LF3OA",
-    "sign":"D78575E9B72185E375999F3BDA97875B"
+    public function getexcel()
+    {
+        $res = $this->import_excel('./222.xlsx');
+        dump($res);
     }
-     */
+
+    public function import_excel($file){
+        ini_set('max_execution_time', '0');
+        Vendor('PHPExcel.PHPExcel');
+        // 判断使用哪种格式
+        $extension = strtolower( pathinfo($file, PATHINFO_EXTENSION) );
+
+        if ($extension =='xlsx') {
+            $objReader = new \PHPExcel_Reader_Excel2007();
+            $objPHPExcel = $objReader ->load($file);
+        } else if ($extension =='xls') {
+            $objReader = new \PHPExcel_Reader_Excel5();
+            $objPHPExcel = $objReader ->load($file);
+        } else {
+            $type = pathinfo($file);
+            $type = strtolower($type["extension"]);
+            $type=$type==='csv' ? $type : 'Excel5';
+            $objReader = \PHPExcel_IOFactory::createReader($type);
+            $objPHPExcel = $objReader->load($file);
+        }
+
+        $sheet = $objPHPExcel->getSheet(0);
+        // 取得总行数
+        $highestRow = $sheet->getHighestRow();
+        // 取得总列数
+        $highestColumn = $sheet->getHighestColumn();
+        //循环读取excel文件,读取一条,插入一条
+        $data=array();
+        //从第二行开始读取数据
+        for($j=2;$j<=$highestRow;$j++){
+            //从A列读取数据
+            for($k='A';$k<$highestColumn;$k++){
+                // 读取单元格
+                if($k == 'A') $data[$j-2]['type']=(string)$objPHPExcel->getActiveSheet()->getCell("$k$j")->getValue();
+                if($k == 'B') $data[$j-2]['type_name']=(string)$objPHPExcel->getActiveSheet()->getCell("$k$j")->getValue();
+                if($k == 'C') $data[$j-2]['mccCd']=(string)$objPHPExcel->getActiveSheet()->getCell("$k$j")->getValue();
+                if($k == 'D') $data[$j-2]['mccNm']=(string)$objPHPExcel->getActiveSheet()->getCell("$k$j")->getValue();
+            }
+        }
+        return $data;
+    }
+
     public function sql()
     {
 //        $message = A("Pay/Banksxf")->wx_micropay('85', '0.02', '134574746235891109', '0', 'test', '', 2);
@@ -63,21 +101,12 @@ class BarcodexmmsbankController extends HomebaseController
 
     public function test()
     {
-//        $message = new \Wechat\Controller\MessageController;
-        die;
-        $message = A('Wechat/Message')->use_balance('oyaFdwCeMYLJd7r8WRrXIBqKSGWI','20','20','20',20);
-        echo $message;exit;
-        $message->setType('1');
-        $message->setOpenid('oyaFdwCeMYLJd7r8WRrXIBqKSGWI');
-        $message->setParameters('first','您的会员卡卡消费成功');
-        $message->setParameters('keyword1','338745817');
-        $message->setParameters('keyword2','20元');
-        $message->setParameters('keyword3','2018年6月12日 18:18');
-        $message->setParameters('keyword4','洋仆淘总部');
-        $message->setParameters('keyword5','186.5元');
-        $message->setParameters('remark','感谢您的光临，欢迎再次光临');
-        $return = $message->sendMessage();
-        echo $return;
+
+/*[14:48:42][15 ms] SHOW FULL FIELDS FROM `youngport`.`ypt_merchants`;
+/*[14:48:42][15 ms] SHOW KEYS FROM `youngport`.`ypt_merchants`;
+/*[14:48:42][13 ms] SHOW CREATE TABLE `youngport`.`ypt_merchants`; */
+        $a = M('merchants')->where("id=84")->find();
+        dump($a);
 
     }
 ########################################################################################################################

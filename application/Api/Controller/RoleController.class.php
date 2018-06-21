@@ -254,11 +254,11 @@ class RoleController extends ApibaseController
     public function set_pos_auth()
     {
         if (IS_POST) {
-            $screen_ids = I('auth_ids');
+            $pos_ids = I('auth_ids');
             $role_id = I('role_id');
-            if (!$screen_ids) err('未选择权限');
+            if (!$pos_ids) err('未选择权限');
             if (!$role_id) err('请选择角色');
-            $this->role_model->where(array("id" => $role_id))->save(array('screen_auth' => $screen_ids));
+            $this->role_model->where(array("id" => $role_id))->save(array('pos_auth' => $pos_ids));
 
             succ_ajax();
         }

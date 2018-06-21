@@ -18,39 +18,42 @@
         <div class="layui-tab-item layui-show">
             <blockquote class="layui-elem-quote layui-text">
                 <i class="layui-icon layui-icon-face-smile" style="font-size: 30px; color: red;"></i>
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail" href="{:U('add',array('id'=>$val['id']))}">添加进件</a>
             </blockquote>
             <div class="layui-form">
                 <table class="layui-table">
                     <colgroup>
                         <col width="50">
-                        <col width="100">
-                        <col width="150">
                         <col width="200">
-                        <col width="250">
+                        <col width="175">
+                        <col width="175">
+                        <col width="150">
                         <col>
                     </colgroup>
                     <thead>
                     <tr>
-                        <th></th>
                         <th>id</th>
-                        <th>权限名称</th>
-                        <th>上级id</th>
-                        <th>权限路径</th>
+                        <th>商户名称</th>
+                        <th>进件时间</th>
+                        <th>进件状态</th>
+                        <th></th>
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     <foreach name="info" item="val">
                         <tr data-id="{$val.id}" class="parents" data-dis="0">
-                            <td data-id="{$val.id}" class="tdparents" data-dis="0"></td>
                             <td>{$val.id}</td>
                             <td>{$val.merchant_name}</td>
-                            <td>{$val.status}</td>
                             <td>{$val.add_time}</td>
+                            <td>{$val.status}</td>
+                            <td></td>
                             <td>
                                 <div class="layui-table-cell laytable-cell-1-10">
-                                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="{:U('add',array('id'=>84))}">修改</a>
-                                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                                    <if condition="$val.status eq 0">
+                                        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="{:U('edit',array('id'=>$val['id']))}">进件</a>
+                                    </if>
+                                    <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
                                 </div>
                             </td>
                         </tr>
