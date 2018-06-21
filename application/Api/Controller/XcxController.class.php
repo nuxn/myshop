@@ -441,7 +441,19 @@ class XcxController extends ApibaseController
         }
         M()->startTrans();
         $no_id = $this->dc_no->add($data);
-        $filePath = $this->add_no_png($no_id,$uid);
+        $mini_type = M('merchants')->where(array('uid'=>$uid))->getField('mini_type');
+        if ($mini_type==2) {
+            // $agent_id = M('merchants_users')->where(array('id'=>$uid))->getField('agent_id');
+            $ids = M()->query('select getagentchild(182) as ids');
+            $ids = explode(',',$ids[0]["ids"]);
+            if(in_array($uid,$ids)){
+                $filePath = $this->add_no_store($no_id,$uid);
+            }else{
+                $filePath = $this->add_no_png($no_id,$uid);
+            }
+        }else{
+            $filePath = $this->add_no_png($no_id,$uid);
+        }
         $res = $this->dc_no->where("id=$no_id")->setField('qr_img',$filePath);
         if($no_id && $res){
             M()->commit();
@@ -469,15 +481,34 @@ class XcxController extends ApibaseController
             return $filepath;
         }
     }
-    //获取小程序token
+
+    //上传二维码照片到服务器
+    private function add_no_store($no,$uid)
+    {
+        $path='dc/store/index?no_id='.$no.'&store_id='.$uid;
+        $access_token = $this->get_token();
+        // $access_token = $this->get_token1($uid);
+        $width=430;
+        $post_data='{"path":"'.$path.'","width":'.$width.'}';
+        $url="https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=".$access_token;
+        $result=$this->api_notice_increment($url,$post_data);
+        $filepath = $this->upload_qr_img($result);
+        if(!$filepath){
+            return false;
+        }else{
+            return $filepath;
+        }
+    }
+    //获取晋城尚购小程序access_token
 	private function get_token(){
-        $url = 'https://api.weixin.qq.com/cgi-bin/token';
-        $param['appid'] = 'wxaeb1889b2a606681';
-        $param['secret'] = 'b3faf2858533ccb4a51bea4c37cf9a6b';
-        $param['grant_type'] = 'client_credential';
-        $data = file_get_contents($url.'?'.http_build_query($param));
-        $data = json_decode($data);
-        $token = $data->access_token;
+        // $url = 'https://api.weixin.qq.com/cgi-bin/token';
+        $param['appid'] = 'wxdbca93f421a8ec1c';
+        $param['secret'] = 'a60b2f4271d7b43a422db73871220df1';
+        // $param['grant_type'] = 'client_credential';
+        $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.$param['appid'].'&secret='.$param['secret'];
+        $data = request_post($url,array());
+        $data = json_decode($data,true);
+        $token = $data['access_token'];
         return $token;
     }
 

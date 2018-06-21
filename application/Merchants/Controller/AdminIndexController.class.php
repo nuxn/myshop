@@ -66,6 +66,13 @@ class AdminIndexController extends AdminbaseController
             $map['mid'] = $mid;
             $this->assign('mid', $mid);
         }
+        $store_type = I("store_type");
+        if ($store_type) {
+            if($store_type==1) $map['mid'] = 0;
+            if($store_type==2) $map['mid'] = 2;
+            if($store_type==3) $map['mid'] = array('gt',2);
+            $this->assign('store_type', $store_type);
+        }
         $agency_business = I("agency_business");
         if ($agency_business) {
             $map['agency_business'] = $agency_business;
@@ -530,7 +537,7 @@ class AdminIndexController extends AdminbaseController
 
                 if ($model->add($data)) {
                     M('merchants_users')->where(array('id' => $uid))->save(array('user_name' => $merchant_jiancheng));
-                    M('merchants_logs')->add(array('mid'=>$uid,'msg'=>'审核通过：将在1～3个工作日内开通支付！','add_time'=>time(),'type'=>3));
+                    M('merchants_logs')->add(array('mid'=>$uid,'msg'=>'审核通过！','add_time'=>time(),'type'=>3));
                     $this->ajaxReturn(array('code' => '1', 'msg' => '添加成功'));
                 } else {
                     $this->ajaxReturn(array('code' => '0', 'msg' => '添加失败'));
@@ -582,7 +589,7 @@ class AdminIndexController extends AdminbaseController
             $map['referrer'] = $referrer;
             $this->assign('referrer',$referrer);
         }
-
+        $map['m.mid'] = array('IN','0,2');
         $data = M('merchants')->alias('m')
             ->join('ypt_merchants_users u on u.id=m.uid')
             ->field('m.id,m.uid,m.status,u.user_phone,m.merchant_name,u.agent_id,m.update_time,m.add_time,referrer')
@@ -746,6 +753,7 @@ class AdminIndexController extends AdminbaseController
             unset($merchant_one['id']);
             $merchant_one['mid'] = $mid;
             $merchant_one['uid'] = $machine_user;
+            $merchant_one['is_sync'] = I('is_sync');
 //            添加的
             $merchant_one['province'] = I("province");
             $merchant_one['city'] = I("city");
@@ -758,6 +766,10 @@ class AdminIndexController extends AdminbaseController
             $merchant_one['merchant_name'] = I("merchant_name");
             $merchant_one['add_time'] = time();
             $machine_merchant = $this->merchants->add($merchant_one);
+            //如果总店有台签，同步进件信息
+            if($this->cates->where(array('merchant_id'=>$mid,'status'=>1,'checker_id'=>0))->find() && I('is_sync')==1){
+                $this->uptosame1($machine_merchant);
+            }
 //            机器人角色对应表添加
             $role['uid'] = $machine_user;
             $role['role_id'] = 3;
@@ -1152,7 +1164,7 @@ class AdminIndexController extends AdminbaseController
                 if ($res !== false) {
                     $this->userMRole($uid);
                     if($status==1){
-                        M('merchants_logs')->add(array('mid'=>$uid,'msg'=>'审核通过：将在1～3个工作日内开通支付！','add_time'=>time(),'type'=>3));
+                        M('merchants_logs')->add(array('mid'=>$uid,'msg'=>'审核通过！','add_time'=>time(),'type'=>3));
                     }
                     $this->ajaxReturn(array("code" => '1', 'msg' => '提交成功'));
                 } else {
@@ -1233,8 +1245,18 @@ class AdminIndexController extends AdminbaseController
                 $res = M("merchants")->where(array('id' => $id))->setField(array('status' => $status));
                 if ($res !== false) {
                     if ($status==1){
+                        //添加到审核记录表
                         $mid=M('merchants')->where(array('id'=>$id))->getField('uid');
-                        M('merchants_logs')->add(array('mid'=>$mid,'msg'=>'审核通过：将在1~3个工作日内开通支付！','add_time'=>time(),'type'=>3));
+                        M('merchants_logs')->add(array('mid'=>$mid,'msg'=>'审核通过！','add_time'=>time(),'type'=>3));
+                        //把分店都审核通过，并且记录到审核记录表
+                        $mids = M('merchants')->where(array('mid'=>$id,'status'=>array('neq','1')))->getField('id',true);
+                        if ($mids) {
+                            foreach ($mids as &$v) {
+                                M('merchants')->where(array('id'=>$v))->setField('status',1);
+                                $mid=M('merchants')->where(array('id'=>$v))->getField('uid');
+                                M('merchants_logs')->add(array('mid'=>$mid,'msg'=>'审核通过！','add_time'=>time(),'type'=>3));
+                            }
+                        }
                     }
                     $this->ajaxReturn(array('code' => '1', 'msg' => '修改成功'));
                 } else {
@@ -1912,15 +1934,70 @@ class AdminIndexController extends AdminbaseController
         }
     }
 
-    public function uptosame()
-    {
-        $id =I("get.id");
-        $small_merchant =$this->merchants->where(array('id'=>$id))->find();
-        if($small_merchant['mid'] == 0)$this->error('该商户并不是多门店模式');
-        $small_cate =$this->cates->where(array('merchant_id'=>$small_merchant['id']))->find();
 
+    public function uptosame1($id)
+    {
+        $small_merchant =$this->merchants->where(array('id'=>$id))->find();
         $big_merchant =$this->merchants->where(array('id'=>$small_merchant['mid']))->find();
         $big_cate =$this->cates->where(array('merchant_id'=>$big_merchant['id'],'status'=>1,'checker_id'=>0))->find();
+
+        $cate_c_id=$this->cates->order("id desc")->getField("id")+1;
+        $seven = "000000".$cate_c_id;
+        $no_number = "YPTTQ".substr($seven,-7);
+        $path_url = "data/upload/pay/".$no_number.".png";
+        $cate_m['id']=$cate_c_id;
+        $cate_m['merchant_id']=$id;
+        $cate_m['checker_id'] = '';
+        $cate_m['no_number'] = $no_number;
+        $cate_m['cate_name'] = "默认台签";
+        $cate_m['barcode_img'] = $path_url;
+        $cate_m['update_time'] = null;
+        $cate_m['create_time'] = time();
+
+        $cate_m['jianchen'] = $small_merchant['merchant_name'];
+        $cate_m['name'] = $big_cate['name'];
+        $cate_m['cate_name'] = $big_cate['cate_name'];
+        $cate_m['wx_name'] = $big_cate['wx_name'];
+        $cate_m['qz_number'] = $big_cate['qz_number'];
+
+        $cate_m['alipay_partner'] = $big_cate['alipay_partner'];
+        $cate_m['alipay_private_key'] = $big_cate['alipay_private_key'];
+        $cate_m['alipay_public_key'] = $big_cate['alipay_public_key'];
+        $cate_m['wx_appid'] = $big_cate['wx_appid'];
+        $cate_m['wx_mchid'] = $big_cate['wx_mchid'];
+        $cate_m['wx_key'] = $big_cate['wx_key'];
+        $cate_m['wx_appsecret'] = $big_cate['wx_appsecret'];
+        $cate_m['ali_bank'] = $big_cate['ali_bank'];
+        $cate_m['wx_bank'] = $big_cate['wx_bank'];
+        $cate_m['is_top'] = $big_cate['is_top'];
+        $cate_m['is_test'] = $big_cate['is_test'];
+        $cate_m['is_cash'] = $big_cate['is_cash'];
+        $cate_m['status'] = $big_cate['status'];
+
+        $this->add_cate_png($cate_c_id,$no_number);
+
+        #2018/05/22 同步到进件表
+        $this->sametointo($id,$big_merchant['id'],$big_cate['wx_bank'],$big_cate['ali_bank']);
+
+        if($this->cates->add($cate_m)){
+            $big_merchant_rate =M("merchants_rate")->where(array('merchants_id'=>$big_merchant['id']))->find();
+            unset($big_merchant_rate['id']);
+            $big_merchant_rate['merchants_id'] = $id;
+            $big_merchant_rate['add_time'] = time();
+            M("merchants_rate")->add($big_merchant_rate);
+        }
+    }
+
+    public function uptosame()
+    {
+        $id = I("get.id");
+        $small_merchant = $this->merchants->where(array('id'=>$id))->find();
+        if($small_merchant['mid'] == 0 || $small_merchant['mid'] == 2)$this->error('该商户并不是多门店模式');
+        if($small_merchant['is_sync'] == 2)$this->error('该分店不与总店同步');
+
+        $small_cate = $this->cates->where(array('merchant_id'=>$small_merchant['id']))->find();
+        $big_merchant = $this->merchants->where(array('id'=>$small_merchant['mid']))->find();
+        $big_cate = $this->cates->where(array('merchant_id'=>$big_merchant['id'],'status'=>1,'checker_id'=>0))->find();
         if(!$big_merchant)$this->error('未找到上级大商户');
         if(!$big_cate)$this->error('大商户还未绑定台签');
         #如果商户已经有台签，改台签进件信息

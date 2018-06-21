@@ -29,8 +29,20 @@ class  PublicController extends ScreenbaseController
         if(!$user){
             $this->ajaxReturn(array("code" => "error", "msg" => "失败","data"=>"请用app为登录"));
         }
+        if(!$this->checkLoginAuth($user['uid'])){
+            $this->ajaxReturn(array("code" => "error", "msg" => "没有权限","data"=>"没有权限！请联系管理员！"));
+        }
 //        判断双屏token表里面是否已经存在改用户了
 //        $uid=$user['uid'];
+
+        if(substr(I("random"),0,9) == "youngport"){
+//            双屏
+//            $twouser=M("twotoken")->where("uid='$uid'")->find();
+//            if($twouser)M("twotoken")->where("uid='$uid'")->delete();
+        }else{
+//            $posuser=M("post_token")->where("uid='$uid'")->find();
+//            if($posuser)M("post_token")->where("uid='$uid'")->delete();
+        }
 
         $time=time();
         $data['value']=$user['value'];
@@ -39,9 +51,6 @@ class  PublicController extends ScreenbaseController
         $data['token']=$this->build_token($data);
         if(substr(I("random"),0,9) == "youngport"){
 //            双屏
-            if(!$this->checkLoginAuth($user['uid'])){
-                $this->ajaxReturn(array("code" => "error", "msg" => "没有权限","data"=>"没有权限！请联系管理员！"));
-            }
             M("twotoken")->add($data);
         }else{
             M("post_token")->add($data);

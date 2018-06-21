@@ -25,6 +25,7 @@ class ApibaseController extends Controller
     public $version;//app版本号
     private $userModel;//用户模型
     private $rule;//当前URL请求的模块/控制器/方法
+    public $is_pos = 0; // 判断是否是POS机登录
     //存储无需验证签名的控制器
     protected $no_need_check_sign = array(
         "Public",
@@ -44,13 +45,14 @@ class ApibaseController extends Controller
         "PushMsg",
         "Product",
         "Integral",
+        "Test",
         "card_pull",
         "Shopping",
         "PopPay",
         "Wghl",
         "Wechat",
         "Merchants",
-	    "Role",
+        "Addstore"
     );
     //存储无需验证签名的模块
     protected $no_need_check_sign_module = array(
@@ -80,6 +82,7 @@ class ApibaseController extends Controller
             $this->userInfo = json_decode($pos['value'], true);
             $this->userId = $this->userInfo['uid'];
             $this->version = '1.3';
+            $this->is_pos = 1;
         } else {
             $result = $this->getTokenInfo($this->token, $type);
             if ($result) {

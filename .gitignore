@@ -1,0 +1,11 @@
+
+log
+logs
+*.log
+*.logs
+.idea
+*.txt
+db.php
+
+data/runtime
+upload

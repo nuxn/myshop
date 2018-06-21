@@ -159,7 +159,9 @@ class IntosxfController extends AdminbaseController
             $this->ajaxReturn(array('code'=> '0000'));
         } else {
             $id = I('id');
+            $province = $this->get_province();
             $info = $this->sxfModel->where(array('id' => $id))->find();
+            $this->assign('province', $province);
             $this->assign('data', $info);
             $this->assign('id', $id);
             $this->display();

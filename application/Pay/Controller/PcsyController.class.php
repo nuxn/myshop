@@ -9,6 +9,8 @@ class PcsyController extends AdminbaseController
     protected $pcsy_log;
     protected $wghl;
     protected $wghl_log;
+    protected $pop;
+    protected $pop_log;
 
     function _initialize()
     {
@@ -17,6 +19,8 @@ class PcsyController extends AdminbaseController
         $this->pcsy_log = M("merchants_pcsy_log");
         $this->wghl = M("merchants_wghl");
         $this->wghl_log = M("merchants_wghl_log");
+        $this->pop = M("merchants_pop");
+        $this->pop_log = M("merchants_pop_log");
     }
 
     #插件绑定列表
@@ -247,6 +251,83 @@ class PcsyController extends AdminbaseController
         if($res){
             $this->wghl_log->add(array('sn'=>$info['sn'],'merchant_id'=>$info['merchant_id'],'add_time'=>time(),'action'=>2,'type'=>3));
             $this->success('解绑成功',U('wg_index'));
+        }else{
+            $this->error('解绑失败');
+        }
+    }
+
+    #聚财宝绑定列表
+    public function pop_index()
+    {
+        $map = array();
+        $merchant_id = I('merchant_id');
+        if(!empty($merchant_id)){
+            $map['p.merchant_id'] = $merchant_id;
+            $this->assign('merchant_id',$merchant_id);
+        }
+        $merchant_name = I('merchant_name');
+        if(!empty($merchant_name)){
+            $map['m.merchant_name'] = array('LIKE',"%$merchant_name%");
+            $this->assign('merchant_name',$merchant_name);
+        }
+        $sn = I('sn');
+        if(!empty($sn)){
+            $map['p.sn'] = array('LIKE',"%$sn%");;
+            $this->assign('sn',$sn);
+        }
+        $count = $this->pop->alias('p')
+            ->join('left join ypt_merchants m on m.id=p.merchant_id')
+            ->where($map)
+            ->count();
+        $page = $this->page($count, 20);
+        $this->assign("page", $page->show('Admin'));
+        $data = $this->pop->alias('p')
+            ->field('p.*,m.merchant_name')
+            ->join('left join ypt_merchants m on m.id=p.merchant_id')
+            ->where($map)
+            ->limit($page->firstRow, $page->listRows)
+            ->order("id desc")
+            ->select();
+        $this->assign("data", $data);
+        $this->display();
+    }
+    #插件绑定
+    public function pop_add()
+    {
+        if(IS_POST){
+            $sn = I('sn');
+            if(!$sn){
+                $this->error('设备号不能为空');
+            }elseif($this->pop->where('sn='.$sn)->find()){
+                $this->error('该设备号已经被绑定');
+            }
+            $merchant_id = I('merchant_id');
+            if(!$merchant_id){
+                $this->error('商户ID不能为空');
+            }
+            $res = $this->pop->add(array('sn'=>$sn,'merchant_id'=>$merchant_id,'add_time'=>time()));
+            if($res){
+                $this->pop_log->add(array('sn'=>$sn,'merchant_id'=>$merchant_id,'add_time'=>time(),'action'=>1,'type'=>3));
+                $this->success('添加成功',U('pop_index'));
+            }else{
+                $this->error('添加失败');
+            }
+        }else{
+            $this->display();
+        }
+    }
+    #删除绑定
+    public function pop_delete()
+    {
+        $id = I('id');
+        if(!$id){
+            $this->error('id不能为空');
+        }
+        $info = $this->pop->where('id='.$id)->find();
+        $res = $this->pop->where('id='.$id)->delete();
+        if($res){
+            $this->pop_log->add(array('sn'=>$info['sn'],'merchant_id'=>$info['merchant_id'],'add_time'=>time(),'action'=>2,'type'=>3));
+            $this->success('解绑成功',U('pop_index'));
         }else{
             $this->error('解绑失败');
         }

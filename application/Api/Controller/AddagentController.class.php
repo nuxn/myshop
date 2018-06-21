@@ -960,6 +960,7 @@ class  AddagentController extends ApibaseController
         if ($keywords) $map['_string'] = '(u.user_name like "%' . $keywords . '%")  OR (u.user_phone like "%' . $keywords . '%") OR (m.merchant_name like "%' . $keywords . '%")';
         if($this->userInfo['role_id'] == 2){
             $map['agent_id'] = $this->userId;
+            $map['m.mid'] = array('in','0,2');//只显示总店或者单店
         }else{
             if($this->userInfo['auth_all_merchants']){
                 $map['agent_id'] = M('merchants_users')->where(array('id'=>$this->userId))->getField("boss_id");

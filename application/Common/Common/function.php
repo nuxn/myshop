@@ -2864,12 +2864,8 @@ function rsa_sign($data, $privatekey)
         wordwrap($privatekey, 64, "\n", true) .
         "\n-----END RSA PRIVATE KEY-----";
 
-    $res = openssl_get_privatekey($res);
-    if(!$res){
-        return '您使用的私钥格式错误，请检查RSA私钥配置';
-    }
+    ($res) or die('您使用的私钥格式错误，请检查RSA私钥配置');
     openssl_sign($data, $sign, $res);
-    openssl_free_key($res);
     $sign = base64_encode($sign);
     return $sign;
 }
