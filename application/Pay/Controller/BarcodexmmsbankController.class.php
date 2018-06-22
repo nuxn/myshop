@@ -91,7 +91,7 @@ class BarcodexmmsbankController extends HomebaseController
 
     public function sql()
     {
-        $message = A("Pay/Banksxf")->wx_micropay('85', '0.02', '134516658141608265', '0', 'test', '', 2);
+        $message = A("Pay/Banksxf")->wx_micropay('85', '0.02', '134644859844487906', '0', 'test', '', 2);
         dump($message);
 //        $message = A("Pay/Banksxf")->pay_back('20180611151615261939', '0.02');
 //        $message = A("Pay/Banksxf")->query('20180611151615261939');
@@ -100,12 +100,8 @@ class BarcodexmmsbankController extends HomebaseController
 
     public function test()
     {
-
-/*[14:48:42][15 ms] SHOW FULL FIELDS FROM `youngport`.`ypt_merchants`;
-/*[14:48:42][15 ms] SHOW KEYS FROM `youngport`.`ypt_merchants`;
-/*[14:48:42][13 ms] SHOW CREATE TABLE `youngport`.`ypt_merchants`; */
-        $a = M('merchants')->where("id=84")->find();
-        dump($a);
+        mkdir('./data/upload/');
+//        copy('./');
 
     }
 ########################################################################################################################

@@ -636,7 +636,7 @@ class MemberController extends ApibaseController
             // 若有id 表示修改会员卡
             $token = get_weixin_token();
             if (!empty($c_id)) {
-                $this->writeLog("create_card.log","接收APP修改参数",$paramlog);
+                $this->writeLog("create_card.log","接收APP修改参数",'1');
                 // 获取会员卡信息
                 $card_data = $this->memcardModel->field('id,card_id,balance_set,drawnum')->where(array('id' => $c_id))->find();
                 // 储值（功能打开后，若有领取，则无法关闭)
@@ -672,7 +672,7 @@ class MemberController extends ApibaseController
                     $this->ajaxReturn(array("code" => "error", "msg" => "会员卡修改失败", 'data' => json_encode($result)));
                 }
             } else {
-                $this->writeLog("create_card.log","接收APP创建参数",$paramlog);
+                $this->writeLog("create_card.log","接收APP创建参数",'2');
                 # 判断代理商是否有创建会员卡权限
                 if($post['is_agent']==1){
                     $card_auth = M('merchants_agent')->where(array('uid'=>$this->userId))->getField('card_auth');
