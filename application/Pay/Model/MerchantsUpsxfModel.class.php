@@ -192,9 +192,13 @@ class MerchantsUpsxfModel extends CommonModel
         if($result['code'] == 'SXF0000'){
             $return = $result['respData'];
             if($return['bizCode'] == '0000'){
-                return array('code'=>'0000','msg'=>'订单已支付');
+                if($return['tranSts'] == 'SUCCESS'){
+                    return array('code'=>'0000','msg'=>'订单支付成功');
+                } else {
+                    return array('code'=>'0002','msg'=>'订单未支付:'.$return['tranSts']);
+                }
             } else {
-                return array('code'=>'0001','msg'=>$return['bizMsg']);
+                return array('code'=>'0003','msg'=>$return['bizMsg']);
             }
         } else {
             return array('code'=>'0001','msg'=>$result['msg']);
