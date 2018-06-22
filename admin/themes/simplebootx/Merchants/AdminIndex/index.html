@@ -55,6 +55,14 @@
             <option value="2" <if condition="$is_miniapp eq 2">selected</if>>开启</option>
             <option value="1" <if condition="$is_miniapp eq 1">selected</if>>未开启</option>
         </select>
+        &nbsp;&nbsp;
+        店铺类型:
+        <select name="store_type">
+            <option value="" selected>请选择</option>
+            <option value="1" <if condition="$store_type eq 1">selected</if>>分店总店</option>
+            <option value="2" <if condition="$store_type eq 2">selected</if>>单店</option>
+            <option value="3" <if condition="$store_type eq 3">selected</if>>分店</option>
+        </select>
         <br/><br/>
 
         添加时间：
@@ -80,6 +88,7 @@
             <th>开通服务</th>
             <th>开启小程序</th>
             <!--<th>洋仆淘预收款</th>-->
+            <th>同步总店进件信息</th>
             <th>帐号状态</th>
             <th>添加时间</th>
             <th width="120">{:L('ACTIONS')}</th>
@@ -124,7 +133,16 @@
                         开启
                     </if>
                 </td>
-              
+                <td>
+                    <if condition="$vo.mid gt 2">
+                        <select name="is_sync" id="is_sync_{$vo.id}" data-id="{$vo.id}" style="width: 50%">
+                            <option value="1" <if condition="$vo['is_sync'] eq 1">selected</if>>是</option>
+                            <option value="2" <if condition="$vo['is_sync'] eq 2">selected</if>>否</option>
+                        </select>
+                        <else/>
+                        总店或单店不可更改
+                    </if>
+                </td>
                 <!--<td>
                     <if condition="$vo['status'] eq 0">
                        <i class="fa fa-close fa-lg" id="id_{$vo.id}" onclick="exchange(1,'{$vo.id}')"></i>
@@ -243,6 +261,18 @@
             }else{
                 $("#show_all").val("显示所有收银员");
             }
+        });
+
+        $("select[name='is_sync']").change(function(){
+            var id = $(this).attr("data-id");
+            $.post('{:U("adminIndex/exchangeSync")}',{id:id},function (data) {
+                if(data.code==1){
+                    alert('修改成功');
+                } else {
+                    $("#is_sync_"+id).val(data.data);
+                    alert(data.msg);
+                }
+            });
         });
 
     });

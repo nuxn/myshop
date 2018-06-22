@@ -138,7 +138,10 @@ class  AdminServiceController extends  AdminbaseController
             $id = I("id");
             $addTime = I("addTime");//select
             $endTime = I("end_time");//选择的到期时间(时间段)
-            $mini_type = I("mini_type");//小程序类型
+            // $mini_type = I("mini_type");//小程序类型
+            $type = I('trade');   //开通行业   1=便利店  2=餐饮
+            $is_own = I('is_own');   //是否拥有独立小程序  1拥有  2=没有
+            $is_enter = I('is_enter');   //是否加入商圈版  1加入  2不加入
             if(empty($addTime)){
                 $this->error("请选择开通时长");
             }else if($addTime == "other" && empty($endTime)) {
@@ -152,39 +155,50 @@ class  AdminServiceController extends  AdminbaseController
                 }
                 if($addTime == "other"){
                     $data['end_time'] = strtotime($endTime)+86399;
+                }elseif($addTime == "zero"){
+                    $data['is_time']=0;
                 }else{
                     $over_time = date("Y-m-d H:i:s", $over_time);
                     $data['end_time'] = strtotime("$over_time + $addTime month");
                 }
-                $data['start_time'] = $over_time+1;
+                $data['start_time'] = strtotime($over_time)+1;
             }else{          /*未开通的用户*/
                 if($endTime && strtotime($endTime) < time()){
                     $this->error("到期时间不能小于当天",$_SERVER["HTTP_REFERER"]);
                 }
                 if($addTime == "other"){
                     $data['end_time'] = strtotime($endTime)+86399;
+                }elseif($addTime == "zero"){
+                    $data['is_time']=0;
                 }else{
                     $time = date("Y-m-d H:i:s", time());
                     $data['end_time'] = strtotime("$time + $addTime month");
                 }
                 $data['start_time'] = time();
             }
-            if ($mini_type) {
-                if ($mini_type==1||$mini_type==3) {
-                    $type=1;
-                }else if ($mini_type==2||$mini_type==4) {
-                    $type=2;
+            //小程序类型 1=多店版便利店  2=平台版点餐  3=单店版便利店  4=单店点餐
+            if($type==1){
+                if($is_own==1){
+                    $mini_type = 3;
+                }elseif($is_own==2){
+                    $mini_type = 1;
                 }
-            }else{
-                $type=1;
+            }elseif($type==2){
+                if($is_own==1){
+                    $mini_type = 4;
+                }elseif($is_own==2){
+                    $mini_type = 2;
+                }
             }
-            
             $data['add_time'] = time();
             $data['order_sn'] = date('YmdHis').$id.rand(1000000,9999999);
             $data['mid'] = $this->get_mch_uid($id);
             $data['type'] = $type;
-            $data['pay_type'] = 'admin';
+            $data['is_own'] = $is_own;
+            $data['is_enter'] = $is_enter;
             $data['remark'] = I("remark");
+            $data['price'] = I("price");
+            $data['pay_type'] = I("pay_type");
             $res = $this->miniappModel->add($data);
             if($res){
                 $mData = array('is_miniapp'=>'2','end_time'=>$data['end_time'],'mini_type'=>$mini_type,'is_open'=>'1');
@@ -204,10 +218,13 @@ class  AdminServiceController extends  AdminbaseController
             $this->userModel->where(array("u.id" => $uid));
             $this->userModel->join("LEFT JOIN __MINIAPP__ m ON u.id = m.mid");
             $this->userModel->join("LEFT JOIN __MERCHANTS__ mc ON u.id = mc.uid");
-            $field = 'mc.id,mc.merchant_name,m.end_time';
+            $field = 'mc.id,mc.merchant_name,m.end_time,m.is_time';
             $this->userModel->field($field);
             $this->userModel->order("m.id DESC");
             $data = $this->userModel->find();
+            if ($data['is_time']===null) {
+                $data['is_time']=1;
+            }
             $data['now'] = time();
             $data['end_time'] = intval($data['end_time']);
             $this->assign("data", $data);
