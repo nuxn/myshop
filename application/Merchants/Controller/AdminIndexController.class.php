@@ -1267,6 +1267,27 @@ class AdminIndexController extends AdminbaseController
 
     }
 
+    /**
+     * 改变分店是否同步 id=商户id
+     */
+    public function exchangeSync()
+    {
+        if (IS_POST) {
+            $id = I("id");
+            $is_sync = M("merchants")->where(array('id' => $id))->getField('is_sync');
+            if ($is_sync == 1) {
+                $res = M("merchants")->where(array('id' => $id))->setField('is_sync','2');
+            } else {
+                $res = M("merchants")->where(array('id' => $id))->setField('is_sync','1');
+            }
+            if($res){
+                $this->ajaxReturn(array('code' => '1', 'msg' => '修改成功'));
+            }else{
+                $this->ajaxReturn(array('code' => '0', 'msg' => '修改失败','data' => $is_sync));
+            }
+        }
+    }
+
     public function merchants_logs()
     {
         $data = M('merchants_logs m')
@@ -1564,6 +1585,14 @@ class AdminIndexController extends AdminbaseController
                 $uid=M("merchants")->where(array('id'=>$mid))->getField("uid");
                 if($uid)M("merchants_users")->where(array('id'=>$uid))->save(array("user_name"=>$user_name));
                 M("merchants")->where("id=$mid")->save(array("merchant_jiancheng"=>$user_name));
+            }
+        }
+
+        $down_mer_ids = $this->merchants->where(array('mid'=>$merchant_id))->getField('id',true);
+        $store_type = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
+        if($down_mer_ids && $store_type == 0 && $merchant_id != 2){
+            foreach ($down_mer_ids as &$v) {
+                $this->uptosame1($v);
             }
         }
 
@@ -1938,54 +1967,82 @@ class AdminIndexController extends AdminbaseController
     public function uptosame1($id)
     {
         $small_merchant =$this->merchants->where(array('id'=>$id))->find();
-        $big_merchant =$this->merchants->where(array('id'=>$small_merchant['mid']))->find();
-        $big_cate =$this->cates->where(array('merchant_id'=>$big_merchant['id'],'status'=>1,'checker_id'=>0))->find();
+        //商户是总店 或者 商户是单店模式 或者 商户设置不与总店同步
+        if($small_merchant['mid'] == 0 || $small_merchant['mid'] == 2 || $small_merchant['is_sync'] == 2) return;
 
-        $cate_c_id=$this->cates->order("id desc")->getField("id")+1;
-        $seven = "000000".$cate_c_id;
-        $no_number = "YPTTQ".substr($seven,-7);
-        $path_url = "data/upload/pay/".$no_number.".png";
-        $cate_m['id']=$cate_c_id;
-        $cate_m['merchant_id']=$id;
-        $cate_m['checker_id'] = '';
-        $cate_m['no_number'] = $no_number;
-        $cate_m['cate_name'] = "默认台签";
-        $cate_m['barcode_img'] = $path_url;
-        $cate_m['update_time'] = null;
-        $cate_m['create_time'] = time();
+        $small_cate = $this->cates->where(array('merchant_id'=>$small_merchant['id']))->find();
+        $big_merchant = $this->merchants->where(array('id'=>$small_merchant['mid']))->find();
+        $big_cate = $this->cates->where(array('merchant_id'=>$big_merchant['id'],'status'=>1,'checker_id'=>0))->find();
+        #如果商户已经有台签，改台签进件信息
+        if($small_cate){
+            $cate_m['name'] = $big_cate['name'];
+            $cate_m['cate_name'] = $big_cate['cate_name'];
+            $cate_m['wx_name'] = $big_cate['wx_name'];
+            $cate_m['qz_number'] = $big_cate['qz_number'];
+            $cate_m['alipay_partner'] = $big_cate['alipay_partner'];
+            $cate_m['alipay_private_key'] = $big_cate['alipay_private_key'];
+            $cate_m['alipay_public_key'] = $big_cate['alipay_public_key'];
+            $cate_m['wx_appid'] = $big_cate['wx_appid'];
+            $cate_m['wx_mchid'] = $big_cate['wx_mchid'];
+            $cate_m['wx_key'] = $big_cate['wx_key'];
+            $cate_m['wx_appsecret'] = $big_cate['wx_appsecret'];
+            $cate_m['ali_bank'] = $big_cate['ali_bank'];
+            $cate_m['wx_bank'] = $big_cate['wx_bank'];
+            $cate_m['is_top'] = $big_cate['is_top'];
+            $cate_m['is_test'] = $big_cate['is_test'];
+            $cate_m['is_cash'] = $big_cate['is_cash'];
+            $cate_m['status'] = $big_cate['status'];
+            $cate_m['update_time'] = time();
+            $this->cates->where(array('id'=>$small_cate['id']))->save($cate_m);
+            $this->sametointo($id,$big_merchant['id'],$big_cate['wx_bank'],$big_cate['ali_bank']);
+        }else{
+            $cate_c_id=$this->cates->order("id desc")->getField("id")+1;
+            $seven = "000000".$cate_c_id;
+            $no_number = "YPTTQ".substr($seven,-7);
+            $path_url = "data/upload/pay/".$no_number.".png";
+            $cate_m['id']=$cate_c_id;
+            $cate_m['merchant_id']=$id;
+            $cate_m['checker_id'] = '';
+            $cate_m['no_number'] = $no_number;
+            $cate_m['cate_name'] = "默认台签";
+            $cate_m['barcode_img'] = $path_url;
+            $cate_m['update_time'] = null;
+            $cate_m['create_time'] = time();
 
-        $cate_m['jianchen'] = $small_merchant['merchant_name'];
-        $cate_m['name'] = $big_cate['name'];
-        $cate_m['cate_name'] = $big_cate['cate_name'];
-        $cate_m['wx_name'] = $big_cate['wx_name'];
-        $cate_m['qz_number'] = $big_cate['qz_number'];
+            $cate_m['jianchen'] = $small_merchant['merchant_name'];
+            $cate_m['name'] = $big_cate['name'];
+            $cate_m['cate_name'] = $big_cate['cate_name'];
+            $cate_m['wx_name'] = $big_cate['wx_name'];
+            $cate_m['qz_number'] = $big_cate['qz_number'];
 
-        $cate_m['alipay_partner'] = $big_cate['alipay_partner'];
-        $cate_m['alipay_private_key'] = $big_cate['alipay_private_key'];
-        $cate_m['alipay_public_key'] = $big_cate['alipay_public_key'];
-        $cate_m['wx_appid'] = $big_cate['wx_appid'];
-        $cate_m['wx_mchid'] = $big_cate['wx_mchid'];
-        $cate_m['wx_key'] = $big_cate['wx_key'];
-        $cate_m['wx_appsecret'] = $big_cate['wx_appsecret'];
-        $cate_m['ali_bank'] = $big_cate['ali_bank'];
-        $cate_m['wx_bank'] = $big_cate['wx_bank'];
-        $cate_m['is_top'] = $big_cate['is_top'];
-        $cate_m['is_test'] = $big_cate['is_test'];
-        $cate_m['is_cash'] = $big_cate['is_cash'];
-        $cate_m['status'] = $big_cate['status'];
+            $cate_m['alipay_partner'] = $big_cate['alipay_partner'];
+            $cate_m['alipay_private_key'] = $big_cate['alipay_private_key'];
+            $cate_m['alipay_public_key'] = $big_cate['alipay_public_key'];
+            $cate_m['wx_appid'] = $big_cate['wx_appid'];
+            $cate_m['wx_mchid'] = $big_cate['wx_mchid'];
+            $cate_m['wx_key'] = $big_cate['wx_key'];
+            $cate_m['wx_appsecret'] = $big_cate['wx_appsecret'];
+            $cate_m['ali_bank'] = $big_cate['ali_bank'];
+            $cate_m['wx_bank'] = $big_cate['wx_bank'];
+            $cate_m['is_top'] = $big_cate['is_top'];
+            $cate_m['is_test'] = $big_cate['is_test'];
+            $cate_m['is_cash'] = $big_cate['is_cash'];
+            $cate_m['status'] = $big_cate['status'];
 
-        $this->add_cate_png($cate_c_id,$no_number);
+            $this->add_cate_png($cate_c_id,$no_number);
 
-        #2018/05/22 同步到进件表
-        $this->sametointo($id,$big_merchant['id'],$big_cate['wx_bank'],$big_cate['ali_bank']);
-
-        if($this->cates->add($cate_m)){
-            $big_merchant_rate =M("merchants_rate")->where(array('merchants_id'=>$big_merchant['id']))->find();
-            unset($big_merchant_rate['id']);
-            $big_merchant_rate['merchants_id'] = $id;
-            $big_merchant_rate['add_time'] = time();
-            M("merchants_rate")->add($big_merchant_rate);
+            #2018/05/22 同步到进件表
+            $this->sametointo($id,$big_merchant['id'],$big_cate['wx_bank'],$big_cate['ali_bank']);
+            if($this->cates->add($cate_m)){
+                $big_merchant_rate =M("merchants_rate")->where(array('merchants_id'=>$big_merchant['id']))->find();
+                unset($big_merchant_rate['id']);
+                $big_merchant_rate['merchants_id'] = $id;
+                $big_merchant_rate['add_time'] = time();
+                M("merchants_rate")->add($big_merchant_rate);
+            }
         }
+
+
     }
 
     public function uptosame()
