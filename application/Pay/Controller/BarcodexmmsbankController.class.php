@@ -100,12 +100,8 @@ class BarcodexmmsbankController extends HomebaseController
 
     public function test()
     {
-
-/*[14:48:42][15 ms] SHOW FULL FIELDS FROM `youngport`.`ypt_merchants`;
-/*[14:48:42][15 ms] SHOW KEYS FROM `youngport`.`ypt_merchants`;
-/*[14:48:42][13 ms] SHOW CREATE TABLE `youngport`.`ypt_merchants`; */
-        $a = M('merchants')->where("id=84")->find();
-        dump($a);
+        mkdir('./data/upload/');
+//        copy('./');
 
     }
 ########################################################################################################################
