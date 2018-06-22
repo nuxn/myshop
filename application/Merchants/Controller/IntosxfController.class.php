@@ -110,7 +110,7 @@ class IntosxfController extends AdminbaseController
     public function getIdtTyps()
     {
         $idtTypCode = I('data');
-        $result = M('mcc_sxf')->field('mccCd,mccNm')->where(array('type'=>$idtTypCode))->select();
+        $result = M('mcc_sxf')->field('mccCd as mcc_cd,mccNm as mcc_name')->where(array('type'=>$idtTypCode))->select();
         $this->ajaxReturn(array('code' => '0000', 'data' => $result));
     }
 

@@ -427,7 +427,7 @@
                 if (res.code == '0000') {
                     var _str = '<option value=""></option>';
                     $.each(res.data, function (k, v) {
-                        _str += '<option value="' + v.mccCd + '">' + v.mccNm + '</option>'
+                        _str += '<option value="' + v.mcc_cd + '">' + v.mcc_name + '</option>'
                     })
                     $("select[name=mccCd]").html(_str);
                     form.render();
