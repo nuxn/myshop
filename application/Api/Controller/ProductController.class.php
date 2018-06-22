@@ -587,12 +587,15 @@ class ProductController extends ApibaseController
             $status = I('status');
             $terminal = I('terminal');
             if(!$terminal) $this->retError('参数为空!');
-            if ($this->goodsModel->where(array('goods_id' => $goods_id,'trade'=>1,'put_xcx'=>1))->find()) {
-                if(!M('goods_desc_img')->where(array('goods_id'=>$goods_id))->find()){
-                    $this->retError('缺少图文描述，不能上架!');
+            if ($terminal=='xcx'&&$status==2) {
+                if ($this->goodsModel->where(array('goods_id' => $goods_id,'trade'=>1,'put_xcx'=>1))->find()) {
+                    if(!M('goods_desc_img')->where(array('goods_id'=>$goods_id))->find()){
+                        $this->retError('缺少图文描述，不能上架!');
+                    }
+
                 }
-                
             }
+
             if ($status==2) {
                 if(!$this->goodsModel->where(array('goods_id' => $goods_id))->getField('goods_img1')){
                     $this->retError('缺少商品图片，不能上架!');
