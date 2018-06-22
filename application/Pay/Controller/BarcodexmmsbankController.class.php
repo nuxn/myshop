@@ -93,7 +93,7 @@ class BarcodexmmsbankController extends HomebaseController
     {
         $message = A("Pay/Banksxf")->wx_micropay('85', '0.02', '134516658141608265', '0', 'test', '', 2);
         dump($message);
-//        $message = A("Pay/Banksxf")->pay_back('20180611151615261939', '0.02');
+//        $message = A("Pay/Banksxf")->pay_back('20180611151615261939', '0.02');git
 
 //        $message = A("Pay/Banksxf")->query('20180614141115624134');
 //        dump($message);
