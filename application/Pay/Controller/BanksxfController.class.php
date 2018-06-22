@@ -44,6 +44,7 @@ class BanksxfController extends HomebaseController
         $this->refund_notify_url = 'https://sy.youngport.com.cn/Pay/Banksxf/refund_notify';
     }
 
+    // 微信付款界面
     public function qr_weixipay()
     {
         //这里直接获得openid;
@@ -60,6 +61,7 @@ class BanksxfController extends HomebaseController
         }
     }
 
+    // 支付宝付款界面
     public function qr_alipay()
     {
         if (strpos($_SERVER['HTTP_USER_AGENT'], 'AlipayClient') !== false) {
@@ -73,11 +75,13 @@ class BanksxfController extends HomebaseController
         }
     }
 
+    // 或取微信会员id
     private function get_costomer_id($sub_openid, $merchant_id)
     {
         $this->customer_id = D("Api/ScreenMem")->add_member($sub_openid, $merchant_id);
     }
 
+    // 微信扫码支付
     public function wx_pay()
     {
         // 先获取openid
@@ -128,6 +132,7 @@ class BanksxfController extends HomebaseController
         die;
     }
 
+    // 双屏扫码支付
     public function two_wx_pay()
     {
         $this->order_id = I("order_id");
@@ -182,7 +187,8 @@ class BanksxfController extends HomebaseController
     public function payPag($res_arr)
     {
     }
-    
+
+    // 微信公众号支付请求
     private function wx_jspay()
     {
         $this->sxfModel->setParameters('ordNo', $this->remark);      // 商户订单号
@@ -197,6 +203,7 @@ class BanksxfController extends HomebaseController
         return $this->sxfModel->getPayInfo();
     }
 
+    // 支付宝扫码支付
     public function qr_to_alipay()
     {
         $this->cate_id = I("seller_id");
@@ -227,6 +234,7 @@ class BanksxfController extends HomebaseController
         }
     }
 
+    // 支付宝扫码支付请求
     private function ali_jspay()
     {
         $this->sxfModel->setParameters('mno', $this->mno);        // 商户入驻返回的商户编号
@@ -262,6 +270,7 @@ class BanksxfController extends HomebaseController
         return $this->pay_model->add($add_data);
     }
 
+    // 微信付款码支付
     public function wx_micropay($mch_id, $price, $auth_code, $checker_id, $jmt_remark, $order_sn, $mode)
     {
         $this->merchant_id = $mch_id;
@@ -287,6 +296,7 @@ class BanksxfController extends HomebaseController
         }
     }
 
+    // 支付宝付款码支付
     public function ali_micropay($mch_id, $price, $auth_code, $checker_id, $jmt_remark, $order_sn, $mode)
     {
         $this->merchant_id = $mch_id;
@@ -355,6 +365,7 @@ class BanksxfController extends HomebaseController
         }
     }
 
+    // 支付成功回到
     public function notify()
     {
         header("Content-type:application/json;charset=utf-8");
@@ -370,7 +381,7 @@ class BanksxfController extends HomebaseController
                 $save['paytime'] = time();
                 $save['status'] = 1;
                 $save['buyers_account'] = $buyerId;
-                if (bccomp($orderData['price'], $notifyData->amt, 3) === 0) {
+                if (bccomp($orderData['price']*100, $notifyData->amt*100, 3) === 0) {
                     get_date_dir($this->path,'notify','支付成功', $json_str);
                     $this->pay_model->where(array('id' => $orderData['id']))->save($save);
                     if ($orderData['paystyle_id'] == '1' && $orderData['order_id'] != 0) {
@@ -395,6 +406,7 @@ class BanksxfController extends HomebaseController
         }
     }
 
+    // 退款回调
     public function refund_notify()
     {
         $json_str = file_get_contents('php://input', 'r');
@@ -402,13 +414,21 @@ class BanksxfController extends HomebaseController
         get_date_dir($this->path,'refund_notify','数据1', json_encode($_REQUEST));
     }
 
+    // 进件回调
     public function mer_notify()
     {
         $json_str = file_get_contents('php://input', 'r');
         get_date_dir($this->path,'mer_notify','数据', $json_str);
-        get_date_dir($this->path,'mer_notify','数据1', json_encode($_REQUEST));
+        $data = json_decode($json_str);
+        M('merchants_upsxf')->where(array('task_code'=>$data->taskCode))->save(array('mno'=>$data->mno));
     }
-    
+
+    /**
+     * 退款
+     * @param $remark   系统订单号
+     * @param $price    退款金额
+     * @return array
+     */
     public function pay_back($remark, $price)
     {
         $pay = $this->pay_model->field('merchant_id,transId,price')->where(array("remark" => $remark))->find();
@@ -433,6 +453,13 @@ class BanksxfController extends HomebaseController
         }
     }
 
+    /**
+     * 退款请求
+     * @param $remark   系统订单号
+     * @param $price    订单退款金额
+     * @param $tran_id  第三方（随行付）订单号
+     * @return mixed
+     */
     private function refund($remark, $price, $tran_id)
     {
         $this->sxfModel->setParameters('ordNo', getOrderNumber());
@@ -445,6 +472,11 @@ class BanksxfController extends HomebaseController
         return $this->sxfModel->refund();
     }
 
+    /**
+     * 查询订单信息
+     * @param $remark   系统订单号
+     * @return mixed
+     */
     public function query($remark)
     {
         $mno = '836102376310006';
@@ -454,6 +486,10 @@ class BanksxfController extends HomebaseController
         return $this->sxfModel->query();
     }
 
+    /**
+     * 错误信息提示页面
+     * @param string $msg 提示信息
+     */
     public function alert_err($msg = '网络错误，请稍后再试')
     {
         $this->assign('err_msg', "$msg");
