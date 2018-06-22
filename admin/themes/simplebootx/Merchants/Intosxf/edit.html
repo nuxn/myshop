@@ -32,6 +32,13 @@
                         </div>
 
                         <div class="layui-form-item">
+                            <label class="layui-form-label">商户费率(%)</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="qrcodeRate" lay-verify="required" value="{$data.qrcodeRate}"
+                                       autocomplete="off" class="layui-input">默认0.38
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
                             <label class="layui-form-label">商户简称</label>
                             <div class="layui-input-block">
                                 <input type="text" name="mecDisNm" lay-verify="required" value="{$data.mecDisNm}"
@@ -359,7 +366,6 @@
                 shade: [0.3, '#000'] //0.1透明度的白色背景
             });
             $.post("{:U('add')}", send, function (res) {
-                layer.close(index);
                 if (res.code == '0000') {
                     location.href = "{:U('index')}";
                 } else {
@@ -368,8 +374,8 @@
                         , content: res.msg
                     });
                 }
+                layer.close(index);
             });
-            layer.close(index);
             return false;
         });
         // 监听选择框

@@ -225,7 +225,7 @@ class BanksxfController extends HomebaseController
             // 请求服务器获取js支付参数
             $res_arr = $this->ali_jspay();
             if($res_arr['code'] == '0000'){
-                header("Location: $res_arr[url]");
+                header("Location:" . $res_arr['url']);
             } else {
                 $this->alert_err($res_arr['msg']);
             }
