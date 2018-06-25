@@ -2840,22 +2840,28 @@ function withdraw_status($status)
 }
 
 
-function get_sign_content($params)
+function get_sign_content($para)
 {
-    ksort($params);
+    ksort($para);
 
-    $stringToBeSigned = "";
-    $i = 0;
-    foreach ($params as $k => $v) {
-        if ($i == 0) {
-            $stringToBeSigned .= "$k" . "=" . "$v";
-        } else {
-            $stringToBeSigned .= "&" . "$k" . "=" . "$v";
+    $params = array();
+    foreach($para as $key => $value){
+
+        if(is_array($value)){
+
+            $value=stripslashes(json_encode($value));
+
         }
-        $i++;
+
+        $params[] = $key .'='. $value ;
+
     }
-    unset ($k, $v);
-    return $stringToBeSigned;
+
+    $data = implode("&", $params);
+
+
+
+    return $data;
 }
 
 function rsa_sign($data, $privatekey)
