@@ -250,12 +250,19 @@ class  WghlController extends ApibaseController
             ->where(array('merchant_id'=>$this->merchant_id,'status'=>1,'wx_remark|new_order_sn|transId'=>$refunds_code))
             ->field('remark,price')->find();
         if(!$pay_info){
-            get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/wghl/', 'refunds', '退款未查到该笔订单: ','参数', json_encode($this->params));
+            get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/wghl/', 'refunds', '退款未查到该笔订单: ','参数:'. json_encode($this->params));
             $this->succ(array("code" => "error", "msg" => "未查到该笔订单"));
         }
-        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/wghl/', 'refunds', '退款: ','参数', json_encode($this->params));
-        request_post('http://sy.youngport.com.cn/Api/Pay/pay_back',array("mid"=>$this->merchant_id,'style'=>'2','remark'=>$pay_info['remark'],'price_back'=>$pay_info['price']*100,'sign'=>'5e022b44a15a90c0'));
-        //$a = request_post('http://sy.youngport.com.cn/Api/Base/pay_back',array("mid"=>$this->merchant_id,'style'=>'2','remark'=>$pay_info['remark'],'price_back'=>$pay_info['price']*100,'sign'=>'5e022b44a15a90c01'));
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/wghl/', 'refunds', 'get_params', json_encode($this->params));
+        //request_post('http://sy.youngport.com.cn/Api/Pay/pay_back',array("mid"=>$this->merchant_id,'style'=>'2','remark'=>$pay_info['remark'],'price_back'=>$pay_info['price']*100,'sign'=>'5e022b44a15a90c0'));
+        $res = request_post('http://sy.youngport.com.cn/Api/Base/pay_back',array("mid"=>$this->merchant_id,'style'=>'2','remark'=>$pay_info['remark'],'price_back'=>$pay_info['price']*100,'sign'=>'5e022b44a15a90c01'));
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/wghl/', 'refunds', 'res_params', $res);
+        $res = json_decode($res,true);
+        if($res['code']=='success'){
+            $this->succ(array('code'=>'success','msg'=>'退款成功'));
+        }else{
+            $this->succ(array('code'=>'success','msg'=>'退款失败'));
+        }
     }
 
     //扫码收款【商户被扫】
