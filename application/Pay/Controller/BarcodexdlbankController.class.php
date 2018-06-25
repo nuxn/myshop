@@ -711,7 +711,7 @@ class BarcodexdlbankController extends HomebaseController
                     $this->norify_succ();
                 }
                 $remark_mer = $result_arr['logNo'];
-                $orderData = $this->payModel->where(array('remark_mer' => $remark_mer))->find();
+                $orderData = $this->payModel->where(array('remark_mer' => $remark_mer))->getField('id');
                 if($orderData){
                     $this->writlog('_notify.log', ' 已存在该电子立牌订单:'.$order_sn);
                     $this->norify_succ();
