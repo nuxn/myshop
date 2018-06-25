@@ -48,6 +48,16 @@ class BarcodexmmsbankController extends HomebaseController
         dump($res);
     }
 
+
+    function my_json_encode($arr)
+    {
+//convmap since x char codes so it takes all multibyte codes (above ASCII ). So such characters are being "hidden" from normal json_encoding
+        array_walk_recursive($arr, function (&$item, $key) {
+            if (is_string($item)) $item = mb_encode_numericentity($item, array(x, xffff, xffff), 'UTF-');
+        });
+        return mb_decode_numericentity(json_encode($arr), array(x, xffff, xffff), 'UTF-');
+    }
+
     public function import_excel($file){
         ini_set('max_execution_time', '0');
         Vendor('PHPExcel.PHPExcel');

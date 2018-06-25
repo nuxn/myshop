@@ -41,6 +41,7 @@ class BanksxfController extends HomebaseController
         $this->pay_model = M('pay');
         $this->sxfModel = D('Pay/Merchants_upsxf');
         $this->notify_url = 'https://sy.youngport.com.cn/notify/sxf_notify.php';
+//        $this->notify_url = 'sxf_notify.php';
         $this->refund_notify_url = 'https://sy.youngport.com.cn/Pay/Banksxf/refund_notify';
     }
 

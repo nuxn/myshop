@@ -27,8 +27,8 @@ class MerchantsUpsxfModel extends CommonModel
         parent::__construct();
 //        $this->microUrl  = 'https://icm-test.suixingpay.com/management/qr/reverseScan';
         $this->microUrl  = 'https://icm-management.suixingpay.com/management/qr/reverseScan';
-//        $this->scanUrl   = 'https://icm-test.suixingpay.com/management/qr/activeScan';
-        $this->scanUrl   = 'https://icm-management.suixingpay.com/management/qr/activeScan';
+        $this->scanUrl   = 'https://icm-test.suixingpay.com/management/qr/activeScan';
+//        $this->scanUrl   = 'https://icm-management.suixingpay.com/management/qr/activeScan';
 //        $this->jspayUrl  = 'https://icm-test.suixingpay.com/management/qr/jsapiScan';
         $this->jspayUrl  = 'https://icm-management.suixingpay.com/management/qr/jsapiScan';
 //        $this->refundUrl = 'https://icm-test.suixingpay.com/management/qr/refund';
@@ -37,14 +37,16 @@ class MerchantsUpsxfModel extends CommonModel
         $this->queryUrl  = 'https://icm-management.suixingpay.com/management/qr/query';
 
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/Banksxf/';
-        $this->private_key = "MIICXAIBAAKBgQDf3b7jHPeK4lzFcxtEQOjPx6UZ6jjIQJADqvoS0Sg/7fr27H732zgxMCqTcMMrgfqAcb2cNu4pNpcN/vvtYZAvIQMahv5ymI/la00HOeNcZpw6GzeExHo7AL+W33lXs2OTTPcIm1m8M1KKcJn0XPF3js8wA12DiyCcQxMOA38FAwIDAQABAoGBAM5KoOTYhKRPA/5PnAjBZ8hQySugUsL1+7/lhpxgcR64RlPUiwwLzzRElndXqgIlvJkwNvIFDGKeE4SqO6z8AsgxdYudM6kSMKjROopKzFBx0Mjk6VGBi6c/Lgpdv/xDu7qN+Dzf8ovI23dGLnLAFGuzWPmJUM8Skx0N7Sq2nEoBAkEA+9KNldJ2REYbuGp6NBWUtUenyTrezzejlxqArfKHc4NYCknpCkD3xrDhOn+qAmFX29Hq5JVX0fD4VHBV7nZfIQJBAOOUd5DmPIiJ+Fp2dYh4yIxlLUXe+2//ts2PenRbVH1bpMllWps9I4hOgj1elbZDkaTLXXWNXbqZ4zUG7PfxE6MCQGL8O71VsjlaGZFfAVQx23d6iCCYbHallz9RIp29hLLKQTQiI2Ftcjf+1TmqbwhqfR+iHyPk9FVI1ERUt+J5UyECQFCzrVKs0np4sqEhsLwcWMGwf0VvtSoaO/DZGEt6t5NclCr2zhKOs7L6ZCTvDZf8jgEqPJIa90ncmD2NnyqtSpECQBQldmr+fMfYSP40PfoqQ4DxjFnq4HjbnzSr+8zi9tP/W7zUdEy+0Mi4Ufnpy4l4wIzqso4SV44V8UJe1rSFmWg=";
+        // 生产
+//        $this->private_key = "MIICXAIBAAKBgQDf3b7jHPeK4lzFcxtEQOjPx6UZ6jjIQJADqvoS0Sg/7fr27H732zgxMCqTcMMrgfqAcb2cNu4pNpcN/vvtYZAvIQMahv5ymI/la00HOeNcZpw6GzeExHo7AL+W33lXs2OTTPcIm1m8M1KKcJn0XPF3js8wA12DiyCcQxMOA38FAwIDAQABAoGBAM5KoOTYhKRPA/5PnAjBZ8hQySugUsL1+7/lhpxgcR64RlPUiwwLzzRElndXqgIlvJkwNvIFDGKeE4SqO6z8AsgxdYudM6kSMKjROopKzFBx0Mjk6VGBi6c/Lgpdv/xDu7qN+Dzf8ovI23dGLnLAFGuzWPmJUM8Skx0N7Sq2nEoBAkEA+9KNldJ2REYbuGp6NBWUtUenyTrezzejlxqArfKHc4NYCknpCkD3xrDhOn+qAmFX29Hq5JVX0fD4VHBV7nZfIQJBAOOUd5DmPIiJ+Fp2dYh4yIxlLUXe+2//ts2PenRbVH1bpMllWps9I4hOgj1elbZDkaTLXXWNXbqZ4zUG7PfxE6MCQGL8O71VsjlaGZFfAVQx23d6iCCYbHallz9RIp29hLLKQTQiI2Ftcjf+1TmqbwhqfR+iHyPk9FVI1ERUt+J5UyECQFCzrVKs0np4sqEhsLwcWMGwf0VvtSoaO/DZGEt6t5NclCr2zhKOs7L6ZCTvDZf8jgEqPJIa90ncmD2NnyqtSpECQBQldmr+fMfYSP40PfoqQ4DxjFnq4HjbnzSr+8zi9tP/W7zUdEy+0Mi4Ufnpy4l4wIzqso4SV44V8UJe1rSFmWg=";
 
-//        $this->private_key = "MIICXAIBAAKBgQC+2v20Ci5VLz7r9si0AuYz3wFLWLE2Vucr1qTWpUY7smlDycOaa/WpasvKssg5lUdgK62JHvFQF2UTqZ2gBm3+atpCUvJFVC29OH4cah7qg0ryUgphEroDsas+zFjQf46EhkE37hem+UhNPcSnMahta+Jnusqftgj2fuHBUaXtzwIDAQABAoGAXC3e3ScRq7ju9f6yfybrUmBB+scyiCE+89BuuvEGU+zepIv9ekbsVtAq75Kb3Bv6ZjuSTCjyuhEik3WXmOOiGapaBmaXl9kkx0UtQsfjpV8dQIAGGskPkn5fkZGFzwmG5VB46B2a1kuR/OpNojIS7Z6Kd+32+KVfKcn1xLH1mykCQQDqBuBqPPwMk3wrXmPXrzZ7li3mO0K4SZTDKT2xfe6rGOprLGCxaXp01OOhWxmXEeW+I1P0b6qL8V+HgzjZjNtDAkEA0MZvoPyJC5Y09/ZSBM0S2izntJ4kGB39rASxpo0CXTDLCIz6k35/abwgCOmX9V8XXnx4og76FDdp3DTNp02shQJBAMUPj07GFXM9iZQ3QhlvN5BvkCzK/86QXwzLIGDh6uP18gbW8oDRkcTpMtg/DthPwMYPl3U/xjtav5crXuaJnmMCQCO6AXpMHOulrbTNKyX1Lge17YTEFyslXrakKv50XPYzllsFPRAmcolWjyjXSJDN0AL0S/R3maYCAZSUWKkLqr0CQGZ2zZVJn4NLv3r9uwJMUljQr+5CoToDp7eahWgN9vO389H0u0Kbhgg0326B4h7DwVl20w7qVwkpnWqTLwz/yqY=";
+        // 测试
+        $this->private_key = "MIICXAIBAAKBgQC+2v20Ci5VLz7r9si0AuYz3wFLWLE2Vucr1qTWpUY7smlDycOaa/WpasvKssg5lUdgK62JHvFQF2UTqZ2gBm3+atpCUvJFVC29OH4cah7qg0ryUgphEroDsas+zFjQf46EhkE37hem+UhNPcSnMahta+Jnusqftgj2fuHBUaXtzwIDAQABAoGAXC3e3ScRq7ju9f6yfybrUmBB+scyiCE+89BuuvEGU+zepIv9ekbsVtAq75Kb3Bv6ZjuSTCjyuhEik3WXmOOiGapaBmaXl9kkx0UtQsfjpV8dQIAGGskPkn5fkZGFzwmG5VB46B2a1kuR/OpNojIS7Z6Kd+32+KVfKcn1xLH1mykCQQDqBuBqPPwMk3wrXmPXrzZ7li3mO0K4SZTDKT2xfe6rGOprLGCxaXp01OOhWxmXEeW+I1P0b6qL8V+HgzjZjNtDAkEA0MZvoPyJC5Y09/ZSBM0S2izntJ4kGB39rASxpo0CXTDLCIz6k35/abwgCOmX9V8XXnx4og76FDdp3DTNp02shQJBAMUPj07GFXM9iZQ3QhlvN5BvkCzK/86QXwzLIGDh6uP18gbW8oDRkcTpMtg/DthPwMYPl3U/xjtav5crXuaJnmMCQCO6AXpMHOulrbTNKyX1Lge17YTEFyslXrakKv50XPYzllsFPRAmcolWjyjXSJDN0AL0S/R3maYCAZSUWKkLqr0CQGZ2zZVJn4NLv3r9uwJMUljQr+5CoToDp7eahWgN9vO389H0u0Kbhgg0326B4h7DwVl20w7qVwkpnWqTLwz/yqY=";
 
         $this->public_key = '';
         $this->requestParams = array(
-//            'orgId' => '07296653',           // 洋仆淘机构号唯一
-            'orgId' => '65554373',           // 洋仆淘机构号唯一
+            'orgId' => '07296653',           // 洋仆淘机构号唯一
+//            'orgId' => '65554373',           // 洋仆淘机构号唯一
             'version' => '1.0',             // 版本
             'signType' => 'RSA',            // 签名方法
         );
@@ -52,7 +54,7 @@ class MerchantsUpsxfModel extends CommonModel
 
     private function getSign()
     {
-        $string = get_sign_content($this->requestParams);
+        $string = $this->get_sign_content($this->requestParams);
         $sign = rsa_sign($string, $this->private_key);
         return $sign;
     }
@@ -91,7 +93,7 @@ class MerchantsUpsxfModel extends CommonModel
     {
         $this->requestParams['reqId'] = md5(getOrderNumber());    // 请求唯一编号
         $this->requestParams['timestamp'] = date('YmdHis');    // 请求时间
-        $this->requestParams['reqData'] = json_encode($this->parameters);
+        $this->requestParams['reqData'] = $this->parameters;
         $this->requestParams['sign'] = $this->getSign();
         $send = json_encode($this->requestParams);
 
@@ -104,6 +106,7 @@ class MerchantsUpsxfModel extends CommonModel
 
         return json_decode($result, true);
     }
+
 
     public function setParameters($key, $val)
     {
@@ -212,6 +215,48 @@ class MerchantsUpsxfModel extends CommonModel
         } else {
             return array('code'=>'0001','msg'=>$result['msg']);
         }
+    }
+
+    public function get_sign_content($para)
+    {
+        $res = $this->argSort($para);
+        return $this->createLinkstring($res);
+    }
+
+
+    function createLinkstring($para) {
+
+        $params = array();
+
+        foreach($para as $key => $value){
+
+            if(is_array($value)){
+
+                $value=stripslashes(json_encode($value,JSON_UNESCAPED_UNICODE));
+
+            }
+
+            $params[] = $key .'='. $value ;
+
+        }
+
+        $data = implode("&", $params);
+
+
+        get_date_dir($this->path,'sign','字符串', $data);
+
+        return $data;
+
+    }
+
+    function argSort($para) {
+
+        ksort($para);
+
+        // reset($para);
+
+        return $para;
+
     }
 
 

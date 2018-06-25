@@ -82,9 +82,9 @@ class MerchantsUpsxfModel extends CommonModel
     {
         $this->requestParams['reqId'] = md5(getOrderNumber());    // 请求唯一编号
         $this->requestParams['timestamp'] = date('YmdHis');    // 请求时间
-        $this->requestParams['reqData'] = json_encode($this->parameters);
+        $this->requestParams['reqData'] = urlencode(urldecode(json_encode($this->parameters)));
         $this->requestParams['sign'] = $this->getSign();
-        $send = json_encode($this->requestParams);
+        $send = urldecode(json_encode($this->requestParams));
 
         $result = $this->requestPost($url,$send);
         if($file_name){
@@ -102,7 +102,9 @@ class MerchantsUpsxfModel extends CommonModel
 
     public function setInfoParams($val)
     {
-        $this->parameters = $val;
+        foreach ($val as $key => $va) {
+            $this->parameters[$key] = urlencode($va);
+        }
     }
 
     public function batchFeedInfo()
