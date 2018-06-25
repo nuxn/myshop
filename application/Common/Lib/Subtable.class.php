@@ -1,14 +1,22 @@
 <?php
 /**
  * 分表
- * 检查当前表是否存在
- * 存在返回表名，不存在插入返回表名
+ * Created by PhpStorm.
+ * User: Joan
+ * Date: 2018/6/20
+ * Time: 12:26
  */
 
 namespace Common\Lib;
 
 define('TABLE_ID', '1807');# 分表起始日期
 
+/**
+ * 检查当前表是否存在
+ * 存在返回表名，不存在插入返回表名
+ * Class Subtable
+ * @package Common\Lib
+ */
 class Subtable
 {
 
@@ -17,7 +25,7 @@ class Subtable
      * @param string $tableName 原始表名
      * @param array $param 条件
      * @param null $tablePrefix 前缀
-     * @return string
+     * @return string 分表表名
      */
     static public function getSubTableName($tableName = '', $param = array(), $tablePrefix = null)
     {
@@ -42,8 +50,10 @@ class Subtable
     static public function createTable($tableName = '', $sql = '')
     {
         try {
+            $Model = M();
+            $Model->startTrans();
             $check_tables_sql = "show tables like '" . $tableName . "'";
-            $check_tables_result = M()->query($check_tables_sql);
+            $check_tables_result = $Model->query($check_tables_sql);
 
             #  按月生成，没有插入生成
             if (!$check_tables_result) {
@@ -59,14 +69,20 @@ class Subtable
 
                 $end_sql = "select max(id)end_id from `" . $last_table_name . "`";# 查询上个月该表的结束ID
 
-                $rs = M()->query($end_sql);
+                $rs = $Model->query($end_sql);
                 $end_id = !empty($rs[0]['end_id']) ? $rs[0]['end_id'] : '0';
                 $end_id += 1;
                 $sql = str_replace("AUTO_INCREMENT=1", "AUTO_INCREMENT=$end_id", "$sql");# 将自增ID替换为上月该表结束ID+1
                 $sql = "CREATE TABLE `" . $tableName . "`" . $sql;
-                M()->query($sql);
+
+                $createRs = $Model->query($sql);
+                if ($rs && $createRs)
+                    $Model->commit();
+                else
+                    $Model->rollback();
             }
         } catch (\Exception $e) {
+            file_put_contents('createTable.log', date("Y-m-d H:i:s") . '分表错误:' . $e->getMessage() . PHP_EOL . PHP_EOL, FILE_APPEND | LOCK_EX);
             // echo $e->getMessage();
         }
     }
