@@ -1314,6 +1314,7 @@ class MemberController extends ApibaseController
             }
             $arr = array($type => $data);
             M('screen_cardset')->where(array('c_id' => $c_id))->save($arr);
+            $this->write_log('投放规则',$c_id);
             $this->ajaxReturn(array('code' => 'success', 'msg' => 'OK'));
         }
     }

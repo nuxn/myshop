@@ -382,6 +382,7 @@ class GoodsController extends ApibaseController
         }
         $result = $this->goods_group_model->where($map)->delete();
         if ($result) {
+            $this->write_log('删除商品分类',I("group_id"));
             $this->group_list();
         } else {
             $this->ajaxReturn(array("code" => "error", "msg" => "删除商品分类失败"));
