@@ -327,4 +327,27 @@ class ApibaseController extends Controller
         return $TOKEN;
     }
 
+    public function write_log($desc = '',$object_id='')
+    {
+        $type = in_array($this->client, array('ios', 'android')) ? 2: 3;
+
+
+        if (!empty($this->userId)) {//写入日志
+            $add_data= array(
+                'app'=>MODULE_NAME,
+                'model'=>CONTROLLER_NAME,
+                'action'=>ACTION_NAME,
+                'desc' => $desc,
+                'add_time'=> time(),
+                'uid' => $this->userId,
+                'object_id' => $object_id,
+                'type' => $type
+
+            );
+            M('handle_log')->add($add_data);
+
+
+        }
+    }
+
 }
