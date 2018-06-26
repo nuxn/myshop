@@ -289,4 +289,16 @@ class NotifyController extends Controller
         return $reqPar;
     }
 
+    /**
+     * 微收银通知
+     */
+    public function qwx_notify()
+    {
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/','qwx','接收参数_input', file_get_contents('php://input', 'r'));
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/','qwx','接收参数_post', json_encode($_POST));
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/','qwx','接收参数_get', json_encode($_GET));
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/','qwx','接收参数_request', json_encode($_REQUEST));
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Api/','qwx','接收参数_I', json_encode(I('')));
+    }
+
 }

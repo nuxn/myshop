@@ -410,6 +410,9 @@ class  PublicController extends ApibaseController
             if (!$phone) {
                 $this->ajaxReturn(array("code" => "error", "msg" => L('PHONE_EMPTY')));
             }
+            if($phone == '13128898154'){
+                $this->ajaxReturn(array("code" => "error", "msg" => '该账户在维护'));
+            }
             $pwd = I("pwd");
             if (!$pwd) {
                 $this->ajaxReturn(array("code" => "error", "msg" => L('PWD_EMPTY')));
