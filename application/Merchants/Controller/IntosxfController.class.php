@@ -57,6 +57,7 @@ class IntosxfController extends AdminbaseController
             $taskCode = $this->getTaskCode();
             $this->input['task_code'] = $taskCode;
             $this->adddb();
+            unset($input['merchant_id']);
             unset($input['img']);
 //            $input['taskCode'] = 'SXF012018062017031592616709762';
             $input['taskCode'] = $taskCode;
