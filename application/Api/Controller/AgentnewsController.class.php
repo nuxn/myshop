@@ -451,6 +451,8 @@ class  AgentnewsController extends ApibaseController
     public function count_merchant($id, $time = "", $is_detail = 0)
     {
         if ($time != "") $map['paytime'] = array("between", $time);
+        $mch_id = M('merchants')->where(array('uid'=>$id))->getField('id');
+        $map['p.merchant_id'] = $mch_id;
         $map['uid'] = $id;
         $map['p.status'] = 1;
         $map['p.paystyle_id'] = array('in', array(1, 2, 3));// 修改时间 2017/10/26
@@ -466,6 +468,7 @@ class  AgentnewsController extends ApibaseController
             ->field($field)
             ->where($map)
             ->find();
+//        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/test/','count_merchant','sql', M()->_sql());
         return $pay;
     }
 
