@@ -1,0 +1,192 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+		body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+	</style>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=9XYbXLI51U5AuY2lCSsUfeI0kPwlPt28"></script>
+	<script type="text/javascript" src="https://libs.baidu.com/jquery/1.11.3/jquery.js"></script>
+	<title>地图定位</title>
+</head>
+<body>
+	<div id="allmap"></div>
+</body>
+</html>
+<script type="text/javascript">
+	// 百度地图API功能
+	var map = new BMap.Map("allmap");
+	var point = new BMap.Point(116.331398,39.897445);
+	map.centerAndZoom(point,12);
+	// 添加带有定位的导航控件
+  var navigationControl = new BMap.NavigationControl({
+    // 靠左上角位置
+    anchor: BMAP_ANCHOR_TOP_LEFT,
+    // LARGE类型
+    type: BMAP_NAVIGATION_CONTROL_LARGE,
+    // 启用显示定位
+    enableGeolocation: true
+  });
+  map.addControl(navigationControl);
+  // 添加定位控件
+  var geolocationControl = new BMap.GeolocationControl();
+  geolocationControl.addEventListener("locationSuccess", function(e){
+    // 定位成功事件
+    var address = '';
+    address += e.addressComponent.province;
+    address += e.addressComponent.city;
+    address += e.addressComponent.district;
+    address += e.addressComponent.street;
+    address += e.addressComponent.streetNumber;
+    alert("当前定位地址为：" + address);
+  });
+  geolocationControl.addEventListener("locationError",function(e){
+    // 定位失败事件
+    alert(e.message);
+  });
+  map.addControl(geolocationControl);
+	
+	// var marker = new BMap.Marker(point);        // 创建标注    
+	// map.addOverlay(marker);                    // 将标注添加到地图中 
+
+	var geolocation = new BMap.Geolocation();
+	geolocation.getCurrentPosition(function(r){
+		if(this.getStatus() == BMAP_STATUS_SUCCESS){
+			var myIcon = new BMap.Symbol(BMap_Symbol_SHAPE_FORWARD_CLOSED_ARROW, {
+			    scale: 2,
+			    strokeWeight: 1,
+			    rotation: 0,//顺时针旋转30度
+			    fillColor: '#1195ff',
+			    fillOpacity: 0.5
+			  })
+			var mk = new BMap.Marker(r.point,{icon:myIcon});
+			map.addOverlay(mk);
+			map.panTo(r.point);
+			mk.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+			var label = new BMap.Label("我的位置",{offset:new BMap.Size(20,-10)});
+			mk.setLabel(label);
+			// alert('您的位置：'+r.point.lng+','+r.point.lat);
+		}
+		else {
+			alert('failed'+this.getStatus());
+		}        
+	},{enableHighAccuracy: true})
+	//关于状态码
+	//BMAP_STATUS_SUCCESS	检索成功。对应数值“0”。
+	//BMAP_STATUS_CITY_LIST	城市列表。对应数值“1”。
+	//BMAP_STATUS_UNKNOWN_LOCATION	位置结果未知。对应数值“2”。
+	//BMAP_STATUS_UNKNOWN_ROUTE	导航结果未知。对应数值“3”。
+	//BMAP_STATUS_INVALID_KEY	非法密钥。对应数值“4”。
+	//BMAP_STATUS_INVALID_REQUEST	非法请求。对应数值“5”。
+	//BMAP_STATUS_PERMISSION_DENIED	没有权限。对应数值“6”。(自 1.1 新增)
+	//BMAP_STATUS_SERVICE_UNAVAILABLE	服务不可用。对应数值“7”。(自 1.1 新增)
+	//BMAP_STATUS_TIMEOUT	超时。对应数值“8”。(自 1.1 新增)
+	// 百度地图API功能
+	
+	/**
+	 * 查询店铺位置
+	 */
+	function distance_store(){
+		var coupons_id = GetRequest()
+		$.ajax({
+			type: 'POST',
+			url: 'http://sy.youngport.com.cn/Api/integral/store_list',
+			data: {'coupons_id':coupons_id},
+			success: function(data){
+				console.log(data)
+				if (data.type==1) {
+					data = data.msg
+					var x = data.lon;
+	    			var y = data.lat;
+	    			var merchant_jiancheng = data.merchant_jiancheng
+	    			var address = data.address
+	    			ggPoint = new BMap.Point(x,y);
+	    			map.addControl(new BMap.NavigationControl());
+
+	    			//坐标转换完之后的回调函数
+				    translateCallback = function (data){
+				      if(data.status === 0) {
+				        var marker = new BMap.Marker(data.points[0]);
+				        map.addOverlay(marker);
+				        var label = new BMap.Label(merchant_jiancheng,{offset:new BMap.Size(20,-10)});
+				        marker.setLabel(label); //添加百度label
+				        
+				        var opts = {
+						  width : 200,     // 信息窗口宽度
+						  height: 100,     // 信息窗口高度
+						  title : merchant_jiancheng , // 信息窗口标题
+						  enableMessage:true,//设置允许信息窗发送短息
+						  // message:"亲耐滴，晚上一起吃个饭吧？戳下面的链接看下地址喔~"
+						}
+						var infoWindow = new BMap.InfoWindow("地址:"+address,opts);  // 创建信息窗口对象 
+						marker.addEventListener("click", function(){          
+							map.openInfoWindow(infoWindow,data.points[0]); //开启信息窗口
+						});
+						map.setCenter(data.points[0]);
+				      }
+				    }
+
+				    setTimeout(function(){
+				        var convertor = new BMap.Convertor();
+				        var pointArr = [];
+				        pointArr.push(ggPoint);
+				        convertor.translate(pointArr, 3, 5, translateCallback)
+				    }, 1000);
+				}else{
+					// 编写自定义函数,创建标注
+					function addMarker(point){
+					  var marker = new BMap.Marker(point);
+					  map.addOverlay(marker);
+					}
+					// 随机向地图添加25个标注
+					// var bounds = map.getBounds();
+					// var sw = bounds.getSouthWest();
+					// var ne = bounds.getNorthEast();
+					// var lngSpan = Math.abs(sw.lng - ne.lng);
+					// var latSpan = Math.abs(ne.lat - sw.lat);
+					console.log(data.msg.length)
+					for (var i = 0; i < data.msg.length; i ++) {
+						var point = new BMap.Point(data.msg[i].lon,data.msg[i].lat);
+						var marker = new BMap.Marker(point);
+					  	map.addOverlay(marker);
+						var label = new BMap.Label(data.msg[i].merchant_jiancheng,{offset:new BMap.Size(20,-10)});
+				        marker.setLabel(label); //添加百度label
+					}
+				}
+			}
+		});
+	}
+	distance_store()
+
+	 // 百度地图API功能
+    //谷歌坐标
+    
+    
+    
+    //地图初始化
+    // var bm = new BMap.Map("allmap");
+    // bm.centerAndZoom(ggPoint, 15);
+    // bm.addControl(new BMap.NavigationControl());
+
+    //添加谷歌marker和label
+    // var markergg = new BMap.Marker(ggPoint);
+    // bm.addOverlay(markergg); //添加谷歌marker
+    // var labelgg = new BMap.Label("未转换的谷歌标注（错误）",{offset:new BMap.Size(20,-10)});
+    // markergg.setLabel(labelgg); //添加谷歌label
+    function GetRequest() {  
+	   var url = location.search; //获取url中"?"符后的字串  
+	   var theRequest = new Object();  
+	   if (url.indexOf("?") != -1) {  
+	      var str = url.substr(1);  
+	      strs = str.split("&");  
+	      for(var i = 0; i < strs.length; i ++) {  
+	         theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);  
+	      }  
+	   }  
+	   return theRequest;  
+	}
+
+
+
+    
+</script>
