@@ -2378,6 +2378,8 @@ class  ShopnewsController extends ApibaseController
             case 2:
                 if(!$info = M('merchants_wghl')->where(array('id'=>$id,'merchant_id'=>$merchant_id))->find()) {
                     $this->ajaxReturn(array('code'=>'error','msg'=>'未找到该设备'));
+                } elseif ($info['sn'] == 'ypt000001') {
+                    $this->ajaxReturn(array('code'=>'error','msg'=>'该设备正在测试，不能解绑'));
                 }
                 M()->startTrans();
                 $res = M('merchants_wghl')->where(array('id'=>$id))->delete();

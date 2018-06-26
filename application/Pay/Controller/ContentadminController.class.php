@@ -59,7 +59,7 @@ class ContentadminController extends AdminbaseController
         $start_time = strtotime(I('start_time'));
         $end_time = strtotime(I('end_time'));
         $status = I('status');
-        $user_phone = (int)I('user_phone', "", "trim");
+        $user_phone = I('user_phone', "", "trim");
         $remark = trim(I('remark'));
         $paystyle_id = I('paystyle');
         $timestyle_id = I('timestyle') ? I('timestyle') : "";
@@ -73,7 +73,9 @@ class ContentadminController extends AdminbaseController
             $map['paystyle_id'] = $paystyle_id;
         }
         if ($merchant_name) {
-            $map['m.merchant_name'] = array('LIKE', "%$merchant_name%");
+//            $map['m.merchant_name'] = array('LIKE', "%$merchant_name%");
+            $merchant_id = M('merchants')->where(array('merchant_name'=>array('LIKE', "%$merchant_name%")))->getField('id');
+            $map['a.merchant_id'] = $merchant_id;
         }
         if ($status !== "-1" && $status != "") {
             if ($status == "0") {
@@ -82,7 +84,10 @@ class ContentadminController extends AdminbaseController
             $map['a.status'] = $status;
         }
         if ($user_phone) {
-            $map['user_phone'] = $user_phone;
+            $mch_uid = M('merchants_users')->where(array('user_phone'=>$user_phone))->getField('id');
+            $merchant_id = M('merchants')->where(array('uid'=>$mch_uid))->getField('id');
+            $map['a.merchant_id'] = $merchant_id;
+//            $map['m.uid'] = $mch_uid;
         }
         if ($remark) {
             $map['remark'] = $remark;
@@ -103,16 +108,9 @@ class ContentadminController extends AdminbaseController
         }
         $map['brash'] = 1;
         $pays = $this->pay->alias('a')
-            ->join("left join __MERCHANTS__ m on m.id=a.merchant_id")
-            ->join('left join __MERCHANTS_USERS__ u on m.uid = u.id')
-            ->field("u.id as u_id,u.user_phone,m.merchant_name,a.*")
             ->where($map);
-//        echo $this->pay->getLastSql();exit;
         $count = $pays->count();
-        /*
-         * 查询sql语句
-         * echo $Pays->where($map)->_sql();
-         * */
+
         $page = $this->page($count, 20);
         $this->assign("page", $page->show('Admin'));
 
@@ -138,6 +136,9 @@ class ContentadminController extends AdminbaseController
     public function data_cache_add($count, $map)
     {
         $n = ceil($count / 3000);
+        if($n>10){
+            return true;
+        }
         F("n", $n);
         F("map", $map);
         for ($i = 1; $i <= $n; $i++) {
@@ -149,7 +150,7 @@ class ContentadminController extends AdminbaseController
                 ->join('left join __MERCHANTS_USERS__ u on m.uid = u.id')
                 ->field("u.id as u_id,u.user_phone,m.merchant_name,a.id,a.paystyle_id,a.price,a.mode,a.remark,a.jmt_remark,a.status,a.status,a.paytime,a.cost_rate")
                 ->where($map)
-                ->order("paytime desc")
+                ->order("id desc")
                 ->limit($left, $right)
                 ->select();
             $name = "pay_" . $i;
@@ -452,6 +453,10 @@ class ContentadminController extends AdminbaseController
             ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")//设置备注
             ->setKeywords("office 2007 openxml php")//设置标记
             ->setCategory("Test result file");                //设置类别
+
+        if(!$n){
+            exit('<script>alert("数据太多，请增加筛选条件")</script>');
+        }
         // 位置aaa  *为下文代码位置提供锚
         for ($a = 0; $a < $n; $a++) {
             $name = "pay_" . ($a + 1);
@@ -540,7 +545,6 @@ class ContentadminController extends AdminbaseController
             $objActSheet->setTitle('洋仆淘对账表' . $a);
 
         }
-
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="洋仆淘对账表.xls"');
         header('Cache-Control: max-age=0');

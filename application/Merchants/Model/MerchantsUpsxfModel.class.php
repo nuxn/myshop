@@ -43,7 +43,7 @@ class MerchantsUpsxfModel extends CommonModel
 
     private function getSign()
     {
-        $string = get_sign_content($this->requestParams);
+        $string = $this->get_sign_content($this->requestParams);
         $sign = rsa_sign($string, $this->private_key);
         return $sign;
     }
@@ -82,9 +82,10 @@ class MerchantsUpsxfModel extends CommonModel
     {
         $this->requestParams['reqId'] = md5(getOrderNumber());    // 请求唯一编号
         $this->requestParams['timestamp'] = date('YmdHis');    // 请求时间
-        $this->requestParams['reqData'] = urlencode(urldecode(json_encode($this->parameters)));
+        $this->requestParams['reqData'] = $this->parameters;
         $this->requestParams['sign'] = $this->getSign();
-        $send = urldecode(json_encode($this->requestParams));
+        $this->requestParams['reqData'] = array_map(function ($val){ return urldecode($val);}, $this->parameters);
+        $send = json_encode($this->requestParams);
 
         $result = $this->requestPost($url,$send);
         if($file_name){
@@ -162,5 +163,38 @@ class MerchantsUpsxfModel extends CommonModel
         $Y = $this->path . date("Y-m");
         if (!file_exists($Y)) mkdir($Y, 0777, true);
         file_put_contents($Y.'/' . "$file_name.log", date("Y-m-d H:i:s") . $title.':'. $param . PHP_EOL . PHP_EOL, FILE_APPEND | LOCK_EX);
+    }
+
+
+    public function get_sign_content($para)
+    {
+        return $this->createLinkstring($para);
+    }
+
+
+    function createLinkstring($para) {
+
+        ksort($para);
+        $params = array();
+
+        foreach($para as $key => $value){
+
+            if(is_array($value)){
+
+                $value=stripslashes(urldecode(json_encode($value)));
+
+            }
+
+            $params[] = $key .'='. $value ;
+
+        }
+
+        $data = implode("&", $params);
+
+
+        get_date_dir($this->path,'sign','字符串', $data);
+
+        return $data;
+
     }
 }
