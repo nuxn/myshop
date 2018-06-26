@@ -11,7 +11,7 @@
         <input type="text" name="merchant_id" value="{$merchant_id|default=''}" style="width:100px;" placeholder="请输入商户ID">&nbsp;&nbsp;
         商户名称:
         <input type="text" name="merchant_name" value="{$merchant_name|default=''}" placeholder="请输入商户名称">&nbsp;&nbsp;
-        设备号:
+        设备SN号:
         <input type="text" name="sn" value="{$sn|default=''}" placeholder="请输入设备SN号">&nbsp;&nbsp;
         <input type="submit" class="btn btn-primary" value="搜索" />
         <a class="btn btn-danger" href="{:U('Pcsy/pop_index')}">清空</a>
@@ -21,7 +21,7 @@
         <tr>
             <th>商户ID</th>
             <th>商户名称</th>
-            <th>设备号</th>
+            <th>设备SN号</th>
             <th width="120">{:L('ACTIONS')}</th>
         </tr>
         </thead>
