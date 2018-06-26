@@ -1,0 +1,18 @@
+[ 2018-06-22T16:08:40+08:00 ] 127.0.0.1 /index.php?g=Merchants&m=AdminService&a=openList
+ERR: 模板不存在:admin/themes/simplebootx/Merchants/AdminService/openList.html
+
+[ 2018-06-22T16:08:52+08:00 ] 127.0.0.1 /index.php?g=Merchants&m=AdminService&a=openList
+ERR: 模板不存在:admin/themes/simplebootx/Merchants/AdminService/openList.html
+
+[ 2018-06-22T16:08:58+08:00 ] 127.0.0.1 /index.php?g=Merchants&m=AdminService&a=serverList
+ERR: 模板不存在:admin/themes/simplebootx/Merchants/AdminService/serverList.html
+
+[ 2018-06-22T16:09:31+08:00 ] 127.0.0.1 /index.php?g=Merchants&m=AdminService&a=openList
+ERR: 模板不存在:admin/themes/simplebootx/Merchants/AdminService/openList.html
+
+[ 2018-06-22T16:12:23+08:00 ] 127.0.0.1 /index.php?g=Merchants&m=AdminService&a=openList
+ERR: 模板不存在:admin/themes/simplebootx/Merchants/AdminService/openList.html
+
+[ 2018-06-22T16:18:05+08:00 ] 127.0.0.1 /index.php?g=Merchants&m=AdminService&a=serverList
+ERR: 模板不存在:admin/themes/simplebootx/Merchants/AdminService/serverList.html
+
