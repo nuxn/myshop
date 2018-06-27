@@ -92,10 +92,38 @@ class IntosxfController extends AdminbaseController
         if (IS_POST) {
             $input = I("post.");
             $this->input = array_filter($input);
-            $this->bindconfig();
-            $this->bindDirectory();
-            $this->bindconfig();
+            $cof_res = $this->bindconfig();
+            if($cof_res['code'] == 'SXF0000'){
+                $cof_ret = $cof_res['respData'];
+                if($cof_ret['bizCode'] != '0000'){
+                    $this->ajaxReturn(array('code'=> '1000','msg'=>$cof_ret['bizMsg']));
+                }
+            } else {
+                $this->ajaxReturn(array('code'=> '1000','msg'=>$cof_res['msg']?:'失败'));
+            }
+            $dir_res = $this->bindDirectory();
+            if($dir_res['code'] == 'SXF0000'){
+                $dir_ret = $dir_res['respData'];
+                if($dir_ret['bizCode'] != '0000'){
+                    $this->ajaxReturn(array('code'=> '2000','msg'=>$dir_ret['bizMsg']));
+                }
+            } else {
+                $this->ajaxReturn(array('code'=> '2000','msg'=>$dir_res['msg']?:'失败'));
+            }
+            $scr_res = $this->bindScribeAppid();
+            if($scr_res == 'no data'){
+                $this->ajaxReturn(array('code'=> '0000'));
+            }
+            if($scr_res['code'] == 'SXF0000'){
+                $scr_ret = $scr_res['respData'];
+                if($scr_ret['bizCode'] != '0000'){
+                    $this->ajaxReturn(array('code'=> '3000','msg'=>$scr_ret['bizMsg']));
+                }
+            } else {
+                $this->ajaxReturn(array('code'=> '3000','msg'=>$scr_res['msg']?:'失败'));
+            }
 
+            $this->ajaxReturn(array('code'=> '0000'));
         } else {
             $id =  I('id');
             $mno = I('mno');
@@ -133,7 +161,7 @@ class IntosxfController extends AdminbaseController
             $this->sxfModel->setParameters('subscribeAppid', $this->input['subscribeAppid']);
             return $this->sxfModel->bindScribeAppid();
         }
-        return false;
+        return 'no data';
     }
 
     public function adddb()
