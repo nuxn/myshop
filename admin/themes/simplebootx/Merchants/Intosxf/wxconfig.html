@@ -97,10 +97,10 @@
                         location.href = "{:U('index')}";
                     })
                 } else {
-                    layer.open({
-                        title: '配置失败'
-                        , content: res.msg
-                    });
+                    if(res.code == '1000'){layer.open({title: 'APPID 配置失败', content: res.msg});}
+                    if(res.code == '2000'){layer.open({title: '授权目录配置失败', content: res.msg});}
+                    if(res.code == '3000'){layer.open({title: '推荐关注配置失败', content: res.msg});}
+
                 }
                 layer.close(index);
             });

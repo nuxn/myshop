@@ -41,6 +41,7 @@ class BanksxfController extends HomebaseController
         $this->pay_model = M('pay');
         $this->sxfModel = D('Pay/Merchants_upsxf');
         $this->notify_url = 'https://sy.youngport.com.cn/notify/sxf_notify.php';
+//        $this->notify_url = 'sxf_notify.php';
         $this->refund_notify_url = 'https://sy.youngport.com.cn/Pay/Banksxf/refund_notify';
     }
 
@@ -195,10 +196,10 @@ class BanksxfController extends HomebaseController
         $this->sxfModel->setParameters('mno', $this->mno);        // 商户入驻返回的商户编号
         $this->sxfModel->setParameters('amt', $this->price);        // 订单总金额，单位为元，
         $this->sxfModel->setParameters('payType', 'JSAPI');        // JSAPI公众号 或 FWC--支付 宝服务窗
-        $this->sxfModel->setParameters('subject', $this->subject);    // 订单标题
+        $this->sxfModel->setParameters('subject', urlencode($this->subject));    // 订单标题
         $this->sxfModel->setParameters('subOpenid', $this->openid);
         $this->sxfModel->setParameters('subAppid', 'wx3fa82ee7deaa4a21');
-        $this->sxfModel->setParameters('notifyUrl', $this->notify_url);  // 回调地址
+        $this->sxfModel->setParameters('notifyUrl', urlencode($this->notify_url));  // 回调地址
 
         return $this->sxfModel->getPayInfo();
     }
@@ -225,7 +226,7 @@ class BanksxfController extends HomebaseController
             // 请求服务器获取js支付参数
             $res_arr = $this->ali_jspay();
             if($res_arr['code'] == '0000'){
-                header("Location: $res_arr[url]");
+                header("Location:" . $res_arr['url']);
             } else {
                 $this->alert_err($res_arr['msg']);
             }
@@ -241,8 +242,8 @@ class BanksxfController extends HomebaseController
         $this->sxfModel->setParameters('ordNo', $this->remark);      // 商户订单号
         $this->sxfModel->setParameters('amt', $this->price);        // 订单总金额，单位为元，
         $this->sxfModel->setParameters('payType', $this->pay_type);    // 取值范围：WECHAT--微信扫码、ALIPAY--支付宝扫码、UNIONPAY--银联扫码
-        $this->sxfModel->setParameters('subject', $this->subject);    // 订单标题
-        $this->sxfModel->setParameters('notifyUrl', $this->notify_url);  // 回调地址
+        $this->sxfModel->setParameters('subject', urlencode($this->subject));    // 订单标题
+        $this->sxfModel->setParameters('notifyUrl', urlencode($this->notify_url));  // 回调地址
 
         return $this->sxfModel->getPayUrl();
     }
@@ -350,8 +351,8 @@ class BanksxfController extends HomebaseController
         $this->sxfModel->setParameters('authCode', $this->auth_code);   // 通过扫码枪
         $this->sxfModel->setParameters('amt', $this->price);        // 订单总金额，单位为元，
         $this->sxfModel->setParameters('payType', $this->pay_type);    // 取值范围：WECHAT--微信扫码、ALIPAY--支付宝扫码、UNIONPAY--银联扫码
-        $this->sxfModel->setParameters('subject', $this->subject);    // 订单标题
-        $this->sxfModel->setParameters('notifyUrl', $this->notify_url);  // 回调地址
+        $this->sxfModel->setParameters('subject', urlencode($this->subject));    // 订单标题
+        $this->sxfModel->setParameters('notifyUrl', urlencode($this->notify_url));  // 回调地址
 
         $res_arr = $this->sxfModel->micropay();
 
@@ -472,7 +473,7 @@ class BanksxfController extends HomebaseController
         $this->sxfModel->setParameters('origOrderNo', $remark);
         $this->sxfModel->setParameters('origUuid', $tran_id);
         $this->sxfModel->setParameters('amt', $price);
-        $this->sxfModel->setParameters('notifyUrl', $this->refund_notify_url);
+        $this->sxfModel->setParameters('notifyUrl', urlencode($this->refund_notify_url));
 
         return $this->sxfModel->refund();
     }

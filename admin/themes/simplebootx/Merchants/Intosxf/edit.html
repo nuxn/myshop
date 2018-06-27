@@ -7,6 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" type="text/css" href="__PUBLIC__/layui/css/layui.css">
+    <style>
+        .red{color: #f00}
+        .bule{color: #00f}
+    </style>
     <script src="__PUBLIC__/layui/layui.all.js"></script>
     <script src="__PUBLIC__/js/jquery.js"></script>
 
@@ -31,6 +35,13 @@
                             </div>
                         </div>
 
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">商户费率(%)</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="qrcodeRate" lay-verify="required" value="{$data.qrcodeRate}"
+                                       autocomplete="off" class="layui-input">默认0.38
+                            </div>
+                        </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">商户简称</label>
                             <div class="layui-input-block">
@@ -63,7 +74,7 @@
                             <div class="layui-input-block">
                                 <input type="text" name="parentMno" value="{$data.parentMno}" autocomplete="off"
                                        class="layui-input">
-                                非必传
+                                <span class="bule">(非必传)</span>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -71,23 +82,10 @@
                             <div class="layui-input-block">
                                 <div class="layui-upload">
                                     <button type="button" class="layui-btn" id="img3">上传图片</button>
-                                    文件大小 <= 1M
+                                    所有图片加起来需小于 2 M
                                     <input type="hidden" name="img[storePic]" value="{$data.storePic}">
                                     <div class="layui-upload-list">
                                         <img class="layui-upload-img" id="view3" width="100" src="{$data.storePic}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">营业执照</label>
-                            <div class="layui-input-block">
-                                <div class="layui-upload">
-                                    <button type="button" class="layui-btn" id="img6">上传图片</button>
-                                    文件大小 <= 1M
-                                    <input type="hidden" name="img[licensePic]" value="{$data.licensePic}">
-                                    <div class="layui-upload-list">
-                                        <img class="layui-upload-img" id="view6" width="100" src="{$data.licensePic}">
                                     </div>
                                 </div>
                             </div>
@@ -133,6 +131,19 @@
                                 <select name="regDistCd" lay-verify="required">
                                     <option value="">请选择区县</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">营业执照</label>
+                            <div class="layui-input-block">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="img6">上传图片</button>
+                                    所有图片加起来需小于 2 M
+                                    <input type="hidden" name="img[licensePic]" value="{$data.licensePic}">
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="view6" width="100" src="{$data.licensePic}">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -190,7 +201,7 @@
                             <div class="layui-input-block">
                                 <div class="layui-upload">
                                     <button type="button" class="layui-btn" id="img1">上传图片</button>
-                                    文件大小 <= 1M
+                                    所有图片加起来需小于 2 M
                                     <input type="hidden" name="img[legalPersonidPositivePic]"
                                            value="{$data.legalPersonidPositivePic}">
                                     <div class="layui-upload-list">
@@ -205,7 +216,7 @@
                             <div class="layui-input-block">
                                 <div class="layui-upload">
                                     <button type="button" class="layui-btn" id="img2">上传图片</button>
-                                    文件大小 <= 1M
+                                    所有图片加起来需小于 2 M
                                     <input type="hidden" name="img[legalPersonidOppositePic]"
                                            value="{$data.legalPersonidOppositePic}">
                                     <div class="layui-upload-list">
@@ -229,16 +240,16 @@
                                 <div class="layui-form-item">
                                     <label class="layui-form-label">账户类型</label>
                                     <div class="layui-input-block">
-                                        <input type="radio" name="actTyp" value="01" title="对私" checked>
-                                        <input type="radio" name="actTyp" value="00" title="对公">
+                                        <input type="radio" name="actTyp" value="01" title="对私" <if condition="$data['actTyp'] eq '01'">checked</if>>
+                                        <input type="radio" name="actTyp" value="00" title="对公" <if condition="$data['actTyp'] eq '00'">checked</if>>
                                     </div>
                                 </div>
                                 <div class="layui-form-item">
-                                    <label class="layui-form-label">结算身份证号</label>
+                                    <label class="layui-form-label">结算人身份证号</label>
                                     <div class="layui-input-block">
                                         <input type="text" name="stmManIdNo" lay-verify="" value="{$data.stmManIdNo}"
                                                autocomplete="off" class="layui-input">
-                                        对私结算时，此项必传
+                                        <span class="red">(对私结算时，此项必传)</span>
                                     </div>
                                 </div>
                                 <div class="layui-form-item">
@@ -261,7 +272,7 @@
                                     <div class="layui-input-block">
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img4">上传图片</button>
-                                            （对公 结算必传) 文件大小 <= 1M
+                                            <span class="red">（对公结算必传)</span> 所有图片加起来需小于 2 M
                                             <input type="hidden" name="img[openingAccountLicensePic]"
                                                    value="{$data.openingAccountLicensePic}">
                                             <div class="layui-upload-list">
@@ -276,7 +287,7 @@
                                     <div class="layui-input-block">
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img5">上传图片</button>
-                                            （对私 结算必传) 文件大小 <= 1M
+                                            <span class="red">（对私结算必传)</span> 所有图片加起来需小于 2 M
                                             <input type="hidden" name="img[bankCardPositivePic]"
                                                    value="{$data.bankCardPositivePic}">
                                             <div class="layui-upload-list">
@@ -291,7 +302,7 @@
                                     <div class="layui-input-block">
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img7">上传图片</button>
-                                            （对私 结算必传账户人身份证）文件大小 <= 1M
+                                            <span class="red">（对私结算必传）</span> 所有图片加起来需小于 2 M
                                             <input type="hidden" name="img[settlePersonIdcardOpposite]"
                                                    value="{$data.settlePersonIdcardOpposite}">
                                             <div class="layui-upload-list">
@@ -306,7 +317,7 @@
                                     <div class="layui-input-block">
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img8">上传图片</button>
-                                            （对私 结算必传账户人身份证）文件大小 <= 1M
+                                            <span class="red">（对私结算必传）</span> 所有图片加起来需小于 2 M
                                             <input type="hidden" name="img[settlePersonIdcardPositive]"
                                                    value="{$data.settlePersonIdcardPositive}">
                                             <div class="layui-upload-list">
@@ -321,7 +332,7 @@
                                     <div class="layui-input-block">
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img9">上传图片</button>
-                                            （非法人对私 结算，即结算账户类型为对私结算，且结算人身份证号不法人身份证号不一致时必传）文件大小 <= 1M
+                                            <span class="red">（非法人对私结算，即结算账户类型为对私结算，且结算人身份证号不法人身份证号不一致时必传）</span> 所有图片加起来需小于 2 M
                                             <input type="hidden" name="img[letterOfAuthPic]"
                                                    value="{$data.letterOfAuthPic}">
                                             <div class="layui-upload-list">
@@ -371,7 +382,6 @@
                     });
                 }
             });
-            layer.close(index);
             return false;
         });
         // 监听选择框
