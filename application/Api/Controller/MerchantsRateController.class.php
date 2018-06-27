@@ -319,9 +319,9 @@ class  MerchantsRateController extends Controller
         $merchants = M('merchants')->where(array('status'=>1))->field('id,uid,merchant_name')->select();
         $nums = 0;
         foreach ($merchants as $key => $value) {
-//            if (M('pay_statistics')->where(array('date'=>$date,'uid'=>$value['uid']))->getField('id')) {
-//                continue;
-//            }
+            if (M('pay_statistics')->where(array('date'=>$date,'uid'=>$value['uid']))->getField('id')) {
+                continue;
+            }
 //            echo $value['id'].'<br>';
             $pay = M('pay')
                 ->alias("p")
@@ -347,7 +347,7 @@ class  MerchantsRateController extends Controller
             if (!$pay&&$cdk_nums==0){
                 continue;
             }
-            echo M('screen_memcard_cdk_log')->getLastSql();
+//            echo M('screen_memcard_cdk_log')->getLastSql();
             $pay_back = M('pay_back')
                 ->where('paytime >='.$start_time.' and paytime < '.$end_time)
                 ->where(array('merchant_id'=>$value['id']))
