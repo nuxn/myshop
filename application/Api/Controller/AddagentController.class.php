@@ -10,7 +10,7 @@ class  AddagentController extends ApibaseController
 
     public function index()
     {
-//        $id=43;
+//        $id=43;--
         $this->checkLogin();
         $id = $this->userInfo['uid'];
         $users = M("merchants_users")->alias("m")
