@@ -823,18 +823,20 @@ class ShoppingController extends ApibaseController
             $unit_name = I('unit_name');
             $trade = I('trade');
             $units_name = explode(',',$unit_name);
-            $data = array();
+            $insert_str='';
             foreach ($units_name as $key => &$value) {
-                $data[$key]['unit_name'] = $value;
-                $data[$key]['belong_to'] =2;
-                $data[$key]['trade'] = $trade;
-                $data[$key]['uid'] = $this->userId;
+                $data = array();
+                $data['unit_name'] = $value;
+                $data['belong_to'] =2;
+                $data['trade'] = $trade;
+                $data['uid'] = $this->userId;
+                $insert_id=$this->units->add($data);
+                $insert_str.=$insert_id.',';
             }
-            if ($this->units->addAll($data)) {
+            $this->write_log('保存计量单位',$insert_str);
+
                 $this->ajaxReturn(array("code" => "success", "msg" => "成功"));
-            }else{
-                $this->ajaxReturn(array("code" => "error", "msg" => "失败"));
-            }
+
         } else {
             $this->ajaxReturn(array("code" => "error", "msg" => "非法请求"));
         }
@@ -1316,6 +1318,7 @@ class ShoppingController extends ApibaseController
                     $result = $this->goodsModel->where(array('mid'=>$this->userId,'group_id'=>$data['gid'], "is_on_sale" => 1, "is_delete" => 0))->save(array("group_id" => $group_id));
                 }
             }
+            $this->write_log('新增商品分类',$result);
             
             $this->ajaxReturn(array("code" => "success", "msg" => "新增商品分类成功", "data" => array("group_id" => (string)$result)));
         }else {
@@ -1342,6 +1345,9 @@ class ShoppingController extends ApibaseController
             }
         } 
         $this->groupModel->where(array("mid" => $this->userId,'group_id' => $data['group_id']))->save(array("group_name" => $data['group_name'],"sort"=>$data['sort'],"gid"=>$data['gid']));
+
+        $this->write_log('编辑分类',$data['group_id']);
+
         $this->ajaxReturn(array("code" => "success", "msg" => "编辑成功"));
         
     }

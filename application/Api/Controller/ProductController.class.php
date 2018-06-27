@@ -618,6 +618,7 @@ class ProductController extends ApibaseController
             }
             $res = $this->goodsModel->where(array('goods_id' => $goods_id))->save($data);
             if($res){
+                $this->write_log('更改上下架状态',$goods_id);
                 $this->retSucc();
             } else {
                 $this->retError('投放失败');

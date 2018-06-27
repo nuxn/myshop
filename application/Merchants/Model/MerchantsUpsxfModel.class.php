@@ -16,6 +16,9 @@ class MerchantsUpsxfModel extends CommonModel
 
     private $getTaskCodeUrl;
     private $batchFeedInfo;
+    private $bindDirectory;
+    private $bindconfig;
+    private $bindScribeAppid;
 
     private $path;
 
@@ -26,6 +29,9 @@ class MerchantsUpsxfModel extends CommonModel
         $this->getTaskCodeUrl  = 'https://icm-management.suixingpay.com/management/BatchFeed/getTaskCode';
 //        $this->batchFeedInfo  = 'https://icm-test.suixingpay.com/management/BatchFeed/batchFeedInfo';
         $this->batchFeedInfo  = 'https://icm-management.suixingpay.com/management/BatchFeed/batchFeedInfo';
+        $this->bindDirectory  = 'https://icm-management.suixingpay.com/management/weChat/bindDirectory';    // 绑定授权目录
+        $this->bindconfig  = 'https://icm-management.suixingpay.com/management/weChat/bindconfig';   // 绑定APPid
+        $this->bindScribeAppid  = 'https://icm-management.suixingpay.com/management/weChat/bindScribeAppid';   // 绑定推荐关注
 
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/Banksxf/';
         $this->private_key = "MIICXAIBAAKBgQDf3b7jHPeK4lzFcxtEQOjPx6UZ6jjIQJADqvoS0Sg/7fr27H732zgxMCqTcMMrgfqAcb2cNu4pNpcN/vvtYZAvIQMahv5ymI/la00HOeNcZpw6GzeExHo7AL+W33lXs2OTTPcIm1m8M1KKcJn0XPF3js8wA12DiyCcQxMOA38FAwIDAQABAoGBAM5KoOTYhKRPA/5PnAjBZ8hQySugUsL1+7/lhpxgcR64RlPUiwwLzzRElndXqgIlvJkwNvIFDGKeE4SqO6z8AsgxdYudM6kSMKjROopKzFBx0Mjk6VGBi6c/Lgpdv/xDu7qN+Dzf8ovI23dGLnLAFGuzWPmJUM8Skx0N7Sq2nEoBAkEA+9KNldJ2REYbuGp6NBWUtUenyTrezzejlxqArfKHc4NYCknpCkD3xrDhOn+qAmFX29Hq5JVX0fD4VHBV7nZfIQJBAOOUd5DmPIiJ+Fp2dYh4yIxlLUXe+2//ts2PenRbVH1bpMllWps9I4hOgj1elbZDkaTLXXWNXbqZ4zUG7PfxE6MCQGL8O71VsjlaGZFfAVQx23d6iCCYbHallz9RIp29hLLKQTQiI2Ftcjf+1TmqbwhqfR+iHyPk9FVI1ERUt+J5UyECQFCzrVKs0np4sqEhsLwcWMGwf0VvtSoaO/DZGEt6t5NclCr2zhKOs7L6ZCTvDZf8jgEqPJIa90ncmD2NnyqtSpECQBQldmr+fMfYSP40PfoqQ4DxjFnq4HjbnzSr+8zi9tP/W7zUdEy+0Mi4Ufnpy4l4wIzqso4SV44V8UJe1rSFmWg=";
@@ -116,8 +122,24 @@ class MerchantsUpsxfModel extends CommonModel
     public function setNull()
     {
         $this->parameters = null;
+        unset($this->requestParams['sign']);
     }
 
+    public function bindconfig()
+    {
+        return $this->send($this->bindconfig, 'bindconfig');
+    }
+
+    public function bindDirectory()
+    {
+        return $this->send($this->bindDirectory, 'bindDirectory');
+    }
+
+    public function bindScribeAppid()
+    {
+        return $this->send($this->bindScribeAppid, 'bindScribeAppid');
+
+    }
 
     public function getTaskCode()
     {
