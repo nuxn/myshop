@@ -25,23 +25,28 @@ class MerchantsUpsxfModel extends CommonModel
     public function __construct()
     {
         parent::__construct();
-        $this->microUrl  = 'https://icm-test.suixingpay.com/management/qr/reverseScan';
-        $this->scanUrl   = 'https://icm-test.suixingpay.com/management/qr/activeScan';
-        $this->jspayUrl  = 'https://icm-test.suixingpay.com/management/qr/jsapiScan';
-        $this->refundUrl = 'https://icm-test.suixingpay.com/management/qr/refund';
-        $this->queryUrl  = 'https://icm-test.suixingpay.com/management/qr/query';
+//        $this->microUrl  = 'https://icm-test.suixingpay.com/management/qr/reverseScan';
+        $this->microUrl  = 'https://icm-management.suixingpay.com/management/qr/reverseScan';
+//        $this->scanUrl   = 'https://icm-test.suixingpay.com/management/qr/activeScan';
+        $this->scanUrl   = 'https://icm-management.suixingpay.com/management/qr/activeScan';
+//        $this->jspayUrl  = 'https://icm-test.suixingpay.com/management/qr/jsapiScan';
+        $this->jspayUrl  = 'https://icm-management.suixingpay.com/management/qr/jsapiScan';
+//        $this->refundUrl = 'https://icm-test.suixingpay.com/management/qr/refund';
+        $this->refundUrl = 'https://icm-management.suixingpay.com/management/qr/refund';
+//        $this->queryUrl  = 'https://icm-test.suixingpay.com/management/qr/query';
+        $this->queryUrl  = 'https://icm-management.suixingpay.com/management/qr/query';
 
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/Banksxf/';
-        $this->private_key = "MIICXAIBAAKBgQC+2v20Ci5VLz7r9si0AuYz3wFLWLE2Vucr1qTWpUY7smlDycOaa/WpasvKssg5lUdgK62JHvFQF2UTqZ2gBm3+atpCUvJFVC29OH4cah7qg0ryUgphEroDsas+zFjQf46EhkE37hem+UhNPcSnMahta+Jnusqftgj2fuHBUaXtzwIDAQABAoGAXC3e3ScRq7ju9f6yfybrUmBB+scyiCE+89BuuvEGU+zepIv9ekbsVtAq75Kb3Bv6ZjuSTCjyuhEik3WXmOOiGapaBmaXl9kkx0UtQsfjpV8dQIAGGskPkn5fkZGFzwmG5VB46B2a1kuR/OpNojIS7Z6Kd+32+KVfKcn1xLH1mykCQQDqBuBqPPwMk3wrXmPXrzZ7li3mO0K4SZTDKT2xfe6rGOprLGCxaXp01OOhWxmXEeW+I1P0b6qL8V+HgzjZjNtDAkEA0MZvoPyJC5Y09/ZSBM0S2izntJ4kGB39rASxpo0CXTDLCIz6k35/abwgCOmX9V8XXnx4og76FDdp3DTNp02shQJBAMUPj07GFXM9iZQ3QhlvN5BvkCzK/86QXwzLIGDh6uP18gbW8oDRkcTpMtg/DthPwMYPl3U/xjtav5crXuaJnmMCQCO6AXpMHOulrbTNKyX1Lge17YTEFyslXrakKv50XPYzllsFPRAmcolWjyjXSJDN0AL0S/R3maYCAZSUWKkLqr0CQGZ2zZVJn4NLv3r9uwJMUljQr+5CoToDp7eahWgN9vO389H0u0Kbhgg0326B4h7DwVl20w7qVwkpnWqTLwz/yqY=";
+        // 生产
+        $this->private_key = "MIICXAIBAAKBgQDf3b7jHPeK4lzFcxtEQOjPx6UZ6jjIQJADqvoS0Sg/7fr27H732zgxMCqTcMMrgfqAcb2cNu4pNpcN/vvtYZAvIQMahv5ymI/la00HOeNcZpw6GzeExHo7AL+W33lXs2OTTPcIm1m8M1KKcJn0XPF3js8wA12DiyCcQxMOA38FAwIDAQABAoGBAM5KoOTYhKRPA/5PnAjBZ8hQySugUsL1+7/lhpxgcR64RlPUiwwLzzRElndXqgIlvJkwNvIFDGKeE4SqO6z8AsgxdYudM6kSMKjROopKzFBx0Mjk6VGBi6c/Lgpdv/xDu7qN+Dzf8ovI23dGLnLAFGuzWPmJUM8Skx0N7Sq2nEoBAkEA+9KNldJ2REYbuGp6NBWUtUenyTrezzejlxqArfKHc4NYCknpCkD3xrDhOn+qAmFX29Hq5JVX0fD4VHBV7nZfIQJBAOOUd5DmPIiJ+Fp2dYh4yIxlLUXe+2//ts2PenRbVH1bpMllWps9I4hOgj1elbZDkaTLXXWNXbqZ4zUG7PfxE6MCQGL8O71VsjlaGZFfAVQx23d6iCCYbHallz9RIp29hLLKQTQiI2Ftcjf+1TmqbwhqfR+iHyPk9FVI1ERUt+J5UyECQFCzrVKs0np4sqEhsLwcWMGwf0VvtSoaO/DZGEt6t5NclCr2zhKOs7L6ZCTvDZf8jgEqPJIa90ncmD2NnyqtSpECQBQldmr+fMfYSP40PfoqQ4DxjFnq4HjbnzSr+8zi9tP/W7zUdEy+0Mi4Ufnpy4l4wIzqso4SV44V8UJe1rSFmWg=";
+
+        // 测试
+//        $this->private_key = "MIICXAIBAAKBgQC+2v20Ci5VLz7r9si0AuYz3wFLWLE2Vucr1qTWpUY7smlDycOaa/WpasvKssg5lUdgK62JHvFQF2UTqZ2gBm3+atpCUvJFVC29OH4cah7qg0ryUgphEroDsas+zFjQf46EhkE37hem+UhNPcSnMahta+Jnusqftgj2fuHBUaXtzwIDAQABAoGAXC3e3ScRq7ju9f6yfybrUmBB+scyiCE+89BuuvEGU+zepIv9ekbsVtAq75Kb3Bv6ZjuSTCjyuhEik3WXmOOiGapaBmaXl9kkx0UtQsfjpV8dQIAGGskPkn5fkZGFzwmG5VB46B2a1kuR/OpNojIS7Z6Kd+32+KVfKcn1xLH1mykCQQDqBuBqPPwMk3wrXmPXrzZ7li3mO0K4SZTDKT2xfe6rGOprLGCxaXp01OOhWxmXEeW+I1P0b6qL8V+HgzjZjNtDAkEA0MZvoPyJC5Y09/ZSBM0S2izntJ4kGB39rASxpo0CXTDLCIz6k35/abwgCOmX9V8XXnx4og76FDdp3DTNp02shQJBAMUPj07GFXM9iZQ3QhlvN5BvkCzK/86QXwzLIGDh6uP18gbW8oDRkcTpMtg/DthPwMYPl3U/xjtav5crXuaJnmMCQCO6AXpMHOulrbTNKyX1Lge17YTEFyslXrakKv50XPYzllsFPRAmcolWjyjXSJDN0AL0S/R3maYCAZSUWKkLqr0CQGZ2zZVJn4NLv3r9uwJMUljQr+5CoToDp7eahWgN9vO389H0u0Kbhgg0326B4h7DwVl20w7qVwkpnWqTLwz/yqY=";
 
         $this->public_key = '';
         $this->requestParams = array(
-<<<<<<< HEAD
-            'orgId' => '07296653',           // 洋仆淘机构号唯一
-=======
 //            'orgId' => '07296653',           // 洋仆淘机构号唯一 测试
             'orgId' => '65554373',           // 洋仆淘机构号唯一 生产
->>>>>>> c75cd230b60e79e0047330d2828b8043f316747e
             'version' => '1.0',             // 版本
             'signType' => 'RSA',            // 签名方法
         );
@@ -50,13 +55,8 @@ class MerchantsUpsxfModel extends CommonModel
     // 签名
     private function getSign()
     {
-<<<<<<< HEAD
-        $string = get_sign_content($this->requestParams);
-        $sign = rsa_sign($string, $this->private_key);
-=======
         $string = $this->get_sign_content($this->requestParams);
         $sign = $this->rsa_sign($string, $this->private_key);
->>>>>>> c75cd230b60e79e0047330d2828b8043f316747e
         return $sign;
     }
 
@@ -107,10 +107,18 @@ class MerchantsUpsxfModel extends CommonModel
     {
         $this->requestParams['reqId'] = md5(getOrderNumber());    // 请求唯一编号
         $this->requestParams['timestamp'] = date('YmdHis');    // 请求时间
-        $this->requestParams['reqData'] = json_encode($this->parameters);
+        $this->requestParams['reqData'] = $this->parameters;
         $this->requestParams['sign'] = $this->getSign();
+        if($this->parameters['subject']){
+            $this->parameters['subject'] = urldecode($this->parameters['subject']);
+        }
+        if($this->parameters['notifyUrl']){
+            $this->parameters['notifyUrl'] = urldecode($this->parameters['notifyUrl']);
+        }
+        $this->requestParams['reqData'] = $this->parameters;
         $send = json_encode($this->requestParams);
 
+        get_date_dir($this->path,$file_name,'请求地址', $url);
         get_date_dir($this->path,$file_name,'请求数据', $send);
 
         $result = $this->requestPost($url,$send);
@@ -120,14 +128,11 @@ class MerchantsUpsxfModel extends CommonModel
         return json_decode($result, true);
     }
 
-<<<<<<< HEAD
-=======
     /**
      * 设置请求参数
      * @param $key
      * @param $val
      */
->>>>>>> c75cd230b60e79e0047330d2828b8043f316747e
     public function setParameters($key, $val)
     {
         $this->parameters[$key] = $val;
@@ -159,7 +164,7 @@ class MerchantsUpsxfModel extends CommonModel
     public function getPayUrl()
     {
         $result = $this->send($this->scanUrl,'getPayUrl');
-        if($result['code ']== 'SXF0000'){
+        if($result['code']== 'SXF0000'){
             $return = $result['respData'];
             if($return['bizCode'] == '0000'){
                 return array('code'=>'0000','url'=>$return['payUrl']);
@@ -259,9 +264,6 @@ class MerchantsUpsxfModel extends CommonModel
         }
     }
 
-<<<<<<< HEAD
-
-=======
     // 获取签名字符串
     public function get_sign_content($para)
     {
@@ -323,5 +325,4 @@ class MerchantsUpsxfModel extends CommonModel
         $sign = base64_encode($sign);
         return $sign;
     }
->>>>>>> c75cd230b60e79e0047330d2828b8043f316747e
 }
