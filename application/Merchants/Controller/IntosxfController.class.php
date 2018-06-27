@@ -56,7 +56,6 @@ class IntosxfController extends AdminbaseController
             $input = array_filter($this->input);
             $taskCode = $this->getTaskCode();
             $this->input['task_code'] = $taskCode;
-            $this->adddb();
             unset($input['merchant_id']);
             unset($input['img']);
 //            $input['taskCode'] = 'SXF012018062017031592616709762';
@@ -69,6 +68,7 @@ class IntosxfController extends AdminbaseController
             if($result['code'] == 'SXF0000'){
                 $return = $result['respData'];
                 if($return['bizCode'] == '00'){
+                    $this->adddb();
                     $this->ajaxReturn(array('code'=> '0000','msg'=>''));
                 } else {
                     $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg']));
@@ -166,6 +166,7 @@ class IntosxfController extends AdminbaseController
 
     public function adddb()
     {
+        $this->input['status'] = 1;
         $merchant_id = $this->input['merchant_id'];
         $id = $this->sxfModel->where(array('merchant_id'=>$merchant_id))->getField('id');
         if($id){
@@ -256,6 +257,7 @@ class IntosxfController extends AdminbaseController
             $this->ajaxReturn(array('code'=> '1000','msg'=>'图片上传失败'));
         }
         $filename = "./data/upload/sxf/image.zip";
+        unlink($filename);
         $zip = new \ZipArchive();
         $zip->open($filename,ZipArchive::CREATE);   //打开压缩包
         foreach ($imgs as $key => $val) {
@@ -288,7 +290,7 @@ class IntosxfController extends AdminbaseController
             $this->ajaxReturn(array('code' => '0', 'msg' => '上传成功', 'data' => $url));
         } else {
             $message = $upload->getError();
-            $this->ajaxReturn(array('code' => '10', 'msg' => $message,'in'=>ini_get('upload_max_filesize')));
+            $this->ajaxReturn(array('code' => '10', 'msg' => $message));
         }
     }
 }
