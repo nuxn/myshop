@@ -37,7 +37,7 @@ class IntosxfController extends AdminbaseController
 
         $page = $this->page($count, 20);
         $info = $this->sxfModel
-            ->field('b.id,b.merchant_id,b.status,b.add_time,m.merchant_name')
+            ->field('b.id,b.mno,b.merchant_id,b.status,b.add_time,m.merchant_name')
             ->join('b left join ypt_merchants m on b.merchant_id=m.id')
             ->order('b.id desc')
             ->limit($page->firstRow, $page->listRows)
@@ -85,6 +85,55 @@ class IntosxfController extends AdminbaseController
             $this->assign('province', $province);
             $this->display();
         }
+    }
+
+    public function wxconfig()
+    {
+        if (IS_POST) {
+            $input = I("post.");
+            $this->input = array_filter($input);
+            $this->bindconfig();
+            $this->bindDirectory();
+            $this->bindconfig();
+
+        } else {
+            $id =  I('id');
+            $mno = I('mno');
+            $this->assign('id', $id);
+            $this->assign('mno', $mno);
+            $this->display();
+        }
+    }
+
+    public function bindconfig()
+    {
+        $this->sxfModel->setNull();
+        $this->sxfModel->setParameters('mno', $this->input['mno']);
+        $this->sxfModel->setParameters('subAppid', $this->input['subAppid']);
+        $this->sxfModel->setParameters('subMchId', $this->input['subMchId']);
+        return $this->sxfModel->bindconfig();
+    }
+
+    public function bindDirectory()
+    {
+        $this->sxfModel->setNull();
+        $this->sxfModel->setParameters('mno', $this->input['mno']);
+        $this->sxfModel->setParameters('subMchId', $this->input['subMchId']);
+        $this->sxfModel->setParameters('jsapiPath', $this->input['jsapiPath']);
+        return $this->sxfModel->bindDirectory();
+    }
+
+    public function bindScribeAppid()
+    {
+        if($this->input['subscribeAppid']){
+            $this->sxfModel->setNull();
+            $this->sxfModel->setParameters('mno', $this->input['mno']);
+            $this->sxfModel->setParameters('subMchId', $this->input['subMchId']);
+            $this->sxfModel->setParameters('subAppid', $this->input['subAppid']);
+            $this->sxfModel->setParameters('subscribeAppid', $this->input['subscribeAppid']);
+            return $this->sxfModel->bindScribeAppid();
+        }
+        return false;
     }
 
     public function adddb()
@@ -196,7 +245,7 @@ class IntosxfController extends AdminbaseController
     public function upload()
     {
         $upload = new \Think\Upload();// 实例化上传类
-        $upload->maxSize = 1048576;// 设置附件上传大小
+        $upload->maxSize = 3548576;// 设置附件上传大小
         $upload->exts = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
         $upload->rootPath = './data/upload/'; // 设置附件上传根目录
         $upload->savePath = 'merchants/'; // 设置附件上传（子）目录
@@ -205,10 +254,13 @@ class IntosxfController extends AdminbaseController
         $info = $upload->upload();
         if ($info) {
             $url = './data/upload/' . $info['file']['savepath'] . $info['file']['savename'];
+            $image = new \Think\Image();
+            $image->open($url);
+            $image->thumb(1000,1000)->save($url);
             $this->ajaxReturn(array('code' => '0', 'msg' => '上传成功', 'data' => $url));
         } else {
             $message = $upload->getError();
-            $this->ajaxReturn(array('code' => '10', 'msg' => $message));
+            $this->ajaxReturn(array('code' => '10', 'msg' => $message,'in'=>ini_get('upload_max_filesize')));
         }
     }
 }

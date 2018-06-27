@@ -45,18 +45,26 @@ class MerchantsUpsxfModel extends CommonModel
 
         $this->public_key = '';
         $this->requestParams = array(
-//            'orgId' => '07296653',           // 洋仆淘机构号唯一
-            'orgId' => '65554373',           // 洋仆淘机构号唯一
+//            'orgId' => '07296653',           // 洋仆淘机构号唯一 测试
+            'orgId' => '65554373',           // 洋仆淘机构号唯一 生产
             'version' => '1.0',             // 版本
             'signType' => 'RSA',            // 签名方法
         );
     }
 
+    // 签名
     private function getSign()
     {
         $string = $this->get_sign_content($this->requestParams);
-        $sign = rsa_sign($string, $this->private_key);
+        $sign = $this->rsa_sign($string, $this->private_key);
         return $sign;
+    }
+
+    // 设置参数为空
+    public function setNull()
+    {
+        $this->parameters = null;
+        unset($this->requestParams['sign']);
     }
 
     private function requestPost($url, $data, $second = 60)
@@ -83,12 +91,18 @@ class MerchantsUpsxfModel extends CommonModel
         } else {
             $error = curl_errno($curl);
             get_date_dir($this->path,'requestPost','请求错误码', $error);
-//            echo "<a href='http://curl.haxx.se/libcurl/c/libcurl-errors.html'>错误原因查询</a></br>";
+//           "<a href='http://curl.haxx.se/libcurl/c/libcurl-errors.html'>错误原因查询</a></br>";
             curl_close($curl);
             return false;
         }
     }
 
+    /**
+     * 生成请求数据发起氢气球
+     * @param $url
+     * @param $file_name
+     * @return mixed
+     */
     private function send($url, $file_name)
     {
         $this->requestParams['reqId'] = md5(getOrderNumber());    // 请求唯一编号
@@ -114,12 +128,17 @@ class MerchantsUpsxfModel extends CommonModel
         return json_decode($result, true);
     }
 
-
+    /**
+     * 设置请求参数
+     * @param $key
+     * @param $val
+     */
     public function setParameters($key, $val)
     {
         $this->parameters[$key] = $val;
     }
 
+    // 获取公众号支付参数
     public function getPayInfo()
     {
         $result = $this->send($this->jspayUrl,'getPayInfo');
@@ -141,6 +160,7 @@ class MerchantsUpsxfModel extends CommonModel
         }
     }
 
+    // 获取支付宝扫码参数
     public function getPayUrl()
     {
         $result = $this->send($this->scanUrl,'getPayUrl');
@@ -156,6 +176,7 @@ class MerchantsUpsxfModel extends CommonModel
         }
     }
 
+    // 付款码支付
     public function micropay()
     {
         $result = $this->send($this->microUrl,'micropay');
@@ -163,8 +184,8 @@ class MerchantsUpsxfModel extends CommonModel
             $return = $result['respData'];
             if($return['bizCode'] == '0000'){
                 return array('code'=>'0000','transId'=>$return['uuid']);
-            } else if($return['bizCode'] == '2002'){
-                $this->password();
+            } else if($return['bizCode'] == '2002' or $return['bizCode'] == '1005'){
+                return $this->password();
             } else {
                 return array('code'=>'0001','msg'=>$return['bizMsg']);
             }
@@ -173,23 +194,41 @@ class MerchantsUpsxfModel extends CommonModel
         }
     }
 
+    // 用户输入密码查询订单
     public function password()
     {
-        return array('code'=>'0001','msg'=>'交易异常');
-//        $mno = $this->parameters['mno'];
-//        $ordNo = $this->parameters['ordNo'];
-//        $this->parameters = array();
-//        $this->setParameters('ordNo', $ordNo);
-//        $this->setParameters('mno', $mno);
-//        $while = 6;
-//        do {
-//            $result = $this->send($this->queryUrl, 'query_password');
-//            sleep(5);
-//            $while--;
-//        } while ($while);
+        $mno = $this->parameters['mno'];
+        $ordNo = $this->parameters['ordNo'];
+        // 查询6次订单
+        $while = 6;
+        do {
+            sleep(5);
+            $while--;
+            $this->setNull();
+            $this->setParameters('ordNo', $ordNo);
+            $this->setParameters('mno', $mno);
+            $result = $this->send($this->queryUrl, 'query_password');
+            if($result['code'] == 'SXF0000'){
+                $return = $result['respData'];
+                if($return['bizCode'] == '0000'){
+                    if($return['tranSts'] == 'SUCCESS'){ // 支付成功
+                        return array('code'=>'0000','transId'=>$return['uuid']);
+                    } else if($return['tranSts'] == 'PAYING') { // 支付中
+                        continue;
+                    } else {
+                        return array('code'=>'0001','msg'=>$return['bizMsg']);
+                    }
+                }  else {
+                    return array('code'=>'0001','msg'=>$return['bizMsg']);
+                }
+            } else {
+                return array('code'=>'0001','msg'=>$result['msg']);
+            }
+        } while ($while);
 
     }
 
+    // 退款
     public function refund()
     {
         $result = $this->send($this->refundUrl,'refund');
@@ -205,6 +244,7 @@ class MerchantsUpsxfModel extends CommonModel
         }
     }
 
+    // 查询订单
     public function query()
     {
         $result = $this->send($this->queryUrl,'query');
@@ -224,13 +264,14 @@ class MerchantsUpsxfModel extends CommonModel
         }
     }
 
+    // 获取签名字符串
     public function get_sign_content($para)
     {
         $res = $this->argSort($para);
         return $this->createLinkstring($res);
     }
 
-
+    // 拼接参数
     function createLinkstring($para) {
 
         $params = array();
@@ -256,15 +297,32 @@ class MerchantsUpsxfModel extends CommonModel
 
     }
 
+    /**
+     * 对数组排序
+     * @param $para 排序前的数组
+     * @return mixed 排序后的数组
+     */
     function argSort($para) {
-
         ksort($para);
 
-        // reset($para);
-
         return $para;
-
     }
 
+    // RSA签名
+    function rsa_sign($data, $privatekey)
+    {
+        $res = "-----BEGIN RSA PRIVATE KEY-----\n" .
+            wordwrap($privatekey, 64, "\n", true) .
+            "\n-----END RSA PRIVATE KEY-----";
 
+        $pkeyid = openssl_get_privatekey($res);
+        if (empty($pkeyid)) {
+            echo "private key resource identifier False!";
+            return False;
+        }
+        openssl_sign($data, $sign, $pkeyid);
+        openssl_free_key($pkeyid);
+        $sign = base64_encode($sign);
+        return $sign;
+    }
 }
