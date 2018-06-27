@@ -309,8 +309,9 @@ class  MerchantsRateController extends Controller
         //统计对象  微信,支付宝，现金，银联，储值，异业联盟等支付金额和笔数，支付优惠，微信充值，支付宝充值，充值码充值，原路退款，现金退款
         error_reporting (E_ALL & ~E_NOTICE);
         set_time_limit(0); //执行时间无限
-        ignore_user_abort();
-        for($i=200;$i>0;$i--){
+//        ignore_user_abort();
+        $i=1;
+//        for($i=200;$i>0;$i--){
             $start_time = strtotime("-" . $i . " day", strtotime(date('y-m-d')));
             $date = date('Ymd',$start_time);
 
@@ -478,7 +479,7 @@ class  MerchantsRateController extends Controller
                 M('pay_statistics')->add($data);
             }
             echo "总总总总笔数：".$nums.'<br>';
-        }
+//        }
         exit();
     }
 

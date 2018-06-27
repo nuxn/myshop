@@ -418,9 +418,13 @@ class BanksxfController extends HomebaseController
     public function mer_notify()
     {
         $json_str = file_get_contents('php://input', 'r');
-        get_date_dir($this->path,'mer_notify','数据', $json_str);
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/log/Banksxf/'.date('Y-m') . "/into_notify.log",
+            date("Y-m-d H:i:s") . ':'. $json_str . PHP_EOL . PHP_EOL, FILE_APPEND | LOCK_EX);
         $data = json_decode($json_str);
-        M('merchants_upsxf')->where(array('task_code'=>$data->taskCode))->save(array('mno'=>$data->mno));
+        $re = M('merchants_upsxf')->where(array('task_code'=>$data->taskCode))->save(array('mno'=>$data->mno));
+        if($re !== false){
+            exit('{"code":"success","msg":"成功"}');
+        } else exit('{"code":"error","msg":""}');
     }
 
     /**
@@ -462,6 +466,7 @@ class BanksxfController extends HomebaseController
      */
     private function refund($remark, $price, $tran_id)
     {
+        $this->sxfModel->setNull();
         $this->sxfModel->setParameters('ordNo', getOrderNumber());
         $this->sxfModel->setParameters('mno', $this->mno);
         $this->sxfModel->setParameters('origOrderNo', $remark);
@@ -479,7 +484,9 @@ class BanksxfController extends HomebaseController
      */
     public function query($remark)
     {
-        $mno = '836102376310006';
+        $pay = $this->pay_model->field('merchant_id')->where(array("remark" => $remark))->find();
+        $mno = $this->sxfModel->where("merchant_id=$pay[merchant_id]")->getField('mno');
+        $this->sxfModel->setNull();
         $this->sxfModel->setParameters('ordNo', $remark);
         $this->sxfModel->setParameters('mno', $mno);
 

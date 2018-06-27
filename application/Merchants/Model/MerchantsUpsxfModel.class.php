@@ -18,16 +18,29 @@ class MerchantsUpsxfModel extends CommonModel
     private $getIdtTypsUrl;
     private $getTaskCodeUrl;
     private $batchFeedInfo;
+    private $bindDirectory;
+    private $bindconfig;
+    private $bindScribeAppid;
 
     private $path;
 
     public function __construct()
     {
         parent::__construct();
+<<<<<<< HEAD
         $this->getAddressUrl  = 'https://icm-test.suixingpay.com/management/mer/getAddress';
         $this->getIdtTypsUrl  = 'https://icm-test.suixingpay.com/management/mer/getIdtTyps';
         $this->getTaskCodeUrl  = 'https://icm-test.suixingpay.com/management/BatchFeed/getTaskCode';
         $this->batchFeedInfo  = 'https://icm-test.suixingpay.com/management/BatchFeed/batchFeedInfo';
+=======
+//        $this->getTaskCodeUrl  = 'https://icm-test.suixingpay.com/management/BatchFeed/getTaskCode';
+        $this->getTaskCodeUrl  = 'https://icm-management.suixingpay.com/management/BatchFeed/getTaskCode';
+//        $this->batchFeedInfo  = 'https://icm-test.suixingpay.com/management/BatchFeed/batchFeedInfo';
+        $this->batchFeedInfo  = 'https://icm-management.suixingpay.com/management/BatchFeed/batchFeedInfo';
+        $this->bindDirectory  = 'https://icm-management.suixingpay.com/management/weChat/bindDirectory';    // 绑定授权目录
+        $this->bindconfig  = 'https://icm-management.suixingpay.com/management/weChat/bindconfig';   // 绑定APPid
+        $this->bindScribeAppid  = 'https://icm-management.suixingpay.com/management/weChat/bindScribeAppid';   // 绑定推荐关注
+>>>>>>> c75cd230b60e79e0047330d2828b8043f316747e
 
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/Banksxf/';
         $this->private_key = "MIICXAIBAAKBgQC+2v20Ci5VLz7r9si0AuYz3wFLWLE2Vucr1qTWpUY7smlDycOaa/WpasvKssg5lUdgK62JHvFQF2UTqZ2gBm3+atpCUvJFVC29OH4cah7qg0ryUgphEroDsas+zFjQf46EhkE37hem+UhNPcSnMahta+Jnusqftgj2fuHBUaXtzwIDAQABAoGAXC3e3ScRq7ju9f6yfybrUmBB+scyiCE+89BuuvEGU+zepIv9ekbsVtAq75Kb3Bv6ZjuSTCjyuhEik3WXmOOiGapaBmaXl9kkx0UtQsfjpV8dQIAGGskPkn5fkZGFzwmG5VB46B2a1kuR/OpNojIS7Z6Kd+32+KVfKcn1xLH1mykCQQDqBuBqPPwMk3wrXmPXrzZ7li3mO0K4SZTDKT2xfe6rGOprLGCxaXp01OOhWxmXEeW+I1P0b6qL8V+HgzjZjNtDAkEA0MZvoPyJC5Y09/ZSBM0S2izntJ4kGB39rASxpo0CXTDLCIz6k35/abwgCOmX9V8XXnx4og76FDdp3DTNp02shQJBAMUPj07GFXM9iZQ3QhlvN5BvkCzK/86QXwzLIGDh6uP18gbW8oDRkcTpMtg/DthPwMYPl3U/xjtav5crXuaJnmMCQCO6AXpMHOulrbTNKyX1Lge17YTEFyslXrakKv50XPYzllsFPRAmcolWjyjXSJDN0AL0S/R3maYCAZSUWKkLqr0CQGZ2zZVJn4NLv3r9uwJMUljQr+5CoToDp7eahWgN9vO389H0u0Kbhgg0326B4h7DwVl20w7qVwkpnWqTLwz/yqY=";
@@ -111,8 +124,10 @@ class MerchantsUpsxfModel extends CommonModel
     public function setNull()
     {
         $this->parameters = null;
+        unset($this->requestParams['sign']);
     }
 
+<<<<<<< HEAD
     public function get_address()
     {
         return $this->send($this->getAddressUrl,'getAddressUrl');
@@ -121,6 +136,22 @@ class MerchantsUpsxfModel extends CommonModel
     public function getIdtTyps()
     {
         return $this->send($this->getIdtTypsUrl,'getIdtTyps');
+=======
+    public function bindconfig()
+    {
+        return $this->send($this->bindconfig, 'bindconfig');
+    }
+
+    public function bindDirectory()
+    {
+        return $this->send($this->bindDirectory, 'bindDirectory');
+    }
+
+    public function bindScribeAppid()
+    {
+        return $this->send($this->bindScribeAppid, 'bindScribeAppid');
+
+>>>>>>> c75cd230b60e79e0047330d2828b8043f316747e
     }
 
     public function getTaskCode()

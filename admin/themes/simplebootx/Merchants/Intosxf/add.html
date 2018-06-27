@@ -364,15 +364,17 @@
                 shade: [0.3, '#000'] //0.1透明度的白色背景
             });
             $.post("{:U('add')}", send, function (res) {
+                layer.close(index);
                 if (res.code == '0000') {
-                    location.href = "{:U('index')}";
+                    layer.alert('进件成功', {icon: 1},function(){
+                        location.href = "{:U('index')}";
+                    })
                 } else {
                     layer.open({
                         title: '进件失败'
                         , content: res.msg
                     });
                 }
-                layer.close(index);
             });
             return false;
         });

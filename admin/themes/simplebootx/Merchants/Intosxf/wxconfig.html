@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/layui/css/layui.css">
+    <style>
+        .red {
+            color: #f00
+        }
+
+        .bule {
+            color: #00f
+        }
+    </style>
+    <script src="__PUBLIC__/layui/layui.all.js"></script>
+    <script src="__PUBLIC__/js/jquery.js"></script>
+
+</head>
+<body>
+
+<div class="layui-container" style="width: 100%">
+    <!--<blockquote class="layui-elem-quote">注意：</blockquote>-->
+    <br>
+
+    <div class="layui-row layui-col-space30">
+        <div class="layui-col-md7">
+            <fieldset class="layui-elem-field ">
+                <legend>随行付商户公众号配置</legend>
+                <div class="layui-field-box">
+                    <form class="layui-form" action="">
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">微信商户号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="subMchId" lay-verify="required" value=""
+                                       autocomplete="off" class="layui-input">
+                                <span class="bule">(由随行付报备成功后返回)</span>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">公众号APPID</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="subAppid" required lay-verify="required"
+                                       value="wx3fa82ee7deaa4a21" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">授权目录</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="jsapiPath" lay-verify="required" value="https://sy.youngport.com.cn/"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">推荐关注公众号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="subscribeAppid" lay-verify="" value=""
+                                       autocomplete="off" class="layui-input">
+                                <span class="bule">(非必传)</span>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="mno" value="{$mno}">
+                        <input type="hidden" name="id" value="{$id}">
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn layui-btn-normal " lay-submit lay-filter="formSub">立即提交</button>
+                                <a class="layui-btn layui-btn-primary " lay-event="detail" href="javascript:history.back(-1);">返回</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use('form', function () {
+        var form = layui.form;
+        form.render();
+        //监听提交
+        form.on('submit(formSub)', function (data) {
+            var send = JSON.stringify(data.field);
+            send = eval('(' + send + ')')
+            var index = layer.load(0, {
+                shade: [0.3, '#000'] //0.1透明度的白色背景
+            });
+            $.post("{:U('wxconfig')}", send, function (res) {
+                if (res.code == '0000') {
+                    layer.alert('配置成功', {icon: 1},function(){
+                        location.href = "{:U('index')}";
+                    })
+                } else {
+                    layer.open({
+                        title: '配置失败'
+                        , content: res.msg
+                    });
+                }
+                layer.close(index);
+            });
+            return false;
+        });
+    });
+
+</script>
+
+</body>
+</html>
