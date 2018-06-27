@@ -399,6 +399,7 @@ class ShippingController extends ApibaseController
     {
         return (preg_match("/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/",$str)||preg_match("/^\d{3}-\d{8}|\d{4}-\d{7}|\d{3}-\d{3}-\d{4}$/",$str))?true:false;
     }
+
     /**
      * 微信客服图片上传编辑 
      */
@@ -418,8 +419,12 @@ class ShippingController extends ApibaseController
         }
         if($info['img']){
             $img = '/data/upload/' .  $info['img']['savepath'] . $info['img']['savename'];
+            $image = new \Think\Image();
+            $image->open($img);
+            $image->thumb(1000,1000)->save($img);
+            $this->ajaxReturn(array('code'=>'success','msg'=>'上传成功','data'=>$img));
         }
-        $this->ajaxReturn(array('code'=>'success','msg'=>'上传成功','data'=>$img));
+        $this->ajaxReturn(array('code'=>'error','msg'=>'失败'));
     }
 
     /**
