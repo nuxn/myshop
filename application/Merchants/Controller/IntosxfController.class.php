@@ -17,6 +17,7 @@ class IntosxfController extends AdminbaseController
     protected $sxfModel;
     protected $input;
     protected $merUrl;
+    private $orgId;
 
     function _initialize()
     {
@@ -25,6 +26,8 @@ class IntosxfController extends AdminbaseController
         $this->merchants_users = M("merchants_users");
         $this->sxfModel = D("MerchantsUpsxf");
         $this->merUrl = 'https://sy.youngport.com.cn/Pay/Banksxf/mer_notify';
+//        $this->orgId = '07296653';
+        $this->orgId = '65554373';
     }
 
     #进件列表
@@ -50,10 +53,11 @@ class IntosxfController extends AdminbaseController
     {
         if (IS_POST) {
             $this->input = I("post.");
-            $taskCode = $this->getTaskCode();
             $input = array_filter($this->input);
+            $taskCode = $this->getTaskCode();
             $this->input['task_code'] = $taskCode;
             $this->adddb();
+            unset($input['merchant_id']);
             unset($input['img']);
 //            $input['taskCode'] = 'SXF012018062017031592616709762';
             $input['taskCode'] = $taskCode;
@@ -70,7 +74,7 @@ class IntosxfController extends AdminbaseController
                     $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg']));
                 }
             } else {
-                $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']));
+                $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']?:'失败'));
             }
         } else {
             $merchant_id = I('id');
@@ -168,7 +172,7 @@ class IntosxfController extends AdminbaseController
         $path = $this->getZip();
         $this->sxfModel->setNull();
         $this->sxfModel->setParameters('file', "@$path");
-        $this->sxfModel->setParameters('orgId', '07296653');
+        $this->sxfModel->setParameters('orgId', $this->orgId);
         $this->sxfModel->setParameters('reqId', md5(getOrderNumber()));
         $result = $this->sxfModel->getTaskCode();
         if($result['code'] == 'SXF0000'){
@@ -179,7 +183,7 @@ class IntosxfController extends AdminbaseController
                 $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg']));
             }
         } else {
-            $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']));
+            $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']?:'进件失败'));
         }
     }
 
