@@ -304,7 +304,6 @@ class  MerchantsRateController extends Controller
     //定时日流水统计
     public function pay_task()
     {
-//        echo date('Y-m-d H:s',1523899235);die;
         //默认统计昨天
         //统计对象  微信,支付宝，现金，银联，储值，异业联盟等支付金额和笔数，支付优惠，微信充值，支付宝充值，充值码充值，原路退款，现金退款
         error_reporting (E_ALL & ~E_NOTICE);
