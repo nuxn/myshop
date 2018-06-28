@@ -584,6 +584,7 @@ class ProductController extends ApibaseController
     {
         if(IS_POST){
             $goods_id = I('goods_id');  // 商品
+            $goods_name = M('goods')->where(array('goods_id'=>$goods_id))->getfield('goods_name');
             $status = I('status');
             $terminal = I('terminal');
             if(!$terminal) $this->retError('参数为空!');
@@ -618,6 +619,8 @@ class ProductController extends ApibaseController
             }
             $res = $this->goodsModel->where(array('goods_id' => $goods_id))->save($data);
             if($res){
+                $this->write_log('改变了上下架状态'.$goods_name,$goods_id);//记录日志
+
                 $this->retSucc();
             } else {
                 $this->retError('投放失败');
