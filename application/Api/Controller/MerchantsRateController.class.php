@@ -309,176 +309,212 @@ class  MerchantsRateController extends Controller
         //统计对象  微信,支付宝，现金，银联，储值，异业联盟等支付金额和笔数，支付优惠，微信充值，支付宝充值，充值码充值，原路退款，现金退款
         error_reporting (E_ALL & ~E_NOTICE);
         set_time_limit(0); //执行时间无限
-        ignore_user_abort();
-//        $i=1;
+        // ignore_user_abort();
+        $i = 6;
         for($i=200;$i>0;$i--){
-            $start_time = strtotime("-" . $i . " day", strtotime(date('y-m-d')));
-            $date = date('Ymd',$start_time);
+        $start_time = strtotime("-" . $i . " day", strtotime(date('y-m-d')));
+        $date = date('Ymd',$start_time);
 
-            $end_time  =  strtotime("+1 day",$start_time);
-            echo '---------------开始时间：' . $start_time . '-' . $end_time . '---------<br><br>';
-            $merchants = M('merchants')->where(array('status'=>1))->field('id,uid,merchant_name')->select();
-            $nums = 0;
-            foreach ($merchants as $key => $value) {
-                if (M('pay_statistics')->where(array('date'=>$date,'uid'=>$value['uid']))->getField('id')) {
-                    continue;
-                }
-                //            echo $value['id'].'<br>';
-                $pay = M('pay')
-                    ->alias("p")
-                    ->where('p.paytime >='.$start_time.' and p.paytime < '.$end_time)
-                    ->where(array('p.merchant_id'=>$value['id'],'p.status'=>1))
-                    ->field('p.price,p.paystyle_id,p.remark,p.mode')
-                    ->select();
-                //            echo M('pay')->getLastSql().'<br>';
-                $cdk = M('screen_memcard_cdk_log')
-                    ->alias("l")
-                    ->join("join ypt_screen_memcard_cdk c on c.id=l.cdk_id")
-                    ->where('l.use_time >='.$start_time.' and l.use_time < '.$end_time)
-                    ->where(array('l.uid'=>$value['uid']));
-                $cdk_price =  $cdk->sum('c.price');
-                $cdk_price = $cdk_price?$cdk_price:0;
-                //            echo $cdk->getLastSql();
-                $cdk_nums =  M('screen_memcard_cdk_log')
-                    ->alias("l")
-                    ->join("join ypt_screen_memcard_cdk c on c.id=l.cdk_id")
-                    ->where('l.use_time >='.$start_time.' and l.use_time < '.$end_time)
-                    ->where(array('l.uid'=>$value['uid']))
-                    ->count();
-                if (!$pay&&$cdk_nums==0){
-                    continue;
-                }
-                //            echo M('screen_memcard_cdk_log')->getLastSql();
-                $pay_back = M('pay_back')
-                    ->where('paytime >='.$start_time.' and paytime < '.$end_time)
-                    ->where(array('merchant_id'=>$value['id']))
-                    ->field('price_back,mode')
-                    ->select();
-
-                //            echo M('screen_memcard_cdk_log')->getLastSql();
-                $wx_price = $ali_price = $union_price =$cash_price = $double_back = $cash_back = $merchant_price = $agent_price =$order_benefit=$wx_recharge = $ali_recharge=0;
-                $wx_nums = $merchant_nums = $agent_nums =$ali_nums = $union_nums = $cash_nums = $double_back_nums = $cash_back_nums =$wx_recharge_nums = $ali_recharge_nums=$order_benefit_nums=0;
-                $num = 0;
-                foreach ($pay as $k => $v) {
-                    $order = M('order')
-                        ->where(array('order_sn'=>$v['remark']))
-                        ->field('user_money,order_amount,total_amount,card_code,order_benefit')
-                        ->find();
-                    if ($order['order_benefit']>0){
-                        $order_benefit += $order['order_benefit'];   //支付优惠
-                        $order_benefit_nums++;
-                    }
-
-                    if ($v['paystyle_id']==1) {
-                        if(!$order||$order['order_amount']>0){
-                            //微信支付
-                            $wx_price += $v['price'];
-                            $wx_nums++;
-                        }else{
-                            //判断储值支付类型  1=普卡  2=异业联盟盟卡
-                            $type = $this->check_yue($order['card_code']);
-                            if ($type==1){
-                                //1=普卡
-                                $merchant_price += $order['user_money'];
-                                $merchant_nums++;
-                            }elseif($type=2){
-                                //2=异业联盟盟卡
-                                $agent_price += $order['user_money'];
-                                $agent_nums++;
-                            }
-                        }
-                        if($v['mode']==12){
-                            //会员充值
-                            $wx_recharge += $v['price'];
-                            $wx_recharge_nums++;
-                        }
-                    }
-                    if ($v['paystyle_id']==2) {
-                        //支付宝
-                        $ali_price += $v['price'];
-                        $ali_nums++;
-                        if($v['mode']==12){
-                            //会员充值
-                            $ali_recharge += $v['price'];
-                            $ali_recharge_nums++;
-                        }
-                    }
-                    if ($v['paystyle_id']==5) {
-                        //银联
-                        $union_price += $v['price'];
-                        $union_nums++;
-                    }
-                    if ($v['paystyle_id']==3) {
-                        //现金
-                        $cash_price += $v['price'];
-                        $cash_nums++;
-                    }
-
-                }
-                foreach ($pay_back as $kv => $va) {
-                    if ($va['mode']==98) {
-                        $double_back += $va['price_back'];
-                        $double_back_nums++;
-                    }
-                    if ($va['mode']==99) {
-                        $cash_back += $va['price_back'];
-                        $cash_back_nums++;
-                    }
-                }
-                echo $date.'<br>';
-                echo "微信支付：".$wx_price.'数量：'.$wx_nums.'<br>';
-                echo "支付宝：".$ali_price.'数量：'.$ali_nums.'<br>';
-                echo "银联支付：".$union_price.'数量：'.$union_nums.'<br>';
-                echo "现金支付：".$cash_price.'数量：'.$cash_nums.'<br>';
-                echo "商户储值：".$merchant_price.'数量：'.$merchant_nums.'<br>';
-                echo "代理储值：".$agent_price.'数量：'.$agent_nums.'<br>';
-                echo "原路退款：".$double_back.'数量：'.$double_back_nums.'<br>';
-                echo "现金退款：".$cash_back.'数量：'.$cash_back_nums.'<br>';
-                echo "支付优惠：".$order_benefit.'<br>';
-                echo "支付优惠笔数：".$order_benefit_nums.'<br>';
-                echo "微信充值：".$wx_recharge.'<br>';
-                echo "微信笔数：".$wx_recharge_nums.'<br>';
-                echo "支付宝充值：".$ali_recharge.'<br>';
-                echo "支付宝笔数：".$ali_recharge_nums.'<br>';
-                echo "充值码充值：".$cdk_price.'<br>';
-                echo "充值码笔数：".$cdk_nums.'<br>';
-                $num = $wx_nums + $ali_nums +$union_nums+$cash_nums+$merchant_nums+$agent_nums;
-                $nums +=  $num;
-                echo "总笔数：".$num.'<br>';
-                echo $key.'---'.$value['id'].'<br>'.'<br>';
-
-                $data = array(
-                    'uid'=>$value['uid'],
-                    'wx_price'=>$wx_price,
-                    'ali_price'=>$ali_price,
-                    'union_price'=>$union_price,
-                    'cash_price'=>$cash_price,
-                    'double_back'=>$double_back,
-                    'cash_back'=>$cash_back,
-                    'wx_nums'=>$wx_nums,
-                    'ali_nums'=>$ali_nums,
-                    'union_nums'=>$union_nums,
-                    'cash_nums'=>$cash_nums,
-                    'double_back_nums'=>$double_back_nums,
-                    'cash_back_nums'=>$cash_back_nums,
-                    'merchant_price'=>$merchant_price,
-                    'merchant_nums'=>$merchant_nums,
-                    'agent_price'=>$agent_price,
-                    'agent_nums'=>$agent_nums,
-                    'order_benefit'=>$order_benefit,
-                    'order_benefit_nums'=>$order_benefit_nums,
-                    'wx_recharge'=>$wx_recharge,
-                    'wx_recharge_nums'=>$wx_recharge_nums,
-                    'ali_recharge'=>$ali_recharge,
-                    'ali_recharge_nums'=>$ali_recharge_nums,
-                    'cdk_price'=>$cdk_price,
-                    'cdk_nums'=>$cdk_nums,
-                    'add_time'=>time(),
-                    'date'=>$date,
-                    'month'=>date('Ym',$start_time));
-                M('pay_statistics')->add($data);
+        $end_time  =  strtotime("+1 day",$start_time);
+        echo '---------------开始时间：' . $start_time . '-' . $end_time . '---------<br><br>';
+        $merchants = M('merchants')->where(array('status'=>1))->field('id,uid,merchant_name')->select();
+        $nums = 0;
+        foreach ($merchants as $key => $value) {
+            if (M('pay_statistics')->where(array('date'=>$date,'uid'=>$value['uid']))->getField('id')) {
+                continue;
             }
-            echo "总总总总笔数：".$nums.'<br>';
+            // echo $value['id'].'<br>';
+            $pay = M('pay')
+                ->alias("p")
+                ->where('p.paytime >='.$start_time.' and p.paytime < '.$end_time)
+                ->where(array('p.merchant_id'=>$value['id'],'p.status'=>1))
+                ->field('p.price,p.paystyle_id,p.remark,p.mode,p.cost_rate')
+                ->select();
+            // echo M('pay')->getLastSql().'<br>';
+            $cdk = M('screen_memcard_cdk_log')
+                ->alias("l")
+                ->join("join ypt_screen_memcard_cdk c on c.id=l.cdk_id")
+                ->where('l.use_time >='.$start_time.' and l.use_time < '.$end_time)
+                ->where(array('l.uid'=>$value['uid']));
+            $cdk_price =  $cdk->sum('c.price');
+            $cdk_price = $cdk_price?$cdk_price:0;
+            //            echo $cdk->getLastSql();
+            $cdk_nums =  M('screen_memcard_cdk_log')
+                ->alias("l")
+                ->join("join ypt_screen_memcard_cdk c on c.id=l.cdk_id")
+                ->where('l.use_time >='.$start_time.' and l.use_time < '.$end_time)
+                ->where(array('l.uid'=>$value['uid']))
+                ->count();
+            if (!$pay&&$cdk_nums==0){
+                continue;
+            }
+            //            echo M('screen_memcard_cdk_log')->getLastSql();
+            $pay_back = M('pay_back')
+                ->where('paytime >='.$start_time.' and paytime < '.$end_time)
+                ->where(array('merchant_id'=>$value['id']))
+                ->field('price_back,mode')
+                ->select();
+
+            //            echo M('screen_memcard_cdk_log')->getLastSql();
+            $wx_price = $ali_price = $union_price =$cash_price = $double_back = $cash_back = $merchant_price = $agent_price =$order_benefit=$wx_recharge = $ali_recharge=0;
+            $wx_nums = $merchant_nums = $agent_nums =$ali_nums = $union_nums = $cash_nums = $double_back_nums = $cash_back_nums =$wx_recharge_nums = $ali_recharge_nums=$order_benefit_nums=0;
+            $wx_poundage= $ali_poundage = $agent_poundage = $union_poundage = $cash_poundage = $merchant_poundage = 0;
+            foreach ($pay as $k => $v) {
+                $order = M('order')
+                    ->where(array('order_sn'=>$v['remark']))
+                    ->field('user_money,order_amount,total_amount,card_code,order_benefit,user_id')
+                    ->find();
+                $card_rate = M('merchants_users')->where(array('id'=>$order['user_id']))->getField('card_rate');
+                if ($order['order_benefit']>0){
+                    $order_benefit += $order['order_benefit'];   //支付优惠
+                    $order_benefit_nums++;
+                }
+
+                if ($v['paystyle_id']==1) {
+                    if(!$order||$order['order_amount']>0){
+                        //微信支付
+                        $wx_price += $v['price'];
+                        $wx_poundage += $v['price']*$v['cost_rate']/100;
+                        $wx_nums++;
+                        //判断储值支付类型  1=普卡  2=异业联盟盟卡
+                        $type = $this->check_yue($order['card_code']);
+                        if ($type==1){
+                            //1=普卡
+                            $merchant_price += $order['user_money'];
+                        }elseif($type=2){
+                            //2=异业联盟盟卡
+                            $agent_price += $order['user_money'];
+                            $agent_poundage+=$order['user_money']*$card_rate/100;
+                        }
+                    }else{
+                        //判断储值支付类型  1=普卡  2=异业联盟盟卡
+                        $type = $this->check_yue($order['card_code']);
+                        if ($type==1){
+                            //1=普卡
+                            $merchant_price += $order['user_money'];
+                            $merchant_nums++;
+                        }elseif($type=2){
+                            //2=异业联盟盟卡
+                            $agent_price += $order['user_money'];
+                            $agent_poundage+=$order['user_money']*$card_rate/100;
+                            $agent_nums++;
+                        }
+                    }
+                    if($v['mode']==12){
+                        //会员充值
+                        $wx_recharge += $v['price'];
+                        $wx_recharge_nums++;
+                    }
+                }
+
+                if ($v['paystyle_id']==2) {
+                    //支付宝
+                    $ali_price += $v['price'];
+                    $ali_nums++;
+                    $ali_poundage += $v['price']*$v['cost_rate']/100;
+                    if($v['mode']==12){
+                        //会员充值
+                        $ali_recharge += $v['price'];
+                        $ali_recharge_nums++;
+                    }
+                }
+                if($v['paystyle_id']==4){
+                    //判断储值支付类型  1=普卡  2=异业联盟盟卡
+                    $type = $this->check_yue($order['card_code']);
+                    if ($type==1){
+                        //1=普卡
+                        $merchant_price += $order['user_money'];
+                        $merchant_nums++;
+                    }elseif($type=2){
+                        //2=异业联盟盟卡
+                        $agent_price += $order['user_money'];
+                        $agent_poundage+=$order['user_money']*$card_rate/100;
+                        $agent_nums++;
+                    }
+                }
+                if ($v['paystyle_id']==3) {
+                    //银联
+                    $union_price += $v['price'];
+                    $union_nums++;
+                    $union_poundage += $v['price']*$v['cost_rate']/100;
+                }
+                if ($v['paystyle_id']==5) {
+                    //现金
+                    $cash_price += $v['price'];
+                    $cash_nums++;
+                }
+
+            }
+            foreach ($pay_back as $kv => $va) {
+                if ($va['mode']==98) {
+                    $double_back += $va['price_back'];
+                    $double_back_nums++;
+                }
+                if ($va['mode']==99) {
+                    $cash_back += $va['price_back'];
+                    $cash_back_nums++;
+                }
+            }
+            echo $date.'<br>';
+            echo "微信支付：".$wx_price.'数量：'.$wx_nums.'手续费：'.$wx_poundage.'<br>';
+            echo "支付宝：".$ali_price.'数量：'.$ali_nums.'手续费：'.$ali_poundage.'<br>';
+            echo "银联支付：".$union_price.'数量：'.$union_nums.'手续费：'.$union_poundage.'<br>';
+            echo "现金支付：".$cash_price.'数量：'.$cash_nums.'手续费：'.$cash_poundage.'<br>';
+            echo "商户储值：".$merchant_price.'数量：'.$merchant_nums.'手续费：'.$merchant_poundage.'<br>';
+            echo "代理储值：".$agent_price.'数量：'.$agent_nums.'手续费：'.$agent_poundage.'<br>';
+            echo "原路退款：".$double_back.'数量：'.$double_back_nums.'<br>';
+            echo "现金退款：".$cash_back.'数量：'.$cash_back_nums.'<br>';
+            echo "支付优惠：".$order_benefit.'<br>';
+            echo "支付优惠笔数：".$order_benefit_nums.'<br>';
+            echo "微信充值：".$wx_recharge.'<br>';
+            echo "微信笔数：".$wx_recharge_nums.'<br>';
+            echo "支付宝充值：".$ali_recharge.'<br>';
+            echo "支付宝笔数：".$ali_recharge_nums.'<br>';
+            echo "充值码充值：".$cdk_price.'<br>';
+            echo "充值码笔数：".$cdk_nums.'<br>';
+            $num = $wx_nums + $ali_nums +$union_nums+$cash_nums+$merchant_nums+$agent_nums;
+            $nums +=  $num;
+            echo "总笔数：".$num.'<br>';
+            echo $key.'---'.$value['id'].'<br>'.'<br>';
+
+            $data = array(
+                'uid'=>$value['uid'],
+                'wx_price'=>$wx_price,
+                'ali_price'=>$ali_price,
+                'union_price'=>$union_price,
+                'cash_price'=>$cash_price,
+                'double_back'=>$double_back,
+                'cash_back'=>$cash_back,
+                'wx_nums'=>$wx_nums,
+                'ali_nums'=>$ali_nums,
+                'union_nums'=>$union_nums,
+                'cash_nums'=>$cash_nums,
+                'double_back_nums'=>$double_back_nums,
+                'cash_back_nums'=>$cash_back_nums,
+                'merchant_price'=>$merchant_price,
+                'merchant_nums'=>$merchant_nums,
+                'agent_price'=>$agent_price,
+                'agent_nums'=>$agent_nums,
+                'order_benefit'=>$order_benefit,
+                'order_benefit_nums'=>$order_benefit_nums,
+                'wx_recharge'=>$wx_recharge,
+                'wx_recharge_nums'=>$wx_recharge_nums,
+                'ali_recharge'=>$ali_recharge,
+                'ali_recharge_nums'=>$ali_recharge_nums,
+                'cdk_price'=>$cdk_price,
+                'cdk_nums'=>$cdk_nums,
+                'wx_poundage'=>$wx_poundage,
+                'ali_poundage'=>$ali_poundage,
+                'union_poundage'=>$union_poundage,
+                'cash_poundage'=>$cash_poundage,
+                'merchant_poundage'=>$merchant_poundage,
+                'agent_poundage'=>$agent_poundage,
+                'add_time'=>time(),
+                'date'=>$date,
+                'month'=>date('Ym',$start_time));
+            M('pay_statistics')->add($data);
+        }
+        echo "总总总总笔数：".$nums.'<br>';
         }
         exit();
     }
