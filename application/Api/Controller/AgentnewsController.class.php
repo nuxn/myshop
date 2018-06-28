@@ -57,6 +57,9 @@ class  AgentnewsController extends ApibaseController
         $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $pays));
     }
 
+    //代理统计优化
+
+
     public function checkAuth()
     {
         $token_time = $this->userInfo['token_add_time'];
