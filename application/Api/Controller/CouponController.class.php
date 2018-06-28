@@ -228,10 +228,11 @@ class CouponController extends ApibaseController
         $map['status']=3;
         $map['base_url']=$base_url;
         $map['create_time']=time();
-        if(M("screen_coupons")->add($map)){
+        if($scr_id=M("screen_coupons")->add($map)){
             if($base_url&&$this->merchants->where("id=$mid")->find()){
                 $this->merchants->where("id=$mid")->save(array("base_url" =>$base_url,"logo_url"=>$logo_url));
             }
+            $this->write_log('添加了优惠券'.$map['title'],$scr_id);
             $this->ajaxReturn(array("code" => "success","msg"=>"成功", "data"=>"恭喜你添加成功"));
         }else{
             $this->ajaxReturn(array("code" => "error","msg"=>"失败", "data"=>"添加失败"));
@@ -498,6 +499,7 @@ class CouponController extends ApibaseController
         }
         if($agency_business ==2){
             if($this->coupons->where("id='$card'And mid='$mid'")->find())$this->coupons->where("id='$card'And mid='$mid'")->save(array("is_cashier" => 2));
+            $this->write_log('收银台投放'.$card,$card);
             $this->ajaxReturn(array("code" => "success","msg"=>"成功", "data"=>"该优惠券收银台投放成功"));
         }
     }
@@ -526,6 +528,7 @@ class CouponController extends ApibaseController
         if(!$card_id){
             $this->ajaxReturn(array("code" => "失败","msg"=>"优惠券不存在"));
         }
+        $this->write_log('自动投放'.$card_id,$card_id);
         $this->ajaxReturn(array("code" => "success","msg"=>"自动投放成功"));
     }
 
