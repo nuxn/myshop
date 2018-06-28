@@ -12,7 +12,7 @@ return array(
     'DB_PREFIX' => 'ypt_',
     //密钥
     "AUTHCODE" => 'mhZDgxrlMRXnifEMnF',
-    //cookies
+    //cookiess
     "COOKIE_PREFIX" => '5Ndxav_',
     // shanpay 数据库配置
     'DB_SHANPAY'             => "mysql://youngport:52f9i3^2r&jlk*wf#as!df@rm-wz9polh31wc54igp7.mysql.rds.aliyuncs.com:3306/shanpay",
