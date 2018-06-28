@@ -28,15 +28,27 @@
                     <legend>商户资料</legend>
                     <div class="layui-field-box">
 
-                    <foreach name="list" item="val" key="ke">
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">{$ke}</label>
-                            <div class="layui-input-block">
-                                <input type="text" readonly value="{$val|default=''}" class="layui-input">
-                            </div>
-                        </div>
-                    </foreach>
+                        <foreach name="list" item="val" key="ke">
 
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">{$ke}</label>
+                                <div class="layui-input-block">
+                                    <if condition="in_array($ke,$img)">
+                                        <div class="layui-upload">
+                                            <div class="layui-upload-list">
+                                                <img class="layui-upload-img" width="120" src="{$val}">
+                                                <button type="button" class="layui-btn layui-btn-normal" key="{$ke}" val="{$val}" onclick="useImg(this)">
+                                                    使用此图片
+                                                    <i class="layui-icon layui-icon-triangle-r"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <else/>
+                                        <input type="text" readonly value="{$val|default=''}" class="layui-input">
+                                    </if>
+                                </div>
+                            </div>
+                        </foreach>
                     </div>
                 </fieldset>
             </div>
@@ -110,6 +122,32 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
+                            <label class="layui-form-label">内景照片</label>
+                            <div class="layui-input-block">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="img10">上传图片</button>
+                                    -+-
+                                    <input type="hidden" name="img[insideScenePic]">
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="view10" width="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">收银台照片</label>
+                            <div class="layui-input-block">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="img11">上传图片</button>
+                                    -+-
+                                    <input type="hidden" name="img[businessPlacePic]">
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="view11" width="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
                             <label class="layui-form-label">营业执照注册名称</label>
                             <div class="layui-input-block">
                                 <input type="text" name="cprRegNmCn" lay-verify="required" placeholder="请输入营业执照注册名称"
@@ -117,7 +155,7 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">注册号码</label>
+                            <label class="layui-form-label">营业执照注册号码</label>
                             <div class="layui-input-block">
                                 <input type="text" name="registCode" lay-verify="required" placeholder="请输入"
                                        autocomplete="off" class="layui-input">
@@ -125,10 +163,16 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">注册地址</label>
+                            <label class="layui-form-label">营业执照</label>
                             <div class="layui-input-block">
-                                <input type="text" name="cprRegAddr" lay-verify="required" placeholder="请输入注册地址"
-                                       autocomplete="off" class="layui-input">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="img6">上传图片</button>
+                                    -+-
+                                    <input type="hidden" name="img[licensePic]">
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="view6" width="100">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="layui-form-item ">
@@ -153,16 +197,10 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">营业执照</label>
+                            <label class="layui-form-label">注册地址</label>
                             <div class="layui-input-block">
-                                <div class="layui-upload">
-                                    <button type="button" class="layui-btn" id="img6">上传图片</button>
-                                    -+-
-                                    <input type="hidden" name="img[licensePic]">
-                                    <div class="layui-upload-list">
-                                        <img class="layui-upload-img" id="view6" width="100">
-                                    </div>
-                                </div>
+                                <input type="text" name="cprRegAddr" lay-verify="required" placeholder="请输入注册地址"
+                                       autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -626,7 +664,89 @@
                 }
             }
         });
+        upload.render({
+            elem: '#img10'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view10').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[insideScenePic]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view10').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+        upload.render({
+            elem: '#img11'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view11').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[businessPlacePic]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view11').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
     });
+
+    function useImg(obj) {
+        var key = $(obj).attr("key");
+        var val = $(obj).attr("val");
+        console.log(key);
+        switch (key){
+            case '门头':
+                $("input[name='img[storePic]']").val(val);
+                $("#view3").attr("src",val);
+                break;
+            case '营业执照':
+                $("input[name='img[licensePic]']").val(val);
+                $("#view6").attr("src",val);
+                break;
+            case '法人正面':
+                $("input[name='img[legalPersonidPositivePic]']").val(val);
+                $("#view1").attr("src",val);
+                break;
+            case '法人反面':
+                $("input[name='img[legalPersonidOppositePic]']").val(val);
+                $("#view2").attr("src",val);
+                break;
+            case '卡正面':
+                $("input[name='img[bankCardPositivePic]']").val(val);
+                $("#view5").attr("src",val);
+                break;
+            case '法人结算正面':
+                $("input[name='img[settlePersonIdcardOpposite]']").val(val);
+                $("#view7").attr("src",val);
+                break;
+            case '法人结算反面':
+                $("input[name='img[settlePersonIdcardPositive]']").val(val);
+                $("#view8").attr("src",val);
+                break;
+            case '内景':
+                $("input[name='img[insideScenePic]']").val(val);
+                $("#view8").attr("src",val);
+                break;
+            case '收银台':
+                $("input[name='img[businessPlacePic]']").val(val);
+                $("#view8").attr("src",val);
+                break;
+        }
+    }
 
 </script>
 

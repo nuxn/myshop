@@ -79,13 +79,93 @@ class IntosxfController extends AdminbaseController
         } else {
             $merchant_id = I('id');
             $province = $this->get_province();
-            $list = M('Merchants')->where("id='{$merchant_id}'")->find();
+            $list = M('Merchants')->field('m.id as `商户id`,m.merchant_name as `商户名称`,m.merchant_jiancheng as `商户简称`,u.user_phone as `手机号`,
+            header_interior_img as `门头`,interior_img,business_license_number as `营业执照号`,business_license as `营业执照`,province as `省`,city as `市`,county as `区县`,address as `详细地址`,
+            operator_name as `姓名`,id_number as `身份证`,positive_id_card_img as `法人正面`,id_card_img as `法人反面`,case account_type when 0 then "对私" when 1 then "对公" else "未知" end `账户类型`,
+            account_name as `账户名`,bank_account as `银行`,branch_account as `支行`,bank_account_no as `卡号`,positive_bank_card_img as `卡正面`')
+                ->join('m left join ypt_merchants_users u on m.uid=u.id')
+                ->where("m.id='{$merchant_id}'")->find();
+            $base = array('营业执照号','身份证','卡号');
+            $img = array('门头','营业执照','法人正面','法人反面','卡正面','法人结算正面','法人结算反面','内景','收银台');
+            foreach ($list as $key => &$val) {
+                if($key == 'interior_img'){
+                    if($val){
+                        $arr = explode(',', $val);
+                        $a['内景'] = $arr[0];
+                        $a['收银台'] = $arr[1];
+                        $this->array_insert($list,5,$a);
+                    }
+                    unset($list[$key]);
+                    continue;
+                }
+                if(in_array($key, $base)){
+                    $val = decrypt($val);
+                    continue;
+                }
+                if(in_array($key, $img)){
+                    if(strpos($val,'merchants') === 0){
+                        $val = './data/upload/' . $val;
+                    }
+                    $com = strpos($val,'com.cn');
+                    if($com){
+                        $val = substr($val,$com+6);
+                    }
+                }
+            }
+            $list['法人结算正面'] = $list['法人正面'];
+            $list['法人结算反面'] = $list['法人反面'];
+            $this->assign('img', $img);
             $this->assign('list', $list);
             $this->assign('id', $merchant_id);
             $this->assign('province', $province);
             $this->display();
         }
     }
+    function array_insert (&$array, $position, $insert_array) {
+        $first_array = array_splice ($array, 0, $position);
+        $array = array_merge ($first_array, $insert_array, $array);
+    }
+
+    # 编辑
+    public function edit()
+    {
+        if (IS_POST) {
+            $input = I("post.");
+            $imgs = $input['img'];
+            foreach ($imgs as $key => $val) {
+                if($val){
+                    $input[$key] = $val;
+                }
+            }
+            $input = array_filter($input);
+            $merchant_id = $input['merchant_id'];
+            if(!$merchant_id){
+                $this->ajaxReturn(array('code'=> '1000','msg'=>'商户id为空'));
+            }
+            $id = $this->sxfModel->where(array('merchant_id'=>$merchant_id))->getField('id');
+            if($id){
+                $this->sxfModel->where(array('id'=>$id))->save($input);
+            } else {
+                $this->sxfModel->add($input);
+            }
+            $this->ajaxReturn(array('code'=> '0000'));
+        } else {
+            $id = I('id');
+            $province = $this->get_province();
+            $info = $this->sxfModel->where(array('id' => $id))->find();
+            $city = M('address_sxf')->where(array('id'=>$info['regCityCd']))->getField('name');
+            $disc = M('address_sxf')->where(array('id'=>$info['regDistCd']))->getField('name');
+            $mccN = M('mcc_sxf')->where(array('mccCd'=>$info['mccCd']))->getField('mccNm');
+            $this->assign('province', $province);
+            $this->assign('cityN', $city);
+            $this->assign('discN', $disc);
+            $this->assign('mccN', $mccN);
+            $this->assign('data', $info);
+            $this->assign('id', $id);
+            $this->display();
+        }
+    }
+
 
     public function wxconfig()
     {
@@ -216,40 +296,6 @@ class IntosxfController extends AdminbaseController
         }
     }
 
-    # 编辑
-    public function edit()
-    {
-        if (IS_POST) {
-            $input = I("post.");
-            $imgs = $input['img'];
-            foreach ($imgs as $key => $val) {
-                if($val){
-                    $input[$key] = $val;
-                }
-            }
-            $input = array_filter($input);
-            $merchant_id = $input['merchant_id'];
-            if(!$merchant_id){
-                $this->ajaxReturn(array('code'=> '1000','msg'=>'商户id为空'));
-            }
-            $id = $this->sxfModel->where(array('merchant_id'=>$merchant_id))->getField('id');
-            if($id){
-                $this->sxfModel->where(array('id'=>$id))->save($input);
-            } else {
-                $this->sxfModel->add($input);
-            }
-            $this->ajaxReturn(array('code'=> '0000'));
-        } else {
-            $id = I('id');
-            $province = $this->get_province();
-            $info = $this->sxfModel->where(array('id' => $id))->find();
-            $this->assign('province', $province);
-            $this->assign('data', $info);
-            $this->assign('id', $id);
-            $this->display();
-        }
-    }
-
     public function getZip()
     {
         $imgs = array_filter($this->input['img']);
@@ -264,6 +310,12 @@ class IntosxfController extends AdminbaseController
             $path = "./data/upload/sxf/{$key}.jpg";
             if($val){
                 copy($val, $path);
+                if(!file_exists($path)){
+                    $this->ajaxReturn(array('code'=> '1000','msg'=>'图片上传失败'));
+                }
+                $image = new \Think\Image();
+                $image->open($path);
+                $image->thumb(1000,1000)->save($path);
                 $zip->addFile($path,basename($path));   //向压缩包中添加文件
                 $this->input[$key] = $val;
             }
