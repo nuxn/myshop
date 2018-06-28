@@ -310,7 +310,7 @@ class  MerchantsRateController extends Controller
         error_reporting (E_ALL & ~E_NOTICE);
         set_time_limit(0); //执行时间无限
         // ignore_user_abort();
-        $i = 6;
+//        $i = 6;
         for($i=200;$i>0;$i--){
         $start_time = strtotime("-" . $i . " day", strtotime(date('y-m-d')));
         $date = date('Ymd',$start_time);
