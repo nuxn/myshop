@@ -35,9 +35,9 @@ class IntosxfController extends AdminbaseController
     {
         $count = $this->sxfModel->join('b left join ypt_merchants m on b.merchant_id=m.id')->count();
 
-        $page = $this->page($count, 20);
+        $page = $this->page($count, 15);
         $info = $this->sxfModel
-            ->field('b.id,b.mno,b.task_code,b.merchant_id,b.status,b.add_time,m.merchant_name')
+            ->field('b.id,b.mno,b.subMchId,b.task_code,b.merchant_id,b.status,b.add_time,m.merchant_name')
             ->join('b left join ypt_merchants m on b.merchant_id=m.id')
             ->order('b.id desc')
             ->limit($page->firstRow, $page->listRows)
@@ -125,7 +125,8 @@ class IntosxfController extends AdminbaseController
             $this->display();
         }
     }
-    function array_insert (&$array, $position, $insert_array) {
+
+    public function array_insert (&$array, $position, $insert_array) {
         $first_array = array_splice ($array, 0, $position);
         $array = array_merge ($first_array, $insert_array, $array);
     }
@@ -166,6 +167,7 @@ class IntosxfController extends AdminbaseController
             $this->assign('mccN', $mccN);
             $this->assign('data', $info);
             $this->assign('id', $id);
+            $this->assign('edit', I('edit'));
             $this->display();
         }
     }
@@ -176,6 +178,7 @@ class IntosxfController extends AdminbaseController
         if (IS_POST) {
             $input = I("post.");
             $this->input = array_filter($input);
+            $this->sxfModel->where(array('id'=>$input['id']))->save($this->input);
             $cof_res = $this->bindconfig();
             if($cof_res['code'] == 'SXF0000'){
                 $cof_ret = $cof_res['respData'];
@@ -211,6 +214,12 @@ class IntosxfController extends AdminbaseController
         } else {
             $id =  I('id');
             $mno = I('mno');
+            $see = I('see', 0);
+            if($see){
+                $info = $this->sxfModel->where(array('id'=>$id))->field('subMchId,subAppid,jsapiPath,subscribeAppid')->find();
+                $this->assign('info', $info);
+            }
+            $this->assign('see', $see);
             $this->assign('id', $id);
             $this->assign('mno', $mno);
             $this->display();

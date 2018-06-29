@@ -374,8 +374,10 @@
 
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">立即提交</button>
-                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                <if condition="$edit eq 1">
+                                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">立即提交</button>
+                                </if>
+                                <a class="layui-btn layui-btn-primary " lay-event="detail" href="javascript:history.back(-1);">返回</a>
                             </div>
                         </div>
                     </form>

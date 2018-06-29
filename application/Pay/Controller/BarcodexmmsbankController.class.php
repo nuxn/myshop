@@ -91,17 +91,18 @@ class BarcodexmmsbankController extends HomebaseController
 
     public function sql()
     {
-        $message = A("Pay/Banksxf")->wx_micropay('85', '0.02', '134644859844487906', '0', 'test', '', 2);
-        dump($message);
-//        $message = A("Pay/Banksxf")->pay_back('20180611151615261939', '0.02');
-//        $message = A("Pay/Banksxf")->query('20180611151615261939');
+        session('asfasfas',array('si'=>'213213','34asdasd'=>'sadasdqwe32314132'));
+//        $message = A("Pay/Banksxf")->pay_back('20180626160118488563', '0.01');
 //        dump($message);
+//        $message = A("Pay/Banksxf")->query('20180626160118488563');
+//        dump($message);
+        dump($_SESSION);
     }
 
     public function test()
     {
-        mkdir('./data/upload/');
-//        copy('./');
+        session();
+        dump($_SESSION);
 
     }
 ########################################################################################################################

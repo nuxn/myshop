@@ -9,7 +9,9 @@
     <link rel="stylesheet" type="text/css" href="__PUBLIC__/layui/css/layui.css">
     <script src="__PUBLIC__/layui/layui.all.js"></script>
     <script src="__PUBLIC__/js/jquery.js"></script>
-    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    <style>
+        a{color:#0e90d2}
+    </style>
 </head>
 <body>
 
@@ -84,16 +86,22 @@
                             <td>
                                 <div class="layui-table-cell laytable-cell-1-10">
                                     <if condition="$val.status eq 0">
-                                        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="{:U('edit',array('id'=>$val['id']))}">进件</a>
+                                        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="{:U('edit',array('id'=>$val['id'],'edit'=>1))}">进件</a>
                                     </if>
-                                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="detail" href="{:U('wxconfig',array('id'=>$val['id'],'mno'=>$val['mno']))}">配置公众号</a>
-                                    <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+                                    <if condition="$val.subMchId eq 0">
+                                        <a class="layui-btn  layui-btn-xs" lay-event="detail" href="{:U('wxconfig',array('id'=>$val['id'],'mno'=>$val['mno']))}">配置公众号</a>
+                                        <else/>
+                                        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail" href="{:U('wxconfig',array('id'=>$val['id'],'see'=>1))}">查看公众号</a>
+                                    </if>
+                                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="{:U('edit',array('id'=>$val['id'],'edit'=>0))}">查看</a>
+
                                 </div>
                             </td>
                         </tr>
                     </foreach>
                     </tbody>
                 </table>
+                {$page}
             </div>
         </div>
     </div>
