@@ -125,7 +125,7 @@ class BanksxfController extends HomebaseController
                 $this->assign('mid', $this->merchant_id);
                 $this->display("wx_pay");
             } else {
-                $this->alert_err();
+                $this->alert_err($res_arr['msg']);
             }
         } else {
             $this->alert_err();
@@ -233,6 +233,45 @@ class BanksxfController extends HomebaseController
         } else {
             $this->alert_err();
         }
+    }
+
+    // 支付宝双屏支付
+    public function two_alipay()
+    {
+        $this->order_id = I("order_id");
+        $this->mode = I("mode", 3);
+        if ($this->order_id) {
+            $this->cate_id = I("seller_id");
+            $order_info = M("order")->where(array('order_id'=>$this->order_id))->find();
+            if ($this->pay_model->where(array('order_id'=>$this->order_id))->getField('id')) {
+                $this->alert_err('订单已存在');
+            }
+            $cate_info = get_cate_info($this->cate_id);
+            // 插入数据库的数据
+            $this->checker_id = I("checker_id");
+            $this->merchant_id = $cate_info['merchant_id'];
+            $this->remark = $order_info['order_sn'];
+            $this->price = $order_info['order_amount'];
+            $this->jmt_remark = I('memo', '') ?: I("jmt_remark", '');
+            $this->get_into(2);
+            $this->subject = $cate_info['jianchen'];
+            $this->paystyle_id = 2;
+            $db_res = $this->add_db();
+            if ($db_res) {
+                // 请求服务器获取js支付参数
+                $res_arr = $this->ali_jspay();
+                if($res_arr['code'] == '0000'){
+                    header("Location:" . $res_arr['url']);
+                } else {
+                    $this->alert_err($res_arr['msg']);
+                }
+            } else {
+                $this->alert_err();
+            }
+        } else {
+            $this->alert_err('订单号为空');
+        }
+        die;
     }
 
     // 支付宝扫码支付请求
@@ -422,7 +461,17 @@ class BanksxfController extends HomebaseController
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/data/log/Banksxf/'.date('Y-m') . "/into_notify.log",
             date("Y-m-d H:i:s") . ':'. $json_str . PHP_EOL . PHP_EOL, FILE_APPEND | LOCK_EX);
         $data = json_decode($json_str);
-        $re = M('merchants_upsxf')->where(array('task_code'=>$data->taskCode))->save(array('mno'=>$data->mno));
+        switch ($data->msg) {
+            case '进件成功':
+                $re = M('merchants_upsxf')->where(array('task_code'=>$data->taskCode))->save(array('mno'=>$data->mno,'status'=>2));
+                break;
+            case '秒审驳回':
+                $re = M('merchants_upsxf')->where(array('task_code'=>$data->taskCode))->save(array('status'=>3));
+                break;
+            default:
+                $re = false;
+                break;
+        }
         if($re !== false){
             exit('{"code":"success","msg":"成功"}');
         } else exit('{"code":"error","msg":""}');

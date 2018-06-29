@@ -804,6 +804,9 @@ class  AddagentController extends ApibaseController
         $info = $upload->upload();
         if ($info) {
             $url = C('_WEB_UPLOAD_') . $info['img']['savepath'] . $info['img']['savename'];
+            $image = new \Think\Image();
+            $image->open($url);
+            $image->thumb(1000,1000)->save($url);
             $this->ajaxReturn(array('code' => 'success', 'msg' => '上传成功', 'data' => $url));
         } else {
             $message = $upload->getError();

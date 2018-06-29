@@ -320,6 +320,9 @@ class  MerchantsController extends  ApibaseController
         }
         if($info['img']){
             $img = $pic_root_path . $info['img']['savepath'] . $info['img']['savename'];
+            $image = new \Think\Image();
+            $image->open($img);
+            $image->thumb(1000,1000)->save($img);
         }
         $this->ajaxReturn(array('code'=>'success','msg'=>'上传成功','data'=>$img));
     }
