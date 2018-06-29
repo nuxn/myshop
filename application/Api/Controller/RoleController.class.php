@@ -56,6 +56,7 @@ class RoleController extends ApibaseController
             $id = $this->role_model->add($data);
             if ($id) {
                 $info['role_id'] = "$id";
+                $this->write_log('添加角色'.$role_name,$id);
                 succ_ajax($info);
             } else {
                 err('新增失败');
@@ -74,6 +75,7 @@ class RoleController extends ApibaseController
             $data['role_desc'] = $role_desc;
             $re = $this->role_model->where(array('id' => $role_id))->save($data);
             if ($re !== false) {
+                $this->write_log('编辑角色'.$role_name,$role_id);
                 succ_ajax();
             } else {
                 err('修改失败');
@@ -89,6 +91,8 @@ class RoleController extends ApibaseController
             if (!$role_id) err('请选择角色');
             if ($this->role_user_model->where(array('role_id' => $role_id))->find()) err('该角色已有员工,无法删除');
             if ($this->role_model->delete($role_id)) {
+                $role_name=$this->role_model->where(array('id'=>$role_id))->getfield('role_name');
+                $this->write_log('删除角色:'.$role_name,$role_id);
                 succ_ajax();
             } else {
                 err('删除失败');

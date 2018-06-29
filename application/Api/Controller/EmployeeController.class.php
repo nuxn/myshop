@@ -106,6 +106,7 @@ class EmployeeController extends ApibaseController
                 if(!$fid)$fid=0;
                 $employeeModel->add(array('uid'=>$res,'fid'=>$fid,'add_time'=>time(),'update_time'=>time()));
                 if (isset($param['auth_bill_single']) && $param['auth_bill_single'] == '1') $this->user_model->where(array('id' => $res))->save(array('is_all' => 0));
+                $this->write_log('添加员工'.$user_name,$res);
                 $this->ajaxReturn(array("code" => "success", "msg" => "添加成功"));
             } else
                 $this->ajaxReturn(array("code" => "error", "msg" => '添加失败'));
@@ -223,6 +224,7 @@ class EmployeeController extends ApibaseController
         if(I('role_id')){
             $this->user_role_model->where(array("uid" => $id))->save(array('role_id'=>I('role_id')));
         }
+        $this->write_log('编辑员工'.$user_name,$id);
         $this->user_model->where(array("id" => $id))->save($save);
         $this->ajaxReturn(array("code" => "success", "msg" => "成功"));
     }
@@ -258,6 +260,8 @@ class EmployeeController extends ApibaseController
         if (!$id) $this->ajaxReturn(array("code" => "error", "msg" => 'id不能为空'));
         if ($this->user_model->where(array("id" => $id))->save(array("status" => '-1'))) {
             M("token")->where(array("uid" => $id))->delete();
+            $user_name=$this->user_model->where(array('id'=>$id))->getfield('user_name');
+            $this->write_log('删除员工'.$user_name,$id);
             $this->ajaxReturn(array("code" => "success", "msg" => "成功"));
         }
         $this->ajaxReturn(array("code" => "error", "msg" => "失败"));
