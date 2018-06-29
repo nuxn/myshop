@@ -114,7 +114,7 @@
                                 <div class="layui-upload">
                                     <button type="button" class="layui-btn" id="img3">上传图片</button>
                                     -+-
-                                    <input type="hidden" name="img[storePic]">
+                                    <input type="hidden" name="img[storePic]" lay-verify="required">
                                     <div class="layui-upload-list">
                                         <img class="layui-upload-img" id="view3" width="100">
                                     </div>
@@ -168,7 +168,7 @@
                                 <div class="layui-upload">
                                     <button type="button" class="layui-btn" id="img6">上传图片</button>
                                     -+-
-                                    <input type="hidden" name="img[licensePic]">
+                                    <input type="hidden" name="img[licensePic]" lay-verify="required">
                                     <div class="layui-upload-list">
                                         <img class="layui-upload-img" id="view6" width="100">
                                     </div>
@@ -259,7 +259,7 @@
                                 <div class="layui-upload">
                                     <button type="button" class="layui-btn" id="img1">上传图片</button>
                                     -+-
-                                    <input type="hidden" name="img[legalPersonidPositivePic]">
+                                    <input type="hidden" name="img[legalPersonidPositivePic]" lay-verify="required">
                                     <div class="layui-upload-list">
                                         <img class="layui-upload-img" id="view1" width="100">
                                     </div>
@@ -272,7 +272,7 @@
                                 <div class="layui-upload">
                                     <button type="button" class="layui-btn" id="img2">上传图片</button>
                                     -+-
-                                    <input type="hidden" name="img[legalPersonidOppositePic]">
+                                    <input type="hidden" name="img[legalPersonidOppositePic]" lay-verify="required">
                                     <div class="layui-upload-list">
                                         <img class="layui-upload-img" id="view2" width="100">
                                     </div>
@@ -352,7 +352,7 @@
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img7">上传图片</button>
                                             <span class="red">（对私结算必传）</span> -+-
-                                            <input type="hidden" name="img[settlePersonIdcardOpposite]">
+                                            <input type="hidden" name="img[settlePersonIdcardPositive]">
                                             <div class="layui-upload-list">
                                                 <img class="layui-upload-img" id="view7" width="100">
                                             </div>
@@ -365,7 +365,7 @@
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img8">上传图片</button>
                                             <span class="red">（对私结算必传）</span> -+-
-                                            <input type="hidden" name="img[settlePersonIdcardPositive]">
+                                            <input type="hidden" name="img[settlePersonIdcardOpposite]">
                                             <div class="layui-upload-list">
                                                 <img class="layui-upload-img" id="view8" width="100">
                                             </div>
@@ -393,7 +393,6 @@
                             <div class="layui-input-block">
                                 <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">立即进件</button>
                                 <button class="layui-btn layui-btn-warm" lay-submit lay-filter="save">仅保存</button>
-                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                             </div>
                         </div>
                     </form>
@@ -618,7 +617,7 @@
             }
             , done: function (res) {
                 if (res.code == '0') {
-                    $("input[name='img[settlePersonIdcardOpposite]']").val(res.data);
+                    $("input[name='img[settlePersonIdcardPositive]']").val(res.data);
                     return layer.msg('上传成功');
                 } else {
                     $('#view7').attr('src', '');
@@ -637,7 +636,7 @@
             }
             , done: function (res) {
                 if (res.code == '0') {
-                    $("input[name='img[settlePersonIdcardPositive]']").val(res.data);
+                    $("input[name='img[settlePersonIdcardOpposite]']").val(res.data);
                     return layer.msg('上传成功');
                 } else {
                     $('#view8').attr('src', '');
@@ -730,11 +729,11 @@
                 $("#view5").attr("src",val);
                 break;
             case '法人结算正面':
-                $("input[name='img[settlePersonIdcardOpposite]']").val(val);
+                $("input[name='img[settlePersonIdcardPositive]']").val(val);
                 $("#view7").attr("src",val);
                 break;
             case '法人结算反面':
-                $("input[name='img[settlePersonIdcardPositive]']").val(val);
+                $("input[name='img[settlePersonIdcardOpposite]']").val(val);
                 $("#view8").attr("src",val);
                 break;
             case '内景':
