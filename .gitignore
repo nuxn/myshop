@@ -2,3 +2,4 @@
 .idea
 data/runtime
 runtime
+.gitignore
