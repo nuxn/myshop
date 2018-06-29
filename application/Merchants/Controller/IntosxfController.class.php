@@ -35,9 +35,9 @@ class IntosxfController extends AdminbaseController
     {
         $count = $this->sxfModel->join('b left join ypt_merchants m on b.merchant_id=m.id')->count();
 
-        $page = $this->page($count, 20);
+        $page = $this->page($count, 15);
         $info = $this->sxfModel
-            ->field('b.id,b.mno,b.merchant_id,b.status,b.add_time,m.merchant_name')
+            ->field('b.id,b.mno,b.subMchId,b.task_code,b.merchant_id,b.status,b.add_time,m.merchant_name')
             ->join('b left join ypt_merchants m on b.merchant_id=m.id')
             ->order('b.id desc')
             ->limit($page->firstRow, $page->listRows)
@@ -78,6 +78,9 @@ class IntosxfController extends AdminbaseController
             }
         } else {
             $merchant_id = I('id');
+            if($this->sxfModel->where(array('merchant_id'=>$merchant_id))->getField('id')){
+                redirect(U('index'));
+            }
             $province = $this->get_province();
             $list = M('Merchants')->field('m.id as `商户id`,m.merchant_name as `商户名称`,m.merchant_jiancheng as `商户简称`,u.user_phone as `手机号`,
             header_interior_img as `门头`,interior_img,business_license_number as `营业执照号`,business_license as `营业执照`,province as `省`,city as `市`,county as `区县`,address as `详细地址`,
@@ -114,6 +117,7 @@ class IntosxfController extends AdminbaseController
             }
             $list['法人结算正面'] = $list['法人正面'];
             $list['法人结算反面'] = $list['法人反面'];
+            $list['结算身份证号'] = $list['身份证'];
             $this->assign('img', $img);
             $this->assign('list', $list);
             $this->assign('id', $merchant_id);
@@ -121,7 +125,8 @@ class IntosxfController extends AdminbaseController
             $this->display();
         }
     }
-    function array_insert (&$array, $position, $insert_array) {
+
+    public function array_insert (&$array, $position, $insert_array) {
         $first_array = array_splice ($array, 0, $position);
         $array = array_merge ($first_array, $insert_array, $array);
     }
@@ -162,6 +167,7 @@ class IntosxfController extends AdminbaseController
             $this->assign('mccN', $mccN);
             $this->assign('data', $info);
             $this->assign('id', $id);
+            $this->assign('edit', I('edit'));
             $this->display();
         }
     }
@@ -172,6 +178,7 @@ class IntosxfController extends AdminbaseController
         if (IS_POST) {
             $input = I("post.");
             $this->input = array_filter($input);
+            $this->sxfModel->where(array('id'=>$input['id']))->save($this->input);
             $cof_res = $this->bindconfig();
             if($cof_res['code'] == 'SXF0000'){
                 $cof_ret = $cof_res['respData'];
@@ -207,6 +214,12 @@ class IntosxfController extends AdminbaseController
         } else {
             $id =  I('id');
             $mno = I('mno');
+            $see = I('see', 0);
+            if($see){
+                $info = $this->sxfModel->where(array('id'=>$id))->field('subMchId,subAppid,jsapiPath,subscribeAppid')->find();
+                $this->assign('info', $info);
+            }
+            $this->assign('see', $see);
             $this->assign('id', $id);
             $this->assign('mno', $mno);
             $this->display();

@@ -36,7 +36,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">微信商户号</label>
                             <div class="layui-input-block">
-                                <input type="text" name="subMchId" lay-verify="required" value=""
+                                <input type="text" name="subMchId" lay-verify="required" value="{$info.subMchId|default=''}"
                                        autocomplete="off" class="layui-input">
                                 <span class="bule">(由随行付报备成功后返回)</span>
                             </div>
@@ -45,21 +45,21 @@
                             <label class="layui-form-label">公众号APPID</label>
                             <div class="layui-input-block">
                                 <input type="text" name="subAppid" required lay-verify="required"
-                                       value="wx3fa82ee7deaa4a21" autocomplete="off" class="layui-input">
+                                       value="{$info.subAppid|default='wx3fa82ee7deaa4a21'}" autocomplete="off" class="layui-input">
                             </div>
                         </div>
 
                         <div class="layui-form-item">
                             <label class="layui-form-label">授权目录</label>
                             <div class="layui-input-block">
-                                <input type="text" name="jsapiPath" lay-verify="required" value="https://sy.youngport.com.cn/"
+                                <input type="text" name="jsapiPath" lay-verify="required" value="{$info.jsapiPath|default='https://sy.youngport.com.cn/'}"
                                        autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">推荐关注公众号</label>
                             <div class="layui-input-block">
-                                <input type="text" name="subscribeAppid" lay-verify="" value=""
+                                <input type="text" name="subscribeAppid" lay-verify="" value="{$info.subscribeAppid|default=''}"
                                        autocomplete="off" class="layui-input">
                                 <span class="bule">(非必传)</span>
                             </div>
@@ -70,7 +70,9 @@
 
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                                <button class="layui-btn layui-btn-normal " lay-submit lay-filter="formSub">立即提交</button>
+                                <if condition="$see eq 0">
+                                    <button class="layui-btn layui-btn-normal " lay-submit lay-filter="formSub">立即提交</button>
+                                </if>
                                 <a class="layui-btn layui-btn-primary " lay-event="detail" href="javascript:history.back(-1);">返回</a>
                             </div>
                         </div>

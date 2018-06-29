@@ -329,11 +329,11 @@
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img7">上传图片</button>
                                             <span class="red">（对私结算必传）</span> -+-
-                                            <input type="hidden" name="img[settlePersonIdcardOpposite]"
-                                                   value="{$data.settlePersonIdcardOpposite}">
+                                            <input type="hidden" name="img[settlePersonIdcardPositive]"
+                                                   value="{$data.settlePersonIdcardPositive}">
                                             <div class="layui-upload-list">
                                                 <img class="layui-upload-img" id="view7" width="100"
-                                                     src="{$data.settlePersonIdcardOpposite}">
+                                                     src="{$data.settlePersonIdcardPositive}">
                                             </div>
                                         </div>
                                     </div>
@@ -344,11 +344,11 @@
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img8">上传图片</button>
                                             <span class="red">（对私结算必传）</span> -+-
-                                            <input type="hidden" name="img[settlePersonIdcardPositive]"
-                                                   value="{$data.settlePersonIdcardPositive}">
+                                            <input type="hidden" name="img[settlePersonIdcardOpposite]"
+                                                   value="{$data.settlePersonIdcardOpposite}">
                                             <div class="layui-upload-list">
                                                 <img class="layui-upload-img" id="view8" width="100"
-                                                     src="{$data.settlePersonIdcardPositive}">
+                                                     src="{$data.settlePersonIdcardOpposite}">
                                             </div>
                                         </div>
                                     </div>
@@ -374,8 +374,10 @@
 
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">立即提交</button>
-                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                <if condition="$edit eq 1">
+                                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">立即提交</button>
+                                </if>
+                                <a class="layui-btn layui-btn-primary " lay-event="detail" href="javascript:history.back(-1);">返回</a>
                             </div>
                         </div>
                     </form>
@@ -581,7 +583,7 @@
             }
             , done: function (res) {
                 if (res.code == '0') {
-                    $("input[name='img[settlePersonIdcardOpposite]']").val(res.data);
+                    $("input[name='img[settlePersonIdcardPositive]']").val(res.data);
                     return layer.msg('上传成功');
                 } else {
                     $('#view7').attr('src', '');
@@ -600,7 +602,7 @@
             }
             , done: function (res) {
                 if (res.code == '0') {
-                    $("input[name='img[settlePersonIdcardPositive]']").val(res.data);
+                    $("input[name='img[settlePersonIdcardOpposite]']").val(res.data);
                     return layer.msg('上传成功');
                 } else {
                     $('#view8').attr('src', '');
