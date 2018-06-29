@@ -2527,6 +2527,9 @@ function bank_name($bank)
         case 13:
             echo "平安壹钱包";
             break;
+        case 14:
+            echo "随 行 付";
+            break;
         default:
             echo "未设置银行";
             break;
