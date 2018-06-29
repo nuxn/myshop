@@ -464,14 +464,10 @@ class  MerchantsRateController extends Controller
             echo "代理储值：".$agent_price.'数量：'.$agent_nums.'手续费：'.$agent_poundage.'<br>';
             echo "原路退款：".$double_back.'数量：'.$double_back_nums.'<br>';
             echo "现金退款：".$cash_back.'数量：'.$cash_back_nums.'<br>';
-            echo "支付优惠：".$order_benefit.'<br>';
-            echo "支付优惠笔数：".$order_benefit_nums.'<br>';
-            echo "微信充值：".$wx_recharge.'<br>';
-            echo "微信笔数：".$wx_recharge_nums.'<br>';
-            echo "支付宝充值：".$ali_recharge.'<br>';
-            echo "支付宝笔数：".$ali_recharge_nums.'<br>';
-            echo "充值码充值：".$cdk_price.'<br>';
-            echo "充值码笔数：".$cdk_nums.'<br>';
+            echo "支付优惠：".$order_benefit."支付优惠笔数：".$order_benefit_nums.'<br>';
+            echo "微信充值：".$wx_recharge."微信笔数：".$wx_recharge_nums.'<br>';
+            echo "支付宝充值：".$ali_recharge."支付宝笔数：".$ali_recharge_nums.'<br>';
+            echo "充值码充值：".$cdk_price."充值码笔数：".$cdk_nums.'<br>';
             $num = $wx_nums + $ali_nums +$union_nums+$cash_nums+$merchant_nums+$agent_nums;
             $nums +=  $num;
             echo "总笔数：".$num.'<br>';
