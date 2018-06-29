@@ -10,7 +10,7 @@ return array(
 //    'DB_USER' => 'ypt',
 //    'DB_PWD' => '#O1!XvETCyb1pcq%Zn',
     'DB_USER' => 'root',
-    'DB_PWD' => '123456',
+    'DB_PWD' => 'root@52YPT?.0',
     'DB_PORT' => '3306',
     'DB_PREFIX' => 'ypt_',
     //密钥

@@ -47,7 +47,7 @@
                             <div class="layui-input-block">
                                 <input type="text" name="mecDisNm" lay-verify="required" value="{$data.mecDisNm}"
                                        autocomplete="off" class="layui-input">
-                                (6-10字)显示给消费者看的商户名称，会显示在支付页面中
+                                (6-20字)显示给消费者看的商户名称，会显示在支付页面中
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -82,10 +82,36 @@
                             <div class="layui-input-block">
                                 <div class="layui-upload">
                                     <button type="button" class="layui-btn" id="img3">上传图片</button>
-                                    所有图片加起来需小于 2 M
+                                    -+-
                                     <input type="hidden" name="img[storePic]" value="{$data.storePic}">
                                     <div class="layui-upload-list">
                                         <img class="layui-upload-img" id="view3" width="100" src="{$data.storePic}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">内景照片</label>
+                            <div class="layui-input-block">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="img10">上传图片</button>
+                                    -+-
+                                    <input type="hidden" name="img[insideScenePic]">
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="view10" width="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">收银台照片</label>
+                            <div class="layui-input-block">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="img11">上传图片</button>
+                                    -+-
+                                    <input type="hidden" name="img[businessPlacePic]">
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="view11" width="100">
                                     </div>
                                 </div>
                             </div>
@@ -98,7 +124,7 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">注册号码</label>
+                            <label class="layui-form-label">营业执照注册号码</label>
                             <div class="layui-input-block">
                                 <input type="text" name="registCode" lay-verify="required" value="{$data.registCode}"
                                        autocomplete="off" class="layui-input">
@@ -106,10 +132,16 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">注册地址</label>
+                            <label class="layui-form-label">营业执照</label>
                             <div class="layui-input-block">
-                                <input type="text" name="cprRegAddr" lay-verify="required" value="{$data.cprRegAddr}"
-                                       autocomplete="off" class="layui-input">
+                                <div class="layui-upload">
+                                    <button type="button" class="layui-btn" id="img6">上传图片</button>
+                                    -+-
+                                    <input type="hidden" name="img[licensePic]" value="{$data.licensePic}">
+                                    <div class="layui-upload-list">
+                                        <img class="layui-upload-img" id="view6" width="100" src="{$data.licensePic}">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="layui-form-item ">
@@ -118,32 +150,26 @@
                                 <select lay-filter="regProvCd" name="regProvCd" lay-verify="required">
                                     <option value="">请选择省</option>
                                     <foreach name="province" item="pval">
-                                        <option value="{$pval.id}">{$pval.name }</option>
+                                        <option value="{$pval.id}" <if condition="$data['regProvCd'] eq $pval['id']">selected</if>>{$pval.name }</option>
                                     </foreach>
                                 </select>
                             </div>
                             <div class="layui-input-inline">
                                 <select lay-filter="regCityCd" name="regCityCd" lay-verify="required">
-                                    <option value="">请选择市区</option>
+                                    <option value="{$data.regCityCd}" selected>{$cityN}</option>
                                 </select>
                             </div>
                             <div class="layui-input-inline">
                                 <select name="regDistCd" lay-verify="required">
-                                    <option value="">请选择区县</option>
+                                    <option value="{$data.regDistCd}" selected>{$discN}</option>
                                 </select>
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">营业执照</label>
+                            <label class="layui-form-label">注册地址</label>
                             <div class="layui-input-block">
-                                <div class="layui-upload">
-                                    <button type="button" class="layui-btn" id="img6">上传图片</button>
-                                    所有图片加起来需小于 2 M
-                                    <input type="hidden" name="img[licensePic]" value="{$data.licensePic}">
-                                    <div class="layui-upload-list">
-                                        <img class="layui-upload-img" id="view6" width="100" src="{$data.licensePic}">
-                                    </div>
-                                </div>
+                                <input type="text" name="cprRegAddr" lay-verify="required" value="{$data.cprRegAddr}"
+                                       autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -162,7 +188,7 @@
                             <label class="layui-form-label">MCC编码</label>
                             <div class="layui-input-block">
                                 <select name="mccCd" lay-verify="required" lay-search>
-                                    <option value="">先选择MCC类目</option>
+                                    <option value="{$data.mccCd}">{$mccN}</option>
                                 </select>
                                 <!--<input type="text" name="mccCd" lay-verify="required" value="{$data.mccCd}" autocomplete="off" class="layui-input">-->
                             </div>
@@ -201,7 +227,7 @@
                             <div class="layui-input-block">
                                 <div class="layui-upload">
                                     <button type="button" class="layui-btn" id="img1">上传图片</button>
-                                    所有图片加起来需小于 2 M
+                                    -+-
                                     <input type="hidden" name="img[legalPersonidPositivePic]"
                                            value="{$data.legalPersonidPositivePic}">
                                     <div class="layui-upload-list">
@@ -216,7 +242,7 @@
                             <div class="layui-input-block">
                                 <div class="layui-upload">
                                     <button type="button" class="layui-btn" id="img2">上传图片</button>
-                                    所有图片加起来需小于 2 M
+                                    -+-
                                     <input type="hidden" name="img[legalPersonidOppositePic]"
                                            value="{$data.legalPersonidOppositePic}">
                                     <div class="layui-upload-list">
@@ -272,7 +298,7 @@
                                     <div class="layui-input-block">
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img4">上传图片</button>
-                                            <span class="red">（对公结算必传)</span> 所有图片加起来需小于 2 M
+                                            <span class="red">（对公结算必传)</span> -+-
                                             <input type="hidden" name="img[openingAccountLicensePic]"
                                                    value="{$data.openingAccountLicensePic}">
                                             <div class="layui-upload-list">
@@ -287,7 +313,7 @@
                                     <div class="layui-input-block">
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img5">上传图片</button>
-                                            <span class="red">（对私结算必传)</span> 所有图片加起来需小于 2 M
+                                            <span class="red">（对私结算必传)</span> -+-
                                             <input type="hidden" name="img[bankCardPositivePic]"
                                                    value="{$data.bankCardPositivePic}">
                                             <div class="layui-upload-list">
@@ -302,12 +328,12 @@
                                     <div class="layui-input-block">
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img7">上传图片</button>
-                                            <span class="red">（对私结算必传）</span> 所有图片加起来需小于 2 M
-                                            <input type="hidden" name="img[settlePersonIdcardOpposite]"
-                                                   value="{$data.settlePersonIdcardOpposite}">
+                                            <span class="red">（对私结算必传）</span> -+-
+                                            <input type="hidden" name="img[settlePersonIdcardPositive]"
+                                                   value="{$data.settlePersonIdcardPositive}">
                                             <div class="layui-upload-list">
                                                 <img class="layui-upload-img" id="view7" width="100"
-                                                     src="{$data.settlePersonIdcardOpposite}">
+                                                     src="{$data.settlePersonIdcardPositive}">
                                             </div>
                                         </div>
                                     </div>
@@ -317,12 +343,12 @@
                                     <div class="layui-input-block">
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img8">上传图片</button>
-                                            <span class="red">（对私结算必传）</span> 所有图片加起来需小于 2 M
-                                            <input type="hidden" name="img[settlePersonIdcardPositive]"
-                                                   value="{$data.settlePersonIdcardPositive}">
+                                            <span class="red">（对私结算必传）</span> -+-
+                                            <input type="hidden" name="img[settlePersonIdcardOpposite]"
+                                                   value="{$data.settlePersonIdcardOpposite}">
                                             <div class="layui-upload-list">
                                                 <img class="layui-upload-img" id="view8" width="100"
-                                                     src="{$data.settlePersonIdcardPositive}">
+                                                     src="{$data.settlePersonIdcardOpposite}">
                                             </div>
                                         </div>
                                     </div>
@@ -332,7 +358,7 @@
                                     <div class="layui-input-block">
                                         <div class="layui-upload">
                                             <button type="button" class="layui-btn" id="img9">上传图片</button>
-                                            <span class="red">（非法人对私结算，即结算账户类型为对私结算，且结算人身份证号不法人身份证号不一致时必传）</span> 所有图片加起来需小于 2 M
+                                            <span class="red">（非法人对私结算，即结算账户类型为对私结算，且结算人身份证号不法人身份证号不一致时必传）</span> -+-
                                             <input type="hidden" name="img[letterOfAuthPic]"
                                                    value="{$data.letterOfAuthPic}">
                                             <div class="layui-upload-list">
@@ -555,7 +581,7 @@
             }
             , done: function (res) {
                 if (res.code == '0') {
-                    $("input[name='img[settlePersonIdcardOpposite]']").val(res.data);
+                    $("input[name='img[settlePersonIdcardPositive]']").val(res.data);
                     return layer.msg('上传成功');
                 } else {
                     $('#view7').attr('src', '');
@@ -574,7 +600,7 @@
             }
             , done: function (res) {
                 if (res.code == '0') {
-                    $("input[name='img[settlePersonIdcardPositive]']").val(res.data);
+                    $("input[name='img[settlePersonIdcardOpposite]']").val(res.data);
                     return layer.msg('上传成功');
                 } else {
                     $('#view8').attr('src', '');
@@ -597,6 +623,44 @@
                     return layer.msg('上传成功');
                 } else {
                     $('#view9').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+        upload.render({
+            elem: '#img10'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view10').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[insideScenePic]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view10').attr('src', '');
+                    return layer.msg(res.msg);
+                }
+            }
+        });
+        upload.render({
+            elem: '#img11'
+            , url: '{:U(upload)}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#view11').attr('src', result);
+                });
+            }
+            , done: function (res) {
+                if (res.code == '0') {
+                    $("input[name='img[businessPlacePic]']").val(res.data);
+                    return layer.msg('上传成功');
+                } else {
+                    $('#view11').attr('src', '');
                     return layer.msg(res.msg);
                 }
             }
