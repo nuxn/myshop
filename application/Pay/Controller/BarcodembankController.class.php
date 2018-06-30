@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 /**支付
  * Class BarcodeController
@@ -18,11 +19,12 @@ class BarcodembankController extends HomebaseController
     function _initialize()
     {
         parent::_initialize();
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
         //$this->url = "https://aop.koolyun.com:443/apmp/rest/v2";
         $this->url = "http://aop.koolyun.cn:8080/apmp/rest/v2";
         $this->apikey = "YPT17002";
         $this->notify = "http://sy.youngport.com.cn/notify/msbank.php";
+
         $this->private_key = '-----BEGIN RSA PRIVATE KEY-----
 MIICXQIBAAKBgQCbexvFt/rOGUOVDPbT99wWt3ChnmcqRc+lmJkEDHP98c8rd+Ih
 V34VfjeA2+bhaJ66ZlN+sxJG871GIA6X9o7MOFjFsdAkXYAK+EyHiRZx4drhoaiM

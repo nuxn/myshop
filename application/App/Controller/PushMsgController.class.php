@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Created by PhpStorm.
  * User: joan
@@ -8,6 +8,8 @@
 namespace App\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
+
 
 /**
  * 推送消息
@@ -22,10 +24,11 @@ class PushMsgController extends HomebaseController
 
     function _initialize()
     {
-        $this->pay_model = M('pay');
+        $this->pay_model =M(Subtable::getSubTableName('pay'));
     }
 
     /**
+
      * 消息推送
      * @param $phone
      * @param $uid

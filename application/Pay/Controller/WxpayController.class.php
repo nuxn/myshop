@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 class WxpayController extends HomebaseController
 {
@@ -12,7 +13,7 @@ class WxpayController extends HomebaseController
     {
         parent::__construct();
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/weixin/';
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
     }
     /**
      * 获取openid

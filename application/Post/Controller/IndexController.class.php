@@ -1,8 +1,10 @@
-<?php
+﻿<?php
 
 namespace Post\Controller;
 
 use Common\Controller\PostbaseController;
+use Common\Lib\Subtable;
+
 
 class IndexController extends PostbaseController
 {
@@ -28,7 +30,7 @@ class IndexController extends PostbaseController
         $this->agent = M("merchants_agent");
         $this->category = M("category");
         $this->order = M("order");
-        $this->pays = M('pay');
+        $this->pays =M(Subtable::getSubTableName('pay'));
         $this->order_goods = M("order_goods");
         $this->cates = M("merchants_cate");
         $this->memcardModel = M("screen_memcard");

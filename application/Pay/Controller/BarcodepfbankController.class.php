@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 
 //          ┗━┻━┛   ┗━┻━┛
@@ -24,11 +25,12 @@ class BarcodepfbankController extends HomebaseController
         $this->version = '2.0';
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/pfbank/';
 //        $this->apikey = 'fe0e779dd2222420f1713b9248b7f415';
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
     }
 
     public function test()
     {
+
         file_put_contents('./data/log/pfbank/' . date("Y_m") . '_wx_micro.log', date("Y-m-d H:i:s") . '支付数据:test' . PHP_EOL, FILE_APPEND | LOCK_EX);
 //        $this->apikey = 'fe0e779dd2222420f1713b9248b7f415';
 //        $auth_code = I('code');

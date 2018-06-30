@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Created by PhpStorm.
  * User: joan
@@ -8,6 +8,7 @@
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 /**
  * 恒丰银行支付
@@ -36,7 +37,7 @@ class BarcodehfbankController extends HomebaseController
     function _initialize()
     {
         header("Content-type:text/html;charset=utf-8");
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
         $this->httpUrl = 'https://fch.yiguanjinrong.com/flashchannel/';
         $this->RSA_MAX_ORIGINAL = 117;
         $this->RSA_MAX_CIPHER = 256;

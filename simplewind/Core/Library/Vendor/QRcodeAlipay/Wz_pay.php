@@ -540,7 +540,7 @@ class Wz_pay
     private function get_order($orderId)
     {
         if (mb_strlen($orderId) >= '23') $orderId = mb_substr($orderId, 4, 22, 'utf-8');
-        $info = M('pay')->lock(true)->where(array('remark' => $orderId, 'status' => 0))->find();
+        $info = M(Subtable::getSubTableName('pay'))->lock(true)->where(array('remark' => $orderId, 'status' => 0))->find();
         return $info;
     }
 

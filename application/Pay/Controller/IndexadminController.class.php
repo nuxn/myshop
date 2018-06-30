@@ -1,13 +1,14 @@
-<?php
+﻿<?php
 namespace Pay\Controller;
 use Common\Controller\AdminbaseController;
+use Common\Lib\Subtable;
 
 class IndexadminController extends AdminbaseController{
     protected $pay;
     protected $merchants;
     function _initialize() {
         parent::_initialize();
-        $this->pay = M('pay');
+        $this->pay = M(Subtable::getSubTableName('pay'));
         $this->merchants=M("merchants");
     }
 	public function index(){

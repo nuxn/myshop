@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Apiscreen\Controller;
 
 use Common\Controller\ScreenbaseController;
+use Common\Lib\Subtable;
 
 class RecwindowController extends ScreenbaseController
 {
@@ -11,7 +12,7 @@ class RecwindowController extends ScreenbaseController
     public function _initialize()
     {
         parent::_initialize();
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/Apiscreen/';
     }
 

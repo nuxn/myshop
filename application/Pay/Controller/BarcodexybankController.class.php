@@ -1,9 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
-
+use Common\Lib\Subtable;
 
 //          ┗━┻━┛   ┗━┻━┛
 
@@ -26,7 +26,7 @@ class BarcodexybankController extends HomebaseController
         $this->version = '2.0';
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/xybank/';
         $this->file_name = 'query';
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
 //        $this->apikey = 'fe0e779dd2222420f1713b9248b7f415';
     }
 

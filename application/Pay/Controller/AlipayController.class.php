@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 class AlipayController extends HomebaseController
 {
@@ -17,11 +18,12 @@ class AlipayController extends HomebaseController
     {
         parent::__construct();
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/alipay/';
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
     }
 
     public function test()
     {
+
         $data['order_sn'] = getRemark();
         $data['price'] = '0.01';
         $this->payOpenLoan($data);

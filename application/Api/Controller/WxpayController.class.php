@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 class WxpayController extends HomebaseController
 {
@@ -11,11 +12,12 @@ class WxpayController extends HomebaseController
     public function __construct()
     {
         parent::__construct();
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
     }
     /**
      * 获取openid
      * @param $request_url
+
      * @return mixed
      */
     public function _get_openid($request_url)

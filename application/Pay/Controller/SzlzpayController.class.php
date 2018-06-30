@@ -1,8 +1,10 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
+
 
 class SzlzpayController extends HomebaseController
 {
@@ -17,7 +19,7 @@ class SzlzpayController extends HomebaseController
     public function _initialize()
     {
         parent::_initialize();
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
     }
 
     /**

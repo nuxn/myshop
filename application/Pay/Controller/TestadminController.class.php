@@ -1,6 +1,7 @@
-<?php
+﻿<?php
 namespace Pay\Controller;
 use Common\Controller\AdminbaseController;
+use Common\Lib\Subtable;
 
 class TestadminController extends AdminbaseController{
 
@@ -8,7 +9,7 @@ class TestadminController extends AdminbaseController{
     public function __construct()
     {
         parent::__construct();
-        $this->pays=M('pay');
+        $this->pays=M(Subtable::getSubTableName('pay'));
     }
 
     function index()

@@ -1,8 +1,10 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
+
 
 /**支付
  * Class BarcodeController
@@ -16,7 +18,7 @@ class WzPayController extends HomebaseController
     public function __construct()
     {
         parent::__construct();
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
     }
     /**
      * 支付成功展示页面

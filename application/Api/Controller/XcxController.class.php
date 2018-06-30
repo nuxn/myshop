@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * 我的
  * Created by PhpStorm.
@@ -11,6 +11,9 @@ namespace Api\Controller;
 
 use Common\Controller\ApibaseController;
 use Think\Upload;
+use Common\Lib\Subtable;
+
+
 /**
  * Class XcxController 
  * @package Api\Controller       
@@ -42,7 +45,7 @@ class XcxController extends ApibaseController
         $this->dc_no = M("dc_no");
 		$this->dc_set = M("merchants_dc_set");
 		$this->dc_eval = M("dc_eval");
-		$this->pay = M('pay');
+		$this->pay =M(Subtable::getSubTableName('pay'));
         $this->host = 'http://'.$_SERVER['HTTP_HOST'];
 
         $this->u_id = $this->get_mer_info($this->userId);

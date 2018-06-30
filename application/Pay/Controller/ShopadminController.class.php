@@ -1,6 +1,7 @@
-<?php
+﻿<?php
 namespace Pay\Controller;
 use Common\Controller\AdminbaseController;
+use Common\Lib\Subtable;
 
 class ShopadminController extends AdminbaseController{
 	protected $merchant;
@@ -8,7 +9,7 @@ class ShopadminController extends AdminbaseController{
     function _initialize() {
         parent::_initialize();
         $this->merchant = M("merchants");
-        $this->pay = M('pay');
+        $this->pay = M(Subtable::getSubTableName('pay'));
 
     }
 

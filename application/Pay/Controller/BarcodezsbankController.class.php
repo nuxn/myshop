@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 /**支付
  * Class BarcodeController
@@ -20,7 +21,7 @@ class BarcodezsbankController extends HomebaseController
         $this->id =10000220719;
         $this->apikey='27c539b541d35ddc03c7951fa22248b5';
         $this->agent_ylzf_uid = "1388";     // 云来智付 user id
-        $this->pay_model = M('pay');
+        $this->pay_model =M(Subtable::getSubTableName('pay'));
     }
     //商户进件接口
     public function mchinlet(){

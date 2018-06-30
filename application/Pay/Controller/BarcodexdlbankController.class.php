@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 /**
  * Class BarcodexdlbankController
@@ -41,11 +42,12 @@ class BarcodexdlbankController extends HomebaseController
     {
         parent::__construct();
         $this->notify_url = 'https://sy.youngport.com.cn/notify/xdl_notify.php';
-        $this->payModel = M('pay');
+        $this->payModel = M(Subtable::getSubTableName('pay'));
         $this->orgNo = '7170';//7170
         $this->mercId = '800584000001927';//800290000005310
         $this->trmNo = '95077405';//95066032
         $this->signKey = '5AC3F315FF93B4D0ED4C607C85F38B45';//E29B72D4F4D1EFE145FC132C933DE9ED
+
     }
 
     public function scan()

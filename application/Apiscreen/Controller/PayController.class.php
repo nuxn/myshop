@@ -1,9 +1,10 @@
-<?php
+﻿<?php
 
 namespace Apiscreen\Controller;
 
 use Common\Controller\ScreenbaseController;
 use Think\Upload;
+use Common\Lib\Subtable;
 
 class  PayController extends ScreenbaseController
 {
@@ -20,11 +21,12 @@ class  PayController extends ScreenbaseController
         $this->uid = $this->userInfo['uid'];
         $this->user_id = I("userId");
         $this->order = M("order");
-        $this->pays = M('pay');
+        $this->pays = M(Subtable::getSubTableName('pay'));
         $this->merchants = M("merchants");
         $this->cates = M("merchants_cate");
         $this->payBack = M("pay_back");
     }
+
 
     //双屏扫码收款【被扫】
     public function two_get_card($uid, $order_sn, $mode = 1)

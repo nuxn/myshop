@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Created by PhpStorm.
  * By: JC
@@ -9,24 +9,25 @@
 namespace Message\Controller;
 
 use Think\Controller;
-
+use Common\Lib\Subtable;
 
 class AdminpushController extends Controller
 {
 
     public $app_key = 0;//推送key
     public $master_secret = 0;//推送密匙
-    public $title = 0;//推送标题
+    public $title = 0;//推送标�?
     private $pay_model;
 
     function _initialize()
     {
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
         $this->title = '点击获取更多!';
-        //洋仆淘
+        //洋仆�?
         $this->app_key = '74cf5522a74ab07a4442b92f';
         $this->master_secret = '376aab71e4322352a2b762da';
-        //钱嘟嘟
+        //钱嘟�?
+
         //$this->app_key = '69e041d9be7650d1aaf283db';
         //$this->master_secret = '4f335826b02ec9504328180a';
         //云来支付

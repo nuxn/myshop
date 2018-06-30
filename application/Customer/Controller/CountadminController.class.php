@@ -1,6 +1,7 @@
-<?php
+﻿<?php
 namespace Customer\Controller;
 use Common\Controller\AdminbaseController;
+use Common\Lib\Subtable;
 
 class CountadminController extends AdminbaseController{
 
@@ -11,11 +12,12 @@ class CountadminController extends AdminbaseController{
     public function _initialize()
     {
         parent::_initialize();
-        $this->pay=M('pay');
+        $this->pay=M(Subtable::getSubTableName('pay'));
         $this->merchant=M('merchants');
         $this->user=M('users');
         $this->merchant_user=M('merchants_users');
     }
+
     public function index(){
         $id=session('ADMIN_ID');
         if(!$id)$this->error("未找到用户");

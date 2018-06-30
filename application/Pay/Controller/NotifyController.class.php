@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Think\Controller;
+use Common\Lib\Subtable;
 
 /**
  * Class ApiController
@@ -19,7 +20,7 @@ class NotifyController extends Controller
         parent::__construct();
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/Pay/';
         $this->order_api = M('order_api');
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
     }
 
     # 乐刷回调

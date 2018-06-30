@@ -1,7 +1,8 @@
-<?php
+﻿<?php
 namespace Api\Controller;
 
 use Common\Controller\ApibaseController;
+use Common\Lib\Subtable;
 
 /**支付接口
  * 扫码支付、条码支付、刷卡支付
@@ -19,7 +20,7 @@ class  PayController extends ApibaseController
         parent::__construct();
         $this->checkLogin();
         $this->id = $this->userId;
-        $this->pay_model = M('pay');
+        $this->pay_model =M(Subtable::getSubTableName('pay'));
     }
     
     //扫码收款【被扫】

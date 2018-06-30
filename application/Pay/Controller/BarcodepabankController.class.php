@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 /**
  * 平安银行支付
@@ -36,7 +37,7 @@ class BarcodepabankController extends HomebaseController
         $this->platMerchantId = '900000030293'; // 900000030293
 //        $this->platMerchantId_key = '8c56bfb3d5914c319a5ef2ab61a67eae';
 
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
         # 测试账号信息
 //        $this->url = 'https://test-mapi.stg.1qianbao.com/revOrder';
 //        $this->merchantId = '900000112175';

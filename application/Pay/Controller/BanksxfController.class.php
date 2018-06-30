@@ -1,8 +1,10 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
+
 
 /**
  * 随行付支付
@@ -38,10 +40,11 @@ class BanksxfController extends HomebaseController
     {
         parent::_initialize(); 
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/Banksxf/';
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
         $this->sxfModel = D('Pay/Merchants_upsxf');
         $this->notify_url = 'https://sy.youngport.com.cn/notify/sxf_notify.php';
 //        $this->notify_url = 'sxf_notify.php';
+
         $this->refund_notify_url = 'https://sy.youngport.com.cn/Pay/Banksxf/refund_notify';
     }
 

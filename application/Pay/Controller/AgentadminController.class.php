@@ -1,7 +1,8 @@
-<?php
+﻿<?php
 namespace Pay\Controller;
 
 use Common\Controller\AdminbaseController;
+use Common\Lib\Subtable;
 
 class AgentadminController extends AdminbaseController
 {
@@ -14,7 +15,7 @@ class AgentadminController extends AdminbaseController
     {
         parent::_initialize();
         $this->merchant = M("merchants");
-        $this->pay = M('pay');
+        $this->pay = M(Subtable::getSubTableName('pay'));
         $this->user = M("merchants_users");
         $this->agent = M("merchants_agent");
     }

@@ -1,7 +1,8 @@
-<?php
+﻿<?php
 namespace Pay\Controller;
 
 use Common\Controller\AdminbaseController;
+use Common\Lib\Subtable;
 
 class ContentadminController extends AdminbaseController
 {
@@ -10,7 +11,7 @@ class ContentadminController extends AdminbaseController
     function __construct()
     {
         parent::__construct();
-        $this->pay = M('pay');
+        $this->pay = M(Subtable::getSubTableName('pay'));
     }
 
     public function test_rao()

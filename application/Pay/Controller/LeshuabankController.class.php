@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 /**
  * Class LeshuabankController
@@ -39,7 +40,7 @@ class LeshuabankController extends HomebaseController
 //        $this->key = 'a1613a0e7cb9d3a51e33784ee4d212ac';
         $this->mch_id = '9307002285';
         $this->key = 'FBF50AD4E24183AD42DD5F259200FDB7';
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
     }
 
     // 扫码支付
