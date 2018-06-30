@@ -2,6 +2,7 @@
 namespace Admin\Controller;
 
 use Common\Controller\AdminbaseController;
+use Common\Lib\Subtable;
 
 class MainController extends AdminbaseController {
 
@@ -12,7 +13,7 @@ class MainController extends AdminbaseController {
     public function __construct()
     {
         parent::__construct();
-        $this->pays=M('pay');
+        $this->pays=M(Subtable::getSubTableName('pay'));
         $this->users = M("merchants_users");
         $this->merchants = M("merchants");
         $this->mems = M("screen_mem");

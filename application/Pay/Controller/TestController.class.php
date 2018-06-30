@@ -3,6 +3,7 @@
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 /**用于处理回调后的测试服处理.
  * Class TestController
@@ -16,8 +17,11 @@ class TestController extends HomebaseController
         header("Content-Type: text/html;charset=utf-8");
         echo '客户端IP ' . get_client_ip() . '<br/><br/>';
         echo '服务器IP ' . $_SERVER['SERVER_ADDR'];
-
-
+        $pay=M(Subtable::getSubTableName('pay'));# M('pay')改成M(Subtable::getSubTableName('pay'))
+        print_r($pay);
+//        $url='http://dev.xcx.com:81/dc/v1/Base/index';
+//        $rs=$this->http_post(array(),$url);
+//        var_dump($rs);
     }
 
 
@@ -49,9 +53,9 @@ class TestController extends HomebaseController
 //        $unifiedOrder->setParameter("sub_openid", "$sub_openid");//子商户appid下的唯一标识
         $unifiedOrder->setParameter("body", $good_name);//商品描述
         //自定义订单号，
-        $price=$price * 100;
+        $price = $price * 100;
         $unifiedOrder->setParameter("out_trade_no", "$remark");//商户订单号
-        $unifiedOrder->setParameter("total_fee",  "$price");//总金额
+        $unifiedOrder->setParameter("total_fee", "$price");//总金额
         $unifiedOrder->setParameter("notify_url", \WxPayConf_pub::NOTIFY_URL);//通知地址
         $unifiedOrder->setParameter("trade_type", "JSAPI");//交易类型
         $unifiedOrder->setParameter("sub_mch_id", $mchid);//子商户号服务商必填

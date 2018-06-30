@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Api\Controller;
 
 use think\Controller;
+use Common\Lib\Subtable;
 
 class  BaseController extends Controller
 {
@@ -10,7 +11,7 @@ class  BaseController extends Controller
 
     public function _initialize()
     {
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
         $this->url = "https://aop.koolyun.com:443/apmp/rest/v2";
         $this->apikey = "YPT17001P";
         $this->notify = "http://sy.youngport.com.cn/notify/msbank.php";

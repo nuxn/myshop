@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Api\Controller;
 
 use Common\Controller\ApibaseController;
+use Common\Lib\Subtable;
 
 class  AgentnewsController extends ApibaseController
 {
@@ -1221,16 +1222,17 @@ class  AgentnewsController extends ApibaseController
 
     /** 计算返佣
      * @param $map 查询条件
-     * @param $time_array 时间戳区间
+     * @param $time_array 时间戳区�?
      * @return array
      */
     private function calc_maid($map,$time_array)
     {
         $map['paytime'] = array('BETWEEN',$time_array);
-        $month_pay = M('pay')->where($map)->field('price,cost_rate,paystyle_id,bank,cardtype')->select();
+        $month_pay = M(Subtable::getSubTableName('pay'))->where($map)->field('price,cost_rate,paystyle_id,bank,cardtype')->select();
         $agent_rate = M('merchants_agent')->where(array('uid'=>$this->userId))->field('wx_rate,ali_rate')->find();
         $rebate = '0';//费率总计
-        $count = count($month_pay);//交易总笔数
+        $count = count($month_pay);//交易总笔�?
+
 
         $price = '0';//交易总金额
         foreach ($month_pay as &$v) {
