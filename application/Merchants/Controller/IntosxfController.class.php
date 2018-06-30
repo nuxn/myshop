@@ -119,7 +119,7 @@ class IntosxfController extends AdminbaseController
             $list['法人结算反面'] = $list['法人反面'];
             $list['结算身份证号'] = $list['身份证'];
             $this->assign('img', $img);
-            $this->assign('list', $list);
+            $this->assign('list', array_filter($list));
             $this->assign('id', $merchant_id);
             $this->assign('province', $province);
             $this->display();
@@ -305,7 +305,7 @@ class IntosxfController extends AdminbaseController
                 $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg']));
             }
         } else {
-            $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']?:'进件失败'));
+            $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']?:$result['message']));
         }
     }
 
@@ -328,12 +328,16 @@ class IntosxfController extends AdminbaseController
                 }
                 $image = new \Think\Image();
                 $image->open($path);
-                $image->thumb(1000,1000)->save($path);
+                $image->thumb(800,800)->save($path);
                 $zip->addFile($path,basename($path));   //向压缩包中添加文件
                 $this->input[$key] = $val;
             }
         }
         $zip->close();  //关闭压缩包
+        $size = filesize($filename);
+        if($size >= 5242880){
+            $this->ajaxReturn(array('code'=> '1000','msg'=>'图片过大'));
+        }
         return $filename;
     }
 
