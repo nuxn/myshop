@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Api\Controller;
 
 use Think\Controller;
+use Common\Lib\Subtable;
 
 class  MerchantsRateController extends Controller
 {
@@ -22,7 +23,7 @@ class  MerchantsRateController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
     }
 
     /**
@@ -330,12 +331,13 @@ class  MerchantsRateController extends Controller
                 ->where(array('p.merchant_id'=>$value['id'],'p.status'=>1))
                 ->field('p.price,p.paystyle_id,p.remark,p.mode,p.cost_rate')
                 ->select();
-            // echo M('pay')->getLastSql().'<br>';
+            // echo M(Subtable::getSubTableName('pay'))->getLastSql().'<br>';
             $cdk = M('screen_memcard_cdk_log')
                 ->alias("l")
                 ->join("join ypt_screen_memcard_cdk c on c.id=l.cdk_id")
                 ->where('l.use_time >='.$start_time.' and l.use_time < '.$end_time)
                 ->where(array('l.uid'=>$value['uid']));
+
             $cdk_price =  $cdk->sum('c.price');
             $cdk_price = $cdk_price?$cdk_price:0;
             //            echo $cdk->getLastSql();

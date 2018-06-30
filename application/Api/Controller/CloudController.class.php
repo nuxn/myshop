@@ -1,9 +1,10 @@
-<?php
+﻿<?php
 
 namespace Api\Controller;
 
 use Common\Controller\ApibaseController;
 use think\controller;
+use Common\Lib\Subtable;
 
 class CloudController extends ApibaseController
 {
@@ -17,7 +18,7 @@ class CloudController extends ApibaseController
     {
         parent::__construct();
         $this->cloudModel = M('cloud_device');
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
         $this->server = 'http://cloudprint.easyprt.com/o2o-print/print.php';//云打印请求地址
         $this->secret_key = 'zlbz-cloud';//云打印请求密钥
         //$this->speak_url = 'http://101.201.55.12/';//旧打喇叭请求地址

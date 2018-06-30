@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * 我的
  * Created by PhpStorm.
@@ -12,7 +12,7 @@ namespace Api\Controller;
 use Common\Controller\ApibaseController;
 use think\controller;
 use think\log\driver\Test;
-
+use Common\Lib\Subtable;
 
 class TestController extends ApibaseController
 {
@@ -87,12 +87,13 @@ class TestController extends ApibaseController
     private function calc_maid($map,$time_array,$agent_uid)
     {
         $map['paytime'] = array('BETWEEN',$time_array);
-        $month_pay = M('pay')->where($map)->field('price,cost_rate,paystyle_id,bank,cardtype')->select();
+        $month_pay = M(Subtable::getSubTableName('pay'))->where($map)->field('price,cost_rate,paystyle_id,bank,cardtype')->select();
         $agent_rate = M('merchants_agent')->where(array('uid'=>$agent_uid))->field('wx_rate,ali_rate')->find();
         $rebate = '0';//费率总计
         $count = count($month_pay);//交易总笔数
 
         $price = '0';//交易总金额
+
         foreach ($month_pay as &$v) {
             $price += $v['price'];
             if ($v['bank'] == 11 && $v['paystyle_id'] == 3) {
