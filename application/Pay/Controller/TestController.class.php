@@ -17,7 +17,10 @@ class TestController extends HomebaseController
         header("Content-Type: text/html;charset=utf-8");
         echo '客户端IP ' . get_client_ip() . '<br/><br/>';
         echo '服务器IP ' . $_SERVER['SERVER_ADDR'];
-        M(Subtable::getSubTableName('pay'));
+        $pay=M(Subtable::getSubTableName('pay'));# M('pay')改成M(Subtable::getSubTableName('pay'))
+//        $url='http://dev.xcx.com:81/dc/v1/Base/index';
+//        $rs=$this->http_post(array(),$url);
+//        var_dump($rs);
     }
 
 
