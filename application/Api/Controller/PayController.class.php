@@ -442,7 +442,7 @@ class  PayController extends ApibaseController
 
             // 随行付支付
             if ($res['ali_bank'] == "14") {
-                $message = A("Pay/Leshuabank")->ali_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
+                $message = A("Pay/Banksxf")->ali_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
                 if ($message['code'] == "error") {
                     $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "error", "msg" => "失败", "data" => "支付失败")));
                 }
