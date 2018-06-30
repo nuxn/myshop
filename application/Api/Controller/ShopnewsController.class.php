@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Api\Controller;
 
 use Common\Controller\ApibaseController;
+use Common\Lib\Subtable;
 
 class  ShopnewsController extends ApibaseController
 {
@@ -25,7 +26,7 @@ class  ShopnewsController extends ApibaseController
         $this->users = M("merchants_users");
         $this->roles = M("merchants_role_users");
         $this->cates = M("merchants_cate");
-        $this->pays = M('pay');
+        $this->pays =M(Subtable::getSubTableName('pay'));
         $this->payBack = M("pay_back");
     }
 

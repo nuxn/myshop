@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Created by PhpStorm.
  * User: Joan
@@ -10,6 +10,7 @@ namespace Api\Controller;
 
 use Common\Controller\ApibaseController;
 use Think\Controller;
+use Common\Lib\Subtable;
 
 //load('Screen/function');
 
@@ -35,7 +36,7 @@ class MemtestController extends Controller
         $this->memcard_use_Model = M("screen_memcard_use");
         $this->user_coupons = M("screen_user_coupons");
         $this->coupons = M("screen_coupons");
-        $this->pay = M('pay');
+        $this->pay = M(Subtable::getSubTableName('pay'));
         $this->host = 'http://' . $_SERVER['HTTP_HOST'];
 //        $this->userId = get_merchants_id($this->userInfo['role_id'], $this->userId);
     }

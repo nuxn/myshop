@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Created by PhpStorm.
  * User: Joan
@@ -9,6 +9,7 @@
 namespace Api\Controller;
 
 use Common\Controller\ApibaseController;
+use Common\Lib\Subtable;
 
 //load('Screen/function');
 
@@ -34,7 +35,7 @@ class MemberController extends ApibaseController
         $this->memcard_use_Model = M("screen_memcard_use");
         $this->user_coupons = M("screen_user_coupons");
         $this->coupons = M("screen_coupons");
-        $this->pay = M("pay");
+        $this->pay = M(Subtable::getSubTableName('pay'));
         $this->host = 'http://' . $_SERVER['HTTP_HOST'];
         $this->userId = get_merchants_id($this->userInfo['role_id'], $this->userId);
     }
@@ -1594,12 +1595,13 @@ class MemberController extends ApibaseController
                 "paytime" =>time(),
                 "jmt_remark"=>$jmt_remark
             );
-            $pay = M('pay');
+            $pay = M(Subtable::getSubTableName('pay'));
             $pay_add = $pay->add($pay_info);
 
             if($order_add && $pay_add){
                 $this->ajaxReturn(array('code' => 'success', 'msg' => '支付成功','data'=>array('order_sn'=>$order_sn,'pay_id'=>$pay_add)));
             }else{
+
                 $this->ajaxReturn(array('code' => 'error', 'msg' => '网络请求失败'));
             }
         }else{

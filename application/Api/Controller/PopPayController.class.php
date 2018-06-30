@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Api\Controller;
 
 use Common\Controller\ApibaseController;
+use Common\Lib\Subtable;
 
 /**波普支付接口
  * 扫码支付、条码支付、刷卡支付
@@ -28,7 +29,7 @@ class  PopPayController extends ApibaseController
         $this->checkSign($this->params);
         #检查设备绑定
         $this->checkSn();
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
     }
 
     #验证签名

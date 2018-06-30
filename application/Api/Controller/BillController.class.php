@@ -1,9 +1,10 @@
-<?php
+﻿<?php
 
 namespace Api\Controller;
 
 use Think\Controller;
 use Common\Controller\ApibaseController;
+use Common\Lib\Subtable;
 
 class  BillController extends ApibaseController
 {
@@ -26,11 +27,13 @@ class  BillController extends ApibaseController
     public function __construct()
     {
         parent::__construct();
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
+
     }
 
     public function index()
     {
+
         $per_page = 10;
         ($this->userId = get_merchants_id($this->userInfo['role_id'], $this->userId)) || err('userid is empty');
         $this->userId = M('merchants')->where(array('uid' => $this->userId))->getField('id');

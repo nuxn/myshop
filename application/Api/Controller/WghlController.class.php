@@ -1,8 +1,10 @@
-<?php
+﻿<?php
 
 namespace Api\Controller;
 
 use Common\Controller\ApibaseController;
+use Common\Lib\Subtable;
+
 
 /**微光互联支付接口
  * 扫码支付、条码支付、刷卡支付
@@ -26,12 +28,13 @@ class  WghlController extends ApibaseController
         get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/wghl/', 'pay', 'get_params', json_encode($this->params));
         $this->merchant_id = 0;
         $this->uid = 0;
-        $this->pay_model = M('pay');
+        $this->pay_model = M(Subtable::getSubTableName('pay'));
         #验证签名
         if($this->params['sn']!='ypt999999') $this->checkSign($this->params);
         //$this->checkSign($this->params);
         #检查设备绑定
         $this->checkSn();
+
     }
 
     #验证签名
