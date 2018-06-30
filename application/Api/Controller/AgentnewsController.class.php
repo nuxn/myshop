@@ -229,7 +229,7 @@ class  AgentnewsController extends ApibaseController
         //        2是代理 3是商户
         $role = I("role_id");
         //        0是升序 1是降序
-        $sort = I("price_order");
+        $order = I("price_order");
         $time = $this->type_time($type);
         if ($type==1) {
             if ($order != 0) {

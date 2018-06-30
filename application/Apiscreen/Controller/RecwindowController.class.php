@@ -1043,6 +1043,113 @@ class RecwindowController extends ScreenbaseController
 
     }
 
+    /**
+     * 1.8.7  交接班
+     */
+    public function connect_staff()
+    {
+        $uid = I('uid') ? I('uid') : $this->userId;
+        $mac = I('mac');  //型号
+        $token = I('token');
+        $twotoken = M('twotoken');
+        $twotoken->uid = $uid;
+        $twotoken->where(array('token' => $token))->save();
+        $start_time = M('twotoken')->where(array('token' => $token, 'uid' => $uid))->getField('time_start');
+        $end_time = time();
+        $res = M('order o')
+            ->join("right join __PAY__ p on p.remark=o.order_sn")
+            ->field('ifnull(sum( if( o.order_benefit>0,1, 0)),0) benefit_num,sum(o.order_benefit) benefit_price,sum(o.order_amount) order_amount,sum(o.total_amount) total_amount,sum(o.order_goods_num) total_num,sum(o.coupon_price) coupon_price,count(o.order_id) shuliang,count(case when o.coupon_code!=\'\' then id end) coupon_num,o.discount,p.paystyle_id,p.use_member')//coupon_status
+            ->where("p.paytime>$start_time AND $end_time>p.paytime AND o.pay_status = 1 AND o.user_id = $uid")
+            ->group('p.paystyle_id,p.use_member')
+            ->select();
+        get_date_dir($this->path, 'connect_staff', 'I', json_encode(I('')));
+        get_date_dir($this->path, 'connect_staff', 'SQL', M()->_sql());
+        $info = $res[0]['total_amount'] - $res[0]['order_amount'] - $res[0]['coupon_price'];
+        $data = array();
+        $data['merchant_price'] =0;  //储值支付
+        $data['agent_price'] = 0;     //异业联支付
+        foreach ($res as $k => $v) {
+            $data['order_amount'] += $v['order_amount'];  //实收金额
+            $data['shop_amount'] += $v['total_amount'];  //订单金额
+            $data['total_num'] += $v['total_num'];   //商品数量
+            $data['benefit_num'] += $v['benefit_num'];  //优惠笔数
+            $data['benefit_price'] += $v['benefit_price'];  //优惠金额
+            $data['coupon_price'] += round($v['coupon_price'], 2);
+            if ($v['paystyle_id'] == 1) {
+                $data['wx_pay'] += $v['order_amount'];
+            } elseif ($v['paystyle_id'] == 2) {
+                $data['ali_pay'] += $v['order_amount'];
+            } elseif ($v['paystyle_id'] == 5) {
+                $data['cash_pay'] += $v['order_amount'];
+            }elseif ($v['paystyle_id'] == 4) {
+                if($v['use_memeber'] == 1){
+                    $data['merchant_price'] += $v['order_amount'];
+                } elseif ($v['use_memeber'] == 2) {
+                    $data['agent_price'] += $v['order_amount'];
+                }
+            }
+        }
+        $pay_back = M('pay_back')
+            ->field('sum(price) prcie,mode')//coupon_status
+            ->where("paytime>$start_time AND $end_time>paytime AND status = 5 AND checker_id = $uid")
+            ->group('mode')
+            ->select();
+        $data['cash_back'] = $data['double_back']=0;
+        foreach ($pay_back as $key =>$val){
+            if ($val['mode']==99){
+                $data['cash_back'] = $v['price'];
+            }elseif($val['mode']==98){
+                $data['double_back'] = $v['price'];
+            }
+        }
+        $data['sales_amount'] = $data['order_amount']-$data['cash_back']-$data['double_back'];  //总销售额
+        $mac_id = M('screen_pos')->where(array('mac' => $mac))->Field('id')->find();
+        $role_id = M('merchants_role_users')->where(array('uid' => $uid))->getField('role_id');
+        if ($role_id) {
+            if (!in_array($role_id, array(2, 3))) {
+                $user = M('merchants_users');
+                $pid = $user->field('pid')->where(array('id' => $uid))->find();
+                //p($pid);
+                $pid = $pid['pid'];
+                //p($pid);
+                $as = $user->field('id,user_name')->where(array('pid' => $pid, 'status' => 0))->select();
+                $connect = array();
+                foreach ($as as $key => $value) {
+                    if ($this->checkConnectAuth($value['id'])) {
+                        array_push($connect, $value);
+                    }
+                }
+                //p(M()->_sql());
+                $asd = $user->field('id,user_name')->where(array('id' => $uid))->find();
+                $data['jiebanren'] = $connect;
+                array_unshift($asd, 'shouyin');
+                $data['dangqian'] = $asd;
+                $data['mac_id'] = $mac_id;
+                $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
+                //p($data);
+            } else {
+                $user = M('merchants_users');
+                $d = $user->field('id,user_name')->where(array('pid' => $uid, 'status' => 0))->select();
+                $dd = $user->field('id,user_name')->where(array('id' => $uid))->find();
+                $connect = array();
+                foreach ($d as $key => $value) {
+                    if ($this->checkConnectAuth($value['id'])) {
+                        array_push($connect, $value);
+                    }
+                }
+                $data['jiebanren'] = $connect;
+                array_unshift($dd, 'shangjia');
+                $data['dangqian'] = $dd;
+                $data['mac_id'] = $mac_id;
+                $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
+                //p($data);
+            }
+        } else {
+            $this->ajaxReturn(array("code" => "error", 'msg' => '网络错误'));
+        }
+
+    }
+
     private function checkConnectAuth($uid)
     {
         $auth_id = 14;   // 交接班权限id

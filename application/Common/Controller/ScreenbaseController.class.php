@@ -43,6 +43,7 @@ class ScreenbaseController extends Controller
         "ApiscreenRecwindowgroup_list",
         "ApiscreenRecwindowforeach_goods",
         "ApiscreenRecwindowget_order_goods",
+        "ApiscreenRecwindowconnect_staff",
         "ApiscreenRecwindowdel_order1"
     );
 
