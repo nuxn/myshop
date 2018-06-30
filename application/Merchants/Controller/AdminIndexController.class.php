@@ -604,6 +604,7 @@ class AdminIndexController extends AdminbaseController
             ->where($map)
             ->order('m.add_time desc')
             ->select();
+        echo M()->_sql();
         foreach ($data as &$v) {
             $where['uid'] = $v['agent_id'];
             $v['agent_name'] = M('merchants_agent')->where($where)->getField('agent_name');
