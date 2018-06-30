@@ -1060,7 +1060,7 @@ class RecwindowController extends ScreenbaseController
             ->join("right join __PAY__ p on p.remark=o.order_sn")
             ->field('ifnull(sum( if( o.order_benefit>0,1, 0)),0) benefit_num,sum(o.order_benefit) benefit_price,sum(o.user_money) total_user_money,sum(o.order_amount) order_amount,sum(o.total_amount) total_amount,sum(o.order_goods_num) total_num,sum(o.coupon_price) coupon_price,count(o.order_id) shuliang,count(case when o.coupon_code!=\'\' then id end) coupon_num,o.discount,p.paystyle_id,p.use_member')//coupon_status
             ->where("p.paytime>$start_time AND $end_time>p.paytime AND o.pay_status = 1 AND o.user_id = $uid")
-            ->group('p.paystyle_id,p.use_memeber')
+            ->group('p.paystyle_id,p.use_member')
             ->select();
         get_date_dir($this->path, 'connect_staff', 'I', json_encode(I('')));
         get_date_dir($this->path, 'connect_staff', 'SQL', M()->_sql());
@@ -1092,8 +1092,9 @@ class RecwindowController extends ScreenbaseController
         $pay_back = M('pay_back')
             ->field('sum(price) prcie,mode')//coupon_status
             ->where("paytime>$start_time AND $end_time>paytime AND status = 5 AND checker_id = $uid")
-            ->group('p.mode')
+            ->group('mode')
             ->select();
+        $data['cash_back'] = $data['double_back']=0;
         foreach ($pay_back as $key =>$val){
             if ($val['mode']==99){
                 $data['cash_back'] = $v['price'];
