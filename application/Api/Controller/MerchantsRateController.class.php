@@ -324,7 +324,7 @@ class  MerchantsRateController extends Controller
                 continue;
             }
             // echo $value['id'].'<br>';
-            $pay = M('pay')
+            $pay = M(Subtable::getSubTableName('pay'))
                 ->alias("p")
                 ->where('p.paytime >='.$start_time.' and p.paytime < '.$end_time)
                 ->where(array('p.merchant_id'=>$value['id'],'p.status'=>1))
