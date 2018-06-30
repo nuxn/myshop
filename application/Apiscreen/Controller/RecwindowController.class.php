@@ -1058,17 +1058,21 @@ class RecwindowController extends ScreenbaseController
         $end_time = time();
         $res = M('order o')
             ->join("right join __PAY__ p on p.remark=o.order_sn")
-            ->field('ifnull(sum( if( o.order_benefit>0,1, 0)),0) benefit_num,sum(o.order_benefit) benefit_price,sum(o.order_amount) order_amount,sum(o.total_amount) total_amount,sum(o.order_goods_num) total_num,sum(o.coupon_price) coupon_price,count(o.order_id) shuliang,count(case when o.coupon_code!=\'\' then id end) coupon_num,o.discount,p.paystyle_id,p.use_member')//coupon_status
-            ->where("p.paytime>$start_time AND $end_time>p.paytime AND o.pay_status = 1 AND o.user_id = $uid")
+            ->field('sum(o.user_money) total_user_money,ifnull(sum( if( o.order_benefit>0,1, 0)),0) benefit_num,sum(o.order_benefit) benefit_price,sum(o.order_amount) order_amount,sum(o.total_amount) total_amount,sum(o.order_goods_num) total_num,sum(o.coupon_price) coupon_price,count(o.order_id) shuliang,count(case when o.coupon_code!=\'\' then id end) coupon_num,o.discount,p.paystyle_id,p.use_member,o.user_id')//coupon_status
+            ->where("p.paytime>$start_time AND $end_time>p.paytime AND o.pay_status = 1 AND o.user_id = $uid and p.status=1")
             ->group('p.paystyle_id,p.use_member')
             ->select();
+        // echo M('order o')->getLastSql();
+        // dump($res);
         get_date_dir($this->path, 'connect_staff', 'I', json_encode(I('')));
         get_date_dir($this->path, 'connect_staff', 'SQL', M()->_sql());
         $info = $res[0]['total_amount'] - $res[0]['order_amount'] - $res[0]['coupon_price'];
         $data = array();
-        $data['merchant_price'] =0;  //储值支付
-        $data['agent_price'] = 0;     //异业联支付
+        $data['merchant_price'] = $data['order_amount'] = $data['shop_amount']=$data['total_num']= $data['benefit_num']=$data['benefit_price']=0;
+        $data['agent_price'] = $data['sales_amount']=$data['cash_pay']= $data['ali_pay']=$data['wx_pay']=0;
+        $data['total_user_money'] = '0';
         foreach ($res as $k => $v) {
+            $data['total_user_money'] += $v['total_user_money'];
             $data['order_amount'] += $v['order_amount'];  //实收金额
             $data['shop_amount'] += $v['total_amount'];  //订单金额
             $data['total_num'] += $v['total_num'];   //商品数量
@@ -1083,9 +1087,9 @@ class RecwindowController extends ScreenbaseController
                 $data['cash_pay'] += $v['order_amount'];
             }elseif ($v['paystyle_id'] == 4) {
                 if($v['use_memeber'] == 1){
-                    $data['merchant_price'] += $v['order_amount'];
+                    $data['merchant_price'] += $v['order_amount'];//储值支付
                 } elseif ($v['use_memeber'] == 2) {
-                    $data['agent_price'] += $v['order_amount'];
+                    $data['agent_price'] += $v['order_amount'];//异业联支付
                 }
             }
         }
@@ -1102,6 +1106,7 @@ class RecwindowController extends ScreenbaseController
                 $data['double_back'] = $v['price'];
             }
         }
+        $data['total_user_money'] = strval($data['total_user_money']);
         $data['sales_amount'] = $data['order_amount']-$data['cash_back']-$data['double_back'];  //总销售额
         $mac_id = M('screen_pos')->where(array('mac' => $mac))->Field('id')->find();
         $role_id = M('merchants_role_users')->where(array('uid' => $uid))->getField('role_id');
@@ -1148,6 +1153,77 @@ class RecwindowController extends ScreenbaseController
             $this->ajaxReturn(array("code" => "error", 'msg' => '网络错误'));
         }
 
+    }
+
+    /**
+     * 添加交班记录
+     */
+    public function add_connect()
+    {
+        $connect_id = I('connect_id');  //交班人员
+        $start_time = I('start_time');  //开始时间
+        $end_time = I('end_time');      //结束时间
+        $mac_id = I('mac_id');      //机号
+        $connect_price = I('connect_price');      //交班金额
+        $accept_id = I('accept_id'); //接收人员
+        $note = I('note');  //备注
+        $info = I('info');  //交班详情
+        if (!$accept_id){
+            $this->ajaxReturn(array("code" => "error", 'msg' => '请选择交班人员'));
+        }
+        $role_id = M('merchants_role_users')->where(array('uid' => $this->userId))->getField('role_id');
+        if ($role_id==3) {
+            $uid = $this->userId;
+        }else{
+            $uid = M('merchants_users')->where(array('id' => $this->userId))->getField('pid');
+        }
+        $data= array(
+            'uid'=>$uid,
+            'connect_id'=>$connect_id,
+            'start_time'=>$start_time,
+            'end_time'=>$end_time,
+            'mac_id'=>$mac_id,
+            'connect_price'=>$connect_price,
+            'accept_id'=>$accept_id,
+            'note'=>$note,
+            'info'=>$info,
+            'add_time'=>time()
+        );
+        $res = M('screen_connect')->data($data)->add();
+        if($res){
+            $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
+        }else{
+            $this->ajaxReturn(array("code" => "error", 'msg' => '网络错误'));
+        }
+
+    }
+
+    //交班记录
+    public function connect_record()
+    {
+        $role_id = M('merchants_role_users')->where(array('uid' => $this->userId))->getField('role_id');
+        if ($role_id==3) {
+            $uid = $this->userId;
+        }else{
+            $uid = M('merchants_users')->where(array('id' => $this->userId))->getField('pid');
+        }
+        $beginLastmonth = mktime(0, 0, 0, date("m") - 1, 1, date("Y"));
+        $endToday = mktime(0, 0, 0, date('m'), date('d') + 1, date('Y')) - 1;
+        $data = M('screen_connect')
+            ->where("add_time>$beginLastmonth AND $endToday>add_time AND  uid = $uid")
+            ->field('id,start_time,end_time')
+            ->select();
+        $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
+    }
+
+    //交班记录详情
+    public function connect_details()
+    {
+        $id = I('id');
+        $data = M('screen_connect')->where(array('id'=>$id))->find();
+        $data['connect_staff'] = M('merchants_users')->where(array('id' => $data['connect_id']))->getField('user_name');
+        $data['accept_staff'] = M('merchants_users')->where(array('id' => $data['accept_id']))->getField('user_name');
+        $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
     }
 
     private function checkConnectAuth($uid)
