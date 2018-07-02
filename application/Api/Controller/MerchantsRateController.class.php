@@ -310,8 +310,8 @@ class  MerchantsRateController extends Controller
         error_reporting (E_ALL & ~E_NOTICE);
         set_time_limit(0); //执行时间无限
         // ignore_user_abort();
-//        $i = 6;
-        for($i=200;$i>0;$i--){
+        $i = 1;
+//        for($i=200;$i>0;$i--){
         $start_time = strtotime("-" . $i . " day", strtotime(date('y-m-d')));
         $date = date('Ymd',$start_time);
 
@@ -404,6 +404,8 @@ class  MerchantsRateController extends Controller
                         //会员充值
                         $wx_recharge += $v['price'];
                         $wx_recharge_nums++;
+                    }else{
+
                     }
                 }
 
@@ -511,7 +513,7 @@ class  MerchantsRateController extends Controller
             M('pay_statistics')->add($data);
         }
         echo "总总总总笔数：".$nums.'<br>';
-        }
+//        }
         exit();
     }
 

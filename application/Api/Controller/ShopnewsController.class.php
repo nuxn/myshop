@@ -1698,6 +1698,23 @@ class  ShopnewsController extends ApibaseController
         }
         return $pays;
     }
+
+    public function pay_statistics()
+    {
+        // 0: 所有1 :今日 2:昨日 3:本周 4:本月 5:上周 6:上月  7:自定义
+        $type = I('type');
+        $uid = I('uid');  //门店  门店uid
+        $time = $this->type_time($type);
+        $id = M('merchants')->where(array('uid'=>$uid))->getField('id');
+        if($merchants = M('merchants')->where(array('mid'=>$id))->field('uid')->select()){
+            //多店
+            $where['uid'] = array('in',array());
+        }else{
+            //单店
+        }
+
+    }
+
     //支付样式判断
     function numberstyle($number)
     {
