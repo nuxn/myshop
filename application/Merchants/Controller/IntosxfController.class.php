@@ -202,7 +202,6 @@ class IntosxfController extends AdminbaseController
         if (IS_POST) {
             $input = I("post.");
             $this->input = array_filter($input);
-            $this->sxfModel->where(array('id'=>$input['id']))->save($this->input);
             $cof_res = $this->bindconfig();
             if($cof_res['code'] == 'SXF0000'){
                 $cof_ret = $cof_res['respData'];
@@ -221,6 +220,7 @@ class IntosxfController extends AdminbaseController
             } else {
                 $this->ajaxReturn(array('code'=> '2000','msg'=>$dir_res['msg']?:'失败'));
             }
+            $this->sxfModel->where(array('id'=>$input['id']))->save($this->input);
             $scr_res = $this->bindScribeAppid();
             if($scr_res == 'no data'){
                 $this->ajaxReturn(array('code'=> '0000'));
