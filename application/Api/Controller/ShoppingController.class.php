@@ -831,6 +831,7 @@ class ShoppingController extends ApibaseController
                 $data[$key]['uid'] = $this->userId;
             }
             if ($this->units->addAll($data)) {
+                $this->write_log('保存单位',0);
                 $this->ajaxReturn(array("code" => "success", "msg" => "成功"));
             }else{
                 $this->ajaxReturn(array("code" => "error", "msg" => "失败"));
@@ -1235,6 +1236,7 @@ class ShoppingController extends ApibaseController
         $post = I('');
         if ($group_id=='') {
             //添加分类
+
             $this->add_groups($post);
         }else{
             //编辑分类
@@ -1316,6 +1318,7 @@ class ShoppingController extends ApibaseController
                     $result = $this->goodsModel->where(array('mid'=>$this->userId,'group_id'=>$data['gid'], "is_on_sale" => 1, "is_delete" => 0))->save(array("group_id" => $group_id));
                 }
             }
+            $this->write_log('新增商品分类'. $data['group_name'],$result);
             
             $this->ajaxReturn(array("code" => "success", "msg" => "新增商品分类成功", "data" => array("group_id" => (string)$result)));
         }else {
@@ -1342,6 +1345,8 @@ class ShoppingController extends ApibaseController
             }
         } 
         $this->groupModel->where(array("mid" => $this->userId,'group_id' => $data['group_id']))->save(array("group_name" => $data['group_name'],"sort"=>$data['sort'],"gid"=>$data['gid']));
+        $this->write_log('编辑商品分类'. $data['group_name'],$result);
+
         $this->ajaxReturn(array("code" => "success", "msg" => "编辑成功"));
         
     }

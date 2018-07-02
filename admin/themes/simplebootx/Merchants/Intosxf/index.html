@@ -24,20 +24,20 @@
                 <table class="layui-table">
                     <colgroup>
                         <col width="50">
-                        <col width="200">
                         <col width="175">
                         <col width="175">
-                        <col width="150">
+                        <col width="100">
+                        <col width="175">
                         <col>
                     </colgroup>
                     <thead>
                     <tr>
                         <th>id</th>
                         <th>商户名称</th>
-                        <th>进件时间</th>
+                        <th>商户号</th>
                         <th>进件状态</th>
-                        <th></th>
-                        <th></th>
+                        <th>进件时间</th>
+                        <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -45,9 +45,17 @@
                         <tr data-id="{$val.id}" class="parents" data-dis="0">
                             <td>{$val.id}</td>
                             <td>{$val.merchant_name}</td>
+                            <td>{$val.mno}</td>
+                            <td>
+                                <switch name="val.status">
+                                    <case value="0">未进件</case>
+                                    <case value="1">审核中</case>
+                                    <case value="2">通过</case>
+                                    <case value="3">驳回</case>
+                                    <default />等待
+                                </switch>
+                            </td>
                             <td>{$val.add_time}</td>
-                            <td>{$val.status}</td>
-                            <td></td>
                             <td>
                                 <div class="layui-table-cell laytable-cell-1-10">
                                     <if condition="$val.status eq 0">
