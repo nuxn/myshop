@@ -33,17 +33,37 @@ class IntosxfController extends AdminbaseController
     #进件列表
     public function index()
     {
-        $count = $this->sxfModel->join('b left join ypt_merchants m on b.merchant_id=m.id')->count();
+        $mch_name = I('mch_name');
+        $merchant_id = I('merchant_id');
+        $bandconf = I('bandconf');
+        $mno = I('mno');
+        if($mch_name){
+            $map['m.merchant_name'] = array('like', $mch_name);
+        }
+        if($merchant_id){
+            $map['b.merchant_id'] = $merchant_id;
+        }
+        if($bandconf){
+            if($bandconf == 1) $map['b.subMchId'] = array('neq', 0);
+            if($bandconf == 2) $map['b.subMchId'] = array('eq', 0);
+        }
+        if($mno){
+            $map['b.mno'] = $mno;
+        }
+        $count = $this->sxfModel->join('b left join ypt_merchants m on b.merchant_id=m.id')->where($map)->count();
 
         $page = $this->page($count, 15);
         $info = $this->sxfModel
             ->field('b.id,b.mno,b.subMchId,b.task_code,b.merchant_id,b.status,b.add_time,m.merchant_name')
             ->join('b left join ypt_merchants m on b.merchant_id=m.id')
+            ->where($map)
             ->order('b.id desc')
             ->limit($page->firstRow, $page->listRows)
             ->select();
+
         $this->assign("page", $page->show('Admin'));
         $this->assign("info", $info);
+        $this->assign("map", I(''));
         $this->display();
     }
 
