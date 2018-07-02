@@ -1177,6 +1177,8 @@ class RecwindowController extends ScreenbaseController
         }else{
             $uid = M('merchants_users')->where(array('id' => $this->userId))->getField('pid');
         }
+        // echo data('Y年m月d日',1530511201);
+        $string = json_decode(htmlspecialchars_decode($info),true);
         $data= array(
             'uid'=>$uid,
             'connect_id'=>$connect_id,
@@ -1186,7 +1188,7 @@ class RecwindowController extends ScreenbaseController
             'connect_price'=>$connect_price,
             'accept_id'=>$accept_id,
             'note'=>$note,
-            'info'=>$info,
+            'info'=>json_encode($string),
             'add_time'=>time()
         );
         $res = M('screen_connect')->data($data)->add();
@@ -1213,7 +1215,23 @@ class RecwindowController extends ScreenbaseController
             ->where("add_time>$beginLastmonth AND $endToday>add_time AND  uid = $uid")
             ->field('id,start_time,end_time')
             ->select();
-        $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
+        $res3 = $res4 = array();
+
+        foreach ($data as $k =>$v){
+            $month = date('Ym',$v['end_time']);
+            $v['start_time'] = date('Y年m月d日 H:s:i',$v['start_time']);
+            $v['end_time'] = date('Y年m月d日 H:s:i',$v['end_time']);
+            if($month==date('Ym')){
+                array_push($res3,$v);
+            }elseif($month==date('Ym',$beginLastmonth)){
+                array_push($res4,$v);
+            }
+        }
+        $res  = (object)array('month'=>date('Y年m月'),'data'=>$res3);
+        $res2 = (object)array('month'=>date('Y年m月',$beginLastmonth),'data'=>$res4);
+        $result = array();
+        array_push($result,$res,$res2);
+        $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $result));
     }
 
     //交班记录详情
@@ -1223,6 +1241,7 @@ class RecwindowController extends ScreenbaseController
         $data = M('screen_connect')->where(array('id'=>$id))->find();
         $data['connect_staff'] = M('merchants_users')->where(array('id' => $data['connect_id']))->getField('user_name');
         $data['accept_staff'] = M('merchants_users')->where(array('id' => $data['accept_id']))->getField('user_name');
+        $data['info'] = json_decode($data['info'],true);
         $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
     }
 
