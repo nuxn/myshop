@@ -30,8 +30,6 @@ class BarcodeController extends HomebaseController
 
             if ((int)$res['status'] == 1) {
                 $url = "https://sy.youngport.com.cn/index.php?g=Pay&m=Barcode&a=qr_weixipay&id=" . $id;
-//测试服务器
-//                $url = "http://139.224.74.153/youngshop/index.php?g=Pay&m=Barcode&a=qr_weixipay&id=".$id;
                 header("Location: $url");
             } else {
                 echo "<div style='margin: 10px auto;font-size: 30px;;width:80%';color:red>编号为：" . $res['no_number'] . " 的商家未上线 </div>";
@@ -39,8 +37,6 @@ class BarcodeController extends HomebaseController
         } elseif (strpos($_SERVER['HTTP_USER_AGENT'], 'AlipayClient') !== false) {
             if ((int)$res['status'] == 1) {
                 $url = "https://sy.youngport.com.cn/index.php?g=Pay&m=Barcode&a=qr_alipay&id=".I('id');
-//测试服
-//                $url = "http://139.224.74.153/youngshop/index.php?g=Pay&m=Barcode&a=qr_alipay&id=".I('id');
                 header("Location: $url");
             } else {
                 echo "<div style='margin: 10px auto;font-size: 30px;width:80%';color:red>编号为：" . $res['no_number'] . " 的商家未上线 </div>";

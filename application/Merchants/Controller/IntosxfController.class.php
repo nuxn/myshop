@@ -33,17 +33,37 @@ class IntosxfController extends AdminbaseController
     #进件列表
     public function index()
     {
-        $count = $this->sxfModel->join('b left join ypt_merchants m on b.merchant_id=m.id')->count();
+        $mch_name = I('mch_name');
+        $merchant_id = I('merchant_id');
+        $bandconf = I('bandconf');
+        $mno = I('mno');
+        if($mch_name){
+            $map['m.merchant_name'] = array('like', $mch_name);
+        }
+        if($merchant_id){
+            $map['b.merchant_id'] = $merchant_id;
+        }
+        if($bandconf){
+            if($bandconf == 1) $map['b.subMchId'] = array('neq', 0);
+            if($bandconf == 2) $map['b.subMchId'] = array('eq', 0);
+        }
+        if($mno){
+            $map['b.mno'] = $mno;
+        }
+        $count = $this->sxfModel->join('b left join ypt_merchants m on b.merchant_id=m.id')->where($map)->count();
 
         $page = $this->page($count, 15);
         $info = $this->sxfModel
             ->field('b.id,b.mno,b.subMchId,b.task_code,b.merchant_id,b.status,b.add_time,m.merchant_name')
             ->join('b left join ypt_merchants m on b.merchant_id=m.id')
+            ->where($map)
             ->order('b.id desc')
             ->limit($page->firstRow, $page->listRows)
             ->select();
+
         $this->assign("page", $page->show('Admin'));
         $this->assign("info", $info);
+        $this->assign("map", I(''));
         $this->display();
     }
 
@@ -74,12 +94,16 @@ class IntosxfController extends AdminbaseController
                     $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg']));
                 }
             } else {
+                if($result['msg'] == 'mecDisNmlength must be between 12 and 40'){
+                    $this->ajaxReturn(array('code'=> '1000','msg'=>'商户简称至少6个汉字'));
+                }
                 $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']?:'失败'));
             }
         } else {
             $merchant_id = I('id');
             if($this->sxfModel->where(array('merchant_id'=>$merchant_id))->getField('id')){
-                redirect(U('index'));
+                echo '<script>alert("该商户已有进件！")</script>';
+                die;
             }
             $province = $this->get_province();
             $list = M('Merchants')->field('m.id as `商户id`,m.merchant_name as `商户名称`,m.merchant_jiancheng as `商户简称`,u.user_phone as `手机号`,
@@ -347,7 +371,7 @@ class IntosxfController extends AdminbaseController
         $upload->maxSize = 3548576;// 设置附件上传大小
         $upload->exts = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
         $upload->rootPath = './data/upload/'; // 设置附件上传根目录
-        $upload->savePath = 'merchants/'; // 设置附件上传（子）目录
+        $upload->savePath = 'banksxf/'; // 设置附件上传（子）目录
         $upload->saveName = time().mt_rand();
         // 上传文件
         $info = $upload->upload();

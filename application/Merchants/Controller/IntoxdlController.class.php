@@ -13,12 +13,23 @@ class IntoxdlController extends AdminbaseController
     protected $merchants;
     protected $merchants_users;
     protected $merchants_xdl;
+    private $version = 'V1.0.1'; // 签名方式
+    private $orgNo;
+    private $mercId;
+    private $signKey;
+    private $url;
+
     function _initialize()
     {
         parent::_initialize();
         $this->merchants = M("merchants");
         $this->merchants_users =M("merchants_users");
         $this->merchants_xdl =M("merchants_xdl");
+        $this->orgNo = '7170';
+        $this->mercId = '800584000001927';
+        $this->orgNo = '7170';
+        $this->signKey = '7170';
+        $this->url = 'http://139.196.141.163:4243/emercapp';
     }
 
     /**
@@ -115,6 +126,72 @@ class IntoxdlController extends AdminbaseController
             $this->assign('data', $info);
             $this->assign('id', $id);
             $this->display();
+        }
+    }
+
+    public function qianyue()
+    {
+            $id = I('id');
+//            $this->getInfo($id);
+            $params['serviceId'] = '6060105';
+            $params['version'] = $this->version;
+            $params['mercId'] = $this->mercId;
+            $params['orgNo'] = $this->orgNo;
+            $params['signValue'] = $this->getSign($params);
+            $return = $this->requestPost(json_encode($params));
+            $result = json_decode(urldecode($return), true);
+            echo $this->url;
+            echo '<br/>';
+            echo json_encode($params);
+            dump($result);
+    }
+
+    private function getSign($params)
+    {
+        ksort($params);
+        $str = '';
+        foreach ($params as $v) {
+            $str .= $v;
+        }
+
+        return md5($str . $this->signKey);
+    }
+
+    private function getInfo($id)
+    {
+        $re = $this->merchants_xdl->where(array('id' => $id))->find();
+        $this->orgNo = $re['orgNo'];
+        $this->mercId = $re['mercId'];
+        $this->signKey = $re['signKey'];
+        return $re;
+    }
+    # 发送请求
+    private function requestPost($data, $second = 20)
+    {
+        $header = array("Content-type:application/json;charset=UTF-8");
+        //初始化curl
+        $curl = curl_init();
+        //设置超时
+        curl_setopt($curl, CURLOPT_TIMEOUT, $second);
+        curl_setopt($curl, CURLOPT_URL, $this->url);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+        //post提交方式
+        curl_setopt($curl, CURLOPT_POST, TRUE);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        //运行curl
+        $res = curl_exec($curl);
+        //返回结果
+        if ($res) {
+            curl_close($curl);
+            return $res;
+        } else {
+            $error = curl_errno($curl);
+            echo $error;
+            curl_close($curl);
+            return false;
         }
     }
 
