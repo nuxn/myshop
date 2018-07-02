@@ -94,12 +94,16 @@ class IntosxfController extends AdminbaseController
                     $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg']));
                 }
             } else {
+                if($result['msg'] == 'mecDisNmlength must be between 12 and 40'){
+                    $this->ajaxReturn(array('code'=> '1000','msg'=>'商户简称至少6个汉字'));
+                }
                 $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']?:'失败'));
             }
         } else {
             $merchant_id = I('id');
             if($this->sxfModel->where(array('merchant_id'=>$merchant_id))->getField('id')){
-                redirect(U('index'));
+                echo '<script>alert("该商户已有进件！")</script>';
+                die;
             }
             $province = $this->get_province();
             $list = M('Merchants')->field('m.id as `商户id`,m.merchant_name as `商户名称`,m.merchant_jiancheng as `商户简称`,u.user_phone as `手机号`,
@@ -367,7 +371,7 @@ class IntosxfController extends AdminbaseController
         $upload->maxSize = 3548576;// 设置附件上传大小
         $upload->exts = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
         $upload->rootPath = './data/upload/'; // 设置附件上传根目录
-        $upload->savePath = 'merchants/'; // 设置附件上传（子）目录
+        $upload->savePath = 'banksxf/'; // 设置附件上传（子）目录
         $upload->saveName = time().mt_rand();
         // 上传文件
         $info = $upload->upload();

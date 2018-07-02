@@ -106,7 +106,7 @@
                                         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="{:U('edit',array('id'=>$val['id'],'edit'=>1))}">进件</a>
                                     </if>
                                     <if condition="$val.subMchId eq 0">
-                                        <a class="layui-btn layui-btn-xs layui-btn-radius" lay-event="detail" href="{:U('wxconfig',array('id'=>$val['id'],'mno'=>$val['mno']))}">配置公众号</a>
+                                        <a class="layui-btn layui-btn-xs layui-btn-radius" lay-event="detail" href="{:U('wxconfig',array('id'=>$val['id'],'mno'=>$val['mno']))}">配置公众号支付</a>
                                         <else/>
                                         <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail" href="{:U('wxconfig',array('id'=>$val['id'],'see'=>1))}">查看公众号</a>
                                     </if>
