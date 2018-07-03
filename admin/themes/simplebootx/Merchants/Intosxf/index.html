@@ -102,11 +102,11 @@
                             <td>{$val.add_time}</td>
                             <td>
                                 <div class="layui-table-cell laytable-cell-1-10">
-                                    <if condition="$val.status eq 0">
+                                    <if condition="$val['status'] eq 0">
                                         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="{:U('edit',array('id'=>$val['id'],'edit'=>1))}">进件</a>
                                     </if>
-                                    <if condition="$val.subMchId eq 0">
-                                        <a class="layui-btn layui-btn-xs layui-btn-radius" lay-event="detail" href="{:U('wxconfig',array('id'=>$val['id'],'mno'=>$val['mno']))}">配置公众号支付</a>
+                                    <if condition="$val['subMchId'] eq 0">
+                                        <button class="layui-btn layui-btn-xs" type="button" data-id="{$val.id}" data-mno="{$val.mno}" onclick="wxconfig(this)">配置公众号支付</button>
                                         <else/>
                                         <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail" href="{:U('wxconfig',array('id'=>$val['id'],'see'=>1))}">查看公众号</a>
                                     </if>
@@ -124,6 +124,7 @@
     </div>
 </div>
 <script>
+    var open;
 
     layui.use('form', function () {
         var form = layui.form;
@@ -140,7 +141,92 @@
             location.href = url;
             return false;
         });
+        form.on('submit(formSub)', function (data) {
+            var send = JSON.stringify(data.field);
+            send = eval('(' + send + ')')
+            var index = layer.load(0, {
+                shade: [0.3, '#000'] //0.1透明度的白色背景
+            });
+            $.post("{:U('wxconfig')}", send, function (res) {
+                if (res.code == '0000') {
+                    var al = layer.alert('配置成功', {icon: 1},function(){
+                        layer.close(al);
+                        layer.close(open);
+                        location.reload();
+                    })
+                } else {
+                    if(res.code == '1000'){layer.open({title: 'APPID 配置失败', content: res.msg});}
+                    if(res.code == '2000'){layer.open({title: '授权目录配置失败', content: res.msg});}
+                    if(res.code == '3000'){layer.open({title: '推荐关注配置失败', content: res.msg});}
+
+                }
+                layer.close(index);
+            });
+            return false;
+        });
     });
+    function wxconfig(obj) {
+        var id = $(obj).data('id');
+        var mno = $(obj).data('mno');
+            if(true){
+            // if(res.code == '0000'){
+                open = layer.open({
+                title: '随行付商户公众号配置',
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                area: ['650px', '380'], //宽高
+                content: '<div class="layui-row">\n' +
+                '        <div class="layui-col-md12">\n' +
+                '                <div class="layui-field-box">\n' +
+                '                    <form class="layui-form layui-form-pane" action="">\n' +
+                '                        <div class="layui-form-item">\n' +
+                '                            <label class="layui-form-label">微信商户号</label>\n' +
+                '                            <div class="layui-input-block">\n' +
+                '                                <input type="text" name="subMchId" lay-verify="required" value=""\n' +
+                '                                       autocomplete="off" class="layui-input">\n' +
+                '                            </div>\n' +
+                '                        </div>\n' +
+                '                        <div class="layui-form-item">\n' +
+                '                            <label class="layui-form-label">APPID</label>\n' +
+                '                            <div class="layui-input-block">\n' +
+                '                                <input type="text" name="subAppid" required lay-verify="required"\n' +
+                '                                       value="wx3fa82ee7deaa4a21" autocomplete="off" class="layui-input">\n' +
+                '                            </div>\n' +
+                '                        </div>\n' +
+                '\n' +
+                '                        <div class="layui-form-item">\n' +
+                '                            <label class="layui-form-label">授权目录</label>\n' +
+                '                            <div class="layui-input-block">\n' +
+                '                                <input type="text" name="jsapiPath" lay-verify="required" value="https://sy.youngport.com.cn/"\n' +
+                '                                       autocomplete="off" class="layui-input">\n' +
+                '                            </div>\n' +
+                '                        </div>\n' +
+                '                        <div class="layui-form-item">\n' +
+                '                            <label class="layui-form-label">推荐关注公众号</label>\n' +
+                '                            <div class="layui-input-block">\n' +
+                '                                <input type="text" name="subscribeAppid" lay-verify="" value=""\n' +
+                '                                       autocomplete="off" class="layui-input">\n' +
+                '                            </div>\n' +
+                '                        </div>\n' +
+                '\n' +
+                '                        <input type="hidden" name="mno" value="'+mno+'">\n' +
+                '                        <input type="hidden" name="id" value="'+id+'">\n' +
+                '\n' +
+                '                        <div class="layui-form-item">\n' +
+                '                            <div class="layui-input-block">\n' +
+                '                                <if condition="$see eq 0">\n' +
+                '                                    <button class="layui-btn layui-btn-normal " lay-submit lay-filter="formSub">立即提交</button>\n' +
+                '                                </if>\n' +
+                '                            </div>\n' +
+                '                        </div>\n' +
+                '                    </form>\n' +
+                '                </div>\n' +
+                '        </div>\n' +
+                '    </div>'
+            });
+        }
+    }
+
 </script>
 
 </body>

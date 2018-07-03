@@ -29,7 +29,7 @@ class IntoxdlController extends AdminbaseController
         $this->mercId = '800584000001927';
         $this->orgNo = '7170';
         $this->signKey = '7170';
-        $this->url = 'http://139.196.141.163:4243/emercapp';
+        $this->url = 'http://sandbox.starpos.com.cn/emercapp';
     }
 
     /**
@@ -129,6 +129,7 @@ class IntoxdlController extends AdminbaseController
         }
     }
 
+    // 安心签签约
     public function qianyue()
     {
             $id = I('id');
@@ -139,11 +140,27 @@ class IntoxdlController extends AdminbaseController
             $params['orgNo'] = $this->orgNo;
             $params['signValue'] = $this->getSign($params);
             $return = $this->requestPost(json_encode($params));
-            $result = json_decode(urldecode($return), true);
             echo $this->url;
             echo '<br/>';
             echo json_encode($params);
-            dump($result);
+            dump($return);
+    }
+
+    // 安心签签约查询
+    public function qianyueq()
+    {
+            $id = I('id');
+            $this->getInfo($id);
+            $params['serviceId'] = '6060106';
+            $params['version'] = $this->version;
+            $params['mercId'] = $this->mercId;
+            $params['orgNo'] = $this->orgNo;
+            $params['signValue'] = $this->getSign($params);
+            $return = $this->requestPost(json_encode($params));
+            echo $this->url;
+            echo '<br/>';
+            echo json_encode($params);
+            dump($return);
     }
 
     private function getSign($params)
