@@ -96,7 +96,21 @@ class  PublicController extends ScreenbaseController
         if(!$token)$this->ajaxReturn(array("code"=>"error","msg"=>"登录失败,未找到该用户"));
         $uid=$token['uid'];
         $user=M("merchants_users")->where("id=$uid")->find();
-        
+        if (!$mac_id){
+            //添加机器
+            $merchant = M("merchants")->where("uid=$uid")->field('id,province,city,county,address')->find();
+            $res= array(
+                'mid'=>$merchant['id'],
+                'mac'=>$mac,
+                'province'=>$merchant['province'],
+                'city'=>$merchant['city'],
+                'county'=>$merchant['county'],
+                'address'=>$merchant['address'],
+                'add_time'=>time()
+            );
+            M("screen_pos")->data($res)->add();
+            $mac_id=M("screen_pos")->where("mac='$mac'")->getField("id");
+        }
         $role_id=M("merchants_role_users")->where("uid=$uid")->getField("role_id");
         if(!in_array($role_id, array(2, 3))){
             $merchant_id=$user['pid'];
@@ -231,6 +245,21 @@ class  PublicController extends ScreenbaseController
                 
                 $mac=I("mac");
                 $mac_id=M("screen_pos")->where("mac='$mac'")->getField("id");
+                if (!$mac_id){
+                    //添加机器
+                    $merchant = M("merchants")->where("uid=$uid")->field('id,province,city,county,address')->find();
+                    $res= array(
+                        'mid'=>$merchant['id'],
+                        'mac'=>$mac,
+                        'province'=>$merchant['province'],
+                        'city'=>$merchant['city'],
+                        'county'=>$merchant['county'],
+                        'address'=>$merchant['address'],
+                        'add_time'=>time()
+                    );
+                    M("screen_pos")->data($res)->add();
+                    $mac_id=M("screen_pos")->where("mac='$mac'")->getField("id");
+                }
                 $token =M("twotoken")->where("random='$random'")->find();
                 $auth = $this->getAuth($users['role_id']);
                 $data=array(

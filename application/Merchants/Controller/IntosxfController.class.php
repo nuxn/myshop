@@ -33,17 +33,37 @@ class IntosxfController extends AdminbaseController
     #进件列表
     public function index()
     {
-        $count = $this->sxfModel->join('b left join ypt_merchants m on b.merchant_id=m.id')->count();
+        $mch_name = I('mch_name');
+        $merchant_id = I('merchant_id');
+        $bandconf = I('bandconf');
+        $mno = I('mno');
+        if($mch_name){
+            $map['m.merchant_name'] = array('like', $mch_name);
+        }
+        if($merchant_id){
+            $map['b.merchant_id'] = $merchant_id;
+        }
+        if($bandconf){
+            if($bandconf == 1) $map['b.subMchId'] = array('neq', 0);
+            if($bandconf == 2) $map['b.subMchId'] = array('eq', 0);
+        }
+        if($mno){
+            $map['b.mno'] = $mno;
+        }
+        $count = $this->sxfModel->join('b left join ypt_merchants m on b.merchant_id=m.id')->where($map)->count();
 
-        $page = $this->page($count, 20);
+        $page = $this->page($count, 15);
         $info = $this->sxfModel
-            ->field('b.id,b.mno,b.merchant_id,b.status,b.add_time,m.merchant_name')
+            ->field('b.id,b.mno,b.subMchId,b.task_code,b.merchant_id,b.status,b.add_time,m.merchant_name')
             ->join('b left join ypt_merchants m on b.merchant_id=m.id')
+            ->where($map)
             ->order('b.id desc')
             ->limit($page->firstRow, $page->listRows)
             ->select();
+
         $this->assign("page", $page->show('Admin'));
         $this->assign("info", $info);
+        $this->assign("map", I(''));
         $this->display();
     }
 
@@ -74,10 +94,17 @@ class IntosxfController extends AdminbaseController
                     $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg']));
                 }
             } else {
+                if($result['msg'] == 'mecDisNmlength must be between 12 and 40'){
+                    $this->ajaxReturn(array('code'=> '1000','msg'=>'商户简称至少6个汉字'));
+                }
                 $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']?:'失败'));
             }
         } else {
             $merchant_id = I('id');
+            if($this->sxfModel->where(array('merchant_id'=>$merchant_id))->getField('id')){
+                echo '<script>alert("该商户已有进件！")</script>';
+                die;
+            }
             $province = $this->get_province();
             $list = M('Merchants')->field('m.id as `商户id`,m.merchant_name as `商户名称`,m.merchant_jiancheng as `商户简称`,u.user_phone as `手机号`,
             header_interior_img as `门头`,interior_img,business_license_number as `营业执照号`,business_license as `营业执照`,province as `省`,city as `市`,county as `区县`,address as `详细地址`,
@@ -114,14 +141,16 @@ class IntosxfController extends AdminbaseController
             }
             $list['法人结算正面'] = $list['法人正面'];
             $list['法人结算反面'] = $list['法人反面'];
+            $list['结算身份证号'] = $list['身份证'];
             $this->assign('img', $img);
-            $this->assign('list', $list);
+            $this->assign('list', array_filter($list));
             $this->assign('id', $merchant_id);
             $this->assign('province', $province);
             $this->display();
         }
     }
-    function array_insert (&$array, $position, $insert_array) {
+
+    public function array_insert (&$array, $position, $insert_array) {
         $first_array = array_splice ($array, 0, $position);
         $array = array_merge ($first_array, $insert_array, $array);
     }
@@ -162,6 +191,7 @@ class IntosxfController extends AdminbaseController
             $this->assign('mccN', $mccN);
             $this->assign('data', $info);
             $this->assign('id', $id);
+            $this->assign('edit', I('edit'));
             $this->display();
         }
     }
@@ -190,6 +220,7 @@ class IntosxfController extends AdminbaseController
             } else {
                 $this->ajaxReturn(array('code'=> '2000','msg'=>$dir_res['msg']?:'失败'));
             }
+            $this->sxfModel->where(array('id'=>$input['id']))->save($this->input);
             $scr_res = $this->bindScribeAppid();
             if($scr_res == 'no data'){
                 $this->ajaxReturn(array('code'=> '0000'));
@@ -207,6 +238,12 @@ class IntosxfController extends AdminbaseController
         } else {
             $id =  I('id');
             $mno = I('mno');
+            $see = I('see', 0);
+            if($see){
+                $info = $this->sxfModel->where(array('id'=>$id))->field('subMchId,subAppid,jsapiPath,subscribeAppid')->find();
+                $this->assign('info', $info);
+            }
+            $this->assign('see', $see);
             $this->assign('id', $id);
             $this->assign('mno', $mno);
             $this->display();
@@ -292,7 +329,7 @@ class IntosxfController extends AdminbaseController
                 $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg']));
             }
         } else {
-            $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']?:'进件失败'));
+            $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']?:$result['message']));
         }
     }
 
@@ -315,12 +352,16 @@ class IntosxfController extends AdminbaseController
                 }
                 $image = new \Think\Image();
                 $image->open($path);
-                $image->thumb(1000,1000)->save($path);
+                $image->thumb(800,800)->save($path);
                 $zip->addFile($path,basename($path));   //向压缩包中添加文件
                 $this->input[$key] = $val;
             }
         }
         $zip->close();  //关闭压缩包
+        $size = filesize($filename);
+        if($size >= 5242880){
+            $this->ajaxReturn(array('code'=> '1000','msg'=>'图片过大'));
+        }
         return $filename;
     }
 
@@ -330,7 +371,7 @@ class IntosxfController extends AdminbaseController
         $upload->maxSize = 3548576;// 设置附件上传大小
         $upload->exts = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
         $upload->rootPath = './data/upload/'; // 设置附件上传根目录
-        $upload->savePath = 'merchants/'; // 设置附件上传（子）目录
+        $upload->savePath = 'banksxf/'; // 设置附件上传（子）目录
         $upload->saveName = time().mt_rand();
         // 上传文件
         $info = $upload->upload();

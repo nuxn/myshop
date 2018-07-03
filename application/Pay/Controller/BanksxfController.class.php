@@ -125,7 +125,7 @@ class BanksxfController extends HomebaseController
                 $this->assign('mid', $this->merchant_id);
                 $this->display("wx_pay");
             } else {
-                $this->alert_err();
+                $this->alert_err($res_arr['msg']);
             }
         } else {
             $this->alert_err();

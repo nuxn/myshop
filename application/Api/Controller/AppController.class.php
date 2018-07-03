@@ -969,7 +969,7 @@ class AppController extends ApibaseController
             $card['discount']=$res['discount'] * 0.1;
             $card['level_name']='';
         }
-        $card['discount_price'] = $pay_price - $pay_price * $card['discount'];
+        $card['discount_price'] = $pay_price - $pay_price * $card['discount'];;
 
         //判断储值抵扣开关是否打开
         if($res['balance_set']==0){

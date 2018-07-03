@@ -107,7 +107,7 @@ class AdminIndexController extends AdminbaseController
         } else {
             $this->assign('status', '-1');
         }*/
-
+		
         $start_time = I("start_time");
         $end_time = I("end_time");
         if (strtotime($start_time) > strtotime($end_time)) {
@@ -227,6 +227,10 @@ class AdminIndexController extends AdminbaseController
                 $val['wxx_name'] = '平安付';
                 $wx_cost = M("merchants_pingan")->where(array('mid' => $val['id']))->getField("cost_rate");
                 $val['wxx_number'] = $wx_cost;
+            }elseif ($val['wx_bank'] == 14) {
+                $val['wxx_name'] = '随行付';
+                $wx_cost = M("merchants_upsxf")->where(array('merchant_id' => $val['id']))->getField("qrcodeRate");
+                $val['wxx_number'] = $wx_cost;
             } else {
                 $val['wxx_name'] = '';
                 $val['wxx_number'] = 0;
@@ -272,6 +276,10 @@ class AdminIndexController extends AdminbaseController
                 $ali_cost = M("merchants_pingan")->where(array('mid' => $val['id']))->getField("cost_rate");
                 $val['ali_number'] = $ali_cost;
                 $val['ali_name'] = '平安付';
+            } elseif ($val['ali_bank'] == 14) {
+                $ali_cost = M("merchants_upsxf")->where(array('merchant_id' => $val['id']))->getField("qrcodeRate");
+                $val['ali_number'] = $ali_cost;
+                $val['ali_name'] = '随行付';
             }  else {
                 $val['ali_name'] = '';
                 $val['ali_number'] = 0;
@@ -596,6 +604,7 @@ class AdminIndexController extends AdminbaseController
             ->where($map)
             ->order('m.add_time desc')
             ->select();
+        echo M()->_sql();
         foreach ($data as &$v) {
             $where['uid'] = $v['agent_id'];
             $v['agent_name'] = M('merchants_agent')->where($where)->getField('agent_name');
@@ -1676,6 +1685,13 @@ class AdminIndexController extends AdminbaseController
                 if(!$ali_mchid)$data=array('status'=>0,'message'=>"该商户进件未完成");
                 else $data=array('status'=>1,'ali_mchid'=>$ali_mchid,'ali_public_key'=>$ali_public_key);
                 break;
+            case 14: //随行付
+                $intoData=M("merchants_upsxf")->where(array("merchant_id"=>$merchant_id))->find();
+                $ali_mchid = $intoData['mno'];
+                $ali_public_key = '';
+                if(!$ali_mchid)$data=array('status'=>0,'message'=>"该商户进件未完成");
+                else $data=array('status'=>1,'ali_mchid'=>$ali_mchid,'ali_public_key'=>$ali_public_key);
+                break;
             default:
                 $data=array('status'=>0,'message'=>"未知错误");
                 break;
@@ -1758,6 +1774,13 @@ class AdminIndexController extends AdminbaseController
                 $intoData=M("merchants_pingan")->where(array("mid"=>$merchant_id))->find();
                 $wx_mchid = $intoData['sub_mchid'];
                 $wx_key = $intoData['sub_mchkey'];
+                if(!$wx_mchid)$data=array('status'=>0,'message'=>"该商户还未进件");
+                else $data=array('status'=>1,'wx_mchid'=>$wx_mchid,'wx_key'=>$wx_key);
+                break;
+            case 14: //随行付
+                $intoData=M("merchants_upsxf")->where(array("merchant_id"=>$merchant_id))->find();
+                $wx_mchid = $intoData['mno'];
+                $wx_key = '';
                 if(!$wx_mchid)$data=array('status'=>0,'message'=>"该商户还未进件");
                 else $data=array('status'=>1,'wx_mchid'=>$wx_mchid,'wx_key'=>$wx_key);
                 break;
