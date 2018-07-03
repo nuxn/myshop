@@ -1705,14 +1705,223 @@ class  ShopnewsController extends ApibaseController
         $type = I('type');
         $uid = I('uid');  //门店  门店uid
         $time = $this->type_time($type);
-        $id = M('merchants')->where(array('uid'=>$uid))->getField('id');
-        if($merchants = M('merchants')->where(array('mid'=>$id))->field('uid')->select()){
+        $mid = M('merchants')->where(array('uid'=>$uid))->getField('id');
+        if ($type==1) {
+            // 今日流水
+            $this->type_pay($time,$mid);
+        }
+        if($merchants = M('merchants')->where(array('mid'=>$mid))->field('uid,id')->select()){
             //多店
-            $where['uid'] = array('in',array());
+            $uid = $id =array();
+            foreach ($merchants as $key => $value) {
+                array_push($uid,$value['uid']);
+                array_push($id,$value['id']);
+            }
+            dump($uid);dump($id);dump($time);
+            $start_time = date('Ymd',$time[0]);
+            $end_time = date('Ymd',$time[1]);
+            $where['uid'] = array('in',array(implode($uid)));
+
         }else{
             //单店
         }
+        die;
+    }
 
+    //今日流水
+    private function type_pay($time,$mid)
+    {
+        if ($merchants = M('merchants')->where(array('mid'=>$mid))->field('uid,id')->select()) {
+            $id =array($mid,);
+            foreach ($merchants as $key => $value) {
+                array_push($id,$value['id']);
+            }
+            // dump($time);
+            $where['p.merchant_id'] = array('in',array(implode(',',$id)));
+            $where['p.status'] = 1;
+            $where['p.paytime'] = array('between',array($time[0],$time[1]));
+            $pay_back = M('pay_back')
+                ->where('paytime >='.$time[0].' and paytime < '.$time[1])
+                ->where(array('merchant_id'=>array('in',array(implode(',',$id)))))
+                ->field('price_back,mode')
+                ->select();
+
+        }else{
+            $where['p.merchant_id'] = $mid;
+            $where['p.status'] = 1;
+            $where['p.paytime'] = array('between',array($time[0],$time[1]));
+            $pay_back = M('pay_back')
+                ->where('paytime >='.$time[0].' and paytime < '.$time[1])
+                ->where(array('merchant_id'=>$mid))
+                ->field('price_back,mode')
+                ->select();
+        }
+        $field = 'p.paystyle_id,p.order_id,p.price,p.remark,p.cost_rate,p.use_member,o.order_benefit';
+        $pay  = M('pay')->alias('p')->join("__ORDER__ o on o.order_sn=p.remark", 'left')->where($where)->field($field)->select();
+        // echo M('pay')->getLastSql();
+        // dump($pay);
+        $wx_price = $ali_price = $union_price =$cash_price = $double_back = $cash_back = $merchant_price = $agent_price =$order_benefit=$wx_recharge = $ali_recharge=0;
+        $wx_nums = $merchant_nums = $agent_nums =$ali_nums = $union_nums = $cash_nums = $double_back_nums = $cash_back_nums =$wx_recharge_nums = $ali_recharge_nums=$order_benefit_nums=0;
+        $wx_poundage= $ali_poundage = $agent_poundage = $union_poundage = $cash_poundage = $merchant_poundage = 0;
+        foreach ($pay as $k => $v) {
+            $order = M('order')
+                ->where(array('order_sn'=>$v['remark']))
+                ->field('user_money,order_amount,total_amount,card_code,order_benefit,user_id')
+                ->find();
+            $card_rate = M('merchants_users')->where(array('id'=>$order['user_id']))->getField('card_rate');
+            if ($order['order_benefit']>0){
+                $order_benefit += $order['order_benefit'];   //支付优惠
+                $order_benefit_nums++;
+            }
+
+            if ($v['paystyle_id']==1) {
+                if(!$order||$order['order_amount']>0){
+                    //微信支付
+                    $wx_price += $v['price'];
+                    $wx_poundage += $v['price']*$v['cost_rate']/100;
+                    $wx_nums++;
+                    //判断储值支付类型  1=普卡  2=异业联盟盟卡
+                    $type = $this->check_yue($order['card_code']);
+                    if ($type==1){
+                        //1=普卡
+                        $merchant_price += $order['user_money'];
+                    }elseif($type=2){
+                        //2=异业联盟盟卡
+                        $agent_price += $order['user_money'];
+                        $agent_poundage+=$order['user_money']*$card_rate/100;
+                    }
+                }else{
+                    //判断储值支付类型  1=普卡  2=异业联盟盟卡
+                    $type = $this->check_yue($order['card_code']);
+                    if ($type==1){
+                        //1=普卡
+                        $merchant_price += $order['user_money'];
+                        $merchant_nums++;
+                    }elseif($type=2){
+                        //2=异业联盟盟卡
+                        $agent_price += $order['user_money'];
+                        $agent_poundage+=$order['user_money']*$card_rate/100;
+                        $agent_nums++;
+                    }
+                }
+                if($v['mode']==12){
+                    //会员充值
+                    $wx_recharge += $v['price'];
+                    $wx_recharge_nums++;
+                }else{
+
+                }
+            }
+
+            if ($v['paystyle_id']==2) {
+                //支付宝
+                $ali_price += $v['price'];
+                $ali_nums++;
+                $ali_poundage += $v['price']*$v['cost_rate']/100;
+                if($v['mode']==12){
+                    //会员充值
+                    $ali_recharge += $v['price'];
+                    $ali_recharge_nums++;
+                }
+            }
+            if($v['paystyle_id']==4){
+                //判断储值支付类型  1=普卡  2=异业联盟盟卡
+                $type = $this->check_yue($order['card_code']);
+                if ($type==1){
+                    //1=普卡
+                    $merchant_price += $order['user_money'];
+                    $merchant_nums++;
+                }elseif($type=2){
+                    //2=异业联盟盟卡
+                    $agent_price += $order['user_money'];
+                    $agent_poundage+=$order['user_money']*$card_rate/100;
+                    $agent_nums++;
+                }
+            }
+            if ($v['paystyle_id']==3) {
+                //银联
+                $union_price += $v['price'];
+                $union_nums++;
+                $union_poundage += $v['price']*$v['cost_rate']/100;
+            }
+            if ($v['paystyle_id']==5) {
+                //现金
+                $cash_price += $v['price'];
+                $cash_nums++;
+            }
+
+        }
+
+        foreach ($pay_back as $kv => $va) {
+            if ($va['mode']==98) {
+                $double_back += $va['price_back'];
+                $double_back_nums++;
+            }
+            if ($va['mode']==99) {
+                $cash_back += $va['price_back'];
+                $cash_back_nums++;
+            }
+        }
+        $total_price = $wx_price+$ali_price+$union_price+$cash_price+$merchant_price+$agent_price;  //总支付
+        $total_nums = $wx_nums+$ali_nums+$union_nums+$cash_nums+$merchant_nums+$agent_nums;  //总笔数
+        $yue_price = $merchant_price+$agent_price;   //储值支付
+        $yue_nums = $merchant_nums+$agent_nums;      //储值笔数
+        $back_price = $double_back+$cash_back;         //退款
+        $back_nums = $double_back_nums+$cash_back_nums; //退款笔数
+        $total_poundage = $wx_poundage+$ali_poundage+$union_poundage+$cash_poundage+$merchant_poundage+$agent_poundage;  //总手续费
+        $settle_accounts = $total_price-$total_poundage;   //结算金额
+        $wx_accounts = $wx_price-$wx_poundage;
+        $ali_accounts = $ali_price-$ali_poundage;
+        $union_accounts = $union_price-$union_poundage;
+        $cash_accounts = $cash_price-$cash_poundage;
+        $merchant_accounts = $merchant_price-$merchant_poundage;
+        $agent_accounts = $agent_price-$agent_poundage;
+        $data = array(
+            'wx_price'=>$wx_price,
+            'ali_price'=>$ali_price,
+            'union_price'=>$union_price,
+            'cash_price'=>$cash_price,
+            'double_back'=>$double_back,
+            'cash_back'=>$cash_back,
+            'wx_nums'=>$wx_nums,
+            'ali_nums'=>$ali_nums,
+            'union_nums'=>$union_nums,
+            'cash_nums'=>$cash_nums,
+            'double_back_nums'=>$double_back_nums,
+            'cash_back_nums'=>$cash_back_nums,
+            'merchant_price'=>$merchant_price,
+            'merchant_nums'=>$merchant_nums,
+            'agent_price'=>$agent_price,
+            'agent_nums'=>$agent_nums,
+            'order_benefit'=>$order_benefit,
+            'order_benefit_nums'=>$order_benefit_nums,
+            'wx_recharge'=>$wx_recharge,
+            'wx_recharge_nums'=>$wx_recharge_nums,
+            'ali_recharge'=>$ali_recharge,
+            'ali_recharge_nums'=>$ali_recharge_nums,
+            'wx_poundage'=>$wx_poundage,
+            'ali_poundage'=>$ali_poundage,
+            'union_poundage'=>$union_poundage,
+            'cash_poundage'=>$cash_poundage,
+            'merchant_poundage'=>$merchant_poundage,
+            'agent_poundage'=>$agent_poundage,
+            'total_price'=>$total_price,
+            'total_nums'=>$total_nums,
+            'yue_price'=>$yue_price,
+            'yue_nums'=>$yue_nums,
+            'back_price'=>$back_price,
+            'back_nums'=>$back_nums,
+            'settle_accounts'=>$settle_accounts,
+            'total_poundage'=>$total_poundage,
+            'wx_accounts'=>$wx_accounts,
+            'ali_accounts'=>$ali_accounts,
+            'union_accounts'=>$union_accounts,
+            'cash_accounts'=>$cash_accounts,
+            'merchant_accounts'=>$merchant_accounts,
+            'agent_accounts'=>$agent_accounts
+        );
+        $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
+        die;
     }
 
     //支付样式判断
