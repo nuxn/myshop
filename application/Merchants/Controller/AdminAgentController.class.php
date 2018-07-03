@@ -422,6 +422,7 @@ class AdminAgentController extends AdminbaseController
             if(M("merchants_agent")->where(array('uid'=>$res['uid']))->find())M("merchants_agent")->where(array('uid'=>$res['uid']))->delete();
             if(M("merchants_role_users")->where(array('uid'=>$res['uid']))->find())M("merchants_role_users")->where(array('uid'=>$res['uid']))->delete();
             if(M("merchants_users")->where(array('id'=>$res['uid']))->find())M("merchants_users")->where(array('id'=>$res['uid']))->delete();
+            if(M("users")->where(array('muid'=>$res['uid']))->find())M("users")->where(array('id'=>$res['uid']))->delete();
 
             $this->success('删除成功', U('adminAgent/index'));
         } else {

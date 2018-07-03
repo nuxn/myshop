@@ -104,7 +104,7 @@ class BarcodeController extends HomebaseController
         $order_sn   = I('order_sn');
 
         $http = 'https';
-        // if ($_SERVER['HTTP_HOST'] != 'sy.youngport.com.cn') $http = 'http';
+        //if ($_SERVER['HTTP_HOST'] != 'sy.youngport.com.cn') $http = 'http';
 
         #检查该笔订单使用的储值、积分是否充足，是否有优惠券
         $order_info = M('order')->where(array('order_sn' => $order_sn))->field('card_code,user_money,integral,coupon_code')->find();
@@ -1104,7 +1104,7 @@ class BarcodeController extends HomebaseController
                     "merchant_id" => $merchant_id,
                     "checker_id"  => I('checker_id')?:$checker_id,
                     "paystyle_id" => 1,
-                    "price"       => $pay_yue,
+                    "price"       => 0,
                     "status"      => 1,
                     "cate_id"     => $cateid,
                     "bill_date"   => date('Ymd'),

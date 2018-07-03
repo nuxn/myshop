@@ -9,7 +9,7 @@ use Common\Controller\ApibaseController;
  * Class PayController
  * @package Api\Controller
  */
-class  PayController extends ApibaseController
+class  PaybackController extends ApibaseController
 {
     public $uid;
     const brand = 'YPT';
@@ -1154,6 +1154,7 @@ class  PayController extends ApibaseController
         $pay_back['mode'] = $mode;
         $pay_back['bill_date'] = date('Ymd');
         $pay_back['order_info'] = $goods_info;
+        $pay_back['jmt_remark'] = I('reason','');
         $order = M('order')->where(array('order_sn' => $pay_back['remark']))->find();
         if ($order) {
             M('order')->where(array('order_sn' => $pay_back['remark']))->save(array('order_status' => 0));

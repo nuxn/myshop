@@ -87,7 +87,7 @@ class RecwindowController extends ScreenbaseController
      **/
     public function getDoubleScreenOrders()
     {
-        $paystyle = array(1 => '微信支付', 2 => '支付宝', 5 => '现金支付', 3 => '刷卡', 6 => '储值余额');
+        $paystyle = array(1 => '微信支付', 2 => '支付宝', 5 => '现金支付', 3 => '刷卡', 4 => '储值余额');
         $user_id = $this->userId;
         if (IS_POST) {
 
@@ -155,7 +155,13 @@ class RecwindowController extends ScreenbaseController
                     $data['coupon_price'] = $order_info['coupon_price'];
                     $data['order_benefit'] = $order_info['order_benefit'];
 
-                    $data['order_goods'] = M('order_goods')->where(array('order_id' => $order_info['order_id']))->Field('bar_code,goods_name,goods_price,goods_num,goods_price*goods_num as subtotal')->select();
+                    $data['order_goods'] = M('order_goods')
+                        ->where(array('order_id' => $order_info['order_id']))
+                        ->Field('goods_id,spec_key,bar_code,goods_name,goods_price,goods_num,goods_price*goods_num as subtotal')
+                        ->select();
+                    foreach ($data['order_goods'] as $key => &$value){
+                        $value['goods_img']= M('goods')->where(array('goods_id'=>$value['goods_id']))->getField('goods_img1');
+                    }
                     get_date_dir($this->path, 'Recwindow_getDoubleScreenDetail', '订单数据', json_encode($data));
 
 
