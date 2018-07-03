@@ -33,7 +33,7 @@ class MerchantsUsersModel extends Model
     public function get_roles_list($userId)
     {
         $role_id = $this->user_role_model->where(array('uid'=>$userId))->getField('role_id');
-        return $this->role_model->where(array('mu_id' => array('IN', (array($userId, 0))), 'pid' => $role_id))->field('id,role_name,role_desc')->select();
+        return $this->role_model->where(array('mu_id' => array('IN', (array($userId, 0))), '_string'=>"pid=$role_id or id=7"))->field('id,role_name,role_desc')->select();
     }
 
 
