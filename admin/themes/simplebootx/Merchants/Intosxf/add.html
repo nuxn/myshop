@@ -388,6 +388,12 @@
 
                             </div>
                         </fieldset>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">进件失败原因</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="err_msg" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
 
                         <div class="layui-form-item">
                             <div class="layui-input-block">
@@ -419,9 +425,11 @@
                         location.href = "{:U('index')}";
                     })
                 } else {
+                    $("input[name=err_msg]").val(res.msg);
+                    var msg = res.msg;
                     layer.open({
                         title: '进件失败'
-                        , content: res.msg
+                        , content: msg
                     });
                 }
             });

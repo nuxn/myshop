@@ -31,7 +31,17 @@ class  OrderController extends  ApibaseController
     		}else{
     				err($order->getError());
     		}
-    		
+    }
+
+    public function detail()
+    {
+        ($order_id = I('order_id',0,'intval')) || err('order_id is empty!');
+        $order = D('order');
+        if($data = $order->detail($order_id,UID)){
+            succ($data);
+        }else{
+            err($order->getError());
+        }
     }
     //发货
     public function fahuo(){

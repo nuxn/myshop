@@ -404,9 +404,10 @@
                         location.href = "{:U('index')}";
                     })
                 } else {
+                    var msg = res.msg;
                     layer.open({
                         title: '进件失败'
-                        , content: res.msg
+                        , content: msg
                     });
                 }
             });
