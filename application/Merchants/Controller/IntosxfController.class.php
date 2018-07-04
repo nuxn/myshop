@@ -54,7 +54,7 @@ class IntosxfController extends AdminbaseController
 
         $page = $this->page($count, 15);
         $info = $this->sxfModel
-            ->field('b.id,b.mno,b.subMchId,b.task_code,b.merchant_id,b.status,b.add_time,m.merchant_name')
+            ->field('b.id,b.mno,b.err_msg,b.subMchId,b.task_code,b.merchant_id,b.status,b.add_time,m.merchant_name')
             ->join('b left join ypt_merchants m on b.merchant_id=m.id')
             ->where($map)
             ->order('b.id desc')
@@ -77,6 +77,7 @@ class IntosxfController extends AdminbaseController
             $taskCode = $this->getTaskCode();
             $this->input['task_code'] = $taskCode;
             unset($input['merchant_id']);
+            unset($input['err_msg']);
             unset($input['img']);
 //            $input['taskCode'] = 'SXF012018062017031592616709762';
             $input['taskCode'] = $taskCode;
@@ -91,13 +92,13 @@ class IntosxfController extends AdminbaseController
                     $this->adddb();
                     $this->ajaxReturn(array('code'=> '0000','msg'=>''));
                 } else {
-                    $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg']));
+                    $this->ajaxReturn(array('code'=> '1000','msg'=>$return['bizMsg'],'reqid'=>$result['reqId']));
                 }
             } else {
                 if($result['msg'] == 'mecDisNmlength must be between 12 and 40'){
-                    $this->ajaxReturn(array('code'=> '1000','msg'=>'商户简称至少6个汉字'));
+                    $this->ajaxReturn(array('code'=> '1000','msg'=>'商户简称至少6个汉字','reqid'=>$result['reqId']));
                 }
-                $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']?:'失败'));
+                $this->ajaxReturn(array('code'=> '1000','msg'=>$result['msg']?:'失败','reqid'=>$result['reqId']));
             }
         } else {
             $merchant_id = I('id');

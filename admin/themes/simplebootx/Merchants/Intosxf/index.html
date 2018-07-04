@@ -70,6 +70,7 @@
                         <col width="175">
                         <col width="100">
                         <col width="175">
+                        <col width="275">
                         <col>
                     </colgroup>
                     <thead>
@@ -80,6 +81,7 @@
                         <th>任务编号</th>
                         <th>进件状态</th>
                         <th>进件时间</th>
+                        <th>信息</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -100,6 +102,11 @@
                                 </switch>
                             </td>
                             <td>{$val.add_time}</td>
+                            <td>
+                                <if condition="$val['status'] neq 2">
+                                    {$val.err_msg}
+                                </if>
+                            </td>
                             <td>
                                 <div class="layui-table-cell laytable-cell-1-10">
                                     <if condition="$val['status'] eq 0">
