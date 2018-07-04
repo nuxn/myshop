@@ -24,12 +24,13 @@ class  AgentnewsController extends ApibaseController
         $this->users = M("merchants_users");
         $this->roles = M("merchants_role_users");
         $this->cates = M("merchants_cate");
-        $this->pays = M("pay");
+        $this->pays = M(Subtable::getSubTableName('pay'));
         $this->payBack = M("pay_back");
     }
 
 //代理 总额
     public function service()
+
     {
         $this->checkLogin();
         $type = I("type");
@@ -781,11 +782,12 @@ class  AgentnewsController extends ApibaseController
         $ids = explode(",", $category_ids);
         $map['merchant_id'] = array('in', $ids);
         $map['paystyle_id'] = array('in', array(1, 2));  // 修改时间 2017/10/11
-        $pays = M("pay")->where($map)->order('paytime desc')->select();
+        $pays = M(Subtable::getSubTableName('pay'))->where($map)->order('paytime desc')->select();
         return $pays;
     }
 
     /**
+
      * 测试时间信息
      */
     public function checkdata()

@@ -1,5 +1,5 @@
 ﻿<?php
-
+use Common\Lib\Subtable;
 //namespace Vendor\Wzpay;
 /**
  * Created by PhpStorm.
@@ -292,11 +292,13 @@ class Wzpay
         // 转成php数组
         $data = json_decode($json_str, true);
         file_put_contents(get_date_dir($this->wx_path) . date("Y_m_d_") . 'weixin.log', date("Y-m-d H:i:s") . '扫码支付回调信息' . $json_str . PHP_EOL . PHP_EOL, FILE_APPEND | LOCK_EX);
-        $ab = M("pay")->where(array('remark' => $data['out_trade_no']))->getField('id');
+        $ab = M(Subtable::getSubTableName('pay'))->where(array('remark' => $data['out_trade_no']))->getField('id');
+
         if (!$ab) {
             //$url = 'https://api.youngport.com.cn/api/wzbank/wx_notify_return';
             $url = 'http://apiadmin.ypt5566.com/index/curl/wx_notify_return';
             $request1 = $this->postarrayCurl(json_encode($data), $url);
+
             echo $request1;
             exit;
         }

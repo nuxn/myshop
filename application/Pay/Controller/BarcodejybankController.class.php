@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
+use Common\Lib\Subtable;
 
 /**支付
  * Class BarcodeController
@@ -533,11 +534,12 @@ class BarcodejybankController extends HomebaseController
 //        $mchid = $res['wx_mchid'];
 
         $good_name = "向" . $res['jianchen'] . "支付" . $price . "元";
-        M("pay")->add($data);
+        M(Subtable::getSubTableName('pay'))->add($data);
 
         $post_data = array(
             'account' => $this->account,
             'orderCode' => 'tb_wxscanpay'
+
         );
 
         $msgDate = array(
@@ -584,10 +586,11 @@ class BarcodejybankController extends HomebaseController
         }
 
         if ("000000" === $res_msg['respCode']) {
-            $pay_change = M("pay");
+            $pay_change =M(Subtable::getSubTableName('pay'));
             $data['remark'] = $remark;
             $data['status'] = 1;
             if ($pay_change->where("remark=$remark")->find()) $pay_change->where("remark=$remark")->save($data);
+
             A("Pay/Barcode")->push_pay_message($remark);
             file_put_contents('./data/log/jiuyunbank/pay.log', date("Y-m-d H:i:s") . "授权码支付-支付成功:" . json_encode($res_msg) . PHP_EOL, FILE_APPEND | LOCK_EX);
             return array("code" => "success", "msg" => "成功", "data" => '支付成功');

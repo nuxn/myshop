@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+use Common\Lib\Subtable;
 include_once("WzPay.pub.config.php");
 /**
  * Created by PhpStorm.
@@ -414,11 +415,12 @@ class micropay extends WxPayDataBase
 ///      @3 支付成功 而且不用输入密码
         if($result['result']['errno'] === '0'){
             file_put_contents('./data/log/wz/weixin/shuaka.log', date("Y-m-d H:i:s") . '   ' ."result". json_encode($result) . PHP_EOL, FILE_APPEND | LOCK_EX);
-            $pay_change = M("pay");
+            $pay_change = M(Subtable::getSubTableName('pay'));
             $remark=$result['terminal_serialno'];
             $data['customer_id'] = $result['openid'];
             $data['wz_remark'] =$result['orderid'];
             if($pay_change->where("remark=$remark")->find())$pay_change->where("remark=$remark")->save($data);
+
             return array('flag' => true, 'message' => "支付成功");
 //            return array('flag' => true, 'message' => $result['result']['errmsg']);
         }
@@ -442,10 +444,11 @@ class micropay extends WxPayDataBase
                 //查询成功
 //                return array('flag'=>true,'message'=>$queryResult);
                 file_put_contents('./data/log/wz/weixin/shuaka.log', date("Y-m-d H:i:s") . '   ' . "密码支付成功".json_encode($queryResult) . PHP_EOL, FILE_APPEND | LOCK_EX);
-                $pay_change = M("pay");
+                $pay_change =M(Subtable::getSubTableName('pay'));
                 $remark=$queryResult['terminal_serialno'];
                 $data['customer_id'] = $queryResult['sub_openid'];
                 $data['wz_remark'] =$queryResult['orderid'];
+
                 if($pay_change->where("remark=$remark")->find())$pay_change->where("remark=$remark")->save($data);
 
                 return array('flag'=>true,'message'=>'收款成功');

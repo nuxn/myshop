@@ -48,12 +48,13 @@ class MemberController extends ApibaseController
      */
     private function get_expense_count($merchants_id, $usr_arr)
     {
-        $res = M("pay")->where(array("merchant_id" => $merchants_id, "customer_id" => array('in', $usr_arr), "status" => "1"))
+        $res = M(Subtable::getSubTableName('pay'))->where(array("merchant_id" => $merchants_id, "customer_id" => array('in', $usr_arr), "status" => "1"))
             ->field("sum(price) expense,COUNT(id) expense_count,MAX(paytime) last_expense")
             ->find();
         $return['expense'] = $res['expense'] ? $res['expense'] : "0";   // 累积消费金额
         $return['expense_count'] = $res['expense_count'] ? $res['expense_count'] : "0"; // 累积消费次数
         $return['last_expense'] = $res['last_expense'] ? $res['last_expense'] : ""; // 最近消费
+
         return $return;
     }
 

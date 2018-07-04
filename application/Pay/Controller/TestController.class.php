@@ -15,18 +15,29 @@ class TestController extends HomebaseController
     public function test()
     {
         header("Content-Type: text/html;charset=utf-8");
-        echo '客户端IP ' . get_client_ip() . '<br/><br/>';
-        echo '服务器IP ' . $_SERVER['SERVER_ADDR'];
+//        echo '客户端IP ' . get_client_ip() . '<br/><br/>';
+//        echo '服务器IP ' . $_SERVER['SERVER_ADDR'];
         $pay=M(Subtable::getSubTableName('pay'));
-
-        # M('pay')改成
-        M(Subtable::getSubTableName('pay'));
-        print_r($pay);
-//        $url='http://dev.xcx.com:81/dc/v1/Base/index';
-//        $rs=$this->http_post(array(),$url);
-//        var_dump($rs);
+        Vendor('Wzpay.Wzpay');
+        (new \Wzpay())->notify();
     }
 
+    public function reg()
+    {
+            #  curl进件
+            if (class_exists('\CURLFile')) {#php5.5及以上
+                $fieldname = new \CURLFile($_SERVER['DOCUMENT_ROOT'] . '/image/bank.png', 'image/jpeg', 'bank.png');
+                echo 11;
+            } else {#php5.5以下
+                $fieldname = '@' . realpath('image/bank.png') . ';type=image/png';
+            }
+            $param = array(
+                'idCardBackPhoto' => $fieldname,
+            );
+
+            $result = $this->http_post($param,'http://b.ypt5566.com/api/zhang/index');#收款
+        var_dump($result);
+    }
 
     /**
      * 公众号支付扫码支付收款
@@ -89,8 +100,10 @@ class TestController extends HomebaseController
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        var_dump(curl_getinfo($ch));
         $result = curl_exec($ch);
-        //var_dump(curl_errno($ch));
+        var_dump(curl_errno($ch));
+
         curl_close($ch);
         return $result;
     }

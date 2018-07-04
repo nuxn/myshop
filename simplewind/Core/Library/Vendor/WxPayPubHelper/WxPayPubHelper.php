@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 header("Content-Type: text/html; charset=utf-8");
 /**
  * 微信支付帮助库
@@ -28,6 +28,7 @@ header("Content-Type: text/html; charset=utf-8");
  *        postXmlCurl(),以post方式提交xml到对应的接口url
  *        postXmlSSLCurl(),使用证书，以post方式提交xml到对应的接口url
  */
+use Common\Lib\Subtable;
 include_once("SDKRuntimeException.php");
 include_once("WxPay.pub.config.php");
 
@@ -936,11 +937,12 @@ class WxPayMicroPay extends Wxpay_client_pub
             return array('flag' => false, 'msg' => $result["err_code"]);
         }*/
         $out_trade_no = $this->parameters['out_trade_no'];
-        $pay_change = M("pay");
+        $pay_change =M(Subtable::getSubTableName('pay'));
         if ($result["return_code"] == "SUCCESS" && $result["result_code"] == "SUCCESS") {
             $data['wx_remark'] = $result['transaction_id'];
             $data['customer_id'] = $result['openid'];
             $data['status'] = 1;
+
             if ($pay_change->where("remark=$out_trade_no")->find()) {
                 $pay_change->where("remark=$out_trade_no")->save($data);
             }

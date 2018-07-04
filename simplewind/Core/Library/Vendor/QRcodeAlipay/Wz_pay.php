@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Created by PhpStorm.
  * User: Joan
@@ -11,7 +11,7 @@
  *        formatBizQueryParaMap(),格式化参数，签名过程需要用到
  *        getSign(),生成签名
  **/
-
+use Common\Lib\Subtable;
 include_once("AlipayConfig_old.php");//微众支付配置文件
 
 class Wz_pay
@@ -423,12 +423,13 @@ class Wz_pay
         $fundBillList = json_decode($fundBillList, true);
 
         //var_dump($fundBillList[0]['amount']);//具体金额
-        $ab = M("pay")->where(array('remark' => $data['orderId']))->getField('id');
+        $ab = M(Subtable::getSubTableName('pay'))->where(array('remark' => $data['orderId']))->getField('id');
         if (!$ab) {
             //$url = 'https://api.youngport.com.cn/api/wzbank/wx_notify_return';
             $url = 'http://apiadmin.ypt5566.com/index/curl/ali_notify_return';
             $request1 = $this->postarrayCurl($json_str, $url);
             echo $request1;
+
             exit;
         }
         if ($data['tradeStatus'] == '00') {//回调处理中,主动查询订单       
