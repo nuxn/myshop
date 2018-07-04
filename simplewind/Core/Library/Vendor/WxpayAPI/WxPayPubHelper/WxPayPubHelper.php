@@ -141,7 +141,9 @@ class Common_util_pub
 	 * 	作用：将xml转为array
 	 */
 	public function xmlToArray($xml)
-	{		
+	{
+        //禁止引用外部xml实体
+        libxml_disable_entity_loader(true);
         //将XML转为array        
         $array_data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);		
 		return $array_data;
