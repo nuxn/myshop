@@ -34,6 +34,7 @@ class ApibaseController extends Controller
         "Shopnews",
         "Member",
         "Pay",
+        "Payback",
         "Wxpay",
         "App",
         "Goods",

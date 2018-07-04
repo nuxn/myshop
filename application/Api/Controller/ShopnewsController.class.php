@@ -590,14 +590,14 @@ class  ShopnewsController extends ApibaseController
         if ($status == '5') {
             $pay = M('pay_back')
                 ->where(array('back_pid' => $pay_id))
-                ->field("id,status,cate_id,customer_id,paystyle_id,checker_id,remark,paytime,jmt_remark,mode,new_order_sn,price_back as price,price_back")
+                ->field("id,status,cate_id,order_info,customer_id,paystyle_id,checker_id,remark,paytime,jmt_remark,mode,new_order_sn,price_back as price,price_back")
                 ->find();
             //   add_log(json_encode($pay));
 
             if (!$pay) {
                 $pay = M('pay_back')
                     ->where(array('id' => $pay_id))
-                    ->field("id,status,cate_id,customer_id,paystyle_id,checker_id,remark,paytime,jmt_remark,mode,new_order_sn,price_back as price,price_back")
+                    ->field("id,status,cate_id,order_info,customer_id,paystyle_id,checker_id,remark,paytime,jmt_remark,mode,new_order_sn,price_back as price,price_back")
                     ->find();
             }
         } else {
@@ -675,24 +675,37 @@ class  ShopnewsController extends ApibaseController
 
         } else {
             $order = M("order")->where(array('order_sn' => $pay['remark']))->find();
-            if ($status == '5') {
-                $pay['integral_money'] = "0.00";
-                $pay['discount'] = "100";
-                $pay['user_money'] = "0.00";
-                $pay['coupon_price'] = "0.00";
-                $pay['total_price'] = $pay['price'];
-            } elseif ($order) {
-                $pay['integral_money'] = $order['integral_money'] ? $order['integral_money'] : "0.00"; // 积分
-                $pay['discount'] = $order['discount'] ? $order['discount'] : "100";      //折扣
-                $pay['user_money'] = $order['user_money'] ? $order['user_money'] : "0.00"; //  会员卡储值
-                $pay['coupon_price'] = $order['coupon_price'] ? $order['coupon_price'] : "0.00"; //  优惠券使用金额
-                $pay['total_price'] = $order['total_amount']; //总金额
-            } else {
-                $pay['integral_money'] = "0.00";
-                $pay['discount'] = "100";
-                $pay['user_money'] = "0.00";
-                $pay['coupon_price'] = "0.00";
-                $pay['total_price'] = $pay['price'];
+            $pay['integral'] = $order['integral'] ? : "0"; // 积分
+            $pay['integral_money'] = $order['integral_money'] ? : "0.00"; // 积分抵扣金额
+            $pay['discount'] = $order['discount'] ? : "100"; //折扣
+            $pay['discount_money'] = $order['discount_money'] ? : "0.00"; //折扣金额
+            $pay['user_money'] = $order['user_money'] ? : "0.00"; //  会员卡储值
+            $pay['coupon_price'] = $order['coupon_price'] ? : "0.00"; //  优惠券使用金额
+            $pay['total_price'] = $order['total_amount'] ? : $pay['price']; //总金额
+
+            if($status == 5){
+                $pay['goods_should_refund'] = '0';//商品应退金额
+                if($pay['order_info']){
+                    $pay['order_info'] = json_decode($pay['order_info'],true);
+                    $pay['goods_should_refund'] = '0';//退款商品应退金额
+                    //计算退款商品总价
+                    $goods_back_price = '0';
+                    foreach($pay['order_info']['goods'] as &$v){
+                        $goods_back_price += $v['goods_price'] * $v['goods_num'];
+                    }
+                    //商品应退金额
+                    foreach($pay['order_info']['goods'] as &$v){
+                        $pay['goods_should_refund'] += ($pay['price'] - $pay['order_info']['dc_db_price'] - $pay['order_info']['dc_ch_price']) * $v['goods_price'] * $v['goods_num'] / $goods_back_price;
+                    }
+                }else{
+                    $pay['order_info'] = array();
+                }
+            }else{
+                $pay['order_info']['goods'] = M('order_goods og')
+                    ->join('left join ypt_goods g on g.goods_id=og.goods_id')
+                    ->field('og.goods_id,og.goods_name,og.goods_num,og.goods_price,og.sku,og.goods_img,g.bar_code')
+                    ->where(array('order_id'=>$order['order_id']))
+                    ->select();
             }
         }
 
@@ -1678,7 +1691,7 @@ class  ShopnewsController extends ApibaseController
             ->join("__ORDER__ o on o.order_sn=p.remark", 'left')
             ->order("paytime desc")
             ->where($map)
-            ->field("p.id,p.paystyle_id,p.checker_id,p.price,p.remark,p.status,p.paytime,p.bill_date,p.mode,p.authorization")
+            ->field("p.id,p.paystyle_id,p.checker_id,p.price,p.remark,p.status,p.paytime,p.bill_date,p.mode,p.authorization,o.order_amount,o.total_amount")
             ->select();
         // echo $this->users->getLastSql();die;
         $payBack = $this->users->alias("u")
@@ -1687,34 +1700,22 @@ class  ShopnewsController extends ApibaseController
             ->join("__ORDER__ o on o.order_sn=p.remark", 'left')
             ->order("paytime desc")
             ->where($map)
-            ->field("p.back_pid as id,p.paystyle_id,p.checker_id,p.price_back as price,p.remark,p.status,p.paytime,p.bill_date,p.mode,p.type")
+            ->field("p.back_pid as id,p.paystyle_id,p.checker_id,p.price_back as price,p.remark,p.status,p.paytime,p.bill_date,p.mode,p.type,o.order_amount,o.total_amount")
             ->select();
-        if ($payBack) {
-            foreach ($payBack as $k => $v)
-                array_push($pays, $payBack[$k]);
-        }
+        $pays = array_merge($pays,$payBack);
+        array_multisort(array_column($pays,'paytime'),SORT_DESC,$pays);
         foreach ($pays as &$v) {
+            $v['order_amount'] = $v['order_amount']?:$v['price'];
+            $v['total_amount'] = $v['total_amount']?:$v['price'];
             $v['mode_name'] = $this->numberstyle($v['mode']);
+            if($v['checker_id']){
+                $v['checker_name'] = $this->users->where(array('id'=>$v['checker_id']))->getField('user_name');
+            }else{
+                $v['checker_name'] = $this->merchants->where(array('id'=>$m_info['mid']))->getField('merchant_name');
+            }
         }
         return $pays;
     }
-
-    public function pay_statistics()
-    {
-        // 0: 所有1 :今日 2:昨日 3:本周 4:本月 5:上周 6:上月  7:自定义
-        $type = I('type');
-        $uid = I('uid');  //门店  门店uid
-        $time = $this->type_time($type);
-        $id = M('merchants')->where(array('uid'=>$uid))->getField('id');
-        if($merchants = M('merchants')->where(array('mid'=>$id))->field('uid')->select()){
-            //多店
-            $where['uid'] = array('in',array());
-        }else{
-            //单店
-        }
-
-    }
-
     //支付样式判断
     function numberstyle($number)
     {

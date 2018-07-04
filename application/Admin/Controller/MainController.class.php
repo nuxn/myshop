@@ -80,13 +80,13 @@ class MainController extends AdminbaseController {
                 F("pay_top",$pay_top);
                 F("endYesterday",$endYesterday);
             }
-            if(S('pays')){
+            /*if(S('pays')){
                 $pays=S('pays');
             }else{
                 $pays = $this->count_merchant_total();//        支付总流水排名
                 $pays=json_encode($pays);
                 S('pays',$pays,60*60);
-            }
+            }*/
             if(S('bank')){
                 $bank=S('bank');
             }else{
@@ -96,7 +96,7 @@ class MainController extends AdminbaseController {
             }
             $this->assign("bank",$bank);
             $this->assign("row",$row);
-            $this->assign('pay',$pays);
+            //$this->assign('pay',$pays);
             $this->assign('time_numer',$time_numer);
             $this->assign('pay_top',$pay_top);
             $this->display();

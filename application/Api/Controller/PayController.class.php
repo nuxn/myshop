@@ -1067,6 +1067,7 @@ class  PayController extends ApibaseController
             $order_info["user_id"] = $user_id;
             $order_info["add_time"] = I("timestamp");
             $order_info["discount"] = I("discount") * 100;//整单折扣
+            $order_info["discount_money"] = I("discount_money",'0');//折扣金额
             $order_info["order_benefit"] = I("order_benefit");//整单优惠金额
             $card_code = I("card_code", "");
             $order_info["card_code"] = $card_code;//会员卡号
