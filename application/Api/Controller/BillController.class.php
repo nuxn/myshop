@@ -132,12 +132,17 @@ class  BillController extends ApibaseController
             $re['remark'] = $v['remark'];
             $re['id'] = $v['id'];
             //$re['cost_rate'] = $re['cost_rate'].'%';
-            $all_cost_price += $re['cost_price'];
-            $all_price += $re['price'];
+            //$all_cost_price += $re['cost_price'];
+            //$all_price += $re['price'];
 
             //支付方式
             $data[] = $re;
         }
+        $all = $this->pay_model
+            ->field('sum(price) as all_price,sum(price) - truncate(sum(price - truncate(price*cost_rate/100,3)),2) as rate_price')
+            ->where('status =1 and paystyle_id in(1,2)  and  merchant_id = ' . $mid . ' and   price>0 and paytime >= ' . $start_time . ' and paytime < ' . $end_time . '')
+            ->find();
+
         add_log(json_encode($data));
         //查看商户信息
         $res = M('merchants_cate')->where(array('merchant_id' => $mid))->find();
@@ -154,7 +159,7 @@ class  BillController extends ApibaseController
         $rate['wx_rate'] = $rate['wx_rate'] . '%';
         $rate['alipay_rate'] = $rate['alipay_rate'] . '%';
         add_log(json_encode($rate));
-        succ($data ?: array(), 'succ', array('rate' => $rate ?: array(), 'price' => $all_price, 'cost_price' => $all_cost_price));
+        succ($data ?: array(), 'succ', array('rate' => $rate ?: array(), 'price' => (float)$all['all_price'], 'cost_price' => (float)$all['rate_price']));
     }
 
 }

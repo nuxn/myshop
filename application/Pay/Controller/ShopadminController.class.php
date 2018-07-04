@@ -16,22 +16,38 @@ class ShopadminController extends AdminbaseController{
         ini_set('memory_limit', '2000M');
         $start_time=strtotime(I('post.start_time'));
         $end_time=strtotime(I('post.end_time'));
-        $keyword=I('keyword');
+        $keyword=I('keyword','','trim');
         $paystyle_id=I('paystyle');
-        $merchant_name=I("merchant_name");
+        $merchant_name=I("merchant_name",'','trim');
 
         if($paystyle_id){
-            $map['paystyle_id']=$paystyle_id;
+            if($paystyle_id == 88){
+                $map['paystyle_id']=array('in','1,2');
+            }else{
+                $map['paystyle_id']=$paystyle_id;
+            }
+            $this->assign('paystyle',$paystyle_id);
         }
         if($keyword){
             $map['user_phone']=$keyword;
+            $this->assign('keyword',$keyword);
         }
         if($merchant_name){
             $map['a.merchant_name']=array('LIKE',"%$merchant_name%");
+            $this->assign('merchant_name',$merchant_name);
         }
         if($start_time&&$end_time){
             $map['paytime'] = array(array('EGT',$start_time),array('ELT',$end_time)) ;
+            $this->assign('start_time',date('Y-m-d',$start_time));
+            $this->assign('end_time',date('Y-m-d',$end_time));
+        }else{
+            $start_time = date('Y-m-d');
+            $end_time = date("Y-m-d",strtotime("+1 day"));
+            $map['paytime'] = array(array('EGT',strtotime($start_time)),array('ELT',strtotime($end_time))) ;
+            $this->assign('start_time',$start_time);
+            $this->assign('end_time',$end_time);
         }
+
         $map['b.status']=1;
         $merchant = M('merchants')->alias("a")
             ->join('__PAY__ b on a.id=b.merchant_id')
