@@ -1367,10 +1367,9 @@ class BarcodezsbankController extends HomebaseController
 		$orderData=$this->pay_model->where(array('remark'=>$order_sn))->find();
 
 		if($orderData['status']==0){
-		    $sub_order_sn = substr($order_sn,4);
-			$sql="update ypt_pay set status=1,transId='$transId' where (remark='".$order_sn."' OR remark='{$sub_order_sn}') AND status='0'";
-			M("")->query($sql);
-            //A("Api/Cloud")->printer($order_sn);
+//		    $sub_order_sn = substr($order_sn,4);
+//			$sql="update  set status=1,transId='$transId' where (remark='".$order_sn."' OR remark='{$sub_order_sn}') AND status='0'";
+            $this->pay_model->where(array('remark'=>$order_sn))->save(array('status'=> '1','transId'=>$transId,'paytime'=> time()));
 			A("App/PushMsg")->push_pay_message($order_sn);
 		}
     }

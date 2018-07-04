@@ -380,8 +380,7 @@ class WxpayController extends HomebaseController
         $pay = $this->pay_model->where("remark='$remark' And status = 1")->find();
         // 获取微信子商户ID
         $wx_mchid = M('merchants_cate')
-            ->join('m left join ypt_pay p on m.merchant_id = p.merchant_id')
-            ->where(array('p.remark' => $remark))
+            ->where(array('merchant_id' => $pay['merchant_id']))
             ->getField('wx_mchid');
         $payBack->setParameter('sub_mch_id', $wx_mchid);  //子商户号
         $payBack->setParameter('transaction_id', $pay['wx_remark']);  //微信订单号 商户订单号只需一个，优先使用微信单号

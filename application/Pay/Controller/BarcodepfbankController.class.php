@@ -1060,11 +1060,7 @@ class BarcodepfbankController extends HomebaseController
                 $openid = $res['openid'];
                 $orderData = $this->pay_model->where(array('remark' => $order_sn))->find();
                 if ($orderData['status'] == 0) {
-                    $sql = "update ypt_pay set status=1,transId='$transId' where remark='" . $order_sn . "' AND status='0'";
-                    if (empty($orderData['customer_id'])) {
-                        $sql = "update ypt_pay set status=1,transId='$transId',customer_id='{$openid}' where remark='" . $order_sn . "' AND status='0'";
-                    }
-                    M("")->query($sql);
+                    $this->pay_model->where(array('remark'=>$order_sn))->save(array('status'=>1,'transId'=>$transId));
                     file_put_contents('../data/log/pfbank/' . date('Y_m_') . '_notify.log', date("Y-m-d H:i:s") . '支付成功1:' . json_encode($res) . PHP_EOL, FILE_APPEND | LOCK_EX);
                     echo 'success';
                     if ($orderData['mode'] == '0' && $orderData['order_id'] != 0) {

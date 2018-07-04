@@ -547,7 +547,7 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
     {
         if (isset($order_id) && !empty($order_id)) {
             $order_id = $order_id['order_id'];
-            $orderData = M('')->query("select * from ypt_pay where remark='$order_id'");
+            $orderData = $this->pay_model->where(array('remark'=>$order_id))->select();
             if ($orderData) {
                 $merchant_id = $orderData['merchant_id'];
                 $cate_id = $orderData[0]['cate_id'];
@@ -595,13 +595,12 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
         $res = $this->rsaSign($data, $this->private_key);
         $result = $this->httpRequst($this->url, $data, $res, $this->apikey);
         $result = json_decode($result, true);
-        $sql = "update ypt_pay set back_status=1,price_back='$totalAmount',status=2 where remark='$order_sn'";
         if ($result['body']['responseCode'] == '00') {
-            M('')->query($sql);
-            file_put_contents($fileName, date("Y-m-d H:i:s", time()) . '--成功--' . json_encode($result) . "--" . $sql . "\r\n", FILE_APPEND | LOCK_EX);
+            $this->pay_model->where(array('remark'=>$order_sn))->save(array('back_status'=>1,'price_back'=>$totalAmount,'status'=>2));
+            file_put_contents($fileName, date("Y-m-d H:i:s", time()) . '--成功--' . json_encode($result) . "--"  . "\r\n", FILE_APPEND | LOCK_EX);
             return json_encode(array("code" => "success", "msg" => "成功", "data" => "退款成功"));
         } else {
-            file_put_contents($fileName, date("Y-m-d H:i:s", time()) . '--失败--' . json_encode($result) . "--" . $sql . "\r\n", FILE_APPEND | LOCK_EX);
+            file_put_contents($fileName, date("Y-m-d H:i:s", time()) . '--失败--' . json_encode($result) . "--" . "\r\n", FILE_APPEND | LOCK_EX);
             return json_encode(array("code" => "error", "msg" => "失败", "data" => $result['body']['errorMsg']));
         }
     }
@@ -619,10 +618,9 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
             $data = json_decode($str, true);
             $order_sn = $data['orderId'];
             $transId = $data['transId'];
-            $orderData = M('')->query("select * from ypt_pay where remark='$order_sn'");
+            $orderData = $this->pay_model->where(array('remark'=>$order_sn))->select();
             if ($orderData[0]['status'] == 0) {
-                $sql = "update ypt_pay set status=1,transId='$transId' where remark='" . $order_sn . "' AND status='0'";
-                M('')->query($sql);
+                $this->pay_model->where(array('remark'=>$order_sn))->save(array('status'=>1,'transId'=>$transId));
                 A("App/PushMsg")->push_pay_message($order_sn);
             }
         }

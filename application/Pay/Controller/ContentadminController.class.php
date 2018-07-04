@@ -239,11 +239,6 @@ class ContentadminController extends AdminbaseController
 
     public function test()
     {
-        $pay_one = M()->query('SELECT * FROM `ypt_pay` where `status`=-2 and confirm_status=2 and paystyle_id=2 and bank=1 ORDER BY id DESC limit 10');
-        if (!$pay_one) exit('end');
-        foreach ($pay_one as $k => $v) {
-            $this->check_order_pay($v);
-        }
 
     }
 

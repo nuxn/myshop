@@ -996,9 +996,6 @@ class BarcodexybankController extends HomebaseController
                 get_date_dir($this->path, $this->file_name, '退款成功', json_encode($res_arr));
                 return array("code" => "success", "msg" => "成功", "data" => "退款成功");
             } else {
-                /*if ($this->pay_model->where("remark='$remark'")->find()) {
-                    $this->pay_model->where("remark='$remark'")->save(array("status" => 3, "back_status" => 0));
-                }*/
                 get_date_dir($this->path, $this->file_name, '退款失败', json_encode($res_arr));
                 return array("code" => "error", "msg" => "成功", "data" => "退款失败");
             }
@@ -1028,12 +1025,10 @@ class BarcodexybankController extends HomebaseController
                 $openid = $res['openid'];
                 $orderData = $this->pay_model->where(array('remark' => $order_sn))->find();
                 if ($orderData['status'] == 0) {
-                    $time = time();
-                    $sql = "update ypt_pay set paytime={$time},status=1,transId='$transId' where remark='" . $order_sn . "' AND status='0'";
+                    $this->pay_model->where(array('remark'=>$order_sn,'status'=>0))->save(array('paytime'=>time(),'status'=>1,'transId'=>$transId));
                     if (empty($orderData['customer_id'])) {
-                        $sql = "update ypt_pay set status=1,transId='$transId',customer_id='{$openid}' where remark='" . $order_sn . "' AND status='0'";
+                        $this->pay_model->where(array('remark'=>$order_sn))->save(array('customer_id'=>$openid));
                     }
-                    M("")->query($sql);
                     get_date_dir($this->path, 'notify', '支付成功1', json_encode($res));
                     echo 'success';
                     if ($orderData['mode'] == '0' && $orderData['order_id'] != 0) {
