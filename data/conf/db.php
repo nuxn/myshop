@@ -4,13 +4,13 @@
  */
 return array(
     'DB_TYPE' => 'mysql',
-    'DB_HOST' => '127.0.0.1',
+    'DB_HOST' => '139.224.74.153',
     //'DB_HOST' => 'rm-wz9polh31wc54igp7.mysql.rds.aliyuncs.com',
     'DB_NAME' => 'youngport',
 //    'DB_USER' => 'ypt',
 //    'DB_PWD' => '#O1!XvETCyb1pcq%Zn',
     'DB_USER' => 'root',
-    'DB_PWD' => 'root',
+    'DB_PWD' => 'root@52YPT?.0',
     'DB_PORT' => '3306',
     'DB_PREFIX' => 'ypt_',
     //密钥
