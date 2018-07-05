@@ -412,24 +412,27 @@ class BanksxfController extends HomebaseController
     {
         header("Content-type:application/json;charset=utf-8");
         $json_str = file_get_contents('php://input', 'r');
+        $verify = $this->sxfModel->verify(json_decode($json_str, true));
+        if(!$verify){
+            get_date_dir($this->path,'notify','验签失败', $json_str);
+            exit('{"code":"error","msg":"verify fail"}');
+        }
+
         $notifyData = json_decode($json_str);
-        $order_sn = $notifyData->ordNo;
-        $transId = $notifyData->uuid;
-        $buyerId = $notifyData->buyerId;
-        $orderData = $this->pay_model->where(array('remark' => $order_sn))->find();
+        $orderData = $this->pay_model->where(array('remark' => $notifyData->ordNo))->find();
         if ($orderData) {
             if ($orderData['status'] == 0) {
-                $save['transId'] = $transId;
+                $save['transId'] = $notifyData->uuid;
                 $save['paytime'] = time();
                 $save['status'] = 1;
-                $save['buyers_account'] = $buyerId;
+                $save['buyers_account'] = $notifyData->buyerId;
                 if (bccomp($orderData['price']*100, $notifyData->amt*100, 3) === 0) {
                     get_date_dir($this->path,'notify','支付成功', $json_str);
                     $this->pay_model->where(array('id' => $orderData['id']))->save($save);
                     if ($orderData['paystyle_id'] == '1' && $orderData['order_id'] != 0) {
                         A('Barcode')->cardOff($orderData['order_id']);
                     }
-                    A("App/PushMsg")->push_pay_message($order_sn);
+                    A("App/PushMsg")->push_pay_message($notifyData->ordNo);
                     exit('{"code":"success","msg":"成功"}');
                 } else {
                     get_date_dir($this->path,'notify','金额异常', $json_str);
@@ -453,7 +456,6 @@ class BanksxfController extends HomebaseController
     {
         $json_str = file_get_contents('php://input', 'r');
         get_date_dir($this->path,'refund_notify','数据', $json_str);
-        get_date_dir($this->path,'refund_notify','数据1', json_encode($_REQUEST));
     }
 
     // 进件回调
