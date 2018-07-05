@@ -1036,10 +1036,14 @@ class ShoppingController extends ApibaseController
             $goods_img = $this->posts['goods_img'];
             $goods_img_arr = explode(',', $goods_img);
             $this->posts['window_img'] = $goods_img_arr[0];
-            foreach ($goods_img_arr as $k => $v) {
-                $count = $k + 1;
-                $this->posts['goods_img'."$count"] = $v;
+            for ($i=0;$i<7;$i++){
+                $count = $i + 1;
+                $this->posts['goods_img'."$count"] = $goods_img_arr[$i];
             }
+//            foreach ($goods_img_arr as $k => $v) {
+//                $count = $k + 1;
+//                $this->posts['goods_img'."$count"] = $v;
+//            }
         }
         
         #如果传了goods_id就是编辑save
@@ -1240,7 +1244,6 @@ class ShoppingController extends ApibaseController
         $post = I('');
         if ($group_id=='') {
             //添加分类
-
             $this->add_groups($post);
         }else{
             //编辑分类
@@ -1446,10 +1449,15 @@ class ShoppingController extends ApibaseController
             M('agent_goods')->where(array('bar_code'=>$bar_code))->save($post);
             $desc_img = explode(',', $post['desc']);
             $desc_data = array();
-            foreach ($desc_img as $valu) {
+            foreach ($desc_img as $key=>$valu) {
+                //判断url是否带有服务器域名
+                if (strstr($valu,'youngport.com.cn') === false) {
+                    $valu='https://sy.youngport.com.cn'.$valu;
+                }
                 $desc_data[] = array(
                     'goods_id' => $goods_id,
                     'url'   => $valu,
+                    'num'   =>$key+1
                 );
             }
             M('agent_desc')->addAll($desc_data);
@@ -1468,10 +1476,16 @@ class ShoppingController extends ApibaseController
         M('goods_desc_img')->where(array('goods_id'=>$goods_id))->delete();
         $desc_img = explode(',', $desc_imgs);
         $desc_data = array();
-        foreach ($desc_img as $valu) {
+        foreach ($desc_img as $key=>$valu) {
+
+            //判断url是否带有服务器域名
+            if (strstr($valu,'youngport.com.cn') === false) {
+                $valu='https://sy.youngport.com.cn'.$valu;
+            }
             $desc_data[] = array(
                 'goods_id' => $goods_id,
                 'url'   => $valu,
+                'num'   =>$key+1
             );
         }
         M('goods_desc_img')->addAll($desc_data);

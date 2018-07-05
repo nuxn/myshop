@@ -66,11 +66,11 @@
                     <colgroup>
                         <col width="50">
                         <col width="250">
-                        <col width="175">
+                        <col width="150">
                         <col width="175">
                         <col width="100">
-                        <col width="175">
-                        <col width="275">
+                        <col width="75">
+                        <col width="170">
                         <col>
                     </colgroup>
                     <thead>
@@ -80,8 +80,8 @@
                         <th>商户号</th>
                         <th>任务编号</th>
                         <th>进件状态</th>
+                        <th>费率</th>
                         <th>进件时间</th>
-                        <th>信息</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -98,28 +98,31 @@
                                     <case value="1">审核中<i class="layui-icon layui-icon-loading" style="font-size: 20px; color: #0000cc;"></i></case>
                                     <case value="2">通过<i class="layui-icon layui-icon-ok" style="font-size: 20px; color: #1eb9c1;"></i></case>
                                     <case value="3">驳回<i class="layui-icon layui-icon-close" style="font-size: 20px; color: #F32043;"></i></case>
+                                    <case value="4">分店<i class="layui-icon layui-icon-ok" style="font-size: 20px; color: #1eb9c1;"></i></case>
                                     <default />等待
                                 </switch>
                             </td>
+                            <td>{$val.qrcodeRate}%</td>
                             <td>{$val.add_time}</td>
                             <td>
-                                <if condition="$val['status'] neq 2">
-                                    {$val.err_msg}
-                                </if>
-                            </td>
-                            <td>
+                                <if condition="$val.status neq 4">
                                 <div class="layui-table-cell laytable-cell-1-10">
                                     <if condition="$val['status'] eq 0">
                                         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="{:U('edit',array('id'=>$val['id'],'edit'=>1))}">进件</a>
+                                        <else/>
+                                        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="{:U('edit',array('id'=>$val['id'],'edit'=>0))}">查看</a>
                                     </if>
                                     <if condition="$val['subMchId'] eq 0">
                                         <button class="layui-btn layui-btn-xs" type="button" data-id="{$val.id}" data-mno="{$val.mno}" onclick="wxconfig(this)">配置公众号支付</button>
                                         <else/>
                                         <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="detail" href="{:U('wxconfig',array('id'=>$val['id'],'see'=>1))}">查看公众号</a>
                                     </if>
-                                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" href="{:U('edit',array('id'=>$val['id'],'edit'=>0))}">查看</a>
-
+                                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="detail" href="{:U('same',array('merchant_id'=>$val['merchant_id'],'id'=>$val['id']))}">分店</a>
+                                    <if condition="$val['status'] neq 2">
+                                        <button class="layui-btn layui-btn-xs layui-btn-danger" type="button" data-msg="{$val.err_msg}" id="tips{$val.id}" onclick="tipsdis(this)">失败原因</button>
+                                    </if>
                                 </div>
+                                </if>
                             </td>
                         </tr>
                     </foreach>
@@ -131,6 +134,16 @@
     </div>
 </div>
 <script>
+    function tipsdis(obj) {
+        var msg = $(obj).data('msg');
+        var id = $(obj).attr('id');
+        console.log(id);
+        layer.tips(msg, '#'+id, {
+            tips: [1, '#000000'],
+            time: 8000
+        });
+    }
+
     var open;
 
     layui.use('form', function () {

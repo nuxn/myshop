@@ -3,7 +3,7 @@
 <body>
 <div class="wrap">
     <ul class="nav nav-tabs">
-        <li><a href="{:U('AdminIndex/change_route')}">路由通道切换</a></li>
+        <li class="active"><a>通道一键切换</a></li>
     </ul>
     <form method="post" class="form-horizontal" action="{:U('AdminIndex/change_route')}">
         <div class="control-group">
@@ -34,7 +34,20 @@
                     <option value="13">平安付</option>
                     <option value="14">随行付</option>
                 </select>
-                &nbsp;&nbsp;<span style="color: red">*只有在两边通道都进有件的商户才会切换</span>
+            </div>
+        </div>
+        <div class="control-group" style="color:red">
+            <label class="control-label">
+                *注意：
+            </label>
+            <div class="controls">
+                1、在两边通道都进有件的商户才会切换
+            </div>
+            <div class="controls">
+                2、分店如果未进行过多门店同步，并且关闭了总店同步开关不会切换
+            </div>
+            <div class="controls">
+                3、商户下的收银员也会切换过去
             </div>
         </div>
         <div class="form-actions">
@@ -58,7 +71,7 @@
                 return false;
             }else{
                 if(confirm("确定把所有商户从从"+from_text+"切换到"+to_text+"吗？")){
-                    $('#onSubmit').css('disable','disable');
+                    $('#onSubmit').attr('disabled',true);
                     $('#onSubmit').html('正在切换，稍等');
                     $.post('{:U("adminIndex/change_route")}',{from:from_val,to:to_val},function (data) {
                         if(data.code==1){

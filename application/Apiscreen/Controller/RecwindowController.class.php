@@ -160,7 +160,7 @@ class RecwindowController extends ScreenbaseController
                         ->Field('goods_id,spec_key,bar_code,goods_name,goods_price,goods_num,goods_price*goods_num as subtotal')
                         ->select();
                     foreach ($data['order_goods'] as $key => &$value){
-                        $value['goods_img1']= M('goods')->where(array('goods_id'=>$value['goods_id']))->getField('goods_img1');
+                        $value['goods_img']= M('goods')->where(array('goods_id'=>$value['goods_id']))->getField('goods_img1');
                     }
                     get_date_dir($this->path, 'Recwindow_getDoubleScreenDetail', '订单数据', json_encode($data));
 
@@ -1062,14 +1062,14 @@ class RecwindowController extends ScreenbaseController
             ->where("p.paytime>$start_time AND $end_time>p.paytime AND o.pay_status = 1 AND o.user_id = $uid and p.status=1")
             ->group('p.paystyle_id,p.use_member')
             ->select();
-        // echo M('order o')->getLastSql();
-        // dump($res);
+            // echo M('order o')->getLastSql();
+            // dump($res);
         get_date_dir($this->path, 'connect_staff', 'I', json_encode(I('')));
         get_date_dir($this->path, 'connect_staff', 'SQL', M()->_sql());
         $info = $res[0]['total_amount'] - $res[0]['order_amount'] - $res[0]['coupon_price'];
         $data = array();
-        $data['merchant_price'] = $data['order_amount'] = $data['shop_amount']=$data['total_num']= $data['benefit_num']=$data['benefit_price']=0;
-        $data['agent_price'] = $data['sales_amount']=$data['cash_pay']= $data['ali_pay']=$data['wx_pay']=0;
+        $data['merchant_price'] = $data['order_amount'] = $data['shop_amount']=$data['total_num']= $data['benefit_num']=$data['benefit_price']=0;  
+        $data['agent_price'] = $data['sales_amount']=$data['cash_pay']= $data['ali_pay']=$data['wx_pay']=0;     
         $data['total_user_money'] = '0';
         foreach ($res as $k => $v) {
             $data['total_user_money'] += $v['total_user_money'];
@@ -1169,7 +1169,7 @@ class RecwindowController extends ScreenbaseController
         $note = I('note');  //备注
         $info = I('info');  //交班详情
         if (!$accept_id){
-            $this->ajaxReturn(array("code" => "error", 'msg' => '请选择交班人员'));
+            $this->ajaxReturn(array("code" => "error", 'msg' => '请选择交班人员')); 
         }
         $role_id = M('merchants_role_users')->where(array('uid' => $this->userId))->getField('role_id');
         if ($role_id==3) {
@@ -1216,7 +1216,7 @@ class RecwindowController extends ScreenbaseController
             ->field('id,start_time,end_time')
             ->select();
         $res3 = $res4 = array();
-
+        
         foreach ($data as $k =>$v){
             $month = date('Ym',$v['end_time']);
             $v['start_time'] = date('Y年m月d日 H:s:i',$v['start_time']);
@@ -1788,4 +1788,3 @@ class RecwindowController extends ScreenbaseController
 
 
 }
-

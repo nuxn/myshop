@@ -2312,6 +2312,7 @@ class AdminIndexController extends AdminbaseController
 
     private function bank_into_change($cate_id,$merchant_id,$bank,$bank_type)
     {
+        $merchant = $this->merchants->where(array('id'=>$merchant_id))->field('mid,is_sync')->find();
         switch ($bank) {
             case 3:
                 //微信官方通道
@@ -2322,10 +2323,8 @@ class AdminIndexController extends AdminbaseController
                         $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>3,'wx_mchid'=>$bank['sub_mchid'],'wx_key'=>'','update_time'=>time()));
                     }
                 }else{
-                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
-                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
-                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
-                    if($mid > 2 && $bank = M('merchants_upwx')->where(array('mid'=>$mid))->find()){
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件 && 同步总店进件信息打开
+                    if($merchant['mid'] > 2 && $bank = M('merchants_upwx')->where(array('mid'=>$merchant['mid']))->find() && $merchant['is_sync']==1){
                         $bank['mid'] = $merchant_id;
                         M('merchants_upwx')->add($bank);
                         if($bank_type == 'wx'){
@@ -2346,10 +2345,8 @@ class AdminIndexController extends AdminbaseController
                         $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>7,'alipay_partner'=>$bank['mch_id'],'alipay_public_key'=>$bank['mch_key'],'update_time'=>time()));
                     }
                 }else{
-                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
-                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
-                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
-                    if($mid > 2 && $bank = M('merchants_xypay')->where(array('merchant_id'=>$mid))->find()){
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件 && 同步总店进件信息打开
+                    if($merchant['mid'] > 2 && $bank = M('merchants_xypay')->where(array('merchant_id'=>$merchant['mid']))->find() && $merchant['is_sync']==1){
                         $bank['merchant_id'] = $merchant_id;
                         unset($bank['id']);
                         M('merchants_xypay')->add($bank);
@@ -2374,10 +2371,8 @@ class AdminIndexController extends AdminbaseController
                         $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>9,'alipay_partner'=>$bank['ali_mchid'],'alipay_public_key'=>$bank['ali_token'],'update_time'=>time()));
                     }
                 }else{
-                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
-                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
-                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
-                    if($mid > 2 && $bank = M('merchants_szlzwx')->where(array('mid'=>$mid))->find()){
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件 && 同步总店进件信息打开
+                    if($merchant['mid'] > 2 && $bank = M('merchants_szlzwx')->where(array('mid'=>$merchant['mid']))->find() && $merchant['is_sync']==1){
                         $bank['mid'] = $merchant_id;
                         unset($bank['id']);
                         M('merchants_szlzwx')->add($bank);
@@ -2402,10 +2397,8 @@ class AdminIndexController extends AdminbaseController
                         $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>10,'alipay_partner'=>$bank['mch_id'],'alipay_public_key'=>$bank['mch_key'],'update_time'=>time()));
                     }
                 }else{
-                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
-                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
-                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
-                    if($mid > 2 && $bank = M('merchants_pfpay')->where(array('merchant_id'=>$mid))->find()){
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件 && 同步总店进件信息打开
+                    if($merchant['mid'] > 2 && $bank = M('merchants_pfpay')->where(array('merchant_id'=>$merchant['mid']))->find() && $merchant['is_sync']==1){
                         $bank['merchant_id'] = $merchant_id;
                         unset($bank['id']);
                         M('merchants_pfpay')->add($bank);
@@ -2430,10 +2423,8 @@ class AdminIndexController extends AdminbaseController
                         $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>11,'alipay_partner'=>$bank['mercId'],'alipay_public_key'=>$bank['signKey'],'update_time'=>time()));
                     }
                 }else{
-                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
-                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
-                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
-                    if($mid > 2 && $bank = M('merchants_xdl')->where(array('m_id'=>$mid))->find()){
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件 && 同步总店进件信息打开
+                    if($merchant['mid'] > 2 && $bank = M('merchants_xdl')->where(array('m_id'=>$merchant['mid']))->find() && $merchant['is_sync']==1){
                         $bank['m_id'] = $merchant_id;
                         unset($bank['id']);
                         M('merchants_xdl')->add($bank);
@@ -2458,10 +2449,8 @@ class AdminIndexController extends AdminbaseController
                         $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>12,'alipay_partner'=>$bank['merchantId'],'alipay_public_key'=>$bank['key'],'update_time'=>time()));
                     }
                 }else{
-                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
-                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
-                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
-                    if($mid > 2 && $bank = M('merchants_leshua')->where(array('m_id'=>$mid))->find()){
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件 && 同步总店进件信息打开
+                    if($merchant['mid'] > 2 && $bank = M('merchants_leshua')->where(array('m_id'=>$merchant['mid']))->find() && $merchant['is_sync']==1){
                         $bank['m_id'] = $merchant_id;
                         unset($bank['id']);
                         M('merchants_leshua')->add($bank);
@@ -2486,10 +2475,8 @@ class AdminIndexController extends AdminbaseController
                         $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>13,'alipay_partner'=>$bank['sub_mchid'],'alipay_public_key'=>$bank['sub_mchkey'],'update_time'=>time()));
                     }
                 }else{
-                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
-                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
-                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
-                    if($mid > 2 && $bank = M('merchants_pingan')->where(array('mid'=>$mid))->find()){
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件 && 同步总店进件信息打开
+                    if($merchant['mid'] > 2 && $bank = M('merchants_pingan')->where(array('mid'=>$merchant['mid']))->find() && $merchant['is_sync']==1){
                         $bank['mid'] = $merchant_id;
                         unset($bank['id']);
                         M('merchants_pingan')->add($bank);
@@ -2514,10 +2501,8 @@ class AdminIndexController extends AdminbaseController
                         $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>14,'alipay_partner'=>$bank['sub_mchid'],'alipay_public_key'=>$bank['sub_mchkey'],'update_time'=>time()));
                     }
                 }else{
-                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
-                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
-                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
-                    if($mid > 2 && $bank = M('merchants_upsxf')->where(array('mid'=>$mid))->find()){
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件 && 同步总店进件信息打开
+                    if($merchant['mid'] > 2 && $bank = M('merchants_upsxf')->where(array('mid'=>$merchant['mid']))->find() && $merchant['is_sync']==1){
                         $bank['mid'] = $merchant_id;
                         unset($bank['id']);
                         M('merchants_upsxf')->add($bank);
