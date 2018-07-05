@@ -10,7 +10,7 @@
 
 namespace Common\Lib;
 
-define('TABLE_ID', '1807');# 分表起始日期
+define('TABLE_ID', '1806');# 分表起始日期
 
 /**
  * 检查当前表是否存在
@@ -22,9 +22,18 @@ class Subtable
 {
 
     /**
-     * 根据条件返回表名
+     * 返回分表起始日期
+     * @return string
+     */
+    static public function beginDate()
+    {
+        return TABLE_ID;
+    }
+
+    /**
+     * 根据查询条件返回分表表名
      * @param string $tableName 原始表名
-     * @param array $param 条件
+     * @param array $param 查询条件
      * @param null $tablePrefix 前缀
      * @return string
      */
@@ -38,7 +47,8 @@ class Subtable
         else if (date("ym", time()) < TABLE_ID) $SubTableName = $tablePrefix . $tableName;# 分表开始日期前返回原有表名
         else $SubTableName = $tablePrefix . $tableName . '_' . date("ym", time());# 返回按月分表
         $tableName = strtolower($tableName);
-        self::$tableName($tablePrefix ?: C('DB_PREFIX') . $SubTableName);# 判断创建
+
+        self::$tableName($SubTableName);# 判断创建
 
         return $SubTableName;
     }
@@ -54,7 +64,7 @@ class Subtable
             $Model = M();
             $Model->startTrans();
             $check_tables_sql = "show tables like '" . $tableName . "'";
-            $check_tables_result = M()->query($check_tables_sql);
+            $check_tables_result = $Model->query($check_tables_sql);
 
             #  按月生成，没有插入生成
             if (!$check_tables_result) {
@@ -94,13 +104,12 @@ class Subtable
      */
     public static function pay($tableName = '')
     {
-        $sql = " (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID自增编号',
+        $sql = "(`id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID自增编号',
   `merchant_id` int(11) NOT NULL COMMENT '商户ID(商户表主键)',
   `customer_id` varchar(45) DEFAULT NULL COMMENT '用户openid,微信可用(会员表主键)',
   `buyers_account` varchar(20) DEFAULT NULL COMMENT '买家支付账号',
   `checker_id` int(11) DEFAULT '0' COMMENT '收银员的ID(用户表主键)',
-  `paystyle_id` int(2) NOT NULL COMMENT '支付方式 1是微信 2是支付宝 5是现金支付 3是刷储蓄卡或信用卡',
+  `paystyle_id` int(2) NOT NULL COMMENT '支付方式 1微信 2支付宝 3刷储蓄卡或信用卡  4储值支付 5现金支付 ',
   `order_id` int(11) DEFAULT '0' COMMENT '双屏收银用到的id(订单表主键)',
   `mode` tinyint(2) NOT NULL DEFAULT '0' COMMENT '0 为台签支付 1为商业扫码支付 2 位商业刷卡支付 3 双屏收银支付 4双屏现金支付,5pos机主扫 6pos机被扫，7pos机现金支付,8pos机其他支付，9pos机刷银行卡，10快速支付,11小程序,12会员充值，13收银APP现金支付，14收银APP余额支付,15小白盒,16台卡余额,17双屏主扫,18双屏余额,19pos余额,20小程序余额,21波普刷卡,22波普扫码,23波普银行卡,24波普余额,25商+宝主扫，26=api接口订单，27=商+宝余额',
   `phone_info` varchar(256) DEFAULT NULL COMMENT '支付人手机信息',
@@ -138,10 +147,12 @@ class Subtable
   `authorization` tinyint(2) DEFAULT '0' COMMENT '是否预授权，0=否；1=是',
   `cardtype` varchar(2) DEFAULT '' COMMENT '刷银行卡类型（00借记卡，01贷记卡，02准贷记卡，03预付卡，04其他）',
   `is_ypt` tinyint(1) DEFAULT '0' COMMENT '收款人，0商户，1洋仆淘',
+  `use_member` tinyint(1) NOT NULL DEFAULT '0' COMMENT '使用会员卡类型 0=未使用  1=商户  2=代理',
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`) USING BTREE,
   KEY `merchant_id` (`merchant_id`) USING BTREE,
-  KEY `remark` (`remark`) USING BTREE
+  KEY `remark` (`remark`) USING BTREE,
+  KEY `remark_mer` (`remark_mer`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='支付订单表'";
 
         self::createTable($tableName, $sql);
