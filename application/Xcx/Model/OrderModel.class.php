@@ -62,7 +62,7 @@ class OrderModel extends Model
         foreach($order as $key=>$v){
             $order[$key]['city'] = '';
             if ($order[$key]['status']==5){
-                $order[$key]['order_status']==6;
+                $order[$key]['order_status']=6;
             }
             $order[$key]['district'] = '';
             $province = M('area')->where(array('id'=>$v['area_id']))->getField('name');
@@ -141,29 +141,78 @@ class OrderModel extends Model
             $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money';
 
         }elseif($type==2){
-            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money';
+            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_no,dc_db,dc_db_price,dc_ch_price,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,user_note';
         }
         $data = $this->where($where)->field($field)->find();
+        $data['dc_no']= (string)$data['dc_no'];
+        if ($data['dc_no']) {
+            $no = M('dc_no')->where(array('id'=>$data['dc_no']))->getField('no');
+            $data['no'] = $no?$no:'';
+        }else{
+            $data['no'] ='';
+        }
         $data['province'] = M('area')->where(array('id'=>$data['area_id']))->getField('name')?:'';
         //查询订单商品
-        $field = 'goods_name,goods_num,spec_key_name as spec_key,goods_img,goods_price';
+        $field = 'goods_id,goods_name,goods_num,spec_key_name as spec_key,goods_img,goods_price';
         $data['goods'] = M('order_goods')->where(array('order_id'=>$order_id))->field($field)->select();
+        $good_price=0;
         foreach($data['goods'] as &$v){
+            if (!$v['goods_img']) {
+                $v['goods_img'] = M('goods')->where(array('goods_id'=>$v['goods_id']))->getField('goods_img1');
+            }
+            if (!$v['spec_key']) {
+                $units_id = M('goods')->where(array('goods_id'=>$v['goods_id']))->getField('units_id');
+                $v['spec_key'] = (string)M('units')->where(array('id'=>$units_id))->getField('unit_name');
+            }
             $picture = $v['goods_img'];
             if(preg_match("/\x20*https?\:\/\/.*/i",$v['goods_img'])){
-                $v['goods_img'] = substr($picture,27);
-            }else{
                 $v['goods_img'] = $picture;
+            }else{
+                $v['goods_img'] ='https://sy.youngport.com.cn'. substr($picture,1);
             }
+            $good_price += $v['goods_price']*$v['goods_num'];
         }
+        $data['good_price'] = $good_price;
         $field = 'mode,price,price_back,jmt_remark,order_info';
         $back = M('pay_back')->where(array('remark'=>$data['order_sn']))->field($field)->find();
-        foreach($back as $k =>$v){
+        switch ($back['mode']) {
+            case '99':
+                $back['mode'] = '现金退款';
+                break;
+            case '98':
+                $back['mode'] = '原路退款';
+                break;
+            default:
+                # code...
+                break;
+        }
+        $data['back'] = $back?$back:array();
 
+        if ($data['back']['order_info']) {
+            $order_info = json_decode($data['back']['order_info'],true);
+            $good_price=0;
+            foreach ($order_info['goods'] as $key => &$value) {
+                if ($value['sku']) {
+                    $goods = M('goods')->where(array('goods_id'=>$value['goods_id']))->field('goods_name,goods_img1')->find();
+                    $value['goods_name'] = $goods['goods_name'];
+                    $value['goods_img'] = $goods['goods_img1'];
+                    $units_id = M('goods_sku')->where(array('sku_id'=>$value['sku']))->getField('units_id');
+                    $value['spec_key'] = (string)M('units')->where(array('id'=>$units_id))->getField('unit_name');
+                }else{
+                    $goods = M('goods')->where(array('goods_id'=>$value['goods_id']))->field('goods_name,units_id,goods_img1')->find();
+                    $value['goods_name'] = $goods['goods_name'];
+                    $value['goods_img'] = $goods['goods_img1'];
+                    $value['spec_key'] = (string)M('units')->where(array('id'=>$goods['units_id']))->getField('unit_name');
+                }
+                $good_price += $value['goods_price']*$value['goods_num'];
+            }
+            $order_info['good_price'] = $good_price;
+            $data['back']['order_info'] = $order_info;
         }
 
         return $data;
     }
+
     //确认发货
     public function change_status($order_id,$mid,$status){
     	   	switch($status){

@@ -231,55 +231,75 @@ class  AgentnewsController extends ApibaseController
         //        0是升序 1是降序
         $order = I("price_order");
         $time = $this->type_time($type);
-        if ($type==1) {
-            if ($order != 0) {
-                $order = null;
-            } else {
-                $order = "d";
-            }
-            $number = $this->get_number($type);
-            $time = $this->type_time($type);
-            $time = $time[1];
-            $data = array();
-            for ($i = 1; $i <= $number; $i++) {
-                $time_now = $this->day_detail($time, $i);
-                $data[$i] = $this->agent_down($role, 1, $id, $time_now);
-                if ($data[$i] == null) {
-                    unset($data[$i]);
-                } else {
-                    $data[$i] = array2sort($data[$i], 'total_price', $order);
-                    if ($data[$i][0]['id'] == null) unset($data[$i][0]);
-                }
-            }
-            $data = $this->shuzu($data);
-        }else{
-            //       根据选择的类型判断属于全部0，商户3，代理2
-            switch ($role) {
-                case 0:
-                    break;
-                case 2;
-                    $map['role_id'] = 2;
-                    break;
-                case 3;
-                    $map['role_id'] = 3;
-                    break;
-            }
-            $down = $this->users->alias("u")
-                ->join("left join __MERCHANTS_ROLE_USERS__ ur on ur.uid=u.id")
-                ->field("u.*,ur.role_id")
-                ->where($map)
-                ->order("role_id asc,add_time desc");
-            if ($this->page !== null) {
-                $down = $down->select();
-                // $down = $down->limit($this->page,10)->select();
-            } else {
-                $down = $down->select();
-            }
-            foreach ($down as $key => $value) {
-                # code...
-            }
+        switch ($type){
+            case 1;
+                $data = $this->today_pay($id,$type,$role,$order);
+                break;
+            case 2;
+                $data = $this->later_pay($id,$type,$role,$order,$time);
+                break;
         }
         $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
+    }
+
+
+    function later_pay($id,$type,$role,$order,$time)
+    {
+        dump($time);
+        //查看时间类型
+        //定义条件  时间条件
+        //定义条件 根据选择的类型判断属于全部0，商户3，代理2
+        //定义条件 排序
+        //
+        switch ($role) {
+            case 0:
+                break;
+            case 2;
+                $map['role_id'] = 2;
+                break;
+            case 3;
+                $map['role_id'] = 3;
+                break;
+        }
+        $down = $this->users->alias("u")
+            ->join("left join __MERCHANTS_ROLE_USERS__ ur on ur.uid=u.id")
+            ->field("u.*,ur.role_id")
+            ->where($map)
+            ->order("role_id asc,add_time desc");
+        if ($this->page !== null) {
+            $down = $down->select();
+            // $down = $down->limit($this->page,10)->select();
+        } else {
+            $down = $down->select();
+        }
+        foreach ($down as $key => $value) {
+            # code...
+        }
+    }
+
+    function today_pay($id,$type,$role,$order)
+    {
+        if ($order != 0) {
+            $order = null;
+        } else {
+            $order = "d";
+        }
+        $number = $this->get_number($type);
+        $time = $this->type_time($type);
+        $time = $time[1];
+        $data = array();
+        for ($i = 1; $i <= $number; $i++) {
+            $time_now = $this->day_detail($time, $i);
+            $data[$i] = $this->agent_down($role, 1, $id, $time_now);
+            if ($data[$i] == null) {
+                unset($data[$i]);
+            } else {
+                $data[$i] = array2sort($data[$i], 'total_price', $order);
+                if ($data[$i][0]['id'] == null) unset($data[$i][0]);
+            }
+        }
+        $data = $this->shuzu($data);
+        return $data;
     }
 
     /**

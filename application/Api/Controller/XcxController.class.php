@@ -140,11 +140,15 @@ class XcxController extends ApibaseController
      */
     public function dc_order()
     {
+        if (I('order_status')==6){
+            $this->pay_back();
+        }
         $uid = $this->u_id;
         //$mid = $this->_get_mch_id($uid);
         $map['o.type'] = 2;//2点餐
         $map['o.user_id'] = $uid;
         $map['o.order_status'] = I('order_status');
+
         //$map['o.mid'] = $mid;
         if(I('no_id')){$map['dn.id'] = I('no_id');}
         if(I('start_price')){$map['o.real_price'] = array('egt',I('start_price'));}
@@ -153,6 +157,7 @@ class XcxController extends ApibaseController
         if(I('end_num')){$map['o.order_goods_num'] = array('egt',I('end_num'));}
         if(I('order_sn')){$map['o.order_sn'] = array('like','%'.I('order_sn').'%');}
         $map['dc_db'] = I('dc_db')?I('dc_db'):array('in',array('1','2','3'));
+
         //$map['dn.mid'] = $mid;
 		$per_page = 10;
         $page = I("page")?I("page"):0;
@@ -182,7 +187,57 @@ class XcxController extends ApibaseController
             $this->ajaxReturn(array('code'=>'success','msg'=>'成功','data'=>array()));
         }
     }
-	
+
+    public function pay_back()
+    {
+        $uid = $this->u_id;
+        //$mid = $this->_get_mch_id($uid);
+        $map['o.type'] = 2;//2点餐
+        $map['o.user_id'] = $uid;
+        $map['p.status'] = 5;
+
+        //$map['o.mid'] = $mid;
+        if(I('no_id')){$map['dn.id'] = I('no_id');}
+        if(I('start_price')){$map['o.real_price'] = array('egt',I('start_price'));}
+        if(I('end_price')){$map['o.real_price'] = array('elt',I('end_price'));}
+        if(I('start_num')){$map['o.order_goods_num'] = array('egt',I('start_num'));}
+        if(I('end_num')){$map['o.order_goods_num'] = array('egt',I('end_num'));}
+        if(I('order_sn')){$map['o.order_sn'] = array('like','%'.I('order_sn').'%');}
+        $map['dc_db'] = I('dc_db')?I('dc_db'):array('in',array('1','2','3'));
+
+        //$map['dn.mid'] = $mid;
+        $per_page = 10;
+        $page = I("page")?I("page"):0;
+        if(I('order_status') == 5){
+            $order_desc = 'o.update_time DESC';
+        }else{
+            $order_desc = 'o.order_id DESC';
+        }
+        $data = $this->order->alias('o')
+            ->join('left join __DC_NO__ dn on o.dc_no=dn.id')
+            ->join('left join ypt_pay_back p on o.order_sn=p.remark')
+            ->where($map)
+            ->field('o.order_sn,o.order_id,o.dc_db,o.real_price,o.order_goods_num,dn.id as no_id,dn.no,p.status')
+            ->limit($page * $per_page, $per_page)
+            ->order($order_desc)
+            ->select();
+        if($data){
+            foreach ($data as $k => $v) {
+                $data[$k]['goods_list'] = $this->order_goods->where(array('order_id'=>$v['order_id']))->field('goods_name,goods_num,goods_price,spec_key_name')->select();
+                foreach ($data[$k]['goods_list'] as $key => $val){
+                    if($data[$k]['goods_list'][$key]['spec_key_name'] != ''){
+                        $data[$k]['goods_list'][$key]['goods_name'] .= '('. $data[$k]['goods_list'][$key]['spec_key_name'] .')';
+                    }
+                }
+                if ($data[$k]['status']==5){
+                    $data[$k]['order_status']=6;
+                }
+            }
+            $this->ajaxReturn(array('code'=>'success','msg'=>'成功','data'=>$data));
+        }else{
+            $this->ajaxReturn(array('code'=>'success','msg'=>'成功','data'=>array()));
+        }
+    }
 	/**
      * 获取商家对应的餐桌号
      * @Param uid 商家uid

@@ -946,10 +946,14 @@ class ShoppingController extends ApibaseController
             $goods_img = $this->posts['goods_img'];
             $goods_img_arr = explode(',', $goods_img);
             $this->posts['window_img'] = $goods_img_arr[0];
-            foreach ($goods_img_arr as $k => $v) {
-                $count = $k + 1;
-                $this->posts['goods_img'."$count"] = $v;
+            for ($i=0;$i<7;$i++){
+                $count = $i + 1;
+                $this->posts['goods_img'."$count"] = $goods_img_arr[$i];
             }
+//            foreach ($goods_img_arr as $k => $v) {
+//                $count = $k + 1;
+//                $this->posts['goods_img'."$count"] = $v;
+//            }
         }
         
         #如果传了goods_id就是编辑save
@@ -964,7 +968,7 @@ class ShoppingController extends ApibaseController
                 	# 将SKU插入数据库
                 	$this->save_sku($this->posts['goods_id'],$units);
                 	# 更新商品表规格
-        			$this->update_other_info($goods_id);
+        			$this->update_other_info($this->posts['goods_id']);
             	}
             	$this->ajaxReturn(array("code" => "success", "msg" => "编辑成功"));
             } else {
@@ -1049,7 +1053,7 @@ class ShoppingController extends ApibaseController
                     # 将SKU插入数据库
                     $this->save_sku($this->posts['goods_id'],$units);
                     # 更新商品表规格
-                    $this->update_other_info($goods_id);
+                    $this->update_other_info($this->posts['goods_id']);
                 }
                 $this->ajaxReturn(array("code" => "success", "msg" => "编辑成功"));
             } else {
