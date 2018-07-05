@@ -590,20 +590,20 @@ class  ShopnewsController extends ApibaseController
         if ($status == '5') {
             $pay = M('pay_back')
                 ->where(array('back_pid' => $pay_id))
-                ->field("id,status,cate_id,order_info,customer_id,paystyle_id,checker_id,remark,paytime,jmt_remark,mode,new_order_sn,price_back as price,price_back")
+                ->field("id,status,cate_id,order_info,cost_rate,customer_id,paystyle_id,checker_id,remark,paytime,jmt_remark,mode,new_order_sn,price_back as price,price_back")
                 ->find();
             //   add_log(json_encode($pay));
 
             if (!$pay) {
                 $pay = M('pay_back')
                     ->where(array('id' => $pay_id))
-                    ->field("id,status,cate_id,order_info,customer_id,paystyle_id,checker_id,remark,paytime,jmt_remark,mode,new_order_sn,price_back as price,price_back")
+                    ->field("id,status,cate_id,order_info,cost_rate,customer_id,paystyle_id,checker_id,remark,paytime,jmt_remark,mode,new_order_sn,price_back as price,price_back")
                     ->find();
             }
         } else {
             $pay = $this->pays
                 ->where(array('id' => $pay_id))
-                ->field("id,status,cate_id,customer_id,paystyle_id,checker_id,remark,paytime,jmt_remark,mode,new_order_sn,price,price_back")
+                ->field("id,status,cate_id,customer_id,cost_rate,paystyle_id,checker_id,remark,paytime,jmt_remark,mode,new_order_sn,price,price_back")
                 ->find();
         }
         //  add_log(json_encode($pay));
@@ -618,32 +618,28 @@ class  ShopnewsController extends ApibaseController
         if (!$pay['jmt_remark']) {
             $pay['jmt_remark'] = "";
         }
-
+        $pay['mode_name'] = $this->numberstyle($pay['mode']);//付款渠道
+        $pay['cost_price'] = strval(round($pay['price'] * $pay['cost_rate']/100,2));//手续费
 
         if ($pay['mode'] == 10) {
             $order = M('quick_pay')->where(array('order_sn' => $pay['remark']))->find();
+            $pay['card_code'] = M('screen_memcard_use')->where(array('id'=>$order['memcard_id']))->getField('card_code') ? : '0';
             if ($status == '5') {
                 $pay['integral_money'] = "0.00";
                 $pay['discount'] = "100";
                 $pay['user_money'] = "0.00";
                 $pay['coupon_price'] = "0.00";
                 $pay['total_price'] = $pay['price'];
-            } elseif ($order) {
+            } else {
                 $pay['integral_money'] = $order['credits_price'] ? $order['credits_price'] : "0.00"; // 积分
                 $pay['discount'] = $order['discount'] ? (string)($order['discount'] * 10) : "100";      //折扣
                 $pay['user_money'] = $order['yue_price'] ? $order['yue_price'] : "0.00"; //  会员卡储值
                 $pay['coupon_price'] = $order['coupons_price'] ? $order['coupons_price'] : "0.00"; //  优惠券使用金额
-                $pay['total_price'] = $order['order_price']; //总金额
-                // M('log')->add(array('param'=>json_encode($pay)));
-            } else {
-                $pay['integral_money'] = "0.00";
-                $pay['discount'] = "100";
-                $pay['user_money'] = "0.00";
-                $pay['coupon_price'] = "0.00";
-                $pay['total_price'] = $pay['price'];
+                $pay['total_price'] = $order['order_price'] ? : $pay['price']; //总金额
             }
         } elseif ($pay['mode'] == 12) {
             $order = M('user_recharge')->where(array('order_sn' => $pay['remark']))->find();
+            $pay['card_code'] = M('screen_memcard_use')->where(array('id'=>$order['memcard_id']))->getField('card_code') ? : '0';
             if ($status == '5') {
                 $pay['integral_money'] = "0.00";
                 $pay['discount'] = "100";
@@ -664,15 +660,6 @@ class  ShopnewsController extends ApibaseController
                 $pay['coupon_price'] = "0.00";
                 $pay['total_price'] = $pay['price'];
             }
-
-        } elseif ($pay['mode'] == 15) {
-
-            $pay['integral_money'] = "0.00";
-            $pay['discount'] = "100";
-            $pay['user_money'] = "0.00";
-            $pay['coupon_price'] = "0.00";
-            $pay['total_price'] = $pay['price'];
-
         } else {
             $order = M("order")->where(array('order_sn' => $pay['remark']))->find();
             $pay['integral'] = $order['integral'] ? : "0"; // 积分
@@ -682,6 +669,7 @@ class  ShopnewsController extends ApibaseController
             $pay['user_money'] = $order['user_money'] ? : "0.00"; //  会员卡储值
             $pay['coupon_price'] = $order['coupon_price'] ? : "0.00"; //  优惠券使用金额
             $pay['total_price'] = $order['total_amount'] ? : $pay['price']; //总金额
+            $pay['card_code'] = $order['card_code'] ? : '';
 
             if($status == 5){
                 $pay['goods_should_refund'] = '0';//商品应退金额

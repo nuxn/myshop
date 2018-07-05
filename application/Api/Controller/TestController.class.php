@@ -18,7 +18,8 @@ class TestController extends ApibaseController
 {
     function t()
     {
-        $a = array(
+        echo '123';
+        /*$a = array(
             'goods'=>array(
                 array('goods_id'=>'1','num'=>'1','bar_code'=>'111','sku'=>'1111'),
                 array('goods_id'=>'2','num'=>'2','bar_code'=>'222','sku'=>'2222')
@@ -28,75 +29,7 @@ class TestController extends ApibaseController
             'dc_ch_price'=>'3',
         );
 
-        dump(json_encode($a));
-    }
-    //支付样式判断
-    function numberstyle($number)
-    {
-        switch ($number) {
-            case 0:
-                return "台签";
-            case 1:
-                return "App扫码";
-            case 2:
-                return "App主扫";
-            case 3:
-                return "收银扫码";
-            case 4:
-                return "收银现金";
-            case 5:
-                return "Pos机主扫";
-            case 6:
-                return "Pos机扫码";
-            case 7:
-                return "pos机现金";
-            case 8:
-                return "pos机其他";
-            case 9:
-                return "pos机刷银行卡";
-            case 10:
-                return "快速支付";
-            case 11:
-                return "小程序";
-            case 12:
-                return "会员卡充值";
-            case 13:
-                return "收银APP现金";
-            case 14:
-                return "收银APP余额";
-            case 15:
-                return "小白盒";
-            case 16:
-                return "台签余额";
-            case 17:
-                return "双屏主扫";
-            case 18:
-                return "双屏余额";
-            case 19:
-                return "Pos机余额";
-            case 20:
-                return "小程序余额";
-            case 21:
-                return "波普主扫";
-            case 22:
-                return "波普扫码";
-            case 23:
-                return "波普刷银行卡";
-            case 24:
-                return "波普余额";
-            case 25:
-                return "商+宝主扫";
-            case 26:
-                return "api接口订单";
-            case 27:
-                return "商+宝余额";
-            case 98:
-                return "原路退款";
-            case 99:
-                return "现金退款";
-            default:
-                return "其他支付";
-        }
+        dump(json_encode($a));*/
     }
 
     /**

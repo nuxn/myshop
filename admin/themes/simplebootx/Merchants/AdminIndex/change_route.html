@@ -1,0 +1,79 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('AdminIndex/change_route')}">路由通道切换</a></li>
+    </ul>
+    <form method="post" class="form-horizontal" action="{:U('AdminIndex/change_route')}">
+        <div class="control-group">
+            <label class="control-label">
+                所有商户及收银员通道由
+            </label>
+            <div class="controls">
+                <select name="from" id="from">
+                    <option value="" selected>请选择</option>
+                    <option value="3">微信官方通道</option>
+                    <option value="7">兴业</option>
+                    <option value="9">宿州李灿</option>
+                    <option value="10">东莞中信</option>
+                    <option value="11">新大陆</option>
+                    <option value="12">乐刷</option>
+                    <option value="13">平安付</option>
+                    <option value="14">随行付</option>
+                </select>
+                切换至
+                <select name="to" id="to">
+                    <option value="" selected>请选择</option>
+                    <option value="3">微信官方通道</option>
+                    <option value="7">兴业</option>
+                    <option value="9">宿州李灿</option>
+                    <option value="10">东莞中信</option>
+                    <option value="11">新大陆</option>
+                    <option value="12">乐刷</option>
+                    <option value="13">平安付</option>
+                    <option value="14">随行付</option>
+                </select>
+                &nbsp;&nbsp;<span style="color: red">*只有在两边通道都进有件的商户才会切换</span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" id="onSubmit" class="btn btn-primary js-ajax-submit">切换</button>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    $(function(){
+        $("#onSubmit").click(function(){
+            var from_text = $("#from").find("option:selected").text();
+            var to_text = $("#to").find("option:selected").text();
+            var from_val = $("#from").find("option:selected").val();
+            var to_val = $("#to").find("option:selected").val();
+            if(from_val=="" || to_val==""){
+                alert('请选择通道');
+                return false;
+            }else if(from_val == to_val){
+                alert('两边不能选择同一个通道');
+                return false;
+            }else{
+                if(confirm("确定把所有商户从从"+from_text+"切换到"+to_text+"吗？")){
+                    $('#onSubmit').css('disable','disable');
+                    $('#onSubmit').html('正在切换，稍等');
+                    $.post('{:U("adminIndex/change_route")}',{from:from_val,to:to_val},function (data) {
+                        if(data.code==1){
+                            alert('切换成功');
+                            location.href='{:U("adminIndex/index")}';
+                        } else {
+                            alert(data.msg);
+                        }
+                    });
+                }else{
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
