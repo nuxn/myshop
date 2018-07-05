@@ -34,8 +34,8 @@ class Subtable
      * 根据查询条件返回分表表名
      * @param string $tableName 原始表名
      * @param array $param 查询条件
-     * @param null $tablePrefix 前缀
-     * @return string
+     * @param null $tablePrefix 表前缀
+     * @return string 分表表名
      */
     static public function getSubTableName($tableName = '', $param = array(), $tablePrefix = null)
     {
