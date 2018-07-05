@@ -18,8 +18,8 @@ class TestController extends ApibaseController
 {
     function t()
     {
-        echo '123';
-        /*$a = array(
+        M('yuming')->where('id=894')->setInc('yuming',1);
+        $a = array(
             'goods'=>array(
                 array('goods_id'=>'1','num'=>'1','bar_code'=>'111','sku'=>'1111'),
                 array('goods_id'=>'2','num'=>'2','bar_code'=>'222','sku'=>'2222')
@@ -29,7 +29,7 @@ class TestController extends ApibaseController
             'dc_ch_price'=>'3',
         );
 
-        dump(json_encode($a));*/
+        dump(json_encode($a));
     }
 
     /**
