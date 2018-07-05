@@ -412,6 +412,12 @@ class BanksxfController extends HomebaseController
     {
         header("Content-type:application/json;charset=utf-8");
         $json_str = file_get_contents('php://input', 'r');
+        $verify = $this->sxfModel->verify(json_decode($json_str, true));
+        if(!$verify){
+            get_date_dir($this->path,'notify','验签失败', $json_str);
+            exit('{"code":"error","msg":"verify fail"}');
+        }
+
         $notifyData = json_decode($json_str);
         $order_sn = $notifyData->ordNo;
         $transId = $notifyData->uuid;
