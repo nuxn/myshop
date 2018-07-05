@@ -547,8 +547,28 @@ class MemberController extends ApibaseController
         }else{
             $order_where['card_code'] = $mem_data['entity_card_code'];
         }
+        
+        // 分表
+        $sql = 'SELECT pay0.paystyle_id,pay0.status,pay0.remark from ypt_pay pay0';# 分表前sql
+        $sqlArray = array();# 存放分表的sql
+
+        $beginMonth = Subtable::beginDate();# 获取分表起始年月
+        $beginMonth = '20' . mb_substr($beginMonth, 0, 2) . '-' . mb_substr($beginMonth, -2);# 起始年月
+        $currentMonth = date('Y-m', time());# 结束年月(当前年月)
+        $monthArray = get_month_diff(strtotime($beginMonth), strtotime($currentMonth));# 获取分表月份
+
+        $sqlArray[] = $sql;
+        foreach ($monthArray as $ym) {
+            $sqlArray[] = 'SELECT pay' . $ym . '.paystyle_id, pay' . $ym . '.status,pay' . $ym . '.remark from ypt_pay_' . $ym . ' pay' . $ym . "\r";
+        }
+        
+        $sqlAll = implode('union ', $sqlArray);# 合并所有sql语句
+        unset($monthArray);
+        unset($sqlArray);
+        
         $order = M('order o')
-            ->join('ypt_pay p on p.remark=o.order_sn','left')
+            //->join('ypt_pay p on p.remark=o.order_sn','left')
+            ->join('(' . $sqlAll . ')p  ON p.remark = o.order_sn', 'left')
             ->field('(o.order_amount+o.user_money) as price,o.add_time,o.pay_time as paytime,p.paystyle_id,p.status')
             ->where($order_where)
             ->select();

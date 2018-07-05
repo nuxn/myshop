@@ -2886,3 +2886,19 @@ function getOrderNumber()
     return date("YmdHis") . mt_rand(100000,999999);
 }
 
+/**
+ * 获取时间戳的月份差
+ * @param $start
+ * @param bool $end
+ * @return array
+ */
+function get_month_diff($start, $end = FALSE)
+{
+    $end OR $end = time();
+    $monarr = array();
+    while (($start = strtotime('+1 month', $start)) <= $end) {
+        $monarr[] = date('ym', $start); // 取得递增月;
+    }
+    return $monarr;
+}
+
