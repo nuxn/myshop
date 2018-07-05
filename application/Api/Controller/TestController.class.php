@@ -18,7 +18,6 @@ class TestController extends ApibaseController
 {
     function t()
     {
-        M('yuming')->where('id=894')->setInc('yuming',1);
         $a = array(
             'goods'=>array(
                 array('goods_id'=>'1','num'=>'1','bar_code'=>'111','sku'=>'1111'),
