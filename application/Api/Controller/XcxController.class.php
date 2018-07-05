@@ -169,7 +169,7 @@ class XcxController extends ApibaseController
         $data = $this->order->alias('o')
             ->join('left join __DC_NO__ dn on o.dc_no=dn.id')
             ->where($map)
-            ->field('o.order_sn,o.order_id,o.dc_db,o.real_price,o.order_goods_num,dn.id as no_id,dn.no')
+            ->field('o.order_status,o.order_sn,o.order_id,o.dc_db,o.real_price,o.order_goods_num,dn.id as no_id,dn.no')
 			->limit($page * $per_page, $per_page)
             ->order($order_desc)
             ->select();
@@ -217,7 +217,7 @@ class XcxController extends ApibaseController
             ->join('left join __DC_NO__ dn on o.dc_no=dn.id')
             ->join('left join ypt_pay_back p on o.order_sn=p.remark')
             ->where($map)
-            ->field('o.order_sn,o.order_id,o.dc_db,o.real_price,o.order_goods_num,dn.id as no_id,dn.no,p.status')
+            ->field('o.order_status,o.order_sn,o.order_id,o.dc_db,o.real_price,o.order_goods_num,dn.id as no_id,dn.no,p.status')
             ->limit($page * $per_page, $per_page)
             ->order($order_desc)
             ->select();
