@@ -23,7 +23,7 @@ class MerchantsModel extends CommonModel
         array('positive_id_card_img', 'require', '请上传身份证照片', self::EXISTS_VALIDATE, 'regex', self::MODEL_BOTH),
         array('header_interior_img', 'require', '请上传商户证件', self::EXISTS_VALIDATE, 'regex', self::MODEL_BOTH),
         array('business_license', 'require', '请上传商户证件', self::EXISTS_VALIDATE, 'regex', self::MODEL_BOTH),
-        array('referrer', '/^1[34578]\d{9}$/', '请输入有效的推荐人手机号码', self::VALUE_VALIDATE, 'regex', self::MODEL_BOTH),
+        array('referrer', '/^1[345789]\d{9}$/', '请输入有效的推荐人手机号码', self::VALUE_VALIDATE, 'regex', self::MODEL_BOTH),
         array('referrer', 'checkReferrer', '推荐人不能填写自己!', self::VALUE_VALIDATE, 'callback', self::MODEL_BOTH),
     );
 

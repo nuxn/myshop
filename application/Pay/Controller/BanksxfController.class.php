@@ -34,6 +34,7 @@ class BanksxfController extends HomebaseController
     private $sxfModel;
     private $path;
     private $bank = '14';
+    private $appId = 'wx3fa82ee7deaa4a21';
     public function _initialize()
     {
         parent::_initialize(); 
@@ -198,7 +199,7 @@ class BanksxfController extends HomebaseController
         $this->sxfModel->setParameters('payType', 'JSAPI');        // JSAPI公众号 或 FWC--支付 宝服务窗
         $this->sxfModel->setParameters('subject', urlencode($this->subject));    // 订单标题
         $this->sxfModel->setParameters('subOpenid', $this->openid);
-        $this->sxfModel->setParameters('subAppid', 'wx3fa82ee7deaa4a21');
+        $this->sxfModel->setParameters('subAppid', $this->appId);
         $this->sxfModel->setParameters('notifyUrl', urlencode($this->notify_url));  // 回调地址
 
         return $this->sxfModel->getPayInfo();
@@ -368,7 +369,7 @@ class BanksxfController extends HomebaseController
      */
     private function get_into($paystyle)
     {
-        $info = $this->sxfModel->field('mno,wx_rate,ali_rate')->where("merchant_id=$this->merchant_id")->find();
+        $info = $this->sxfModel->field('mno,wx_rate,ali_rate,subMchId')->where("merchant_id=$this->merchant_id")->find();
         if(!$info){
             $this->alert_err('商户未进件！');
         }
@@ -381,6 +382,7 @@ class BanksxfController extends HomebaseController
             $this->pay_type = 'ALIPAY';
         }
         $this->mno = $info['mno'];
+//        $this->appId = $info['subMchId'];
     }
 
     private function send_micropay()

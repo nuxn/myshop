@@ -604,7 +604,6 @@ class AdminIndexController extends AdminbaseController
             ->where($map)
             ->order('m.add_time desc')
             ->select();
-        echo M()->_sql();
         foreach ($data as &$v) {
             $where['uid'] = $v['agent_id'];
             $v['agent_name'] = M('merchants_agent')->where($where)->getField('agent_name');
@@ -1493,7 +1492,7 @@ class AdminIndexController extends AdminbaseController
                 $this->error("需先设置商户台签");
             }
             if ($this->cates->where(array("merchant_id" => $merchant_id, "checker_id" => $checker_id))->find()) {
-                $this->error("改收银员已设置台签,无法编辑");
+                $this->error("该收银员已设置台签,无法编辑");
             }
             $user_phone = $this->users->where(array("id" => $checker_id))->getField("user_phone");
             $this->assign("checker_id",$checker_id);
@@ -2282,6 +2281,259 @@ class AdminIndexController extends AdminbaseController
         }
     }
 
+    /**
+     * 通道路由切换
+     */
+    public function change_route()
+    {
+        if(IS_POST){
+            $from = $_POST['from'];
+            $to = $_POST['to'];
+            if(!$from || !$to){
+                $this->ajaxReturn(array('code'=>'0','msg'=>'请选择通道'));
+            }elseif($from == $to){
+                $this->ajaxReturn(array('code'=>'0','msg'=>'切换的通道不能与原通道相同'));
+            }
+            //切微信
+            $wx_mer_ids = $this->cates->where(array('wx_bank'=>$from,'merchant_id'=>array('gt',0)))->field('id,merchant_id')->select();
+            foreach ($wx_mer_ids as &$v) {
+                $this->bank_into_change($v['id'],$v['merchant_id'],$to,'wx');
+            }
+            //切支付宝
+            $wx_mer_ids = $this->cates->where(array('ali_bank'=>$from,'merchant_id'=>array('gt',0)))->field('id,merchant_id')->select();
+            foreach ($wx_mer_ids as &$v) {
+                $this->bank_into_change($v['id'],$v['merchant_id'],$to,'ali');
+            }
+            $this->ajaxReturn(array('code'=>'1','msg'=>'切换成功'));
+        }else{
+            $this->display();
+        }
+    }
+
+    private function bank_into_change($cate_id,$merchant_id,$bank,$bank_type)
+    {
+        switch ($bank) {
+            case 3:
+                //微信官方通道
+                $bank = M('merchants_upwx')->where(array('mid'=>$merchant_id))->field('sub_mchid')->find();
+                if($bank){
+                    //找到要切换通道的进件信息
+                    if($bank_type == 'wx'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>3,'wx_mchid'=>$bank['sub_mchid'],'wx_key'=>'','update_time'=>time()));
+                    }
+                }else{
+                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
+                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
+                    if($mid > 2 && $bank = M('merchants_upwx')->where(array('mid'=>$mid))->find()){
+                        $bank['mid'] = $merchant_id;
+                        M('merchants_upwx')->add($bank);
+                        if($bank_type == 'wx'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>3,'wx_mchid'=>$bank['sub_mchid'],'wx_key'=>'','update_time'=>time()));
+                        }
+                    }
+                }
+                break;
+            case 7:
+                //兴业
+                $bank = M('merchants_xypay')->where(array('merchant_id'=>$merchant_id))->field('mch_id,mch_key')->find();
+                if($bank){
+                    //找到要切换通道的进件信息
+                    if($bank_type == 'wx'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>7,'wx_mchid'=>$bank['mch_id'],'wx_key'=>$bank['mch_key'],'update_time'=>time()));
+                    }
+                    if($bank_type == 'ali'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>7,'alipay_partner'=>$bank['mch_id'],'alipay_public_key'=>$bank['mch_key'],'update_time'=>time()));
+                    }
+                }else{
+                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
+                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
+                    if($mid > 2 && $bank = M('merchants_xypay')->where(array('merchant_id'=>$mid))->find()){
+                        $bank['merchant_id'] = $merchant_id;
+                        unset($bank['id']);
+                        M('merchants_xypay')->add($bank);
+                        if($bank_type == 'wx'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>7,'wx_mchid'=>$bank['mch_id'],'wx_key'=>$bank['mch_key'],'update_time'=>time()));
+                        }
+                        if($bank_type == 'ali'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>7,'alipay_partner'=>$bank['mch_id'],'alipay_public_key'=>$bank['mch_key'],'update_time'=>time()));
+                        }
+                    }
+                }
+                break;
+            case 9:
+                //宿州李灿
+                $bank = M('merchants_szlzwx')->where(array('mid'=>$merchant_id))->field('mch_id,ali_mchid,ali_token')->find();
+                if($bank){
+                    //找到要切换通道的进件信息
+                    if($bank_type == 'wx'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>9,'wx_mchid'=>$bank['mch_id'],'wx_key'=>'','update_time'=>time()));
+                    }
+                    if($bank_type == 'ali'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>9,'alipay_partner'=>$bank['ali_mchid'],'alipay_public_key'=>$bank['ali_token'],'update_time'=>time()));
+                    }
+                }else{
+                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
+                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
+                    if($mid > 2 && $bank = M('merchants_szlzwx')->where(array('mid'=>$mid))->find()){
+                        $bank['mid'] = $merchant_id;
+                        unset($bank['id']);
+                        M('merchants_szlzwx')->add($bank);
+                        if($bank_type == 'wx'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>9,'wx_mchid'=>$bank['mch_id'],'wx_key'=>'','update_time'=>time()));
+                        }
+                        if($bank_type == 'ali'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>9,'alipay_partner'=>$bank['ali_mchid'],'alipay_public_key'=>$bank['ali_token'],'update_time'=>time()));
+                        }
+                    }
+                }
+                break;
+            case 10:
+                //东莞中信
+                $bank = M('merchants_pfpay')->where(array('merchant_id'=>$merchant_id))->field('mch_id,mch_key')->find();
+                if($bank){
+                    //找到要切换通道的进件信息
+                    if($bank_type == 'wx'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>10,'wx_mchid'=>$bank['mch_id'],'wx_key'=>$bank['mch_key'],'update_time'=>time()));
+                    }
+                    if($bank_type == 'ali'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>10,'alipay_partner'=>$bank['mch_id'],'alipay_public_key'=>$bank['mch_key'],'update_time'=>time()));
+                    }
+                }else{
+                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
+                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
+                    if($mid > 2 && $bank = M('merchants_pfpay')->where(array('merchant_id'=>$mid))->find()){
+                        $bank['merchant_id'] = $merchant_id;
+                        unset($bank['id']);
+                        M('merchants_pfpay')->add($bank);
+                        if($bank_type == 'wx'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>10,'wx_mchid'=>$bank['mch_id'],'wx_key'=>$bank['mch_key'],'update_time'=>time()));
+                        }
+                        if($bank_type == 'ali'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>10,'alipay_partner'=>$bank['mch_id'],'alipay_public_key'=>$bank['mch_key'],'update_time'=>time()));
+                        }
+                    }
+                }
+                break;
+            case 11:
+                //新大陆
+                $bank = M('merchants_xdl')->where(array('m_id'=>$merchant_id))->field('mercId,signKey')->find();
+                if($bank){
+                    //找到要切换通道的进件信息
+                    if($bank_type == 'wx'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>11,'wx_mchid'=>$bank['mercId'],'wx_key'=>$bank['signKey'],'update_time'=>time()));
+                    }
+                    if($bank_type == 'ali'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>11,'alipay_partner'=>$bank['mercId'],'alipay_public_key'=>$bank['signKey'],'update_time'=>time()));
+                    }
+                }else{
+                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
+                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
+                    if($mid > 2 && $bank = M('merchants_xdl')->where(array('m_id'=>$mid))->find()){
+                        $bank['m_id'] = $merchant_id;
+                        unset($bank['id']);
+                        M('merchants_xdl')->add($bank);
+                        if($bank_type == 'wx'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>11,'wx_mchid'=>$bank['mercId'],'wx_key'=>$bank['signKey'],'update_time'=>time()));
+                        }
+                        if($bank_type == 'ali'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>11,'alipay_partner'=>$bank['mercId'],'alipay_public_key'=>$bank['signKey'],'update_time'=>time()));
+                        }
+                    }
+                }
+                break;
+            case 12:
+                //乐刷
+                $bank = M('merchants_leshua')->where(array('m_id'=>$merchant_id))->field('merchantId,key')->find();
+                if($bank){
+                    //找到要切换通道的进件信息
+                    if($bank_type == 'wx'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>12,'wx_mchid'=>$bank['merchantId'],'wx_key'=>$bank['key'],'update_time'=>time()));
+                    }
+                    if($bank_type == 'ali'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>12,'alipay_partner'=>$bank['merchantId'],'alipay_public_key'=>$bank['key'],'update_time'=>time()));
+                    }
+                }else{
+                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
+                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
+                    if($mid > 2 && $bank = M('merchants_leshua')->where(array('m_id'=>$mid))->find()){
+                        $bank['m_id'] = $merchant_id;
+                        unset($bank['id']);
+                        M('merchants_leshua')->add($bank);
+                        if($bank_type == 'wx'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>12,'wx_mchid'=>$bank['merchantId'],'wx_key'=>$bank['key'],'update_time'=>time()));
+                        }
+                        if($bank_type == 'ali'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>12,'alipay_partner'=>$bank['merchantId'],'alipay_public_key'=>$bank['key'],'update_time'=>time()));
+                        }
+                    }
+                }
+                break;
+            case 13:
+                //平安付
+                $bank = M('merchants_pingan')->where(array('mid'=>$merchant_id))->field('sub_mchid,sub_mchkey')->find();
+                if($bank){
+                    //找到要切换通道的进件信息
+                    if($bank_type == 'wx'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>13,'wx_mchid'=>$bank['sub_mchid'],'wx_key'=>$bank['sub_mchkey'],'update_time'=>time()));
+                    }
+                    if($bank_type == 'ali'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>13,'alipay_partner'=>$bank['sub_mchid'],'alipay_public_key'=>$bank['sub_mchkey'],'update_time'=>time()));
+                    }
+                }else{
+                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
+                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
+                    if($mid > 2 && $bank = M('merchants_pingan')->where(array('mid'=>$mid))->find()){
+                        $bank['mid'] = $merchant_id;
+                        unset($bank['id']);
+                        M('merchants_pingan')->add($bank);
+                        if($bank_type == 'wx'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>13,'wx_mchid'=>$bank['sub_mchid'],'wx_key'=>$bank['sub_mchkey'],'update_time'=>time()));
+                        }
+                        if($bank_type == 'ali'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>13,'alipay_partner'=>$bank['sub_mchid'],'alipay_public_key'=>$bank['sub_mchkey'],'update_time'=>time()));
+                        }
+                    }
+                }
+                break;
+            case 14:
+                //随行付
+                $bank = M('merchants_upsxf')->where(array('mid'=>$merchant_id))->field('sub_mchid,sub_mchkey')->find();
+                if($bank){
+                    //找到要切换通道的进件信息
+                    if($bank_type == 'wx'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>14,'wx_mchid'=>$bank['sub_mchid'],'wx_key'=>$bank['sub_mchkey'],'update_time'=>time()));
+                    }
+                    if($bank_type == 'ali'){
+                        $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>14,'alipay_partner'=>$bank['sub_mchid'],'alipay_public_key'=>$bank['sub_mchkey'],'update_time'=>time()));
+                    }
+                }else{
+                    //没找到该商户的进件信息，如果是分店去查总店是否有进件，有的话给分店同步一条进件信息然后切过去
+                    $mid = $this->merchants->where(array('id'=>$merchant_id))->getField('mid');
+                    //上级商户大于2证明是该店是分店 && 查询上级商户是否有在该通道进件
+                    if($mid > 2 && $bank = M('merchants_upsxf')->where(array('mid'=>$mid))->find()){
+                        $bank['mid'] = $merchant_id;
+                        unset($bank['id']);
+                        M('merchants_upsxf')->add($bank);
+                        if($bank_type == 'wx'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('wx_bank'=>14,'wx_mchid'=>$bank['sub_mchid'],'wx_key'=>$bank['sub_mchkey'],'update_time'=>time()));
+                        }
+                        if($bank_type == 'ali'){
+                            $this->cates->where(array('id'=>$cate_id))->save(array('ali_bank'=>14,'alipay_partner'=>$bank['sub_mchid'],'alipay_public_key'=>$bank['sub_mchkey'],'update_time'=>time()));
+                        }
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
 }
 
