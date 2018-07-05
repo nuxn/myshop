@@ -41,6 +41,7 @@
             <th>支付宝T0</th>
             <th>支付宝D1</th>
             <th>进件时间</th>
+            <th>联行号</th>
             <th>状态</th>
             <th>操作</th>
         </tr>
@@ -92,6 +93,9 @@
                 </td>
                 <td>
                     {$u.add_time}
+                </td>
+                <td>
+                    {$u.unionpay}
                 </td>
                 <td>
                     <if condition="$u['status'] eq 1"> 进件失败:{$u.err_msg}

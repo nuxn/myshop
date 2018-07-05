@@ -54,7 +54,7 @@ class IntosxfController extends AdminbaseController
 
         $page = $this->page($count, 15);
         $info = $this->sxfModel
-            ->field('b.id,b.mno,b.err_msg,b.subMchId,b.task_code,b.merchant_id,b.status,b.add_time,m.merchant_name')
+            ->field('b.id,b.mno,b.err_msg,b.subMchId,b.task_code,b.merchant_id,b.status,b.qrcodeRate,b.add_time,m.merchant_name')
             ->join('b left join ypt_merchants m on b.merchant_id=m.id')
             ->where($map)
             ->order('b.id desc')
@@ -304,6 +304,36 @@ class IntosxfController extends AdminbaseController
         $prov = I('data');
         $result = M('address_sxf')->where(array('pid'=>$prov))->select();
         $this->ajaxReturn(array('code' => '0000', 'data' => $result));
+    }
+
+    // 分店进件
+    public function same()
+    {
+        $merchant_id = I('merchant_id');
+        $id = I('id');
+        $sub_mchs = M('merchants')->field('id,merchant_name')->where(array("mid"=>$merchant_id))->select();
+        if($sub_mchs){
+            $info = $this->sxfModel->where(array('id'=>$id))->field('mno,subMchId,qrcodeRate')->find();
+            $intos = array_map(function ($item) use ($info){
+                return array(
+                    'merchant_id' => $item['id'],
+                    'mecDisNm' => $item['merchant_name'],
+                    'mno' => $info['mno'],
+                    'status' => 4,
+                    'subMchId' => $info['subMchId'],
+                    'qrcodeRate' => $info['qrcodeRate'],
+                );
+            }, $sub_mchs);
+            $res = $this->sxfModel->addAll($intos);
+            if($res){
+                $this->redirect(U('index'));
+            } else {
+                exit('<script>alert("同步失败！")</script>');
+            }
+        } else {
+            exit('<script>alert("该商户没分店！")</script>');
+        }
+
     }
 
     // 获取 MCC 行业大类信息

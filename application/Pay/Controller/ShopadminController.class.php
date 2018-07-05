@@ -49,8 +49,8 @@ class ShopadminController extends AdminbaseController{
         }
 
         $map['b.status']=1;
-        $merchant = M('merchants')->alias("a")
-            ->join('__PAY__ b on a.id=b.merchant_id')
+        $merchant = M('pay')->alias("b")
+            ->join('__MERCHANTS__ a on a.id=b.merchant_id')
             ->join('left join __MERCHANTS_USERS__ u on a.uid=u.id')
             ->field('u.user_phone,a.id,a.merchant_name,b.price,b.merchant_id,b.paytime,b.paystyle_id,b.status')
             ->order("a.id asc")->where($map)->select();
