@@ -12,6 +12,30 @@ use Think\Model;
 
 class OrderModel extends Model
 {
+    //全部订单
+    public function all_lists($mid,$order_sn,$type,$page,$role=0)
+    {
+        $where = array('user_id'=>$mid);
+        if ($role) {
+            $where['staff_id'] = $role;
+        }
+        $where['type'] = $type;
+        $per_page = 20;
+        if($order_sn){$map['o.order_sn'] = array('like','%'.$order_sn.'%');}
+        if ($type==1) {
+
+        }elseif($type==2){
+
+        }
+        $data = $this->alias('o')
+            ->join('left join __DC_NO__ dn on o.dc_no=dn.id')
+            ->where($map)
+            ->field('o.order_status,o.order_sn,o.order_id,o.dc_db,o.real_price,o.order_goods_num,dn.id as no_id,dn.no')
+            ->limit($page * $per_page, $per_page)
+            ->order($order_desc)
+            ->select();
+    }
+
 	//商户订单
 	//订单状态 1:待付款 2:待发货 3:已发货 4：已收货 5:交易成功 0:交易关闭（订单取消） 7:退换货申请中
     public function lists($mid,$status,$type,$page)
@@ -19,65 +43,35 @@ class OrderModel extends Model
         if ($status==6){
             $this->pay_back($mid,$type,$page);
         }
-        $where = array('user_id'=>$mid);
-        switch($status){
-             case 4:
-             $where['order_status'] = array('in','4,5');
-             break;
-             default:
-             $where['order_status'] = $status;
-             break;
-        }
-        $where['type'] = $type;
-        $field = 'order_id,order_status,order_sn,city,consignee,province,district,area_id,address,mobile,order_amount,total_amount,add_time';
-        $order = $this->where($where)->page($page,5)->field($field)->order('add_time desc')->select();
-        foreach($order as $key=>$v){
-                $order[$key]['city'] = '';
+		$where = array('user_id'=>$mid);
+		switch($status){
+			 case 4:
+			 $where['order_status'] = array('in','4,5');
+			 break;
+			 default:
+			 $where['order_status'] = $status;
+			 break;
+		}
+		$where['type'] = $type;
+		$field = 'order_id,order_status,order_sn,city,consignee,province,district,area_id,address,mobile,order_amount,total_amount,add_time';
+		$order = $this->where($where)->page($page,5)->field($field)->order('add_time desc')->select();
+		foreach($order as $key=>$v){
+				$order[$key]['city'] = '';
 
-                $order[$key]['district'] = '';
-                $province = M('area')->where(array('id'=>$v['area_id']))->getField('name');
-                $order[$key]['province'] = $province?:'';
-        }
-        //add_log(json_encode($order));
-        return $order;
-    }
-
-    protected function pay_back($mid,$type,$page,$role)
-    {
-
-        $where = array('o.user_id'=>$mid);
-        if ($role) {
-            $where['o.staff_id'] = $role;
-        }
-        $where['o.type'] = $type;
-        $where['p.status'] = 5;
-        $field = 'p.status,o.order_id,o.order_sn,o.city,o.consignee,o.province,o.district,o.area_id,o.address,mobile,o.order_amount,o.total_amount,o.add_time';
-        $order = M('pay_back')->alias('p')
-            ->join("ypt_order o on o.order_sn=p.remark", 'left')
-            ->where($where)
-            ->page($page,5)
-            ->field($field)
-            ->order('p.paytime desc')
-            ->select();
-        foreach($order as $key=>$v){
-            $order[$key]['city'] = '';
-            if ($order[$key]['status']==5){
-                $order[$key]['order_status']=6;
-            }
-            $order[$key]['district'] = '';
-            $province = M('area')->where(array('id'=>$v['area_id']))->getField('name');
-            $order[$key]['province'] = $province?:'';
-        }
-        //add_log(json_encode($order));
-        return $order;
+				$order[$key]['district'] = '';
+				$province = M('area')->where(array('id'=>$v['area_id']))->getField('name');
+				$order[$key]['province'] = $province?:'';
+		}
+		//add_log(json_encode($order));
+		return $order;
     }
 
     //员工订单
     //订单状态 1:待付款 2:待发货 3:已发货 4：已收货 5:交易成功 0:交易关闭（订单取消） 7:退换货申请中
-    public function lists_y($mid,$status,$type,$page,$role=0)
+    public function lists_y($mid,$status,$type,$page,$role)
     {
         if ($status==6){
-            $this->pay_back($mid,$type,$page,$role);
+            $this->pay_back($mid,$type,$page);
         }
         $where = array('user_id'=>$mid);
         if ($role) {
@@ -104,31 +98,32 @@ class OrderModel extends Model
         //add_log(json_encode($order));
         return $order;
     }
-    //订单信息 {"goods":[{"bar_code":"0111111","goods_id":"7154","goods_num":"1.0","sku":"","goods_price":"0.03","subtotal":"0.030"}],"should_refund":"0.03"}
+    //订单信息
     public function info($order_id,$mid){
-        $where['order_id'] = $order_id;
-        $where['user_id'] = $mid;
-        $field = 'order_id,order_status,order_sn,city,area_id,consignee,province,district,address,mobile,order_amount,order_benefit,total_amount,dc_db,dc_db_price,dc_ch_price,dc_ps_price,add_time,coupon_price,integral_money,paystyle,pay_time,user_note,discount_money,user_money';
-        if($data = $this->where($where)->field($field)->find()){
-                $data['city'] = '';
-                $data['district'] = '';
-                $data['province'] = M('area')->where(array('id'=>$data['area_id']))->getField('name')?:'';
-            //查询订单商品
-            $field = 'goods_name,goods_num,spec_key_name as spec_key,goods_img,goods_price';
-            $data['goods'] = M('order_goods')->where(array('order_id'=>$order_id))->field($field)->select();
-            foreach($data['goods'] as &$v){
-                $picture = $v['goods_img'];
-                if(preg_match("/\x20*https?\:\/\/.*/i",$v['goods_img'])){
-                    $v['goods_img'] = substr($picture,27);
-                }else{
-                    $v['goods_img'] = $picture;
-                }
-            }
-            return $data;
-        }else{
+    			$where['order_id'] = $order_id;
+    			$where['user_id'] = $mid;
+    			$field = 'order_id,order_status,order_sn,city,area_id,consignee,province,district,address,mobile,order_amount,total_amount,dc_db,dc_db_price,dc_ch_price,dc_ps_price,add_time,coupon_price,integral_money,paystyle,pay_time,user_note,discount_money,user_money';
+    			if($data = $this->where($where)->field($field)->find()){
+    					$data['city'] = '';
 
-            return $this->err('没有查到订单');
-        }
+						$data['district'] = '';
+						$data['province'] = M('area')->where(array('id'=>$data['area_id']))->getField('name')?:'';
+    				//查询订单商品
+    				$field = 'goods_name,goods_num,spec_key_name as spec_key,goods_img,goods_price';
+    				$data['goods'] = M('order_goods')->where(array('order_id'=>$order_id))->field($field)->select();
+                    foreach($data['goods'] as &$v){
+                        $picture = $v['goods_img'];
+                        if(preg_match("/\x20*https?\:\/\/.*/i",$v['goods_img'])){
+                            $v['goods_img'] = substr($picture,27);
+                        }else{
+                            $v['goods_img'] = $picture;
+                        }
+                    }
+    				return $data;
+    			}else{
+
+    				return $this->err('没有查到订单');
+    			}
     }
 
     //订单详情 {"goods":[{"bar_code":"0111111","goods_id":"7154","goods_num":"1.0","sku":"","goods_price":"0.03","subtotal":"0.030"}],"should_refund":"0.03"}
@@ -138,10 +133,10 @@ class OrderModel extends Model
         $where['user_id'] = $mid;
         $type = $this->where($where)->getField('type');
         if ($type==1){
-            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money';
+            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,consignee';
 
         }elseif($type==2){
-            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_no,dc_db,dc_db_price,dc_ch_price,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,user_note';
+            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_no,dc_db,dc_db_price,dc_ch_price,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,user_note,real_price,consignee';
         }
         $data = $this->where($where)->field($field)->find();
         $data['dc_no']= (string)$data['dc_no'];
@@ -186,9 +181,10 @@ class OrderModel extends Model
                 # code...
                 break;
         }
-        $data['back'] = $back?$back:array();
+        $data['back'] = $back?$back:'';
 
         if ($data['back']['order_info']) {
+            $data['order_status'] = 6;
             $order_info = json_decode($data['back']['order_info'],true);
             $good_price=0;
             foreach ($order_info['goods'] as $key => &$value) {
@@ -211,6 +207,36 @@ class OrderModel extends Model
         }
 
         return $data;
+    }
+
+    protected function pay_back($mid,$type,$page,$role)
+    {
+
+        $where = array('o.user_id'=>$mid);
+        if ($role) {
+            $where['o.staff_id'] = $role;
+        }
+        $where['o.type'] = $type;
+        $where['p.status'] = 5;
+        $field = 'p.status,o.order_id,o.order_sn,o.city,o.consignee,o.province,o.district,o.area_id,o.address,mobile,o.order_amount,o.total_amount,o.add_time';
+        $order = M('pay_back')->alias('p')
+            ->join("ypt_order o on o.order_sn=p.remark", 'left')
+            ->where($where)
+            ->page($page,5)
+            ->field($field)
+            ->order('p.paytime desc')
+            ->select();
+        foreach($order as $key=>$v){
+            $order[$key]['city'] = '';
+            if ($order[$key]['status']==5){
+                $order[$key]['order_status']=6;
+            }
+            $order[$key]['district'] = '';
+            $province = M('area')->where(array('id'=>$v['area_id']))->getField('name');
+            $order[$key]['province'] = $province?:'';
+        }
+        //add_log(json_encode($order));
+        return $order;
     }
 
     //确认发货

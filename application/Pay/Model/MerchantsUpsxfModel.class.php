@@ -26,15 +26,15 @@ class MerchantsUpsxfModel extends CommonModel
     {
         parent::__construct();
 //        $this->microUrl  = 'https://icm-test.suixingpay.com/management/qr/reverseScan';
-        $this->microUrl = 'https://icm-management.suixingpay.com/management/qr/reverseScan';
+        $this->microUrl  = 'https://icm-management.suixingpay.com/management/qr/reverseScan';
 //        $this->scanUrl   = 'https://icm-test.suixingpay.com/management/qr/activeScan';
-        $this->scanUrl = 'https://icm-management.suixingpay.com/management/qr/activeScan';
+        $this->scanUrl   = 'https://icm-management.suixingpay.com/management/qr/activeScan';
 //        $this->jspayUrl  = 'https://icm-test.suixingpay.com/management/qr/jsapiScan';
-        $this->jspayUrl = 'https://icm-management.suixingpay.com/management/qr/jsapiScan';
+        $this->jspayUrl  = 'https://icm-management.suixingpay.com/management/qr/jsapiScan';
 //        $this->refundUrl = 'https://icm-test.suixingpay.com/management/qr/refund';
         $this->refundUrl = 'https://icm-management.suixingpay.com/management/qr/refund';
 //        $this->queryUrl  = 'https://icm-test.suixingpay.com/management/qr/query';
-        $this->queryUrl = 'https://icm-management.suixingpay.com/management/qr/query';
+        $this->queryUrl  = 'https://icm-management.suixingpay.com/management/qr/query';
 
         $this->path = $_SERVER['DOCUMENT_ROOT'] . '/data/log/Banksxf/';
         // 生产
@@ -43,28 +43,13 @@ class MerchantsUpsxfModel extends CommonModel
         // 测试
 //        $this->private_key = "MIICXAIBAAKBgQC+2v20Ci5VLz7r9si0AuYz3wFLWLE2Vucr1qTWpUY7smlDycOaa/WpasvKssg5lUdgK62JHvFQF2UTqZ2gBm3+atpCUvJFVC29OH4cah7qg0ryUgphEroDsas+zFjQf46EhkE37hem+UhNPcSnMahta+Jnusqftgj2fuHBUaXtzwIDAQABAoGAXC3e3ScRq7ju9f6yfybrUmBB+scyiCE+89BuuvEGU+zepIv9ekbsVtAq75Kb3Bv6ZjuSTCjyuhEik3WXmOOiGapaBmaXl9kkx0UtQsfjpV8dQIAGGskPkn5fkZGFzwmG5VB46B2a1kuR/OpNojIS7Z6Kd+32+KVfKcn1xLH1mykCQQDqBuBqPPwMk3wrXmPXrzZ7li3mO0K4SZTDKT2xfe6rGOprLGCxaXp01OOhWxmXEeW+I1P0b6qL8V+HgzjZjNtDAkEA0MZvoPyJC5Y09/ZSBM0S2izntJ4kGB39rASxpo0CXTDLCIz6k35/abwgCOmX9V8XXnx4og76FDdp3DTNp02shQJBAMUPj07GFXM9iZQ3QhlvN5BvkCzK/86QXwzLIGDh6uP18gbW8oDRkcTpMtg/DthPwMYPl3U/xjtav5crXuaJnmMCQCO6AXpMHOulrbTNKyX1Lge17YTEFyslXrakKv50XPYzllsFPRAmcolWjyjXSJDN0AL0S/R3maYCAZSUWKkLqr0CQGZ2zZVJn4NLv3r9uwJMUljQr+5CoToDp7eahWgN9vO389H0u0Kbhgg0326B4h7DwVl20w7qVwkpnWqTLwz/yqY=";
 
-        // 随行付生产公钥用于验签
-//        $this->public_key = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjo1+KBcvwDSIo+nMYLeOJ19Ju4ii0xH66ZxFd869EWFWk/EJa3xIA2+4qGf/Ic7m7zi/NHuCnfUtUDmUdP0JfaZiYwn+1Ek7tYAOc1+1GxhzcexSJLyJlR2JLMfEM+rZooW4Ei7q3a8jdTWUNoak/bVPXnLEVLrbIguXABERQ0Ze0X9Fs0y/zkQFg8UjxUN88g2CRfMC6LldHm7UBo+d+WlpOYH7u0OTzoLLiP/04N1cfTgjjtqTBI7qkOGxYs6aBZHG1DJ6WdP+5w+ho91sBTVajsCxAaMoExWQM2ipf/1qGdsWmkZScPflBqg7m0olOD87ymAVP/3Tcbvi34bDfwIDAQAB';
-
+        $this->public_key = '';
         $this->requestParams = array(
-//            'orgId' => '07296653',          // 洋仆淘机构号唯一 测试
-            'orgId' => '65554373',          // 洋仆淘机构号唯一 生产
+//            'orgId' => '07296653',           // 洋仆淘机构号唯一 测试
+            'orgId' => '65554373',           // 洋仆淘机构号唯一 生产
             'version' => '1.0',             // 版本
             'signType' => 'RSA',            // 签名方法
         );
-
-        $this->public_key = <<<PBK
------BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjo1+KBcvwDSIo+nMYLeO
-J19Ju4ii0xH66ZxFd869EWFWk/EJa3xIA2+4qGf/Ic7m7zi/NHuCnfUtUDmUdP0J
-faZiYwn+1Ek7tYAOc1+1GxhzcexSJLyJlR2JLMfEM+rZooW4Ei7q3a8jdTWUNoak
-/bVPXnLEVLrbIguXABERQ0Ze0X9Fs0y/zkQFg8UjxUN88g2CRfMC6LldHm7UBo+d
-+WlpOYH7u0OTzoLLiP/04N1cfTgjjtqTBI7qkOGxYs6aBZHG1DJ6WdP+5w+ho91s
-BTVajsCxAaMoExWQM2ipf/1qGdsWmkZScPflBqg7m0olOD87ymAVP/3Tcbvi34bD
-fwIDAQAB
------END PUBLIC KEY-----
-PBK;
-
     }
 
     // 签名
@@ -105,7 +90,7 @@ PBK;
             return $res;
         } else {
             $error = curl_errno($curl);
-            get_date_dir($this->path, 'requestPost', '请求错误码', $error);
+            get_date_dir($this->path,'requestPost','请求错误码', $error);
 //           "<a href='http://curl.haxx.se/libcurl/c/libcurl-errors.html'>错误原因查询</a></br>";
             curl_close($curl);
             return false;
@@ -124,21 +109,21 @@ PBK;
         $this->requestParams['timestamp'] = date('YmdHis');    // 请求时间
         $this->requestParams['reqData'] = $this->parameters;
         $this->requestParams['sign'] = $this->getSign();
-        if ($this->parameters['subject']) {
+        if($this->parameters['subject']){
             $this->parameters['subject'] = urldecode($this->parameters['subject']);
         }
-        if ($this->parameters['notifyUrl']) {
+        if($this->parameters['notifyUrl']){
             $this->parameters['notifyUrl'] = urldecode($this->parameters['notifyUrl']);
         }
         $this->requestParams['reqData'] = $this->parameters;
         $send = json_encode($this->requestParams);
 
-        get_date_dir($this->path, $file_name, '请求地址', $url);
-        get_date_dir($this->path, $file_name, '请求数据', $send);
+        get_date_dir($this->path,$file_name,'请求地址', $url);
+        get_date_dir($this->path,$file_name,'请求数据', $send);
 
-        $result = $this->requestPost($url, $send);
+        $result = $this->requestPost($url,$send);
 
-        get_date_dir($this->path, $file_name, '返回', $result);
+        get_date_dir($this->path,$file_name,'返回', $result);
 
         return json_decode($result, true);
     }
@@ -156,56 +141,56 @@ PBK;
     // 获取公众号支付参数
     public function getPayInfo()
     {
-        $result = $this->send($this->jspayUrl, 'getPayInfo');
-        if ($result['code'] == 'SXF0000') {
+        $result = $this->send($this->jspayUrl,'getPayInfo');
+        if($result['code'] == 'SXF0000'){
             $return = $result['respData'];
-            if ($return['bizCode'] == '0000') {
+            if($return['bizCode'] == '0000'){
                 $pay_info['timeStamp'] = $return['payTimeStamp'];
                 $pay_info['package'] = $return['payPackage'];
                 $pay_info['paySign'] = $return['paySign'];
                 $pay_info['appId'] = $return['payAppId'];
                 $pay_info['signType'] = $return['paySignType'];
                 $pay_info['nonceStr'] = $return['paynonceStr'];
-                return array('code' => '0000', 'pay_info' => json_encode($pay_info));
+                return array('code'=>'0000','pay_info'=>json_encode($pay_info));
             } else {
-                return array('code' => '0001', 'msg' => $return['bizMsg']);
+                return array('code'=>'0001','msg'=>$return['bizMsg']);
             }
         } else {
-            return array('code' => '0001', 'msg' => $result['msg']);
+            return array('code'=>'0001','msg'=>$result['msg']);
         }
     }
 
     // 获取支付宝扫码参数
     public function getPayUrl()
     {
-        $result = $this->send($this->scanUrl, 'getPayUrl');
-        if ($result['code'] == 'SXF0000') {
+        $result = $this->send($this->scanUrl,'getPayUrl');
+        if($result['code']== 'SXF0000'){
             $return = $result['respData'];
-            if ($return['bizCode'] == '0000') {
-                return array('code' => '0000', 'url' => $return['payUrl']);
+            if($return['bizCode'] == '0000'){
+                return array('code'=>'0000','url'=>$return['payUrl']);
             } else {
-                return array('code' => '0001', 'msg' => $return['bizMsg']);
+                return array('code'=>'0001','msg'=>$return['bizMsg']);
             }
         } else {
-            return array('code' => '0001', 'msg' => $result['msg']);
+            return array('code'=>'0001','msg'=>$result['msg']);
         }
     }
 
     // 付款码支付
     public function micropay()
     {
-        $result = $this->send($this->microUrl, 'micropay');
-        if ($result['code'] == 'SXF0000') {
+        $result = $this->send($this->microUrl,'micropay');
+        if($result['code'] == 'SXF0000'){
             $return = $result['respData'];
-            if ($return['bizCode'] == '0000') {
-                return array('code' => '0000', 'transId' => $return['uuid']);
-            } else if ($return['bizCode'] == '2002' or $return['bizCode'] == '1005') {
+            if($return['bizCode'] == '0000'){
+                return array('code'=>'0000','transId'=>$return['uuid']);
+            } else if($return['bizCode'] == '2002' or $return['bizCode'] == '1005'){
                 return $this->password();
             } else {
-                return array('code' => '0001', 'msg' => $return['bizMsg']);
+                return array('code'=>'0001','msg'=>$return['bizMsg']);
             }
         } else {
-            return array('code' => '0001', 'msg' => $result['msg']);
+            return array('code'=>'0001','msg'=>$result['msg']);
         }
     }
 
@@ -223,21 +208,21 @@ PBK;
             $this->setParameters('ordNo', $ordNo);
             $this->setParameters('mno', $mno);
             $result = $this->send($this->queryUrl, 'query_password');
-            if ($result['code'] == 'SXF0000') {
+            if($result['code'] == 'SXF0000'){
                 $return = $result['respData'];
-                if ($return['bizCode'] == '0000') {
-                    if ($return['tranSts'] == 'SUCCESS') { // 支付成功
-                        return array('code' => '0000', 'transId' => $return['uuid']);
-                    } else if ($return['tranSts'] == 'PAYING') { // 支付中
+                if($return['bizCode'] == '0000'){
+                    if($return['tranSts'] == 'SUCCESS'){ // 支付成功
+                        return array('code'=>'0000','transId'=>$return['uuid']);
+                    } else if($return['tranSts'] == 'PAYING') { // 支付中
                         continue;
                     } else {
-                        return array('code' => '0001', 'msg' => $return['bizMsg']);
+                        return array('code'=>'0001','msg'=>$return['bizMsg']);
                     }
-                } else {
-                    return array('code' => '0001', 'msg' => $return['bizMsg']);
+                }  else {
+                    return array('code'=>'0001','msg'=>$return['bizMsg']);
                 }
             } else {
-                return array('code' => '0001', 'msg' => $result['msg']);
+                return array('code'=>'0001','msg'=>$result['msg']);
             }
         } while ($while);
 
@@ -246,36 +231,36 @@ PBK;
     // 退款
     public function refund()
     {
-        $result = $this->send($this->refundUrl, 'refund');
-        if ($result['code'] == 'SXF0000') {
+        $result = $this->send($this->refundUrl,'refund');
+        if($result['code'] == 'SXF0000'){
             $return = $result['respData'];
-            if ($return['bizCode'] == '0000') {
-                return array('code' => '0000');
+            if($return['bizCode'] == '0000'){
+                return array('code'=>'0000');
             } else {
-                return array('code' => '0001', 'msg' => $return['bizMsg']);
+                return array('code'=>'0001','msg'=>$return['bizMsg']);
             }
         } else {
-            return array('code' => '0001', 'msg' => $result['msg']);
+            return array('code'=>'0001','msg'=>$result['msg']);
         }
     }
 
     // 查询订单
     public function query()
     {
-        $result = $this->send($this->queryUrl, 'query');
-        if ($result['code'] == 'SXF0000') {
+        $result = $this->send($this->queryUrl,'query');
+        if($result['code'] == 'SXF0000'){
             $return = $result['respData'];
-            if ($return['bizCode'] == '0000') {
-                if ($return['tranSts'] == 'SUCCESS') {
-                    return array('code' => '0000', 'msg' => '订单支付成功');
+            if($return['bizCode'] == '0000'){
+                if($return['tranSts'] == 'SUCCESS'){
+                    return array('code'=>'0000','msg'=>'订单支付成功');
                 } else {
-                    return array('code' => '0002', 'msg' => '订单未支付:' . $return['tranSts']);
+                    return array('code'=>'0002','msg'=>'订单未支付:'.$return['tranSts']);
                 }
             } else {
-                return array('code' => '0003', 'msg' => $return['bizMsg']);
+                return array('code'=>'0003','msg'=>$return['bizMsg']);
             }
         } else {
-            return array('code' => '0001', 'msg' => $result['msg']);
+            return array('code'=>'0001','msg'=>$result['msg']);
         }
     }
 
@@ -287,21 +272,29 @@ PBK;
     }
 
     // 拼接参数
-    public function createLinkstring($para)
-    {
+    function createLinkstring($para) {
+
         $params = array();
 
-        foreach ($para as $key => $value) {
-            if (is_array($value)) {
-                $value = stripslashes(urldecode(json_encode($value)));
+        foreach($para as $key => $value){
+
+            if(is_array($value)){
+
+                $value=stripslashes(urldecode(json_encode($value)));
+
             }
-            $params[] = $key . '=' . $value;
+
+            $params[] = $key .'='. $value ;
+
         }
 
         $data = implode("&", $params);
-        //get_date_dir($this->path,'sign','字符串', $data);
+
+
+        get_date_dir($this->path,'sign','字符串', $data);
 
         return $data;
+
     }
 
     /**
@@ -309,8 +302,7 @@ PBK;
      * @param $para 排序前的数组
      * @return mixed 排序后的数组
      */
-    function argSort($para)
-    {
+    function argSort($para) {
         ksort($para);
 
         return $para;
@@ -332,39 +324,5 @@ PBK;
         openssl_free_key($pkeyid);
         $sign = base64_encode($sign);
         return $sign;
-    }
-
-    /**
-     * 验签
-     * @param $data 数据
-     * @return bool
-     */
-    public function verify($data)
-    {
-        $sign = $data['sign'];
-        unset($data['sign']);
-        ksort($data);
-        $mystrs = $this->createLinkstring($data);
-
-        return $this->verifyRSA($mystrs, $sign, $this->public_key);
-    }
-
-    public function verifyRSA($data, $sign, $pubKey)
-    {
-        //转换为openssl格式密钥
-//        $key = "-----BEGIN PUBLIC KEY-----\n" .
-//            wordwrap($pubKey, 64, "\n", true) .
-//            "\n-----END PUBLIC KEY-----";
-
-        $res = openssl_get_publickey($pubKey);
-
-        //调用openssl内置方法验签，返回bool值
-        $result = (bool)openssl_verify($data, base64_decode($sign), $res);
-
-        //释放资源
-        openssl_free_key($res);
-
-        //返回资源是否成功
-        return $result;
     }
 }
