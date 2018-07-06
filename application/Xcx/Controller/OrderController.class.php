@@ -22,6 +22,22 @@ class  OrderController extends  ApibaseController
         }
 			
     }
+
+    public function all_lists()
+    {
+        ($page = I('page',0,'intval')) || err('page is empty');
+        ($type = I('type',0,'intval')) || err('type is empty');
+        $order_sn = I('order_sn',0,'intval');
+        $order = D('order');
+        if (ROLE_ID==7) {
+            $data = $order->all_lists(UID,$order_sn,$type,$page,ROLEID);
+            succ($data);
+        }else{
+            $data = $order->all_lists(UID,$order_sn,$type,$page);
+            succ($data);
+        }
+
+    }
     
     public function info(){
     		($order_id = I('order_id',0,'intval')) || err('order_id is empty!');
