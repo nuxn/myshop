@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace Pay\Controller;
 
@@ -173,6 +173,7 @@ class BarcodexdlbankController extends HomebaseController
                 $params['txnTime'] = date('YmdHis');
                 $params['signType'] = $this->signType;
                 $params['version'] = $this->version;
+//                $params['addField'] = $this->pubVersion; // pubVersion
                 $params['signValue'] = $this->getSign($params);
                 $this->writlog('JS_wx2_pay.log', '请求地址：' . $this->url);
                 $this->writlog('JS_wx2_pay.log', '参数：' . json_encode($params));

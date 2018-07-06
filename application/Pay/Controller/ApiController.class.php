@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * 对外支付接口
+ * create by 刘
+ */
 namespace Pay\Controller;
 
 use Common\Controller\PayapiController;
