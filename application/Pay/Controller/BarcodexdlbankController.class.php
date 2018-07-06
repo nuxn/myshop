@@ -89,6 +89,7 @@ class BarcodexdlbankController extends HomebaseController
             $this->getOffer($merchant, $openid);
             $this->assign("checker_id", $checker_id);
             $this->assign('openid', $openid);
+            $this->assign('openid', '1');
             $this->assign("merchant", $merchant);
             $this->assign('seller_id', I("id"));
             $this->display();
@@ -99,6 +100,7 @@ class BarcodexdlbankController extends HomebaseController
 
     public function wx_pay()
     {
+        $code = $this->get_code(array('APPID'=>'wx877afef258515692','APPSECRET'=>'b632d5eb32839b715768a04a292d3c39'));
         $sub_openid = I('openid','1');
         $id = I('seller_id');
         $price = I('price');
@@ -133,15 +135,11 @@ class BarcodexdlbankController extends HomebaseController
             'remark_mer' => '',
         );
         $data['jmt_remark'] = I('memo','')?:I("jmt_remark",'');
-        $db_res = true;
-        if(!$this->payModel->where(array('remark'=>$remark))->find()){
-            $db_res =  $this->payModel->add($data);
-        }
-        if($db_res!==false){
+        $db_res =  $this->payModel->add($data);
+        if($db_res){
             if($into_data['jspay_type'] == 1){
                 $money = $price*100;
                 $this->notify_url = "https://sy.youngport.com.cn/Pay/Barcode/weixipay_return000/price/{$money}/sub_openid/{$sub_openid}/remark/{$remark}/mid/{$cate_info[merchant_id]}";
-                $this->fileName = 'wx_js_pay.log';
                 $this->url = 'https://gateway.starpos.com.cn/sysmng/bhpspos4/5533020.do';
                 $params['opsys'] = '0';
                 $params['characterset'] = $this->characterSet;
@@ -159,7 +157,6 @@ class BarcodexdlbankController extends HomebaseController
                 $params['paysuccurl'] = $this->notify_url;
                 $params['signvalue'] = $this->getSign($params);
                 $this->writlog('JS_wx1_pay.log', 'payParams：' . json_encode($params));
-
                 $this->assign('data',$params);
                 $this->assign('url',$this->url);
                 $this->display('wxpay');
@@ -175,30 +172,49 @@ class BarcodexdlbankController extends HomebaseController
                 $params['version'] = $this->version;
 //                $params['addField'] = $this->pubVersion; // pubVersion
                 $params['signValue'] = $this->getSign($params);
-                $this->writlog('JS_wx2_pay.log', '请求地址：' . $this->url);
-                $this->writlog('JS_wx2_pay.log', '参数：' . json_encode($params));
+                $this->writlog('JS_pubSigQry.log', '查询-url：' . $this->url);
+                $this->writlog('JS_pubSigQry.log', '查询-参数：' . json_encode($params));
                 $return = $this->requestPost(json_encode($params));
                 $result = json_decode(urldecode($return), true);
-                $this->writlog('JS_wx2_pay.log', '返回：' . json_encode($result));
-                dump($params);
-                dump($result);exit;
+                $this->writlog('JS_pubSigQry.log', '查询-返回：' . json_encode($result));
+                if($result['returnCode'] != '000000'){
+                    $this->alert_err('网络异常，请稍后再试！');
+                }
                 $this->url = $this->server . 'pubSigPay.json';
                 $params['orgNo'] = $this->orgNo;
                 $params['mercId'] = $this->mercId;
                 $params['trmNo'] = $this->trmNo;
                 $params['txnTime'] = date('YmdHis');
                 $params['version'] = $this->version;
-                $params['code'] = $this->get_code();
+                $params['selOrderNo'] = $remark;
+                $params['code'] = $code;
                 $params['amount'] = (string)($price*100);
                 $params['total_amount'] = (string)($price*100);
                 $params['signValue'] = $this->getSign($params);
-                $this->writlog('JS_wx2_pay.log', '请求地址：' . $this->url);
-                $this->writlog('JS_wx2_pay.log', '参数：' . json_encode($params));
+                $this->writlog('JS_wx2_pay.log', '获取-url：' . $this->url);
+                $this->writlog('JS_wx2_pay.log', '获取-参数：' . json_encode($params));
                 $return = $this->requestPost(json_encode($params));
                 $result = json_decode(urldecode($return), true);
-                $this->writlog('JS_wx2_pay.log', '返回：' . json_encode($result));
-                dump($params);
-                dump($result);
+                $this->writlog('JS_wx2_pay.log', '获取-返回：' . json_encode($result));
+                if($result['returnCode'] == '000000'){
+                    $payInfo = array(
+                        'timeStamp' => $result['apiTimestamp'],
+                        'package' => $result['apiPackage'],
+                        'paySign' => str_replace(' ','+',$result['apiPaysign']),
+                        'appId' => $result['apiAppid'],
+                        'signType' => $result['apiSigntype'],
+                        'nonceStr' => $result['apiNoncestr'],
+                    );
+                    $this->writlog('JS_wx2_pay.log', '支付参数：' . json_encode($payInfo));
+                    $this->assign('body', json_encode($payInfo));
+                    $this->assign('price', $price);
+                    $this->assign('openid', $sub_openid);
+                    $this->assign('remark', $remark);
+                    $this->assign('mid', $cate_info['merchant_id']);
+                    $this->display("wx_pay");
+                } else {
+                    $this->alert_err('网络异常，请稍后再试！');
+                }
             }
         } else {
             $this->alert_err();
@@ -206,16 +222,19 @@ class BarcodexdlbankController extends HomebaseController
     }
 
 
-    public function get_code()
+    public function get_code($config = array())
     {
         // 获取配置项
-        $config = C('WEIXINPAY_CONFIG');
+        if(!$config){
+            $config = C('WEIXINPAY_CONFIG');
+        }
         // 如果没有get参数没有code；则重定向去获取openid；
         if (!isset($_GET['code'])) {
-            $redirect_uri = 'https://' . $_SERVER['HTTP_HOST'] . $_SESSION['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SESSION['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             $redirect_uri = urlencode($redirect_uri);
             $url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' . $config['APPID'] . '&redirect_uri=' . $redirect_uri . '&response_type=code&scope=snsapi_base#wechat_redirect';
             redirect($url);
+            die;
         } else {
             $code = I('get.code');
             return $code;
@@ -224,6 +243,7 @@ class BarcodexdlbankController extends HomebaseController
 
     public function two_wx_pay()
     {
+        $code = $this->get_code(array('APPID'=>'wx877afef258515692','APPSECRET'=>'b632d5eb32839b715768a04a292d3c39'));
         $sub_openid = I('openid','1');
         $id = I('id');
         $mode = I('mode',0);
@@ -234,7 +254,7 @@ class BarcodexdlbankController extends HomebaseController
             $price = $order_info['order_amount'];
             $this->price = $price;
             $cate_info = $this->get_cate_info($id);
-            $into_data = M('merchants_xdl')->where(array('m_id' => $cate_info['merchant_id']))->find();
+            $into_data = $this->getInfo($cate_info['merchant_id']);
             $checker_id = $cate_info['checker_id'];
             $data = array(
                 'order_id' => $order_id,
@@ -263,36 +283,87 @@ class BarcodexdlbankController extends HomebaseController
                 'remark_mer' => '',
             );
             $data['jmt_remark'] = I('memo', '') ?: I("jmt_remark", '');
-            $db_res = true;
+            $db_res = false;
             if(!$this->payModel->where(array('remark'=>$remark))->find()){
                 $db_res =  $this->payModel->add($data);
             }
             if ($db_res !== false) {
-                $this->getInfo($cate_info['merchant_id']);
-                $this->fileName = 'wx_js_pay.log';
-                $this->url = 'https://gateway.starpos.com.cn/sysmng/bhpspos4/5533020.do';
-                $money = $price*100;
-                $this->notify_url = "https://sy.youngport.com.cn/Pay/Barcode/weixipay_return000/price/{$money}/sub_openid/{$sub_openid}/remark/{$remark}/mid/{$cate_info[merchant_id]}";
-                $params['opsys'] = '0';
-                $params['characterset'] = $this->characterSet;
-                $params['orgno'] = $this->orgNo;
-                $params['mercid'] = $this->mercId;
-                $params['trmno'] = $this->trmNo;
-                $params['tradeno'] = $remark;
-                $params['trmtyp'] = 'W';
-                $params['txntime'] = date('YmdHis');
-                $params['signtype'] = $this->signType;
-                $params['version'] = 'V1.0.0';
-                $params['amount'] = $price*100;
-                $params['total_amount'] = $price*100;
-                $params['paychannel'] = 'WXPAY'; //支付宝	ALIPAY 微信	WXPAY 银联	YLPAY
-                $params['paysuccurl'] = $this->notify_url;
-                $params['signvalue'] = $this->getSign($params);
-                $this->writlog('JS_wx_pay.log', 'payParams：' . json_encode($params));
-                $this->assign('data', $params);
-                $this->assign('url', $this->url);
-                $this->display('wxpay');
-                exit;
+                if ($into_data['jspay_type'] == 1) {
+                    $this->url = 'https://gateway.starpos.com.cn/sysmng/bhpspos4/5533020.do';
+                    $money = $price * 100;
+                    $this->notify_url = "https://sy.youngport.com.cn/Pay/Barcode/weixipay_return000/price/{$money}/sub_openid/{$sub_openid}/remark/{$remark}/mid/{$cate_info[merchant_id]}";
+                    $params['opsys'] = '0';
+                    $params['characterset'] = $this->characterSet;
+                    $params['orgno'] = $this->orgNo;
+                    $params['mercid'] = $this->mercId;
+                    $params['trmno'] = $this->trmNo;
+                    $params['tradeno'] = $remark;
+                    $params['trmtyp'] = 'W';
+                    $params['txntime'] = date('YmdHis');
+                    $params['signtype'] = $this->signType;
+                    $params['version'] = 'V1.0.0';
+                    $params['amount'] = $price * 100;
+                    $params['total_amount'] = $price * 100;
+                    $params['paychannel'] = 'WXPAY'; //支付宝	ALIPAY 微信	WXPAY 银联	YLPAY
+                    $params['paysuccurl'] = $this->notify_url;
+                    $params['signvalue'] = $this->getSign($params);
+                    $this->writlog('JS_two_wx_pay.log', 'payParams：' . json_encode($params));
+                    $this->assign('data', $params);
+                    $this->assign('url', $this->url);
+                    $this->display('wxpay');
+                    exit;
+                } else {
+                    header("content-type:text/html;charset=utf-8");
+//                    $this->url = $this->server . 'pubSigQry.json';
+//                    $params['orgNo'] = $this->orgNo;
+//                    $params['mercId'] = $this->mercId;
+//                    $params['trmNo'] = $this->trmNo;
+//                    $params['txnTime'] = date('YmdHis');
+//                    $params['signType'] = $this->signType;
+//                    $params['version'] = $this->version;
+//                    $params['signValue'] = $this->getSign($params);
+//                    $this->writlog('JS_two_wx_pay.log', '查询-url：' . $this->url);
+//                    $this->writlog('JS_two_wx_pay.log', '查询-参数：' . json_encode($params));
+//                    $return = $this->requestPost(json_encode($params));
+//                    $result = json_decode(urldecode($return), true);
+//                    $this->writlog('JS_two_wx_pay.log', '查询-返回：' . json_encode($result));
+//                    if ($result['returnCode'] != '000000') {
+//                        $this->alert_err('网络异常，请稍后再试！');
+//                    }
+                    $this->url = $this->server . 'pubSigPay.json';
+                    $params['orgNo'] = $this->orgNo;
+                    $params['mercId'] = $this->mercId;
+                    $params['trmNo'] = $this->trmNo;
+                    $params['txnTime'] = date('YmdHis');
+                    $params['version'] = $this->version;
+                    $params['code'] = $code;
+                    $params['amount'] = (string)($price * 100);
+                    $params['total_amount'] = (string)($price * 100);
+                    $params['signValue'] = $this->getSign($params);
+                    $this->writlog('JS_two_wx_pay.log', '获取-url：' . $this->url);
+                    $this->writlog('JS_two_wx_pay.log', '获取-参数：' . json_encode($params));
+                    $return = $this->requestPost(json_encode($params));
+                    $result = json_decode(urldecode($return), true);
+                    $this->writlog('JS_two_wx_pay.log', '获取-返回：' . json_encode($result));
+                    if ($result['returnCode'] == '000000') {
+                        $payInfo = array(
+                            'timeStamp' => $result['apiTimestamp'],
+                            'package' => $result['apiPackage'],
+                            'paySign' => $result['apiPaysign'],
+                            'appId' => $result['apiAppid'],
+                            'signType' => $result['apiSigntype'],
+                            'nonceStr' => $result['apiNoncestr'],
+                        );
+                        $this->assign('body', json_encode($payInfo));
+                        $this->assign('price', $price);
+                        $this->assign('openid', $sub_openid);
+                        $this->assign('remark', $remark);
+                        $this->assign('mid', $cate_info['merchant_id']);
+                        $this->display("wx_pay");
+                    } else {
+                        $this->alert_err('网络异常，请稍后再试！');
+                    }
+                }
             } else {
                 $this->alert_err();
             }
@@ -719,6 +790,12 @@ class BarcodexdlbankController extends HomebaseController
                 header("Location: " . $url.$str);
             }
             $orderData = $this->payModel->where(array('remark' => $order_sn))->find();
+            if(!$orderData){
+                $orderData = $this->payModel->where(array('remark' => $result_arr['ChannelId']))->find();
+                if($orderData){
+                    $order_sn = $result_arr['ChannelId'];
+                }
+            }
             if($orderData){
                 if ($orderData['status'] == 0) {
                     if($result_arr['TxnAmt']*100 == $orderData['price']*100){

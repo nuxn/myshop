@@ -38,7 +38,7 @@ class IntosxfController extends AdminbaseController
         $bandconf = I('bandconf');
         $mno = I('mno');
         if($mch_name){
-            $map['m.merchant_name'] = array('like', $mch_name);
+            $map['b.cprRegNmCn'] = array('like', "%{$mch_name}%");
         }
         if($merchant_id){
             $map['b.merchant_id'] = $merchant_id;
@@ -54,13 +54,12 @@ class IntosxfController extends AdminbaseController
 
         $page = $this->page($count, 15);
         $info = $this->sxfModel
-            ->field('b.id,b.mno,b.err_msg,b.subMchId,b.task_code,b.merchant_id,b.status,b.qrcodeRate,b.add_time,m.merchant_name')
-            ->join('b left join ypt_merchants m on b.merchant_id=m.id')
+            ->alias('b')
+            ->field('b.id,b.mno,b.err_msg,b.subMchId,b.task_code,b.merchant_id,b.status,b.qrcodeRate,b.add_time,b.cprRegNmCn as merchant_name')
             ->where($map)
             ->order('b.id desc')
             ->limit($page->firstRow, $page->listRows)
             ->select();
-
         $this->assign("page", $page->show('Admin'));
         $this->assign("info", $info);
         $this->assign("map", I(''));
@@ -318,6 +317,7 @@ class IntosxfController extends AdminbaseController
                 return array(
                     'merchant_id' => $item['id'],
                     'mecDisNm' => $item['merchant_name'],
+                    'cprRegNmCn' => $item['merchant_name'],
                     'mno' => $info['mno'],
                     'status' => 4,
                     'subMchId' => $info['subMchId'],

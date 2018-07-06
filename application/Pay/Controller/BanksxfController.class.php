@@ -385,6 +385,7 @@ class BanksxfController extends HomebaseController
 //        $this->appId = $info['subMchId'];
     }
 
+    # 请求刷卡支付付款
     private function send_micropay()
     {
         $this->sxfModel->setParameters('mno', $this->mno);        // 商户入驻返回的商户编号
