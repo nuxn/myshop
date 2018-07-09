@@ -20,8 +20,15 @@ class TestController extends HomebaseController
         header("Content-Type: text/html;charset=utf-8");
         echo '客户端IP ' . get_client_ip() . '<br/><br/>';
         echo '服务器IP ' . $_SERVER['SERVER_ADDR'] . '<br/><br/>';
-        $pay = Subtable::getSubTableName('pay', '', '');
-        //print_r($pay);
+        //$pay = Subtable::getSubTableName('pay', '', '');
+        $sqlAll = Subtable::getSubTableUnionSql();
+        $order = M('order o')
+            //->join('ypt_pay p on p.remark=o.order_sn','left')
+            ->join('(' . $sqlAll . ')p  ON p.remark = o.order_sn', 'left')
+            ->field('(o.order_amount+o.user_money) as price,o.add_time,o.pay_time as paytime,p.paystyle_id,p.status')
+            ->select();
+        echo M()->_sql(), "\r\n", count($order);
+
         //Vendor('Wzpay.Wzpay');
         // (new \Wzpay())->notify();
     }
