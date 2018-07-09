@@ -482,7 +482,48 @@ class  ShopnewsController extends ApibaseController
                 $data = $this->merge_pay($data1,$data2);
                 break;
         }
+        $data = $this->dealData($data);
         $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
+    }
+
+    private function dealData($data)
+    {
+
+        $data['detail'] = array(
+            array('type'=>1,'price'=>$data['wx_price'],'nums'=>$data['wx_nums'],'poundage'=>$data['wx_poundage'],'settle'=>$data['wx_settle']),
+            array('type'=>2,'price'=>$data['ali_price'],'nums'=>$data['ali_nums'],'poundage'=>$data['ali_poundage'],'settle'=>$data['ali_settle']),
+            array('type'=>3,'price'=>$data['merchant_price'],'nums'=>$data['merchant_nums'],'poundage'=>$data['merchant_poundage'],'settle'=>$data['merchant_settle']),
+            array('type'=>4,'price'=>$data['union_price'],'nums'=>$data['union_nums'],'poundage'=>$data['union_poundage'],'settle'=>$data['union_settle']),
+            array('type'=>5,'price'=>$data['agent_price'],'nums'=>$data['agent_nums'],'poundage'=>$data['agent_poundage'],'settle'=>$data['agent_settle']),
+            array('type'=>6,'price'=>$data['cash_price'],'nums'=>$data['cash_nums'],'poundage'=>$data['cash_poundage'],'settle'=>$data['cash_settle'])
+        );
+        unset($data['wx_price']);
+        unset($data['wx_nums']);
+        unset($data['wx_poundage']);
+        unset($data['wx_settle']);
+        unset($data['ali_price']);
+        unset($data['ali_nums']);
+        unset($data['ali_poundage']);
+        unset($data['ali_settle']);
+        unset($data['merchant_price']);
+        unset($data['merchant_nums']);
+        unset($data['merchant_poundage']);
+        unset($data['merchant_settle']);
+        unset($data['union_price']);
+        unset($data['union_nums']);
+        unset($data['union_poundage']);
+        unset($data['union_settle']);
+        unset($data['agent_price']);
+        unset($data['agent_nums']);
+        unset($data['agent_poundage']);
+        unset($data['agent_settle']);
+        unset($data['cash_poundage']);
+        unset($data['cash_settle']);
+        unset($data['double_back']);
+        unset($data['cash_back']);
+        unset($data['double_back_nums']);
+        unset($data['cash_back_nums']);
+        return $data;
     }
 
     private function merge_pay($a,$b)
