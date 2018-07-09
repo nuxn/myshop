@@ -338,7 +338,7 @@ class IndexController extends PostbaseController
         //$jinri  = array('1491321600','1491407999');
         //p($users);
         $role_id = $this->role_users->where(array('uid' => $uid))->getField('role_id');
-        if ($role_id == 7) {
+        if ($role_id != 3) {
             $map['paytime'] = array('between', $jinri);
             $map['status'] = 1;
             $map['checker_id'] = $id;
@@ -369,7 +369,7 @@ class IndexController extends PostbaseController
     {
         $uid = $this->userId;
         $role_id = $this->role_users->where(array('uid' => $uid))->getField('role_id');
-        if ($role_id == 7) {
+        if ($role_id != 3) {
             $mid = $this->users->where(array('id' => $uid))->getField('pid');
         } else {
             $mid = $uid;
@@ -391,7 +391,7 @@ class IndexController extends PostbaseController
         $user_id = $this->userId;
         //$user_id  = '26';
         $role_id = $this->role_users->where(array('uid' => $user_id))->getField('role_id');
-        if ($role_id == 7) {
+        if ($role_id != 3) {
             $uid = $this->users->where(array('id' => $user_id))->getField('pid');
         } else {
             $uid = $user_id;
@@ -439,7 +439,7 @@ class IndexController extends PostbaseController
         //$p  = '1';
         $p = I('p');
         $role_id = $this->role_users->where(array('uid' => $user_id))->getField('role_id');
-        if ($role_id == 7) {
+        if ($role_id != 3) {
             $mid = $this->users->where(array('id' => $user_id))->getField('pid');
         } else {
             $mid = $user_id;
@@ -463,7 +463,7 @@ class IndexController extends PostbaseController
         $user_id = $this->userId;
         //$user_id  = 26;
         $role_id = $this->role_users->where(array('uid' => $user_id))->getField('role_id');
-        if ($role_id == 7) {
+        if ($role_id != 3) {
             $mid = $this->users->where(array('id' => $user_id))->getField('pid');
         } else {
             $mid = $user_id;
@@ -689,7 +689,7 @@ class IndexController extends PostbaseController
         //$user_id =209;
         //$cat_id = 1;
         $role_id = $this->role_users->where(array('uid' => $user_id))->getField('role_id');
-        if ($role_id == 7) {
+        if ($role_id != 3) {
             $uid = $this->users->where(array('id' => $user_id))->getField('pid');
         } else {
             $uid = $user_id;
@@ -749,7 +749,7 @@ class IndexController extends PostbaseController
         //$user_id =209;
         //$cat_id = 1;
         $role_id = $this->role_users->where(array('uid' => $user_id))->getField('role_id');
-        if ($role_id == 7) {
+        if ($role_id != 3) {
             $uid = $this->users->where(array('id' => $user_id))->getField('pid');
         } else {
             $uid = $user_id;
@@ -1547,7 +1547,7 @@ class IndexController extends PostbaseController
         $user_id = $this->userId;
         //p($user_id);
         $role_id = $this->role_users->where(array('uid' => $user_id))->getField('role_id');
-        if ($role_id == 7) {
+        if ($role_id != 3) {
             $uid = $this->users->where(array('id' => $user_id))->getField('pid');
             $agent_id = $this->users->where(array('id' => $uid))->getField('agent_id');
         } else {
@@ -1601,7 +1601,7 @@ class IndexController extends PostbaseController
     {
         $user_id = $this->userId;
         $role_id = $this->role_users->where(array('uid' => $user_id))->getField('role_id');
-        if ($role_id == 7) {
+        if ($role_id != 3) {
             $uid = $this->users->where(array('id' => $user_id))->getField('pid');
         } else {
             $uid = $user_id;
@@ -1648,7 +1648,7 @@ class IndexController extends PostbaseController
         //$card_code = '426064753830';
         /* $user_id = $this->userId;
              $role_id = M('merchants_role_users')->where(array('uid'=>$user_id))->getField('role_id');
-             if($role_id == 7){
+             if($role_id != 3){
                  $uid = M('merchants_users')->where(array('id'=>$user_id))->getField('pid');
              }else{
                  $uid = $user_id;
@@ -1706,7 +1706,7 @@ class IndexController extends PostbaseController
         $status = I("status");
         $mode = I("mode");
         $time = $this->type_time($type);
-        if ($role_id == 7) {
+        if ($role_id != 3) {
             $pays = $this->customer_detail($user_id, $time, $paystyle, $status, $mode);
         } else {
             $pays = $this->merchant_detail($user_id, $time, $paystyle, $status, $mode);

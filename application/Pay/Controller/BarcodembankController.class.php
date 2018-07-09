@@ -53,13 +53,6 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
         $merchant = M("merchants_cate")->where("merchant_id=$id")->find();
         $openid = 'oyaFdwCeMYLJd7r8WRrXIBqKSGWI';
         $this->getOffer($merchant, $openid);
-//            $this->assign('discount', $this->discount);
-//            $this->assign('credits', $this->credits);
-//            $this->assign('credits_use', $this->credits_use);
-//            $this->assign('credits_discount', $this->credits_discount);
-//            $this->assign('yue', $this->yue);
-//            $this->assign('flag', $this->flag);
-//            $this->assign('card_code', $this->card_code);
         $this->assign('openid', $openid);
         $this->assign("merchant", $merchant);
         $this->assign('seller_id', $id);

@@ -312,7 +312,7 @@ class  PublicController extends ScreenbaseController
         if (in_array($role_id, array(2, 3))) {//商家代理
             if ($role_id == '3') return M("merchants")->where(array("uid" => $uid))->getField("merchant_name");
             else return M("merchants_agent")->where(array("uid" => $uid))->getField("agent_name");
-        } else if ($role_id == '7') {//收银员
+        } else if ($role_id != '3') {//收银员
             $pid = M("merchants_users")->where(array("id" => $uid))->getField("pid");
             return M("merchants")->where(array("uid" => $pid))->getField("merchant_name");
         } else {//其他

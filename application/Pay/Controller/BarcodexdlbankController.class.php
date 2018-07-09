@@ -971,22 +971,6 @@ class BarcodexdlbankController extends HomebaseController
         $this->ajaxReturn(array('RspCode'=>'000000','RspDes'=>'success'));exit;
     }
 
-    public function ttt()
-    {
-        $str = '{"status":1,"merchant_id":"966","paytime":1521744582,"transId":"UD180323A01175300702492689394894","new_order_sn":"UD180323A01175300702492689394894","la_ka_la":0,"add_time":1521744583,"bill_date":"20180323","price":"3100","remark":"20180323024943435246","remark_mer":"201803230209556524","bank":"11","cost_rate":"0.35","subject":"\u7535\u5b50\u7acb\u724c\u652f\u4ed83100\u5143","paystyle_id":"1","mode":"20"}';
-        $arr = json_decode($str, true);
-        $remark = $arr['ChannelId'];
-        $dn_res = $this->payModel->where(array('remark' => $remark))->getField('id');
-//        $dn_res = $this->payModel->add($arr);
-        echo M()->getLastSql();
-        dump($dn_res);
-        if($dn_res){
-            echo 'aaa';
-        } else {
-            echo '000';
-        }
-
-    }
     private function addOrder($info)
     {
         $remark = $info['ChannelId'];
@@ -1114,7 +1098,7 @@ class BarcodexdlbankController extends HomebaseController
                 $result = $queryRes['result'];
                 if ($result == 'S') {   // 支付成功
                     $brr = array("status" => "1", "paytime" => time(), 'transId' => $queryRes['logNo'], 'new_order_sn' => $result['orderNo'],);
-                    $this->writlog('micro.log', 'querySucc：' . json_encode($queryRes));
+                    $this->writlog('micro.log', '密码正确：' . json_encode($queryRes));
                     $this->payModel->where(array("remark" => $order_sn))->save($brr);
                     return array("code" => "success", "msg" => "失败", "data" => '支付失败');
                 } else if ($result == 'A') {    // 等待密码

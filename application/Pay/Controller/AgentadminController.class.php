@@ -693,7 +693,8 @@ class AgentadminController extends AdminbaseController
         if ($uids) {
             $pay = $this->pay
                 ->alias('a')
-                ->field('a.id,a.merchant_id,a.mode,a.bank,a.paystyle_id,a.status,a.bill_id,a.paytime,a.remark,a.repaid_rate,a.price,a.min_repaid_amount,a.poundage,a.cost_rate,a.cardtype,a.paystyle_id,a.agent_status,a.min_repaid_amount,u.merchant_name as user_name,b.user_phone,c.agent_name')
+                ->field('a.id,a.merchant_id,a.mode,a.bank,a.paystyle_id,a.status,a.bill_id,a.paytime,a.remark,a.repaid_rate,a.price,
+                a.min_repaid_amount,a.poundage,a.cost_rate,a.cardtype,a.paystyle_id,a.agent_status,a.min_repaid_amount,u.merchant_name as user_name,b.user_phone,c.agent_name')
                 ->join("left join __MERCHANTS__ u on a.merchant_id = u.id")
                 ->join("left join __MERCHANTS_USERS__ b on u.uid = b.id")
                 ->join('left join __MERCHANTS_AGENT__ c on c.uid = b.pid')
