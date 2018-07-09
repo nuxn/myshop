@@ -102,6 +102,7 @@ class Common_util_pub
         $String = $this->formatBizQueryParaMap($Parameters, false);
         //签名步骤二：在string后加入KEY
         $String = $String . "&key=" . WxPayConf_pub::KEY;
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/weixin/','getSign','支付字符串',$String);
         //签名步骤三：MD5加密
         $String = md5($String);
         //签名步骤四：所有字符转为大写
@@ -905,6 +906,7 @@ class WxPayMicroPay extends Wxpay_client_pub
      */
     public function pay()
     {
+        $remark = $this->parameters['out_trade_no'];
         $this->parameters["spbill_create_ip"] = $_SERVER['REMOTE_ADDR'];//终端ip
         $this->url = WxPayConf_pub::MICROPAY_URL;
         $this->curl_timeout = 5;
@@ -917,35 +919,13 @@ class WxPayMicroPay extends Wxpay_client_pub
         unset($result['sign']);
         $_sign = $this->getSign($result);
         if ($sign != $_sign) {
+            get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/weixin/','getSign','签名错误',$_sign);
             return array('flag' => false, 'msg' => "签名错误！");
         }
         //如果返回成功
-        /*if (!array_key_exists("return_code", $result)
-            || !array_key_exists("out_trade_no", $result)
-            || !array_key_exists("result_code", $result)
-        ) {
-            return array('flag' => false, 'msg' => "接口调用失败,请确认是否输入是否有误！");
-//            throw new WxPayException("接口调用失败！");
-        }
-        $out_trade_no = $this->parameters['out_trade_no'];
 
-        //②、接口调用成功，明确返回调用失败
-        if ($result["return_code"] == "SUCCESS" &&
-            $result["result_code"] == "FAIL" &&
-            $result["err_code"] != "USERPAYING" &&
-            $result["err_code"] != "SYSTEMERROR"
-        ) {
-            return array('flag' => false, 'msg' => $result["err_code"]);
-        }*/
-        $out_trade_no = $this->parameters['out_trade_no'];
-        $pay_change = M("pay");
+        $out_trade_no = $remark;
         if ($result["return_code"] == "SUCCESS" && $result["result_code"] == "SUCCESS") {
-            $data['wx_remark'] = $result['transaction_id'];
-            $data['customer_id'] = $result['openid'];
-            $data['status'] = 1;
-            if ($pay_change->where("remark=$out_trade_no")->find()) {
-                $pay_change->where("remark=$out_trade_no")->save($data);
-            }
             return array('flag' => true, 'message' => "支付成功");
         } elseif ($result["return_code"] == "SUCCESS" && $result["result_code"] == "FAIL") {
             //③、确认支付是否成功
@@ -959,11 +939,6 @@ class WxPayMicroPay extends Wxpay_client_pub
                 if ($succResult == 2) {
                     continue;
                 } else if ($queryResult == 1) {//查询成功
-                    $data['customer_id'] = $queryResult['openid'];
-                    $data['status'] = 1;
-                    if ($pay_change->where("remark=$out_trade_no")->find()) {
-                        $pay_change->where("remark=$out_trade_no")->save($data);
-                    }
                     return array('flag' => true, 'msg' => "支付成功");
                 } else {//订单交易失败
                     return array('flag' => false, 'msg' => "订单交易失败");
@@ -1003,6 +978,8 @@ class WxPayMicroPay extends Wxpay_client_pub
         if(!$this->sub_mch_id){
             $this->sub_mch_id = M('pay p')->join('ypt_merchants_upwx wx on wx.mid=p.merchant_id', 'left')->where("p.remark='$out_trade_no'")->getField('sub_mchid');
         }
+
+        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/weixin/','pay_query','查询','订单号:' . $out_trade_no . '，参数:' . $this->sub_mch_id);
         $this->parameters["sub_mch_id"] = $this->sub_mch_id;
         $this->url = WxPayConf_pub::ORDER_QUERY_URL;
 

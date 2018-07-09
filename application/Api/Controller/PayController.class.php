@@ -148,13 +148,17 @@ class  PayController extends ApibaseController
         if ($checker_id == $this->uid) {
             $u_id = M("merchants_users")->where("id=$checker_id")->getField("pid");
         } else {
-            $u_id = $this->uid;
+            if($this->userInfo['role_id'] != 3){
+                $u_id = M("merchants_users")->where("id=$this->uid")->getField("boss_id");;
+            } else {
+                $u_id = $this->uid;
+	    }
         }
         $id = $this->merchants->where("uid=$u_id")->getField("id");
         $res = $this->cates->field('status,wx_bank,ali_bank,is_ypt')->where(array("merchant_id" => $id, 'status' => 1))->find();
 //        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/Apiscreen/','barcode_pay','res',json_encode($res));
         // dump($number);dump($res['ali_bank']);
-        if ($res['status'] == 0) $this->ajaxReturn(array("code" => "error", "msg" => "失败1"));
+        if ($res['status'] == 0) $this->ajaxReturn(array("code" => "error", "msg" => "失败1",'data'=>$res));
         if ($number == "10" || $number == "11" || $number == "12" || $number == "13" || $number == "14" || $number == "15" && strlen($code) == 18) {//微信支付
             #洋仆淘预收款，1.9版本
             /*if($res['is_ypt'] == 1) {
@@ -283,7 +287,7 @@ class  PayController extends ApibaseController
                 $message = A("Pay/Barcodexdlbank")->wx_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, $mode);
                 get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/test/', 'api-pay', ':日志', json_encode($message));
                 if ($message['code'] == "error") {
-                    $this->ajaxReturn(array("code" => "error", "msg" => "error"));
+                    $this->ajaxReturn(array("code" => "error", "msg" => "error1"));
                 }
                 if ($message['code'] == "success") {
                     $pay = $this->pays->where("merchant_id=$id And price=$price And status=1")->order("paytime desc")->field("id,price,paystyle_id,mode,remark,paytime,status,jmt_remark")->find();
@@ -1220,7 +1224,7 @@ class  PayController extends ApibaseController
             $order_info["card_code"] = $card_code;//会员卡号
             $this->check_preferential($card_code, $order_info["user_money"], $order_info['integral'], $code);
             $role_id = M('merchants_role_users')->where(array('uid' => $user_id))->getField('role_id');
-            if ($role_id == '7') {
+            if ($role_id != '3') {
                 $pid = M('merchants_users')->where(array('id' => $user_id))->getField('pid');
                 $merchant_id = M('merchants')->where(array('uid' => $pid))->getField('id');
                 $checker_id = $this->userId;
@@ -1301,7 +1305,7 @@ class  PayController extends ApibaseController
             $jmt_remark = I('jmt_remark', '');
             $user_id = $this->userId;
             $role_id = M('merchants_role_users')->where(array('uid' => $user_id))->getField('role_id');
-            if ($role_id == '7') {
+            if ($role_id != '3') {
                 $pid = M('merchants_users')->where(array('id' => $user_id))->getField('pid');
                 $merchant_id = M('merchants')->where(array('uid' => $pid))->getField('id');
                 $checker_id = $this->userId;

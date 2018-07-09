@@ -370,8 +370,7 @@ class WxpayController extends HomebaseController
         $product = "向" . $res['jianchen'] . "支付" . $price . "元";
         $this->pay_model->add($data);
 
-        $data = array('pay_money' => $price, 'auth_code' => $auth_code, 'remark' => $remark, 'merchant_code' => $mchid, 'product' => $product, 'key' => $key);
-        get_date_dir($_SERVER['DOCUMENT_ROOT'] . '/data/log/weixin/','pay_micro','请求支付',json_encode($data));
+//        $data = array('pay_money' => $price, 'auth_code' => $auth_code, 'remark' => $remark, 'merchant_code' => $mchid, 'product' => $product, 'key' => $key);
         $input = new \WxPayMicroPay();
         $input->setParameter("auth_code", "$auth_code");    // 授权码
         $input->setParameter("body", "$product");  // 商品描述
@@ -380,18 +379,17 @@ class WxpayController extends HomebaseController
         $input->setParameter("sub_mch_id", $mchid);    // 子商户号
 
         $result = $input->pay();
-        get_date_dir($this->path,'pay_micro','刷卡支付',':micropay:订单号:' . $remark.',返回参数:'.json_encode($result));
         if ($result['flag'] == false) {
-            A("Pay/Barcode")->push_pay_message($remark);
+            get_date_dir($this->path,'pay_micro','失败',':micropay:订单号:' . $remark.',返回参数:'.json_encode($result));
             return array("code" => "error", "msg" => "失败", "data" => $result['msg']);
+//            A("Pay/Barcode")->push_pay_message($remark);
         } else {
-            $pay_change = $this->pay_model;
-            $data['paytime'] = time();
-            $data['status'] = 1;
-            if ($pay_change->where("remark=$remark")->find()) $pay_change->where("remark=$remark")->save($data);
-            A("App/PushMsg")->push_pay_message($remark);
-            //A("Pay/Barcode")->push_pay_message($remark);
+            get_date_dir($this->path,'pay_micro','成功',':micropay:订单号:' . $remark.',返回参数:'.json_encode($result));
+            $save['paytime'] = time();
+            $save['status'] = 1;
+            $this->pay_model->where(array('remark' => $remark))->save($save);
             return array("code" => "success", "msg" => "成功", "data" => $result['msg']);
+            A("App/PushMsg")->push_pay_message($remark);
         }
 
     }

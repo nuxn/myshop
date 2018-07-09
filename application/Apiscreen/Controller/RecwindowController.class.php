@@ -675,8 +675,8 @@ class RecwindowController extends ScreenbaseController
             $two_type = I('two_type', 1);   //行业类别   1=便利店  2=餐饮
             // $order_info["group_id"]  = I('group_id');
             $role_id = M('merchants_role_users')->where(array('uid' => $user_id))->getField('role_id');
-            if ($role_id == '7') {
-                $pid = M('merchants_users')->where(array('id' => $user_id))->getField('pid');
+            if ($role_id != '3') {
+                $pid = M('merchants_users')->where(array('id' => $user_id))->getField('boss_id');
                 $merchant_id = M('merchants')->where(array('uid' => $pid))->getField('id');
                 $checker_id = $this->userId;
             } else {
