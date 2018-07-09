@@ -164,16 +164,16 @@ class OrderModel extends Model
         }
         $data['province'] = M('area')->where(array('id'=>$data['area_id']))->getField('name')?:'';
         //查询订单商品
-        $field = 'goods_id,goods_name,goods_num,spec_key_name as spec_key,goods_img,goods_price';
+        $field = 'goods_id,goods_name,goods_num,spec_key,spec_key_name,goods_img,goods_price';
         $data['goods'] = M('order_goods')->where(array('order_id'=>$order_id))->field($field)->select();
         $good_price=0;
         foreach($data['goods'] as &$v){
             if (!$v['goods_img']) {
                 $v['goods_img'] = M('goods')->where(array('goods_id'=>$v['goods_id']))->getField('goods_img1');
             }
-            if (!$v['spec_key']) {
+            if (!$v['spec_key_name']) {
                 $units_id = M('goods')->where(array('goods_id'=>$v['goods_id']))->getField('units_id');
-                $v['spec_key'] = (string)M('units')->where(array('id'=>$units_id))->getField('unit_name');
+                $v['spec_key_name'] = (string)M('units')->where(array('id'=>$units_id))->getField('unit_name');
             }
             $picture = $v['goods_img'];
             if(preg_match("/\x20*https?\:\/\/.*/i",$v['goods_img'])){

@@ -471,15 +471,36 @@ class  ShopnewsController extends ApibaseController
                 $data2 = $this->later_pay($uid,$time);
                 $data = $this->merge_pay($data1,$data2);
                 break;
+            case '7';
+                $time[0] = I('start_time');
+                $time[1] = I('end_time');
+                $data1 = array();
+                if(date('ymd')==date('ymd',$time[1])){
+                    $data1 = $this->today_pay($uid);
+                }
+                $data2 = $this->later_pay($uid,$time);
+                $data = $this->merge_pay($data1,$data2);
+                break;
         }
-        dump($data);
-        dump($data1);
-        die;
+        $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
     }
 
-    private function merge_pay($param,$param1)
+    private function merge_pay($a,$b)
     {
-
+        //根据键名获取两个数组的交集
+        $arr=array_intersect_key($a, $b);
+        //遍历第二个数组，如果键名不存在与第一个数组，将数组元素增加到第一个数组
+        foreach($b as $key=>$value){
+            if(!array_key_exists($key, $a)){
+                $a[$key]=$value;
+            }
+        }
+        //计算键名相同的数组元素的和，并且替换原数组中相同键名所对应的元素值
+        foreach($arr as $key=>$value){
+            $a[$key]=$a[$key]+$b[$key];
+        }
+        //返回相加后的数组
+        return $a;
     }
 
     private function later_pay($uid,$time)
@@ -491,7 +512,7 @@ class  ShopnewsController extends ApibaseController
         }
         $map['uid'] =array('in',$uid);
         $data = M('pay_statistics')
-            ->field('sum(wx_price) as wx_price,sum(ali_price) as ali_price,sum(union_price) as union_price,sum(cash_price) as cash_price,sum(merchant_price) as merchant_price,sum(agent_price) as agent_price,sum(wx_nums) as wx_nums,sum(ali_nums) as ali_nums,sum(union_nums) as union_nums,sum(cash_nums) as cash_nums,sum(merchant_nums) as merchant_nums,sum(agent_nums) as agent_nums,sum(double_back) as double_back,sum(cash_back) as cash_back,sum(double_back_nums) as double_back_nums,sum(cash_back_nums) as cash_back_nums,sum(wx_poundage) as wx_poundage,sum(ali_poundage) as ali_poundage,sum(union_poundage) as union_poundage,sum(cash_poundage) as cash_poundage,sum(merchant_poundage) as merchant_poundage,sum(agent_poundage) as agent_poundage,sum(order_benefit) as order_benefit,sum(order_benefit_nums) as order_benefit_nums')
+            ->field('ifnull(sum(wx_price),0) as wx_price,ifnull(sum(ali_price),0) as ali_price,ifnull(sum(union_price),0) as union_price,ifnull(sum(cash_price),0) as cash_price,ifnull(sum(merchant_price),0) as merchant_price,ifnull(sum(agent_price),0) as agent_price,ifnull(sum(wx_nums),0) as wx_nums,ifnull(sum(ali_nums),0) as ali_nums,ifnull(sum(union_nums),0) as union_nums,ifnull(sum(cash_nums),0) as cash_nums,ifnull(sum(merchant_nums),0) as merchant_nums,ifnull(sum(agent_nums),0) as agent_nums,ifnull(sum(double_back),0) as double_back,ifnull(sum(cash_back),0) as cash_back,ifnull(sum(double_back_nums),0) as double_back_nums,ifnull(sum(cash_back_nums),0) as cash_back_nums,ifnull(sum(wx_poundage),0) as wx_poundage,ifnull(sum(ali_poundage),0) as ali_poundage,ifnull(sum(union_poundage),0) as union_poundage,ifnull(sum(cash_poundage),0) as cash_poundage,ifnull(sum(merchant_poundage),0) as merchant_poundage,ifnull(sum(agent_poundage),0) as agent_poundage,ifnull(sum(order_benefit),0) as order_benefit,ifnull(sum(order_benefit_nums),0) as order_benefit_nums')
             ->where($map)
             ->find();
         $data['total_price'] = $data['wx_price']+$data['ali_price']+$data['union_price']+$data['cash_price']+$data['merchant_price']+$data['agent_price'];
