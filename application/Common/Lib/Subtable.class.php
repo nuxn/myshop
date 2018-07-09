@@ -25,7 +25,7 @@ class Subtable
      * 返回分表起始日期
      * @return string
      */
-    static public function beginDate()
+    public static function beginDate()
     {
         return TABLE_ID;
     }
@@ -37,7 +37,7 @@ class Subtable
      * @param null $tablePrefix 表前缀
      * @return string 分表表名
      */
-    static public function getSubTableName($tableName = '', $param = array(), $tablePrefix = null)
+    public static function getSubTableName($tableName = '', $param = array(), $tablePrefix = null)
     {
 
         if ($tablePrefix === null) $tablePrefix = '';# 默认M方法调用不要前缀
@@ -58,7 +58,7 @@ class Subtable
      * @param $tableName
      * @param $sql
      */
-    static public function createTable($tableName = '', $sql = '')
+    private static function createTable($tableName = '', $sql = '')
     {
         try {
             $Model = M();
@@ -102,7 +102,7 @@ class Subtable
      * 支付成功表
      * @param string $tableName
      */
-    public static function pay($tableName = '')
+    private static function pay($tableName = '')
     {
         $sql = "(`id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID自增编号',
   `merchant_id` int(11) NOT NULL COMMENT '商户ID(商户表主键)',
@@ -162,7 +162,7 @@ class Subtable
      * 订单表
      * @param string $tableName
      */
-    public static function order($tableName = '')
+    private static function order($tableName = '')
     {
         $sql = " (
   `order_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '订单id',
@@ -235,5 +235,68 @@ class Subtable
 ) ENGINE=InnoDB AUTO_INCREMENT=42328 DEFAULT CHARSET=utf8 COMMENT='订单表'";
 
         self::createTable($tableName, $sql);
+    }
+
+    /**
+     * 返回联表查询的sql语句
+     * @param string $tableName 原始表名
+     * @param string $sql 原始sql
+     * @param int $queryType 联表查询类型 1 联表查询 2 子查询
+     * @return string 拼装后的sql
+     */
+    public static function getSubTableUnionSql($tableName = '', $sql = '', $queryType = 1)
+    {
+        if ($queryType == 1) {
+
+            $sqlArray = array();# 存放分表的sql
+            $monthArray = self::getMonthDiff();
+
+            $sqlArray[] = $sql;
+
+            $limit = 30;# 限制查询数量
+            $limitArray = preg_split('/limit|LIMIT/', $sql, -1);# 匹配sql语句limit条数
+            if (!empty($limitArray[1])) {
+                $strToArr = explode(',', $limitArray[1]);
+                $limit = $strToArr[1] ?: $limit;
+            }
+
+            foreach ($monthArray as $ym) {
+                $sqlArray[] = str_replace("ypt_" . $tableName, "ypt_" . "$tableName" . "_" . $ym, "$sql") . "\r";
+            }
+
+            $sqlAll = implode('union ', $sqlArray);# 合并所有sql语句
+            $sqlAll = 'select * from (' . $sqlAll . ')temp limit ' . $limit;
+            unset($monthArray);
+            unset($sqlArray);
+            return $sqlAll;
+
+        } else {
+
+            if (!$sql) $sql = "SELECT pay0.paystyle_id,pay0.status,pay0.remark from ypt_pay pay0 \r";# 分表前sql
+            $sqlArray = array();# 存放分表的sql
+            $monthArray = self::getMonthDiff();
+
+            $sqlArray[] = $sql;
+            foreach ($monthArray as $ym) {
+                $sqlArray[] = 'SELECT pay' . $ym . '.paystyle_id, pay' . $ym . '.status,pay' . $ym . '.remark from ypt_pay_' . $ym . ' pay' . $ym . "\r";
+            }
+
+            $sqlAll = implode('union ', $sqlArray);# 合并所有sql语句
+            unset($monthArray);
+            unset($sqlArray);
+            return $sqlAll;
+        }
+    }
+
+    /**
+     *获取相差的月份
+     */
+    public static function getMonthDiff()
+    {
+        $beginMonth = Subtable::beginDate();# 获取分表起始年月
+        $beginMonth = '20' . mb_substr($beginMonth, 0, 2) . '-' . mb_substr($beginMonth, -2);# 起始年月
+        $currentMonth = date('Y-m', time());# 结束年月(当前年月)
+        $monthArray = get_month_diff(strtotime($beginMonth), strtotime($currentMonth));# 获取分表月份
+        return $monthArray;
     }
 }

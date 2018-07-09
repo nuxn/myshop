@@ -18,17 +18,22 @@ class TestController extends HomebaseController
     public function test()
     {
         header("Content-Type: text/html;charset=utf-8");
-        echo '客户端IP ' . get_client_ip() . '<br/><br/>';
-        echo '服务器IP ' . $_SERVER['SERVER_ADDR'] . '<br/><br/>';
-        //$pay = Subtable::getSubTableName('pay', '', '');
-        $sqlAll = Subtable::getSubTableUnionSql();
-        $order = M('order o')
-            //->join('ypt_pay p on p.remark=o.order_sn','left')
-            ->join('(' . $sqlAll . ')p  ON p.remark = o.order_sn', 'left')
-            ->field('(o.order_amount+o.user_money) as price,o.add_time,o.pay_time as paytime,p.paystyle_id,p.status')
-            ->select();
-        echo M()->_sql(), "\r\n", count($order);
+        echo '客户端IP ', get_client_ip(), "\r\n\r\n";
+        echo '服务器IP ', $_SERVER['SERVER_ADDR'], "\r\n\r\n";
+        //$pay = Subtable::getSubTableName('pay', '', '');# 获取分表表名
+        //$sqlAll = Subtable::getSubTableUnionSql();# 返回基于分表后完整的sql语句
 
+        M('order o')
+            ->join('ypt_pay p on p.remark=o.order_sn', 'left')
+            ->field('(o.order_amount+o.user_money) as price,o.add_time,o.pay_time as paytime,p.paystyle_id,p.status')
+            ->where('card_code is not null')
+            // ->limit(40,20)
+            ->select(false);
+        $baseSql = M()->_sql();
+        //echo $baseSql;
+        $sqlAll = Subtable::getSubTableUnionSql('pay', $baseSql);
+        $rs = M()->query($sqlAll);
+        echo $sqlAll, count($rs), "\r\n";
         //Vendor('Wzpay.Wzpay');
         // (new \Wzpay())->notify();
     }
