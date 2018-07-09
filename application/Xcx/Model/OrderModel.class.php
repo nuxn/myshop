@@ -57,7 +57,8 @@ class OrderModel extends Model
     public function lists($mid,$status,$type,$page)
     {
         if ($status==6){
-            $this->pay_back($mid,$type,$page);
+            $order = $this->pay_back($mid,$type,$page);
+            return $order;
         }
 		$where = array('user_id'=>$mid);
 		switch($status){
@@ -87,7 +88,8 @@ class OrderModel extends Model
     public function lists_y($mid,$status,$type,$page,$role)
     {
         if ($status==6){
-            $this->pay_back($mid,$type,$page);
+            $order = $this->pay_back($mid,$type,$page);
+            return $order;
         }
         $where = array('user_id'=>$mid);
         if ($role) {
@@ -149,10 +151,10 @@ class OrderModel extends Model
         // $where['user_id'] = $mid;
         $type = $this->where($where)->getField('type');
         if ($type==1){
-            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,consignee';
+            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,consignee,paystyle';
 
         }elseif($type==2){
-            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_no,dc_db,dc_db_price,dc_ch_price,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,user_note,real_price,consignee';
+            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_no,dc_db,dc_db_price,dc_ch_price,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,user_note,real_price,consignee,paystyle';
         }
         $data = $this->where($where)->field($field)->find();
         $data['dc_no']= (string)$data['dc_no'];
