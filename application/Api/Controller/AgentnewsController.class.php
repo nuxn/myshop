@@ -232,28 +232,59 @@ class  AgentnewsController extends ApibaseController
         $order = I("price_order");
         $time = $this->type_time($type);
         switch ($type){
-            case 1;
+            case '1':
                 $data = $this->today_pay($id,$type,$role,$order);
                 break;
-            case 2;
-                $data = $this->later_pay($id,$type,$role,$order,$time);
+            case '2,5,6':
+                $data1 = $this->later_pay($id,$type,$role,$time);
+                $data = $this->sort_pay($data1,$order);
+                break;
+            case '3,4':
+                $data1 = $this->today_pay($id,$type,$role,$order);
+                $data2 = $this->later_pay($id,$type,$role,$time);
+                $data = $this->sort_pay($data1,$data2,$order);
+
+                break;
+            default:
+                $data1 = $this->today_pay($id,$type,$role,$order);
+                $data2 = $this->later_pay($id,$type,$role,$time);
+                $data = $this->sort_pay($data1,$data2,$order);
                 break;
         }
         $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => $data));
     }
 
-
-    function later_pay($id,$type,$role,$order,$time)
+    public function sort_pay($param,$param2,$order)
     {
+        if ($param2) {
+            foreach ($param2 as $key => $value) {
+                array_push($param,$value);
+            }
+        }
 
+        foreach ($param as $ke => $va) {
+            $d[$ke]  = $va['total_price'];
+        }
+        if ($order) {
+            array_multisort($d, SORT_DESC, $param);
+        }else{
+            array_multisort($d, SORT_ASC, $param);
+        }
+
+        return $param;
+    }
+
+    function later_pay($id,$type,$role,$time)
+    {
         //定义条件  时间条件
-        $start_time = date('Ymd',$time[0]);
-        $end_time = date('Ymd',$time[1]);
-        echo '----------'.$start_time.'--'.$end_time.'-----';
+        $time[0] = date('Ymd',$time[0]);
+        $time[1] = date('Ymd',$time[1]);
+        // echo '----------'.$time[0].'--'.$time[1].'-----';
         //
         //定义条件 根据选择的类型判断属于全部0，商户3，代理2
         //定义条件 排序
         $map['agent_id'] = $id;
+        $map['status'] = 0;
         switch ($role) {
             case 0:
                 break;
@@ -266,19 +297,72 @@ class  AgentnewsController extends ApibaseController
         }
         $down = $this->users->alias("u")
             ->join("left join __MERCHANTS_ROLE_USERS__ ur on ur.uid=u.id")
-            ->field("u.*,ur.role_id")
+            ->field("u.id,u.user_name,u.agent_id,u.pid,ur.role_id")
             ->where($map)
-            ->order("role_id asc,add_time desc");
+            ->order("role_id asc,u.add_time desc");
         if ($this->page !== null) {
             $down = $down->select();
             // $down = $down->limit($this->page,10)->select();
         } else {
             $down = $down->select();
         }
-        dump($down);
-        foreach ($down as $key => $value) {
-            # code...
+        // dump($down);
+        $new_message = array();
+        foreach ($down as $k => &$v) {
+            if ($v['agent_id'] == $v['pid']) {
+                $v['staff'] = "0";
+                $v['staff_name'] = "";
+            } else {
+                $user = $this->users->where('id=' . $v['pid'])->find();
+                $v['staff'] = $v['pid'];
+                $v['staff_name'] = $user['user_name'];
+            }
+
+
+//           判断是否是代理商
+            if ($v['role_id'] == 2) {
+                $pay = $this->agent_pay($v['id'], $time);dump($pay);
+                $data =array();
+                foreach ($pay as $key => $value) {
+                    $data['role_id'] = $v['role_id'];
+                    $data['id'] = $v['id'];
+                    $data['user_name'] = $v['user_name'];
+                    $data['staff'] = $v['staff'];
+                    $data['staff_name'] = $v['staff_name'];
+                    $data['paytime'] = date("Y-m-d", $value['date']);
+                    $data['week'] = $this->weekday($value['date']);
+                    $data['total_num'] = $value['total_num'];
+                    $data['total_price'] = $value['total_price'];
+                    array_push($new_message,$data);
+                }
+            } else if ($v['role_id'] == 3) {//           判断是否是商户
+                $pay = $this->merchant_pay($v['id'], $time);
+                $data =array();
+                foreach ($pay as $key => $value) {
+                    $data['role_id'] = $v['role_id'];
+                    $data['id'] = $v['id'];
+                    $data['user_name'] = $v['user_name'];
+                    $data['staff'] = $v['staff'];
+                    $data['staff_name'] = $v['staff_name'];
+                    $data['paytime'] = date("Y-m-d", $value['date']);
+                    $data['week'] = $this->weekday($value['date']);
+                    $data['total_num'] = $value['total_num'];
+                    $data['total_price'] = $value['total_price'];
+                    if ($data['total_num'] == 0) continue;
+                    array_push($new_message,$data);
+                }
+                // if ($total_price['total_num'] == 0) unset($down[$k]);
+
+            }
+
+            // if ($v['role_id'] == 6 || $v['role_id'] == 4 || $v['role_id'] == 5 || $v['role_id'] == 7) {//           其他的
+            //     unset($down[$k]);
+            // }
+            // if ($down[$k]) {
+            //     $new_message[] = $down[$k];
+            // }
         }
+        return $new_message;
 
     }
 
@@ -289,8 +373,8 @@ class  AgentnewsController extends ApibaseController
         } else {
             $order = "d";
         }
-        $number = $this->get_number($type);
-        $time = $this->type_time($type);
+        $number = $this->get_number(1);
+        $time = $this->type_time(1);
         $time = $time[1];
         $data = array();
         for ($i = 1; $i <= $number; $i++) {
@@ -304,7 +388,22 @@ class  AgentnewsController extends ApibaseController
             }
         }
         $data = $this->shuzu($data);
-        return $data;
+        // dump($data);
+        $res =array();
+        foreach ($data as $key => &$value) {
+            $v['id']= $value['id'];
+            $v['user_name']= $value['user_name'];
+            $v['role_id']= $value['role_id'];
+            $v['staff']= $value['staff'];
+            $v['staff_name']= $value['staff_name'];
+            $v['paytime']= $value['paytime'];
+            $v['week']= $value['week'];
+            $v['total_num']= $value['total_num'];
+            $v['total_price']= $value['total_price'];
+            array_push($res,$v);
+        }
+        // dump($res);
+        return $res;
     }
 
     /**
@@ -313,8 +412,9 @@ class  AgentnewsController extends ApibaseController
      * @param int $is_detail 是否需要微信和支付宝支付的细节
      * 返回该商户交易的总额
      */
-    function merchant_pay($id, $time = "",$role,$sort, $is_detail = 0)
+    function agent_pay($id, $time = "",$role,$sort, $is_detail = 0)
     {
+        // dump($time);
 //        $users_str = $this->get_category($id);
         $uses = M()->query('select getagentchild(' . $id . ') as uids');
         $users_str = $uses[0]['uids'];
@@ -322,12 +422,18 @@ class  AgentnewsController extends ApibaseController
         # 只查询角色是商户的信息
         $uids = M('merchants_role_users')->field('uid')->where(array('role_id' => 3, 'uid' => array('IN', $users_str)))->select();
         unset($users_str);
-
+        // dump($uids);
         $uids = array_map(function ($a) {
             return $a['uid'];
         }, $uids);
         if (!$uids) {
-            return array("paytime" => time(), 'total_num' => "0", 'total_price' => "0", 'per_weixin_num' => "0", 'per_ali_num' => "0", 'per_wei_price' => "0", 'per_ali_price' => "0");
+            $data = array();
+            for ($i=$time[0]; $i <=$time[1];) {
+                array_push($data,array("date" => strtotime($i), 'total_num' => "0", 'total_price' => "0"));
+                $i = date('Ymd',strtotime('+1 day',strtotime($i)));
+
+            }
+            return $data;
         }
         # 查询条件
         $map['uid'] = array('in', $uids);
@@ -340,11 +446,46 @@ class  AgentnewsController extends ApibaseController
             ifnull(sum( if( p.paystyle_id =1,p.price, 0)),0) as per_wei_price,ifnull(sum( if( p.paystyle_id =2,p.price, 0)),0) as per_ali_price";
             $pay = M('pay_statistics')->field($field)->where($map)->find();
         } else {
-            $field = "date,sum(wx_price) as wx_price,sum(ali_price) as ali_price,sum(cash_price) as cash_price,sum(union_price) as union_price,sum(merchant_price) as merchant_price,sum(agent_price) as agent_price,sum(wx_nums) as wx_nums,sum(ali_nums) as ali_nums,sum(cash_nums) as cash_nums,sum(union_nums) as union_nums,sum(merchant_nums) as merchant_nums,sum(agent_nums) as agent_nums";
+            $field = "date,sum(wx_price) as wx_price,sum(ali_price) as ali_price,sum(cash_price) as cash_price,sum(union_price) as union_price,sum(merchant_price) as merchant_price,sum(agent_price) as agent_price,sum(wx_nums) as wx_nums,sum(ali_nums) as ali_nums,sum(cash_nums) as cash_nums,sum(union_nums) as union_nums,sum(merchant_nums) as merchant_nums,sum(agent_nums) as agent_nums,uid";
             // dump($map);
+            $pay = M('pay_statistics')->field($field)->where($map)->group('date,uid')->select();
+            foreach ($pay as $key => &$value) {
+                $value['total_price'] = $value['wx_price']+$value['ali_price']+$value['cash_price']+$value['union_price']+$value['merchant_price']+$value['agent_price'];
+                $value['total_num'] = $value['wx_nums']+$value['ali_nums']+$value['cash_nums']+$value['union_nums']+$value['merchant_nums']+$value['agent_nums'];
+                $value['date'] = strtotime($value['date']);
+            }
+        }
+        return $pay;
+    }
+
+    /**
+     * @param $id  用户表里面的id
+     * @param int $time 按时间区分
+     * @param int $is_detail 是否需要微信和支付宝支付的细节
+     * 返回该商户交易的总额
+     */
+    function merchant_pay($id, $time = "",$role,$sort, $is_detail = 0)
+    {
+        // dump($id);
+        # 查询条件
+        $map['uid'] = $id;
+        if ($time != "") {
+            $map['date'] = array("between", $time);
+        }
+        if ($is_detail == 1) {
+            $field = "p.paytime,ifnull(sum(price),0) as total_price,count(p.id) as total_num,ifnull(sum( if( p.paystyle_id =1, 1, 0)),0) as per_weixin_num,ifnull(sum( if( p.paystyle_id =2, 1, 0)),0) as per_ali_num,
+            ifnull(sum( if( p.paystyle_id =1,p.price, 0)),0) as per_wei_price,ifnull(sum( if( p.paystyle_id =2,p.price, 0)),0) as per_ali_price";
             $pay = M('pay_statistics')->field($field)->where($map)->find();
-            $pay['total_num'] = $pay['wx_nums']+$pay['ali_nums']+$pay['cash_nums']+$pay['union_nums']+$pay['merchant_nums']+$pay['agent_nums'];
-            $pay['total_price'] = $pay['wx_price']+$pay['ali_price']+$pay['cash_price']+$pay['union_price']+$pay['merchant_price']+$pay['agent_price'];
+        } else {
+            $field = "date,wx_price,ali_price,cash_price,union_price,merchant_price, agent_price,wx_nums,ali_nums,cash_nums,union_nums,merchant_nums,agent_nums";
+            // dump($map);
+            $pay = M('pay_statistics')->field($field)->where($map)->select();
+            foreach ($pay as $key => &$value) {
+                $value['total_price'] = $value['wx_price']+$value['ali_price']+$value['cash_price']+$value['union_price']+$value['merchant_price']+$value['agent_price'];
+                $value['total_num'] = $value['wx_nums']+$value['ali_nums']+$value['cash_nums']+$value['union_nums']+$value['merchant_nums']+$value['agent_nums'];
+                $value['date'] = strtotime($value['date']);
+            }
+
         }
         return $pay;
     }
