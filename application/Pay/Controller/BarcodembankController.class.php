@@ -60,6 +60,20 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
         $this->display();
     }
 
+
+    //支付宝支付界面跳转
+    public function qr_alipay()
+    {
+//        if (strpos($_SERVER['HTTP_USER_AGENT'], 'AlipayClient') !== false) {
+            $id = I('id');
+            $merchant = M("merchants_cate")->where("id=$id")->find();
+            $this->assign("merchant", $merchant);
+            $this->assign('seller_id', $id);
+            $this->assign('redirect_url', 'Pay/Barcodezsbank/qr_to_alipay');
+            $this->display();
+//        }
+    }
+
     public function getOffer($merchant, $openid)
     {
         $merchant_id = $merchant['merchant_id'];
@@ -137,7 +151,7 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
             ->join('c left join ypt_merchants m on m.uid=c.mid')
             ->where(array('m.id' => $merchant_id))
             ->find();
-        // 判断会员卡的参数
+// 判断会员卡的参数
         if (empty($card_data)) {
             $this->discount = '';   // 折扣
             $this->credits = '';    // 本次可用积分
@@ -741,19 +755,6 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
         }
     }
 
-
-    //支付宝支付界面跳转
-    public function qr_alipay()
-    {
-        if (strpos($_SERVER['HTTP_USER_AGENT'], 'AlipayClient') !== false) {
-            $id = I('id');
-            $merchant = M("merchants_cate")->where("id=$id")->find();
-            $this->assign("merchant", $merchant);
-            $this->assign('seller_id', $id);
-            $this->assign('redirect_url', 'Pay/Barcodezsbank/qr_to_alipay');
-            $this->display();
-        }
-    }
 
 
     /**
