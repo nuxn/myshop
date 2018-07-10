@@ -57,7 +57,8 @@ class OrderModel extends Model
     public function lists($mid,$status,$type,$page)
     {
         if ($status==6){
-            $this->pay_back($mid,$type,$page);
+            $order = $this->pay_back($mid,$type,$page);
+            return $order;
         }
 		$where = array('user_id'=>$mid);
 		switch($status){
@@ -87,7 +88,8 @@ class OrderModel extends Model
     public function lists_y($mid,$status,$type,$page,$role)
     {
         if ($status==6){
-            $this->pay_back($mid,$type,$page);
+            $order = $this->pay_back($mid,$type,$page);
+            return $order;
         }
         $where = array('user_id'=>$mid);
         if ($role) {
@@ -149,10 +151,10 @@ class OrderModel extends Model
         // $where['user_id'] = $mid;
         $type = $this->where($where)->getField('type');
         if ($type==1){
-            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,consignee';
+            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,consignee,paystyle';
 
         }elseif($type==2){
-            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_no,dc_db,dc_db_price,dc_ch_price,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,user_note,real_price,consignee';
+            $field = 'order_id,order_status,order_sn,area_id,address,mobile,order_amount,order_benefit,total_amount,dc_no,dc_db,dc_db_price,dc_ch_price,dc_ps_price,add_time,coupon_price,integral_money,pay_time,discount_money,user_money,user_note,real_price,consignee,paystyle';
         }
         $data = $this->where($where)->field($field)->find();
         $data['dc_no']= (string)$data['dc_no'];
@@ -164,16 +166,16 @@ class OrderModel extends Model
         }
         $data['province'] = M('area')->where(array('id'=>$data['area_id']))->getField('name')?:'';
         //查询订单商品
-        $field = 'goods_id,goods_name,goods_num,spec_key_name as spec_key,goods_img,goods_price';
+        $field = 'goods_id,goods_name,goods_num,spec_key,spec_key_name,goods_img,goods_price';
         $data['goods'] = M('order_goods')->where(array('order_id'=>$order_id))->field($field)->select();
         $good_price=0;
         foreach($data['goods'] as &$v){
             if (!$v['goods_img']) {
                 $v['goods_img'] = M('goods')->where(array('goods_id'=>$v['goods_id']))->getField('goods_img1');
             }
-            if (!$v['spec_key']) {
+            if (!$v['spec_key_name']) {
                 $units_id = M('goods')->where(array('goods_id'=>$v['goods_id']))->getField('units_id');
-                $v['spec_key'] = (string)M('units')->where(array('id'=>$units_id))->getField('unit_name');
+                $v['spec_key_name'] = (string)M('units')->where(array('id'=>$units_id))->getField('unit_name');
             }
             $picture = $v['goods_img'];
             if(preg_match("/\x20*https?\:\/\/.*/i",$v['goods_img'])){

@@ -365,6 +365,7 @@ class  MerchantsRateController extends Controller
                     ->field('user_money,order_amount,total_amount,card_code,order_benefit,user_id')
                     ->find();
                 $card_rate = M('merchants_users')->where(array('id'=>$order['user_id']))->getField('card_rate');
+
                 if ($order['order_benefit']>0){
                     $order_benefit += $order['order_benefit'];   //支付优惠
                     $order_benefit_nums++;
@@ -383,8 +384,9 @@ class  MerchantsRateController extends Controller
                             $merchant_price += $order['user_money'];
                         }elseif($type=2){
                             //2=异业联盟盟卡
+                            $rate_price = M('balance_log')->where(array('order_sn'=>$v['remark']))->getField('rate_price');
                             $agent_price += $order['user_money'];
-                            $agent_poundage+=$order['user_money']*$card_rate/100;
+                            $agent_poundage+=$rate_price?$rate_price:0;
                         }
                     }else{
                         //判断储值支付类型  1=普卡  2=异业联盟盟卡
@@ -395,8 +397,9 @@ class  MerchantsRateController extends Controller
                             $merchant_nums++;
                         }elseif($type=2){
                             //2=异业联盟盟卡
+                            $rate_price = M('balance_log')->where(array('order_sn'=>$v['remark']))->getField('rate_price');
                             $agent_price += $order['user_money'];
-                            $agent_poundage+=$order['user_money']*$card_rate/100;
+                            $agent_poundage+=$rate_price?$rate_price:0;
                             $agent_nums++;
                         }
                     }
@@ -429,8 +432,9 @@ class  MerchantsRateController extends Controller
                         $merchant_nums++;
                     }elseif($type=2){
                         //2=异业联盟盟卡
+                        $rate_price = M('balance_log')->where(array('order_sn'=>$v['remark']))->getField('rate_price');
                         $agent_price += $order['user_money'];
-                        $agent_poundage+=$order['user_money']*$card_rate/100;
+                        $agent_poundage+=$rate_price?$rate_price:0;
                         $agent_nums++;
                     }
                 }
