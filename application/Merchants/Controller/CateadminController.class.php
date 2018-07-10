@@ -148,6 +148,7 @@ class CateadminController extends AdminbaseController{
             $this->shopcates->wx_key = trim($_POST['post']['wx_key']);
             $this->shopcates->merchant_id = $_POST['merchant_id'];
             $this->shopcates->wx_bank = $_POST['wx_bank'];
+            $this->shopcates->xcx_bank = $_POST['xcx_bank'];
             $this->shopcates->ali_bank = trim($_POST['ali_bank']);
             $this->shopcates->alipay_public_key = trim($_POST['alipay_public_key']);
             $this->shopcates->checker_id = $this->get_checker_id($_POST['checker_phone'],$_POST['merchant_id']);

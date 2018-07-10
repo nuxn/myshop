@@ -25,6 +25,7 @@ class OrderModel extends Model
             $field = 'order_id,order_status,order_sn,city,consignee,province,district,area_id,address,mobile,order_amount,total_amount,add_time';
             $order = $this->where($where)->page($page,15)->field($field)->select();
             foreach($order as $key=>$v){
+                $order[$key]['is_back'] = M('pay_back')->where(array('status'=>5,'remark'=>$v['order_sn']))->getField('id')?1:0;
                 if ($back = M('pay_back')->where(array('remark'=>$v['order_sn']))->field('remark,paytime,price,price_back,status')->find()) {
                     if ($back['status']==5) {
                         $data = array(
@@ -74,7 +75,7 @@ class OrderModel extends Model
 		$order = $this->where($where)->page($page,5)->field($field)->order('add_time desc')->select();
 		foreach($order as $key=>$v){
 				$order[$key]['city'] = '';
-
+                $order[$key]['is_back'] = M('pay_back')->where(array('status'=>5,'remark'=>$v['order_sn']))->getField('id')?1:0;
 				$order[$key]['district'] = '';
 				$province = M('area')->where(array('id'=>$v['area_id']))->getField('name');
 				$order[$key]['province'] = $province?:'';
@@ -108,7 +109,7 @@ class OrderModel extends Model
         $order = $this->where($where)->page($page,5)->field($field)->order('add_time desc')->select();
         foreach($order as $key=>$v){
                 $order[$key]['city'] = '';
-
+                $order[$key]['is_back'] = M('pay_back')->where(array('status'=>5,'remark'=>$v['order_sn']))->getField('id')?1:0;
                 $order[$key]['district'] = '';
                 $province = M('area')->where(array('id'=>$v['area_id']))->getField('name');
                 $order[$key]['province'] = $province?:'';
@@ -256,6 +257,7 @@ class OrderModel extends Model
             if ($order[$key]['status']==5){
                 $order[$key]['order_status']=6;
             }
+            $order[$key]['is_back'] = ($v['status']==5)?1:0;
             $order[$key]['district'] = '';
             $province = M('area')->where(array('id'=>$v['area_id']))->getField('name');
             $order[$key]['province'] = $province?:'';

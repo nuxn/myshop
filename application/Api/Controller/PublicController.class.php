@@ -921,7 +921,7 @@ class  PublicController extends ApibaseController
             $mid = $merchant['id'];
             $uids = $merchants->where("mid='$mid'")->field("uid")->order("id asc")->select();
             $phones = array();
-            $phones[] = array("user_phone" => $model->where("id=$u_id")->getField("user_phone"), "user_name" => $merchant['merchant_name']);
+            $phones[] = array("user_phone" => $model->where("id=$u_id")->getField("user_phone"), "user_name" => $merchant['merchant_name'],'uid'=>$u_id);
             foreach ($uids as $k => $v) {
                 unset($ab);
                 $ab = $v['uid'];
