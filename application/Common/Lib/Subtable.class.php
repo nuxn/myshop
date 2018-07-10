@@ -239,6 +239,7 @@ class Subtable
 
     /**
      * 返回联表查询的sql语句
+     * 调用示例 Subtable::getSubTableUnionSql('pay', 'SELECT * from ypt_pay');
      * @param string $tableName 原始表名
      * @param string $sql 原始sql
      * @param int $queryType 联表查询类型 1 联表查询 2 子查询
@@ -246,13 +247,13 @@ class Subtable
      */
     public static function getSubTableUnionSql($tableName = '', $sql = '', $queryType = 1)
     {
+        $sqlArray = array();# 存放分表的sql
+        $monthArray = self::getMonthDiff();
+        $tableName = strtolower($tableName);
+
         if ($queryType == 1) {
 
-            $sqlArray = array();# 存放分表的sql
-            $monthArray = self::getMonthDiff();
-
             $sqlArray[] = $sql;
-
             $limit = 30;# 限制查询数量
             $limitArray = preg_split('/limit|LIMIT/', $sql, -1);# 匹配sql语句limit条数
             if (!empty($limitArray[1])) {
@@ -266,26 +267,20 @@ class Subtable
 
             $sqlAll = implode('union ', $sqlArray);# 合并所有sql语句
             $sqlAll = 'select * from (' . $sqlAll . ')temp limit ' . $limit;
-            unset($monthArray);
-            unset($sqlArray);
-            return $sqlAll;
 
         } else {
 
             if (!$sql) $sql = "SELECT pay0.paystyle_id,pay0.status,pay0.remark from ypt_pay pay0 \r";# 分表前sql
-            $sqlArray = array();# 存放分表的sql
-            $monthArray = self::getMonthDiff();
-
             $sqlArray[] = $sql;
             foreach ($monthArray as $ym) {
                 $sqlArray[] = 'SELECT pay' . $ym . '.paystyle_id, pay' . $ym . '.status,pay' . $ym . '.remark from ypt_pay_' . $ym . ' pay' . $ym . "\r";
             }
 
             $sqlAll = implode('union ', $sqlArray);# 合并所有sql语句
-            unset($monthArray);
-            unset($sqlArray);
-            return $sqlAll;
         }
+        unset($monthArray);
+        unset($sqlArray);
+        return $sqlAll;
     }
 
     /**

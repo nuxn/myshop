@@ -21,19 +21,21 @@ class TestController extends HomebaseController
         echo '客户端IP ', get_client_ip(), "\r\n\r\n";
         echo '服务器IP ', $_SERVER['SERVER_ADDR'], "\r\n\r\n";
         //$pay = Subtable::getSubTableName('pay', '', '');# 获取分表表名
-        //$sqlAll = Subtable::getSubTableUnionSql();# 返回基于分表后完整的sql语句
+        //$sqlAll = Subtable::getSubTableUnionSql('', '',2);# 返回基于分表后完整的sql语句
 
         M('order o')
             ->join('ypt_pay p on p.remark=o.order_sn', 'left')
+            //->join('(' . $sqlAll . ')p  ON p.remark = o.order_sn', 'left')
             ->field('(o.order_amount+o.user_money) as price,o.add_time,o.pay_time as paytime,p.paystyle_id,p.status')
             ->where('card_code is not null')
             // ->limit(40,20)
             ->select(false);
         $baseSql = M()->_sql();
-        //echo $baseSql;
+        //echo $baseSql;exit;
         $sqlAll = Subtable::getSubTableUnionSql('pay', $baseSql);
         $rs = M()->query($sqlAll);
-        echo $sqlAll, count($rs), "\r\n";
+        echo $sqlAll, "\r\n", count($rs), "\r\n";
+        //print_r($rs);
         //Vendor('Wzpay.Wzpay');
         // (new \Wzpay())->notify();
     }
