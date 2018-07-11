@@ -1,6 +1,8 @@
-<?php
+﻿<?php
 require_once('../../libary/mysqli.php');//数据库配置
 require_once('../../config/config.mysql.php');//数据库配置
+use Common\Lib\Subtable;
+
 $db = new mysql();
 date_default_timezone_set('Asia/Shanghai');
 $fileName="notify/".date("Y-m-d",time()).".logs";
@@ -13,13 +15,15 @@ $str=stripslashes($_POST['body']);
 $data=json_decode($str,true);
 $order_sn=$data['orderId'];
 $transId=$data['transId'];
-$orderData=$db->query("select * from ypt_pay where remark='$order_sn'");
+$orderData=$db->query("select * from Subtable::getSubTableName('pay', array('order_sn' => $order_sn), '') where remark='$order_sn'");
 if($orderData['status']==0){
-	$sql="update ypt_pay set status=1,transId='$transId' where remark='".$order_sn."' AND status='0'";
+	$sql="update Subtable::getSubTableName('pay', array('order_sn' => $order_sn), '') set status=1,transId='$transId' where remark='".$order_sn."' AND status='0'";
 	$fileName="sql/".date("Y-m-d",time()).".logs";
+
 	if(!file_exists($fileName)) {
  		@fopen($fileName, "w");
 	}
+
 	file_put_contents($fileName,date("Y-m-d H:i:s",time())."--".$order_sn."--".$sql."\r\n",FILE_APPEND | LOCK_EX);
 	$db->query($sql);
 }else{

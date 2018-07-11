@@ -38,7 +38,7 @@ class Subtable
      * @param null $tablePrefix 表前缀
      * @return string 分表表名
      */
-    public static function getSubTableName($tableName = '', $param = array(), $tablePrefix = null)
+    public static function getSubTableName($tableName = '', $tablePrefix = null, $param = array())
     {
         $tableName = strtolower($tableName);
         if ($tablePrefix === null) $tablePrefix = '';# 默认M方法调用不要前缀

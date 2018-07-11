@@ -21,8 +21,8 @@ class TestController extends HomebaseController
         echo '客户端IP ', get_client_ip(), "\r\n\r\n";
         echo '服务器IP ', $_SERVER['SERVER_ADDR'], "\r\n\r\n";
         $pay1 = Subtable::getSubTableName('pay', '');# 获取分表表名,不返回表前缀
-        $pay2 = Subtable::getSubTableName('pay', '', 'ypt_');# 获取分表表名，返回表前缀
-        $pay3 = Subtable::getSubTableName('pay', array('order_sn' => '20180516172351463811'));# 获取分表表名，根据订单号
+        $pay2 = Subtable::getSubTableName('pay', '', '');# 获取分表表名，返回表前缀
+        $pay3 = Subtable::getSubTableName('pay', array('order_sn' => '20180516172351463811'), '');# 获取分表表名，根据订单号
         echo $pay1, "\r\n", $pay2, "\r\n", $pay3, "\r\n";
         //$sqlAll = Subtable::getSubTableUnionSql('', '',2);# 返回基于分表后完整的sql语句
 
