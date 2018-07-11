@@ -547,7 +547,8 @@ class MemberController extends ApibaseController
         }else{
             $order_where['card_code'] = $mem_data['entity_card_code'];
         }
-        
+
+
         // 分表
         M('order o')
             ->join('ypt_pay p on p.remark=o.order_sn','left')

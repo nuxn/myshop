@@ -32,6 +32,7 @@ class Subtable
 
     /**
      * 根据查询条件返回分表表名
+     * 调用Subtable::getSubTableName('pay', '');第三个参数不传不返回前缀
      * @param string $tableName 原始表名
      * @param array $param 查询条件
      * @param null $tablePrefix 表前缀
@@ -39,14 +40,19 @@ class Subtable
      */
     public static function getSubTableName($tableName = '', $param = array(), $tablePrefix = null)
     {
-
+        $tableName = strtolower($tableName);
         if ($tablePrefix === null) $tablePrefix = '';# 默认M方法调用不要前缀
         else $tablePrefix = $tablePrefix ?: C('DB_PREFIX');# 非null时采用默认前缀或传递前缀
 
-        if (!empty($param['order_sn'])) $SubTableName = $tablePrefix . $tableName . '_' . substr($param['order_sn'], 2, 6);# 根据单号返分表名
-        else if (date("ym", time()) < TABLE_ID) $SubTableName = $tablePrefix . $tableName;# 分表开始日期前返回原有表名
+        if (!empty($param['order_sn'])) {
+
+            $ym = substr($param['order_sn'], 2, 4);
+            $ym = (strlen(intval($ym)) < 4) ? date("ym", time()) : $ym;
+            if ($ym < TABLE_ID) $SubTableName = $tablePrefix . $tableName;
+            else $SubTableName = $tablePrefix . $tableName . '_' . $ym;# 根据单号返分表名
+
+        } else if (date("ym", time()) < TABLE_ID) $SubTableName = $tablePrefix . $tableName;# 分表开始日期前返回原有表名
         else $SubTableName = $tablePrefix . $tableName . '_' . date("ym", time());# 返回按月分表
-        $tableName = strtolower($tableName);
 
         self::$tableName($SubTableName);# 判断创建
 
