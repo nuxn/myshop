@@ -126,7 +126,7 @@
             <div class="control-group">
                 <label class="control-label">微信连接银行:</label>
                 <div class="controls">
-                    <select name="xcx_bank" class="wx_bank" onChange="change_wx(this)">
+                    <select name="xcx_bank" class="xcx_bank" onChange="change_xcx(this)">
                         <option value="">请选择</option>
                         <!--<option value="1" <if condition="$shopcate.wx_bank eq 1 ">selected</if>>微众银行</option>-->
                         <!--<option value="2" <if condition="$shopcate.wx_bank eq 2 ">selected</if> >深圳民生银行</option>-->
@@ -153,14 +153,14 @@
             <div class="control-group">
                 <label class="control-label">微信KEY</label>
                 <div class="controls">
-                    <input type="text" class="wx_key" name="post[wx_key]" value="{$shopcate['wx_key']}" placeholder="请填入微信的KEY"><span class="form-required">*没有的不填</span>
+                    <input type="text" class="xcx_key" name="post[xcx_key]" value="{$shopcate['xcx_key']}" placeholder="请填入微信的KEY"><span class="form-required">*没有的不填</span>
                 </div>
             </div>
 
             <div class="control-group">
                 <label class="control-label">微信MCHID</label>
                 <div class="controls">
-                    <input type="text" class="wx_mchid" name="post[wx_mchid]" value="{$shopcate['wx_mchid']}" placeholder="请填入微信的MCHID"><span class="form-required">*</span>
+                    <input type="text" class="xcx_mchid" name="post[xcx_mchid]" value="{$shopcate['xcx_mchid']}" placeholder="请填入微信的MCHID"><span class="form-required">*</span>
                 </div>
             </div>
         </fieldset>
@@ -218,6 +218,28 @@
         },"json");
     }
 
+    function change_xcx()
+    {
+        var data={
+            ali_bank :$(".xcx_bank").val(),
+            merchant_id:$(".merchant_id").val()
+        };
+        console.log(data);
+        $.post("{:U('AdminIndex/wx_change_bank')}", data, function(ad){
+            if(ad.status == 0){
+                alert(ad.message);
+                return false;
+                $(".xcx_key").val("");
+                $(".xcx_mchid").val("");
+            }else if(ad.status == 1)
+            {
+                var wx_mchid=ad.wx_mchid;
+                var wx_key=ad.wx_key;
+                $(".xcx_key").val(wx_key);
+                $(".xcx_mchid").val(wx_mchid);
+            }
+        },"json");
+    }
 </script>
 </body>
 </html>

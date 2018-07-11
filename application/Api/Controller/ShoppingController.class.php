@@ -948,7 +948,7 @@ class ShoppingController extends ApibaseController
             $this->posts['window_img'] = $goods_img_arr[0];
             for ($i=0;$i<7;$i++){
                 $count = $i + 1;
-                $this->posts['goods_img'."$count"] = $goods_img_arr[$i];
+                $this->posts['goods_img'."$count"] = $goods_img_arr[$i]?$goods_img_arr[$i]:'';
             }
 //            foreach ($goods_img_arr as $k => $v) {
 //                $count = $k + 1;
@@ -1038,7 +1038,7 @@ class ShoppingController extends ApibaseController
             $this->posts['window_img'] = $goods_img_arr[0];
             for ($i=0;$i<7;$i++){
                 $count = $i + 1;
-                $this->posts['goods_img'."$count"] = $goods_img_arr[$i];
+                $this->posts['goods_img'."$count"] = $goods_img_arr[$i]?$goods_img_arr[$i]:'';
             }
 //            foreach ($goods_img_arr as $k => $v) {
 //                $count = $k + 1;
