@@ -1,5 +1,6 @@
-<?php
+﻿<?php
 ini_set('date.timezone','Asia/Shanghai');
+use Common\Lib\Subtable;
 class index
 {
 	var $db;
@@ -10,11 +11,12 @@ class index
     public function refund(){
         if(isset($_POST['order_id']) &&!empty($_POST['order_id'])){    
             $order_id=$_POST['order_id'];
-            $orderData=$this->db->query("select * from ypt_pay where remark='$order_id'");
+            $orderData=$this->db->query("select * from Subtable::getSubTableName('pay', array('order_sn' =>$order_id), '') where remark='$order_id'");
             if($orderData){
                 $merchant_id=$orderData['merchant_id'];
                 $cate_id=$orderData['cate_id'];
                 $cateData=$this->db->query("select * from ypt_merchants_cate where id= '$cate_id'");
+
                 $pay_type=$orderData['paystyle_id'];
                 if($pay_type==1){
                     $acquirerType='wechat';
@@ -53,10 +55,11 @@ class index
         $res=rsaSign($data,PRIVATE_KEY);
         $result=httpRequst(URL,$data,$res,APPKEY);
       	$result=json_decode($result,true);
-        $sql="update ypt_pay set back_status=1,price_back='$totalAmount',status=2 where remark='$order_sn'";
+        $sql="update Subtable::getSubTableName('pay', array('order_sn' =>$order_sn), '') set back_status=1,price_back='$totalAmount',status=2 where remark='$order_sn'";
         file_put_contents("/nasdata/www/youngshop/application/Alipay/application/paylog/1.txt",date("Y-m-d H:i:s",time())."-".$cate_id."-".$order_id."--".$data."--".json_encode($cateData)."--".json_encode($result)."--".$sql."\r\n",FILE_APPEND | LOCK_EX);
         if($result['body']['responseCode']=='00'){
             $this->db->query($sql);
+
             return json_encode(array("code" => "success", "msg" => "成功", "data" => "退款成功"));
         }else{
             return json_encode(array("code" => "error", "msg" => "失败", "data" =>$result['body']['errorMsg']));

@@ -2212,12 +2212,13 @@ class IndexController extends PostbaseController
                         );
                         $time = time();
                         $pay = $this->pays;
-                        $pay->query("INSERT INTO ypt_pay(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'7',$merchant_id,$checker_id,'5',$order_amount,'1','1',$time,'1')");
+                        $pay->query("INSERT INTO Subtable::getSubTableName('pay', array('order_sn' =>$order_sn), '')(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'7',$merchant_id,$checker_id,'5',$order_amount,'1','1',$time,'1')");
                         //核销优惠券
                         if ($code) {
                             $url = "https://api.weixin.qq.com/card/code/consume?access_token=" . get_weixin_token();
                             $c['code'] = $code;
                             $use_coupon = request_post($url, json_encode($c));
+
                             $result = json_decode($use_coupon, true);
                             M("screen_user_coupons")->where("usercard=$code")->setField('status', '0');
                             file_put_contents('./data/log/wz/weixin/coupon.log', date("Y-m-d H:i:s") . '用户使用优惠券' . json_encode($use_coupon) . PHP_EOL, FILE_APPEND | LOCK_EX);
@@ -2251,11 +2252,12 @@ class IndexController extends PostbaseController
                         );
                         $time = time();
                         $pay = $this->pays;
-                        $pay->query("INSERT INTO ypt_pay(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'9',$merchant_id,$checker_id,'3',$order_amount,'1','1',$time,'1')");
+                        $pay->query("INSERT INTO Subtable::getSubTableName('pay', array('order_sn' =>$order_sn), '')(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'9',$merchant_id,$checker_id,'3',$order_amount,'1','1',$time,'1')");
                         //核销优惠券
                         if ($code) {
                             $url = "https://api.weixin.qq.com/card/code/consume?access_token=" . get_weixin_token();
                             $c['code'] = $code;
+
                             $use_coupon = request_post($url, json_encode($c));
                             $result = json_decode($use_coupon, true);
                             M("screen_user_coupons")->where("usercard=$code")->setField('status', '0');
@@ -2290,10 +2292,11 @@ class IndexController extends PostbaseController
                         );
                         $time = time();
                         $pay = $this->pays;
-                        $pay->query("INSERT INTO ypt_pay(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'5',$merchant_id,$checker_id,'1',$order_amount,'1','1',$time,'1')");
+                        $pay->query("INSERT INTO Subtable::getSubTableName('pay', array('order_sn' =>$order_sn), '')(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'5',$merchant_id,$checker_id,'1',$order_amount,'1','1',$time,'1')");
                         //核销优惠券
                         if ($code) {
                             $url = "https://api.weixin.qq.com/card/code/consume?access_token=" . get_weixin_token();
+
                             $c['code'] = $code;
                             $use_coupon = request_post($url, json_encode($c));
                             $result = json_decode($use_coupon, true);
@@ -2329,9 +2332,10 @@ class IndexController extends PostbaseController
                         );
                         $time = time();
                         $pay = $this->pays;
-                        $pay->query("INSERT INTO ypt_pay(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'5',$merchant_id,$checker_id,'2',$order_amount,'1','1',$time,'1')");
+                        $pay->query("INSERT INTO  Subtable::getSubTableName('pay', array('order_sn' =>$order_sn), '')(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'5',$merchant_id,$checker_id,'2',$order_amount,'1','1',$time,'1')");
                         //核销优惠券
                         if ($code) {
+
                             $url = "https://api.weixin.qq.com/card/code/consume?access_token=" . get_weixin_token();
                             $c['code'] = $code;
                             $use_coupon = request_post($url, json_encode($c));
@@ -2471,8 +2475,9 @@ class IndexController extends PostbaseController
                     );
                     $time = time();
                     $pay = $this->pays;
-                    $pay->query("INSERT INTO ypt_pay(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'7',$merchant_id,$checker_id,'5',$order_amount,'1','1',$time,'1')");
+                    $pay->query("INSERT INTO Subtable::getSubTableName('pay', array('order_sn' =>$order_sn), '')(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'7',$merchant_id,$checker_id,'5',$order_amount,'1','1',$time,'1')");
                     //核销优惠券
+
                     // dump($code);die;
                     if ($code) {
                         $url = "https://api.weixin.qq.com/card/code/consume?access_token=" . get_weixin_token();
@@ -2515,7 +2520,8 @@ class IndexController extends PostbaseController
                     );
                     $time = time();
                     $pay = $this->pays;
-                    $pay->query("INSERT INTO ypt_pay(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'9',$merchant_id,$checker_id,'3',$order_amount,'1','1',$time,'1')");
+                    $pay->query("INSERT INTO Subtable::getSubTableName('pay', array('order_sn' =>$order_sn), '')(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'9',$merchant_id,$checker_id,'3',$order_amount,'1','1',$time,'1')");
+
                     //核销优惠券
                     if ($code) {
                         $url = "https://api.weixin.qq.com/card/code/consume?access_token=" . get_weixin_token();
@@ -2555,12 +2561,13 @@ class IndexController extends PostbaseController
                     // dump($pay_info);
                     $time = time();
                     $pay = $this->pays;
-                    $pay->query("INSERT INTO ypt_pay(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'5',$merchant_id,$checker_id,'1',$order_amount,'1','1',$time,'1')");
+                    $pay->query("INSERT INTO Subtable::getSubTableName('pay', array('order_sn' =>$order_sn), '')(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'5',$merchant_id,$checker_id,'1',$order_amount,'1','1',$time,'1')");
 
                     // $pay->add($pay_info);
                     // echo $pay->_sql();die;
                     //核销优惠券
                     if ($code) {
+
                         $url = "https://api.weixin.qq.com/card/code/consume?access_token=" . get_weixin_token();
                         $c['code'] = $code;
                         $use_coupon = request_post($url, json_encode($c));
@@ -2597,11 +2604,12 @@ class IndexController extends PostbaseController
                     );
                     $time = time();
                     $pay = $this->pays;
-                    $pay->query("INSERT INTO ypt_pay(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'5',$merchant_id,$checker_id,'2',$order_amount,'1','1',$time,'1')");
+                    $pay->query("INSERT INTO Subtable::getSubTableName('pay', array('order_sn' =>$order_sn), '')(remark,mode,merchant_id,checker_id,paystyle_id,price,status,cate_id,paytime,la_ka_la) VALUES($order_sn,'5',$merchant_id,$checker_id,'2',$order_amount,'1','1',$time,'1')");
                     //核销优惠券
                     if ($code) {
                         $url = "https://api.weixin.qq.com/card/code/consume?access_token=" . get_weixin_token();
                         $c['code'] = $code;
+
                         $use_coupon = request_post($url, json_encode($c));
                         $result = json_decode($use_coupon, true);
                         M("screen_user_coupons")->where("usercard=$code")->setField('status', '0');

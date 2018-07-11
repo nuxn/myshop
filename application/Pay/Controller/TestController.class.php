@@ -1,5 +1,11 @@
 <?php
-
+/**
+ *
+ * Created by PhpStorm.
+ * User: Joan
+ * Date: 2018/6/20
+ * Time: 12:26
+ */
 namespace Pay\Controller;
 
 use Common\Controller\HomebaseController;
