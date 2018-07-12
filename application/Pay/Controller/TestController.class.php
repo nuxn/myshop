@@ -23,6 +23,7 @@ class TestController extends HomebaseController
      */
     public function test()
     {
+        //header('Location: http://b.ypt5566.com/trade/channel/common_index.html');
         header("Content-Type: text/html;charset=utf-8");
         echo '客户端IP ', get_client_ip(), "\r\n\r\n";
         echo '服务器IP ', $_SERVER['SERVER_ADDR'], "\r\n\r\n";
@@ -43,8 +44,7 @@ class TestController extends HomebaseController
         //echo $baseSql;exit;
         $sqlAll = Subtable::getSubTableUnionSql('pay', $baseSql);
         $rs = M()->query($sqlAll);
-        echo $sqlAll, "\r\n", count($rs), "\r\n";
-        //print_r($rs);
+        //echo $sqlAll, "\r\n", count($rs), "\r\n";
         //Vendor('Wzpay.Wzpay');
         // (new \Wzpay())->notify();
     }

@@ -251,7 +251,7 @@ class Subtable
      * @param int $queryType 联表查询类型 1 联表查询 2 子查询
      * @return string 拼装后的sql
      */
-    public static function getSubTableUnionSql($tableName = '', $sql = '', $queryType = 1)
+    public static function getSubTableUnionSql($tableName = '', $sql = '', $queryType = 1, $field = '*')
     {
         $sqlArray = array();# 存放分表的sql
         $monthArray = self::getMonthDiff();
@@ -272,7 +272,7 @@ class Subtable
             }
 
             $sqlAll = implode('union ', $sqlArray);# 合并所有sql语句
-            $sqlAll = 'select * from (' . $sqlAll . ')temp limit ' . $limit;
+            $sqlAll = 'select ' . $field . ' from (' . $sqlAll . ')temp limit ' . $limit;
 
         } else {
 

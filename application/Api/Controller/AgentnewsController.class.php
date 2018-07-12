@@ -73,12 +73,12 @@ class  AgentnewsController extends ApibaseController
         $id = $this->id;
         $time = $this->type_time($type);
 
-        if ($type==1) {
+        if ($type == 1) {
             $pays = $this->count_agent($id, $time);
-        }else{
-            if ($time!="") {
-                $time[0]= date('Ymd',$time[0]);
-                $time[1] = date('Ymd',$time[1]);
+        } else {
+            if ($time != "") {
+                $time[0] = date('Ymd', $time[0]);
+                $time[1] = date('Ymd', $time[1]);
             }
             $pays = $this->count_agent2($id, $time);
         }
@@ -233,7 +233,7 @@ class  AgentnewsController extends ApibaseController
         //        0是升序 1是降序
         $sort = I("price_order");
         $time = $this->type_time($type);
-        if ($type==1) {
+        if ($type == 1) {
             if ($order != 0) {
                 $order = null;
             } else {
@@ -254,7 +254,7 @@ class  AgentnewsController extends ApibaseController
                 }
             }
             $data = $this->shuzu($data);
-        }else{
+        } else {
             //       根据选择的类型判断属于全部0，商户3，代理2
             switch ($role) {
                 case 0:
@@ -290,7 +290,7 @@ class  AgentnewsController extends ApibaseController
      * @param int $is_detail 是否需要微信和支付宝支付的细节
      * 返回该商户交易的总额
      */
-    function merchant_pay($id, $time = "",$role,$sort, $is_detail = 0)
+    function merchant_pay($id, $time = "", $role, $sort, $is_detail = 0)
     {
 //        $users_str = $this->get_category($id);
         $uses = M()->query('select getagentchild(' . $id . ') as uids');
@@ -320,8 +320,8 @@ class  AgentnewsController extends ApibaseController
             $field = "date,sum(wx_price) as wx_price,sum(ali_price) as ali_price,sum(cash_price) as cash_price,sum(union_price) as union_price,sum(merchant_price) as merchant_price,sum(agent_price) as agent_price,sum(wx_nums) as wx_nums,sum(ali_nums) as ali_nums,sum(cash_nums) as cash_nums,sum(union_nums) as union_nums,sum(merchant_nums) as merchant_nums,sum(agent_nums) as agent_nums";
             // dump($map);
             $pay = M('pay_statistics')->field($field)->where($map)->find();
-            $pay['total_num'] = $pay['wx_nums']+$pay['ali_nums']+$pay['cash_nums']+$pay['union_nums']+$pay['merchant_nums']+$pay['agent_nums'];
-            $pay['total_price'] = $pay['wx_price']+$pay['ali_price']+$pay['cash_price']+$pay['union_price']+$pay['merchant_price']+$pay['agent_price'];
+            $pay['total_num'] = $pay['wx_nums'] + $pay['ali_nums'] + $pay['cash_nums'] + $pay['union_nums'] + $pay['merchant_nums'] + $pay['agent_nums'];
+            $pay['total_price'] = $pay['wx_price'] + $pay['ali_price'] + $pay['cash_price'] + $pay['union_price'] + $pay['merchant_price'] + $pay['agent_price'];
         }
         return $pay;
     }
@@ -494,35 +494,35 @@ class  AgentnewsController extends ApibaseController
     public function withdraw_info()
     {
         $agent_uid = $this->userId;
-        $date_list = M('pay_month')->where(array('agent_id'=>$agent_uid))->order('date asc')->getField('date',true);
-        $time = date('Y-m',M('merchants_agent')->where(array('uid'=>$agent_uid))->getField('add_time'));
-        $uid = M()->query('select getchild('.$agent_uid.') as uids');
+        $date_list = M('pay_month')->where(array('agent_id' => $agent_uid))->order('date asc')->getField('date', true);
+        $time = date('Y-m', M('merchants_agent')->where(array('uid' => $agent_uid))->getField('add_time'));
+        $uid = M()->query('select getchild(' . $agent_uid . ') as uids');
         $uids = $uid[0]['uids'];
         $mer_ids = $this->get_merchant_id($uids); //获取商户id
-        $map['merchant_id'] = array('in',$mer_ids);
+        $map['merchant_id'] = array('in', $mer_ids);
         $map['status'] = '1';
         #$not_data 未插入到pay_month表数据
         $not_data = array();
-        if($mer_ids){
-            while ($time<date('Y-m')){
-                if(!in_array($time,$date_list)){
-                    $info = $this->calc_maid($map,$this->get_appoint_month($time));
-                    if($info){
-                        $not_data[] = array('date'=>$time,'rebate'=>$info['rebate']);
+        if ($mer_ids) {
+            while ($time < date('Y-m')) {
+                if (!in_array($time, $date_list)) {
+                    $info = $this->calc_maid($map, $this->get_appoint_month($time));
+                    if ($info) {
+                        $not_data[] = array('date' => $time, 'rebate' => $info['rebate']);
                     }
                 }
-                $time = date('Y-m',strtotime("$time +1 month"));
+                $time = date('Y-m', strtotime("$time +1 month"));
             }
         }
         $logs = M('pay_month')
             ->field('date,rebate')
-            ->where(array('agent_id'=>$agent_uid,'status'=>array(array('eq',0),array('eq',3),'or')))
+            ->where(array('agent_id' => $agent_uid, 'status' => array(array('eq', 0), array('eq', 3), 'or')))
             ->select();
         //可提现月份及金额
-        $data['withdraw_data'] = array_merge($logs,$not_data);
+        $data['withdraw_data'] = array_merge($logs, $not_data);
         //近三十天提现记录
-        $data['withdraw_log'] = M('pay_month')->where(array('agent_id'=>$agent_uid,'status'=>array('gt','0'), 'add_time' => array('EGT', time() - 86400 * 30)))->field('id,date,rebate,status')->order('add_time desc')->select();//近三十天提现记录
-        $this->ajaxReturn(array('code'=>'success','msg'=>'成功','data'=>$data));
+        $data['withdraw_log'] = M('pay_month')->where(array('agent_id' => $agent_uid, 'status' => array('gt', '0'), 'add_time' => array('EGT', time() - 86400 * 30)))->field('id,date,rebate,status')->order('add_time desc')->select();//近三十天提现记录
+        $this->ajaxReturn(array('code' => 'success', 'msg' => '成功', 'data' => $data));
     }
 
     /**
@@ -531,36 +531,36 @@ class  AgentnewsController extends ApibaseController
     public function withdraw()
     {
         //申请提现的日期，格式2018-06
-        ($date = I('date')) || $this->ajaxReturn(array('code'=>'error','msg'=>'date is empty'));
-        (substr_count($date,'-') == 1 && strlen($date) == 7) || $this->ajaxReturn(array('code'=>'error','msg'=>'date格式错误'));
+        ($date = I('date')) || $this->ajaxReturn(array('code' => 'error', 'msg' => 'date is empty'));
+        (substr_count($date, '-') == 1 && strlen($date) == 7) || $this->ajaxReturn(array('code' => 'error', 'msg' => 'date格式错误'));
 
-        ($bank_id = I('bank_id')) || $this->ajaxReturn(array('code'=>'error','msg'=>'bank_id is empty'));
+        ($bank_id = I('bank_id')) || $this->ajaxReturn(array('code' => 'error', 'msg' => 'bank_id is empty'));
 
-        $pay_month_id = M('pay_month')->where(array('agent_id'=>$this->userId,'date'=>$date))->getField('id');
-        if($pay_month_id){
+        $pay_month_id = M('pay_month')->where(array('agent_id' => $this->userId, 'date' => $date))->getField('id');
+        if ($pay_month_id) {
             #如果pay_month表有该条数据则改status
-            M('pay_month')->where(array('id'=>$pay_month_id))->save(array('status'=>1,'bank_id'=>$bank_id));
+            M('pay_month')->where(array('id' => $pay_month_id))->save(array('status' => 1, 'bank_id' => $bank_id));
             $this->ajaxReturn(array("code" => "success", "msg" => "提现申请已提交"));
-        }else{
-            $uid = M()->query('select getchild('.$this->userId.') as uids');
+        } else {
+            $uid = M()->query('select getchild(' . $this->userId . ') as uids');
             $uids = $uid[0]['uids'];
             $mer_ids = $this->get_merchant_id($uids); //获取商户id
-            $map['merchant_id'] = array('in',$mer_ids);
+            $map['merchant_id'] = array('in', $mer_ids);
             $map['status'] = '1';
-            if($mer_ids){
-                $info = $this->calc_maid($map,$this->get_appoint_month($date));
-                if($info){
+            if ($mer_ids) {
+                $info = $this->calc_maid($map, $this->get_appoint_month($date));
+                if ($info) {
                     $add_data = array(
-                        'agent_id'=>$this->userId,
-                        'date'=>$date,
-                        'price'=>$info['price'],
-                        'nums'=>$info['num'],
-                        'rebate'=>$info['rebate'],
-                        'price0'=>'0.00',
-                        'nums0'=>'0',
-                        'rebate0'=>'0.00000',
-                        'status'=>1,
-                        'add_time'=>time()
+                        'agent_id' => $this->userId,
+                        'date' => $date,
+                        'price' => $info['price'],
+                        'nums' => $info['num'],
+                        'rebate' => $info['rebate'],
+                        'price0' => '0.00',
+                        'nums0' => '0',
+                        'rebate0' => '0.00000',
+                        'status' => 1,
+                        'add_time' => time()
                     );
                     $res = M('pay_month')->add($add_data);
                     if ($res) {
@@ -569,7 +569,7 @@ class  AgentnewsController extends ApibaseController
                         $this->ajaxReturn(array("code" => "error", "msg" => "提现申请提交失败"));
                     }
                 }
-            }else{
+            } else {
                 $this->ajaxReturn(array("code" => "error", "msg" => "无数据"));
             }
 
@@ -595,11 +595,14 @@ class  AgentnewsController extends ApibaseController
         } else {
             $field = "p.paytime,count(p.id) as total_num,ifnull(sum(price),0) as total_price";
         }
-        $pay = M('merchants')->alias("m")
+        M('merchants')->alias("m")
             ->join("right join __PAY__ p on p.merchant_id=m.id")
             ->field($field)
             ->where($map)
-            ->find();
+            ->select(false);
+        $sqlAll = Subtable::getSubTableUnionSql('pay', M()->_sql(), '1', 'paytime,sum(total_num)total_num,sum(total_price) total_price');
+        $pay = M()->query($sqlAll);
+        $pay = !empty($pay[0]) ? $pay[0] : '';
         return $pay;
     }
 
@@ -654,8 +657,8 @@ class  AgentnewsController extends ApibaseController
             $field = "date,sum(wx_price) as wx_price,sum(ali_price) as ali_price,sum(cash_price) as cash_price,sum(union_price) as union_price,sum(merchant_price) as merchant_price,sum(agent_price) as agent_price,sum(wx_nums) as wx_nums,sum(ali_nums) as ali_nums,sum(cash_nums) as cash_nums,sum(union_nums) as union_nums,sum(merchant_nums) as merchant_nums,sum(agent_nums) as agent_nums";
             // dump($map);
             $pay = M('pay_statistics')->field($field)->where($map)->find();
-            $pay['total_num'] = $pay['wx_nums']+$pay['ali_nums']+$pay['cash_nums']+$pay['union_nums']+$pay['merchant_nums']+$pay['agent_nums'];
-            $pay['total_price'] = $pay['wx_price']+$pay['ali_price']+$pay['cash_price']+$pay['union_price']+$pay['merchant_price']+$pay['agent_price'];
+            $pay['total_num'] = $pay['wx_nums'] + $pay['ali_nums'] + $pay['cash_nums'] + $pay['union_nums'] + $pay['merchant_nums'] + $pay['agent_nums'];
+            $pay['total_price'] = $pay['wx_price'] + $pay['ali_price'] + $pay['cash_price'] + $pay['union_price'] + $pay['merchant_price'] + $pay['agent_price'];
         }
         return $pay;
     }
@@ -707,8 +710,8 @@ class  AgentnewsController extends ApibaseController
             $field = "p.paytime,count(p.id) as total_num,ifnull(sum(price),0) as total_price";
         }
         $pay = $this->pays->alias("p")->field($field)->where($map)->find();
-        if(!$pay['paytime']){
-            $pay['paytime']=time();
+        if (!$pay['paytime']) {
+            $pay['paytime'] = time();
         }
         return $pay;
     }
@@ -787,7 +790,6 @@ class  AgentnewsController extends ApibaseController
     }
 
     /**
-
      * 测试时间信息
      */
     public function checkdata()
@@ -1166,17 +1168,17 @@ class  AgentnewsController extends ApibaseController
      */
     public function get_agent_maid()
     {
-        if($this->userInfo['role_id'] != 3){
-            $this->ajaxReturn(array('code'=>'error','msg'=>'role_id error'));
+        if ($this->userInfo['role_id'] != 3) {
+            $this->ajaxReturn(array('code' => 'error', 'msg' => 'role_id error'));
         }
-        $uid = M()->query('select getchild('.$this->userId.') as uids');
+        $uid = M()->query('select getchild(' . $this->userId . ') as uids');
         $uids = $uid[0]['uids'];
         $mer_ids = $this->get_merchant_id($uids); //获取商户id
-        $map['merchant_id'] = array('in',$mer_ids);
+        $map['merchant_id'] = array('in', $mer_ids);
         $map['status'] = '1';
-        $last_month = $this->calc_maid($map,$this->type_time(6));//上月
-        $current_month = $this->calc_maid($map,$this->type_time(4));//本月
-        $this->ajaxReturn(array('code'=>'success','msg'=>'ok','data'=>array('last_mouth'=>$last_month['rebate'],'current_month'=>$current_month['rebate'])));
+        $last_month = $this->calc_maid($map, $this->type_time(6));//上月
+        $current_month = $this->calc_maid($map, $this->type_time(4));//本月
+        $this->ajaxReturn(array('code' => 'success', 'msg' => 'ok', 'data' => array('last_mouth' => $last_month['rebate'], 'current_month' => $current_month['rebate'])));
     }
 
     /**
@@ -1184,29 +1186,29 @@ class  AgentnewsController extends ApibaseController
      */
     public function get_merchants_maid_detail()
     {
-        if($this->userInfo['role_id'] != 3){
-            $this->ajaxReturn(array('code'=>'error','msg'=>'role_id error'));
+        if ($this->userInfo['role_id'] != 3) {
+            $this->ajaxReturn(array('code' => 'error', 'msg' => 'role_id error'));
         }
-        ($date = I('date')) || $this->ajaxReturn(array('code'=>'error','msg'=>'date is empty'));
+        ($date = I('date')) || $this->ajaxReturn(array('code' => 'error', 'msg' => 'date is empty'));
         #date格式必须是yyyy-mm
-        (substr_count($date,'-') == 1 && strlen($date) == 7) || $this->ajaxReturn(array('code'=>'error','msg'=>'date格式错误'));
-        $uid = M()->query('select getchild('.$this->userId.') as uids');
+        (substr_count($date, '-') == 1 && strlen($date) == 7) || $this->ajaxReturn(array('code' => 'error', 'msg' => 'date格式错误'));
+        $uid = M()->query('select getchild(' . $this->userId . ') as uids');
         $uids = $uid[0]['uids'];
         $mer_ids = $this->get_merchant_id($uids); //获取商户id
-        $map['merchant_id'] = array('in',$mer_ids);
+        $map['merchant_id'] = array('in', $mer_ids);
         $map['status'] = '1';
-        $agent = $this->calc_maid($map,$this->get_appoint_month($date));
-        $mer_ids_arr = explode(',',$mer_ids);
+        $agent = $this->calc_maid($map, $this->get_appoint_month($date));
+        $mer_ids_arr = explode(',', $mer_ids);
         $merchant = array();
         foreach ($mer_ids_arr as &$v) {
             $map['merchant_id'] = $v;
-            $calc = $this->calc_maid($map,$this->get_appoint_month($date));
-            if($calc){
-                $calc['merchant_jiancheng'] = M('merchants')->where('id='.$v)->getField('merchant_jiancheng');
+            $calc = $this->calc_maid($map, $this->get_appoint_month($date));
+            if ($calc) {
+                $calc['merchant_jiancheng'] = M('merchants')->where('id=' . $v)->getField('merchant_jiancheng');
                 $merchant[] = $calc;
             }
         }
-        $this->ajaxReturn(array('code'=>'success','msg'=>'ok','agent_rebate'=>$agent['rebate'],'merchant_data'=>$merchant));
+        $this->ajaxReturn(array('code' => 'success', 'msg' => 'ok', 'agent_rebate' => $agent['rebate'], 'merchant_data' => $merchant));
     }
 
     /** 获取指定年月的开始时间戳和结束时间戳
@@ -1215,25 +1217,25 @@ class  AgentnewsController extends ApibaseController
      */
     public function get_appoint_month($y_m)
     {
-        ($start_time = strtotime( $y_m )) || $this->ajaxReturn(array('code'=>'error','msg'=>'时间格式有误'));
-        $mdays = date( 't', $start_time );
-        $end_time = strtotime(date( 'Y-m-' . $mdays . ' 23:59:59', $start_time ));
+        ($start_time = strtotime($y_m)) || $this->ajaxReturn(array('code' => 'error', 'msg' => '时间格式有误'));
+        $mdays = date('t', $start_time);
+        $end_time = strtotime(date('Y-m-' . $mdays . ' 23:59:59', $start_time));
 
-        return array($start_time,$end_time);
+        return array($start_time, $end_time);
     }
 
     /** 计算返佣
      * @param $map 查询条件
-     * @param $time_array 时间戳区�?
+     * @param $time_array 时间戳区�?
      * @return array
      */
-    private function calc_maid($map,$time_array)
+    private function calc_maid($map, $time_array)
     {
-        $map['paytime'] = array('BETWEEN',$time_array);
+        $map['paytime'] = array('BETWEEN', $time_array);
         $month_pay = M(Subtable::getSubTableName('pay'))->where($map)->field('price,cost_rate,paystyle_id,bank,cardtype')->select();
-        $agent_rate = M('merchants_agent')->where(array('uid'=>$this->userId))->field('wx_rate,ali_rate')->find();
+        $agent_rate = M('merchants_agent')->where(array('uid' => $this->userId))->field('wx_rate,ali_rate')->find();
         $rebate = '0';//费率总计
-        $count = count($month_pay);//交易总笔�?
+        $count = count($month_pay);//交易总笔�?
 
 
         $price = '0';//交易总金额
@@ -1246,20 +1248,20 @@ class  AgentnewsController extends ApibaseController
                     $v['agent_rate'] = '0.53';
                 }
                 $bcdiv = $v['price'] * ($v['cost_rate'] - $v['agent_rate']);
-            }else{
-                if(!$v['cost_rate']){
+            } else {
+                if (!$v['cost_rate']) {
                     $bcdiv = 0;
-                }else{
-                    $bcdiv = $v['price']*($v['cost_rate']-$agent_rate[$v['paystyle_id']==1?'wx_rate':'ali_rate']);
+                } else {
+                    $bcdiv = $v['price'] * ($v['cost_rate'] - $agent_rate[$v['paystyle_id'] == 1 ? 'wx_rate' : 'ali_rate']);
                 }
             }
-            $rebate = bcadd($rebate,bcdiv(($bcdiv),'100',2),2);
+            $rebate = bcadd($rebate, bcdiv(($bcdiv), '100', 2), 2);
         }
         #条件不是数组就是商户，如果返佣为0则不显示
-        if(!is_array($map['merchant_id']) && $rebate==0){
+        if (!is_array($map['merchant_id']) && $rebate == 0) {
             return false;
-        }else{
-            return array('rebate'=>"$rebate",'num'=>"$count",'price'=>"$price");
+        } else {
+            return array('rebate' => "$rebate", 'num' => "$count", 'price' => "$price");
         }
     }
 
@@ -1267,11 +1269,12 @@ class  AgentnewsController extends ApibaseController
      * @param $uid 商户uid
      * @return mixed|string
      */
-    public function get_merchant_id($uid){
-        $where['uid'] = array('in',$uid);
-        $id = M('merchants')->where($where)->getField('id',true);
-        if($id){
-            $id = implode(',',$id);
+    public function get_merchant_id($uid)
+    {
+        $where['uid'] = array('in', $uid);
+        $id = M('merchants')->where($where)->getField('id', true);
+        if ($id) {
+            $id = implode(',', $id);
         }
         return $id;
     }
