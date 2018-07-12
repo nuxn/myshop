@@ -556,6 +556,26 @@ class  ShopnewsController extends ApibaseController
             ->field('ifnull(sum(wx_price),0) as wx_price,ifnull(sum(ali_price),0) as ali_price,ifnull(sum(union_price),0) as union_price,ifnull(sum(cash_price),0) as cash_price,ifnull(sum(merchant_price),0) as merchant_price,ifnull(sum(agent_price),0) as agent_price,ifnull(sum(wx_nums),0) as wx_nums,ifnull(sum(ali_nums),0) as ali_nums,ifnull(sum(union_nums),0) as union_nums,ifnull(sum(cash_nums),0) as cash_nums,ifnull(sum(merchant_nums),0) as merchant_nums,ifnull(sum(agent_nums),0) as agent_nums,ifnull(sum(double_back),0) as double_back,ifnull(sum(cash_back),0) as cash_back,ifnull(sum(double_back_nums),0) as double_back_nums,ifnull(sum(cash_back_nums),0) as cash_back_nums,ifnull(sum(wx_poundage),0) as wx_poundage,ifnull(sum(ali_poundage),0) as ali_poundage,ifnull(sum(union_poundage),0) as union_poundage,ifnull(sum(cash_poundage),0) as cash_poundage,ifnull(sum(merchant_poundage),0) as merchant_poundage,ifnull(sum(agent_poundage),0) as agent_poundage,ifnull(sum(order_benefit),0) as order_benefit,ifnull(sum(order_benefit_nums),0) as order_benefit_nums')
             ->where($map)
             ->find();
+        $data['wx_price'] = (float)$data['wx_price'];
+        $data['ali_price'] = (float)$data['ali_price'];
+        $data['union_price'] = (float)$data['union_price'];
+        $data['cash_price'] = (float)$data['cash_price'];
+        $data['merchant_price'] = (float)$data['merchant_price'];
+        $data['agent_price'] = (float)$data['agent_price'];
+        $data['order_benefit'] = (float)$data['order_benefit'];
+        $data['wx_nums'] = (int)$data['wx_nums'];
+        $data['ali_nums'] = (int)$data['ali_nums'];
+        $data['union_nums'] = (int)$data['union_nums'];
+        $data['cash_nums'] = (int)$data['cash_nums'];
+        $data['merchant_nums'] = (int)$data['merchant_nums'];
+        $data['agent_nums'] = (int)$data['agent_nums'];
+        $data['order_benefit_nums'] = (int)$data['order_benefit_nums'];
+        $data['wx_poundage'] = (float)$data['wx_poundage'];
+        $data['ali_poundage'] = (float)$data['ali_poundage'];
+        $data['union_poundage'] = (float)$data['union_poundage'];
+        $data['cash_poundage'] = (float)$data['cash_poundage'];
+        $data['merchant_poundage'] = (float)$data['merchant_poundage'];
+        $data['agent_poundage'] = (float)$data['agent_poundage'];
         $data['total_price'] = $data['wx_price']+$data['ali_price']+$data['union_price']+$data['cash_price']+$data['merchant_price']+$data['agent_price'];
         $data['total_nums'] = $data['wx_nums']+$data['ali_nums']+$data['union_nums']+$data['cash_nums']+$data['merchant_nums']+$data['agent_nums'];
         $data['yue_price'] = $data['merchant_price']+$data['agent_price'];

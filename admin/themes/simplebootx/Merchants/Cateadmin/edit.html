@@ -122,6 +122,47 @@
                 </div>
             </div>
 
+            <h2>小程序的信息填写:</h2>
+            <div class="control-group">
+                <label class="control-label">微信连接银行:</label>
+                <div class="controls">
+                    <select name="xcx_bank" class="xcx_bank" onChange="change_xcx(this)">
+                        <option value="">请选择</option>
+                        <!--<option value="1" <if condition="$shopcate.wx_bank eq 1 ">selected</if>>微众银行</option>-->
+                        <!--<option value="2" <if condition="$shopcate.wx_bank eq 2 ">selected</if> >深圳民生银行</option>-->
+                        <!--<option value="4" <if condition="$shopcate.wx_bank eq 4 ">selected</if> >招商银行</option>-->
+                        <!--<option value="5" <if condition="$shopcate.wx_bank eq 5 ">selected</if> >钱方好近支付</option>-->
+                        <!--<option value="6" <if condition="$shopcate.wx_bank eq 6 ">selected</if> >济南民生银行</option>-->
+                        <option value="3" <if condition="$shopcate.xcx_bank eq 3 ">selected</if> >微信围餐</option>
+                        <option value="7" <if condition="$shopcate.xcx_bank eq 7 ">selected</if> >兴业银行</option>
+                        <option value="9" <if condition="$shopcate.xcx_bank eq 9 ">selected</if> >宿州李灿</option>
+                        <option value="10" <if condition="$shopcate.xcx_bank eq 10 ">selected</if> >东莞中信</option>
+                        <option value="11" <if condition="$shopcate.xcx_bank eq 11 ">selected</if> >新大陆</option>
+                        <option value="12" <if condition="$shopcate.xcx_bank eq 12 ">selected</if> >乐刷</option>
+                        <option value="13" <if condition="$shopcate.xcx_bank eq 13 ">selected</if> >平安付</option>
+                        <option value="14" <if condition="$shopcate.xcx_bank eq 14 ">selected</if> >随行付</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">微信商户名:</label>
+                <div class="controls">
+                    <input type="text" name="post[wx_name]" value="{$shopcate['wx_name']}" placeholder="请填入微信的商户名"><span class="form-required">*</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">微信KEY</label>
+                <div class="controls">
+                    <input type="text" class="xcx_key" name="post[xcx_key]" value="{$shopcate['xcx_key']}" placeholder="请填入微信的KEY"><span class="form-required">*没有的不填</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">微信MCHID</label>
+                <div class="controls">
+                    <input type="text" class="xcx_mchid" name="post[xcx_mchid]" value="{$shopcate['xcx_mchid']}" placeholder="请填入微信的MCHID"><span class="form-required">*</span>
+                </div>
+            </div>
         </fieldset>
         <div class="form-actions">
             <button type="submit" class="btn btn-primary js-ajax-submit">提交</button>
@@ -177,6 +218,28 @@
         },"json");
     }
 
+    function change_xcx()
+    {
+        var data={
+            ali_bank :$(".xcx_bank").val(),
+            merchant_id:$(".merchant_id").val()
+        };
+        console.log(data);
+        $.post("{:U('AdminIndex/wx_change_bank')}", data, function(ad){
+            if(ad.status == 0){
+                alert(ad.message);
+                return false;
+                $(".xcx_key").val("");
+                $(".xcx_mchid").val("");
+            }else if(ad.status == 1)
+            {
+                var wx_mchid=ad.wx_mchid;
+                var wx_key=ad.wx_key;
+                $(".xcx_key").val(wx_key);
+                $(".xcx_mchid").val(wx_mchid);
+            }
+        },"json");
+    }
 </script>
 </body>
 </html>

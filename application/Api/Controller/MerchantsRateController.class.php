@@ -536,4 +536,14 @@ class  MerchantsRateController extends Controller
 
     }
 
+    public function set()
+    {
+        error_reporting (E_ALL & ~E_NOTICE);
+        set_time_limit(0); //执行时间无限
+        $cate = M('merchants_cate')->field('id,wx_bank,wx_mchid,wx_key')->select();
+        foreach ($cate as $k=>$v){
+            M('merchants_cate')->where(array('id'=>$v['id']))->save(array('xcx_bank'=>$v['wx_bank'],'xcx_mchid'=>$v['wx_mchid'],'xcx_key'=>$v['wx_key']));
+        }
+    }
+
 }

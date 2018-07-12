@@ -173,6 +173,7 @@ class XcxController extends ApibaseController
             ->select();
         if($data){
             foreach ($data as $k => $v) {
+                $data[$k]['is_back'] = M('pay_back')->where(array('status'=>5,'remark'=>$v['order_sn']))->getField('id')?1:0;
                 $data[$k]['goods_list'] = $this->order_goods->where(array('order_id'=>$v['order_id']))->field('goods_name,goods_num,goods_price,spec_key_name')->select();
                 foreach ($data[$k]['goods_list'] as $key => $val){
                     if($data[$k]['goods_list'][$key]['spec_key_name'] != ''){
@@ -230,6 +231,7 @@ class XcxController extends ApibaseController
                 if ($data[$k]['status']==5){
                     $data[$k]['order_status']=6;
                 }
+                $data[$k]['is_back'] = ($v['status']==5)?1:0;
             }
             $this->ajaxReturn(array('code'=>'success','msg'=>'成功','data'=>$data));
         }else{
