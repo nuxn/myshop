@@ -142,6 +142,7 @@
         }
         
         .conter ul li span.ul_s {
+            margin-left: 0;
             color: #ff9232;
         }
         
@@ -223,7 +224,7 @@
             width: 25%;
             height: 3rem;
             text-align: center;
-            background-color: #329cff;
+            background-color: #98CDFF;
             font-size: .36rem;
             color: #fff;
         }
@@ -379,7 +380,7 @@
         }
         
         .payment .cell_input {
-            padding: .2rem;
+            padding: .3rem;
             height: .7rem;
             margin-top: .3rem;
         }
@@ -453,6 +454,7 @@
             line-height: 1.06rem !important;
             font-size: .34rem !important;
             border-radius: .26rem .26rem 0 0 !important;
+            color: #323232 !important;
         }
         
         .layui-m-layercont {
@@ -484,4 +486,112 @@
         .layui-m-layerbtn,
         .layui-m-layerbtn span {
             border-radius: 0 0 .26rem .26rem !important;
+        }
+        /* 重置支付密码 */
+        
+        .respay {
+            width: 80%;
+            background-color: #fff;
+            margin-top: 3.75rem;
+            margin-left: 10%;
+            border-radius: .26rem;
+        }
+        
+        .respay h3 {
+            width: 100%;
+            height: .68rem;
+            line-height: .68rem;
+            text-align: center;
+            color: #323232;
+            font-size: .32rem;
+            padding-top: .2rem;
+            position: relative;
+        }
+        
+        .respay h3 a {
+            width: .4rem;
+            height: .4rem;
+            line-height: .4rem;
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: .3rem;
+        }
+        
+        .respay h3 a img {
+            width: .4rem;
+        }
+        
+        .respay p {
+            width: 100%;
+            height: .58rem;
+            line-height: .58rem;
+            text-align: center;
+            color: #323232;
+            font-size: .26rem;
+        }
+        
+        .respay .res {
+            height: 1.12rem;
+            line-height: 1.12rem;
+            text-align: center;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .respay .res .res_inp {
+            width: 50%;
+            height: .5rem;
+            line-height: .5rem;
+            border: none;
+            font-size: .26rem;
+            color: #545454;
+            text-align: center;
+        }
+        
+        .respay .res button {
+            width: 1.4rem;
+            height: .5rem;
+            line-height: .5rem;
+            font-size: .24rem;
+            background-color: #329cff;
+            color: #fff;
+            border-radius: .1rem;
+            border: none;
+            padding: 0;
+            white-space: nowrap;
+        }
+        
+        .respay .next {
+            width: 100%;
+            height: .85rem;
+            line-height: .85rem;
+            font-size: .3rem;
+            color: #329cff;
+            border: none;
+            background-color: #fff;
+            border-radius: 0 0 .26rem .26rem;
+        }
+        
+        .respay .res .inp {
+            width: 83%;
+            height: .7rem;
+            margin-left: 8.5%;
+            border: 1px solid #b9b9b9;
+        }
+        
+        .respay .res .inp input {
+            width: 16.66%;
+            height: .7rem;
+            line-height: .7rem;
+            font-size: .36rem;
+            text-align: center;
+            float: left;
+            box-sizing: border-box;
+            border: none;
+            border-right: 1px solid #e5e5e3;
+            color: #323232;
+        }
+        
+        .respay .res .inp input:last-child {
+            border-right: none;
         }

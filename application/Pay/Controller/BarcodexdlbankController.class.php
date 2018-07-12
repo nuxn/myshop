@@ -135,9 +135,26 @@ class BarcodexdlbankController extends HomebaseController
             'remark_mer' => '',
         );
         $data['jmt_remark'] = I('memo','')?:I("jmt_remark",'');
-        $db_res =  $this->payModel->add($data);
-        if($db_res){
+        $db_res = $this->payModel->add($data);
+        if ($db_res) {
+//            $params['orgNo'] = $this->orgNo;
+//            $params['mercId'] = $this->mercId;
+//            $params['trmNo'] = $this->trmNo;
+//            $params['txnTime'] = date('YmdHis');
+//            $params['signType'] = $this->signType;
+//            $params['version'] = $this->version;
+//            $params['signValue'] = $this->getSign($params);
+//            $return = $this->requestPost(json_encode($params));
+//            $result = json_decode(urldecode($return), true);
+//            $jspay = true;
+//            if ($result['returnCode'] == '000000') {
+//                if($result['appId'] == 'wx877afef258515692'){
+//                    $jspay = false;
+//                }
+//            }
+//            if($jspay){
             if($into_data['jspay_type'] == 1){
+                $params = null;
                 $money = $price*100;
                 $this->notify_url = "https://sy.youngport.com.cn/Pay/Barcode/weixipay_return000/price/{$money}/sub_openid/{$sub_openid}/remark/{$remark}/mid/{$cate_info[merchant_id]}";
                 $this->url = 'https://gateway.starpos.com.cn/sysmng/bhpspos4/5533020.do';
@@ -163,23 +180,24 @@ class BarcodexdlbankController extends HomebaseController
                 exit;
             } else {
                 header("content-type:text/html;charset=utf-8");
-                $this->url = $this->server . 'pubSigQry.json';
-                $params['orgNo'] = $this->orgNo;
-                $params['mercId'] = $this->mercId;
-                $params['trmNo'] = $this->trmNo;
-                $params['txnTime'] = date('YmdHis');
-                $params['signType'] = $this->signType;
-                $params['version'] = $this->version;
-//                $params['addField'] = $this->pubVersion; // pubVersion
-                $params['signValue'] = $this->getSign($params);
-                $this->writlog('JS_pubSigQry.log', '查询-url：' . $this->url);
-                $this->writlog('JS_pubSigQry.log', '查询-参数：' . json_encode($params));
-                $return = $this->requestPost(json_encode($params));
-                $result = json_decode(urldecode($return), true);
-                $this->writlog('JS_pubSigQry.log', '查询-返回：' . json_encode($result));
-                if($result['returnCode'] != '000000'){
-                    $this->alert_err('网络异常，请稍后再试！');
-                }
+//                $this->url = $this->server . 'pubSigQry.json';
+//                $params['orgNo'] = $this->orgNo;
+//                $params['mercId'] = $this->mercId;
+//                $params['trmNo'] = $this->trmNo;
+//                $params['txnTime'] = date('YmdHis');
+//                $params['signType'] = $this->signType;
+//                $params['version'] = $this->version;
+////                $params['addField'] = $this->pubVersion; // pubVersion
+//                $params['signValue'] = $this->getSign($params);
+////                $this->writlog('JS_wx2_pay.log', '查询-url：' . $this->url);
+////                $this->writlog('JS_wx2_pay.log', '查询-参数：' . json_encode($params));
+//                $return = $this->requestPost(json_encode($params));
+//                $result = json_decode(urldecode($return), true);
+//                $this->writlog('JS_wx2_pay.log', '查询-返回：' . json_encode($result));
+//                if($result['returnCode'] != '000000'){
+//                    $this->alert_err('网络异常，请稍后再试！');
+//                }
+                $params = null;
                 $this->url = $this->server . 'pubSigPay.json';
                 $params['orgNo'] = $this->orgNo;
                 $params['mercId'] = $this->mercId;
@@ -191,7 +209,7 @@ class BarcodexdlbankController extends HomebaseController
                 $params['amount'] = (string)($price*100);
                 $params['total_amount'] = (string)($price*100);
                 $params['signValue'] = $this->getSign($params);
-                $this->writlog('JS_wx2_pay.log', '获取-url：' . $this->url);
+//                $this->writlog('JS_wx2_pay.log', '获取-url：' . $this->url);
                 $this->writlog('JS_wx2_pay.log', '获取-参数：' . json_encode($params));
                 $return = $this->requestPost(json_encode($params));
                 $result = json_decode(urldecode($return), true);
@@ -221,6 +239,33 @@ class BarcodexdlbankController extends HomebaseController
         }
     }
 
+    public function test()
+    {
+        $this->url = $this->server . 'pubSigQry.json';
+        $re = M('merchants_xdl')->where("id IN (67,157,410,445,853,859,862,863,864,868,874) or jspay_type=1")->group('mercId')->select();
+        foreach ($re as $key => $val) {
+            $this->signKey = null;
+            $params = null;
+            $this->signKey = $val['signKey'];
+            $params['orgNo'] = $val['orgNo'];
+            $params['mercId'] = $val['mercId'];
+            $params['trmNo'] = $val['trmNo'];
+            $params['txnTime'] = date('YmdHis');
+            $params['signType'] = $this->signType;
+            $params['version'] = $this->version;
+            $params['signValue'] = $this->getSign($params);
+            $return = $this->requestPost(json_encode($params));
+            $result = json_decode(urldecode($return), true);
+            if($result['returnCode'] == '000000'){
+                dump($return);
+                if($result['appId'] == 'wx877afef258515692'){
+                    M('merchants_xdl')->where(array('id'=>$val['id']))->save(array('jspay_type'=>'2'));
+                }
+            } else {
+                dump($val['mercId'].'|'.$result['message']);
+            }
+        }
+    }
 
     public function get_code($config = array())
     {

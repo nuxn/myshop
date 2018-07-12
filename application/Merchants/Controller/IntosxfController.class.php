@@ -18,6 +18,7 @@ class IntosxfController extends AdminbaseController
     protected $input;
     protected $merUrl;
     private $orgId;
+    private $status = 0;
 
     function _initialize()
     {
@@ -88,6 +89,7 @@ class IntosxfController extends AdminbaseController
             if($result['code'] == 'SXF0000'){
                 $return = $result['respData'];
                 if($return['bizCode'] == '00'){
+                    $this->status = 1;
                     $this->adddb();
                     $this->ajaxReturn(array('code'=> '0000','msg'=>''));
                 } else {
@@ -196,6 +198,113 @@ class IntosxfController extends AdminbaseController
         }
     }
 
+    # 批量进件
+    public function batch_add()
+    {
+        if(IS_POST){
+            $intoid = I('intoid');
+            if(!$intoid){$this->ajaxReturn(array('code'=> '1000','msg'=>'id为空'));}
+            $intoid = substr($intoid, 1);
+            $info = $this->sxfModel->where(array('id'=>array('IN', $intoid)))->select();
+            foreach ($info as $val) {
+                $this->sxfModel->setNull();
+                $this->sxfModel->setBatchInfoParams($val, $this->merUrl);
+                $result = $this->sxfModel->batchFeedInfo();
+                $status = 0;
+                $mno = '';
+                if($result['code'] == 'SXF0000'){
+                    $return = $result['respData'];
+                    if($return['bizCode'] == '00'){
+                        $status = 1;
+                        $msg = $return['bizMsg'];
+                    } else {
+                        $msg = $return['bizMsg'];
+                    }
+                } else {
+                    if($result['msg'] == 'mecDisNmlength must be between 12 and 40'){
+                        $msg = '商户简称至少6个汉字';
+                    } else {
+                        $msg = $result['msg']?:'失败';
+                    }
+                }
+                $this->sxfModel->where()->save(array('status'=>$status, 'err_msg'=>$msg));
+            }
+            $this->ajaxReturn(array('code'=> '0000'));
+        } else {
+            $province = $this->get_province();
+            $img = array('门头','营业执照','法人正面','法人反面','卡正面','法人结算正面','法人结算反面','内景','收银台');
+            $this->assign('province', $province);
+            $this->assign('img', $img);
+            $this->display();
+        }
+    }
+
+    public function getInfo()
+    {
+        $merchant_id = I('mch_id');
+        if($this->sxfModel->where(array('merchant_id'=>$merchant_id))->getField('id')){
+            $this->ajaxReturn(array('code'=>'1000','msg'=>'商户已进件'));
+        }
+        $list = M('Merchants')->field('m.id as `商户id`,m.merchant_name as `商户名称`,m.merchant_jiancheng as `商户简称`,u.user_phone as `手机号`,
+            header_interior_img as `门头`,interior_img,business_license_number as `营业执照号`,business_license as `营业执照`,province as `省`,city as `市`,county as `区县`,address as `详细地址`,
+            operator_name as `姓名`,id_number as `身份证`,positive_id_card_img as `法人正面`,id_card_img as `法人反面`,case account_type when 0 then "对私" when 1 then "对公" else "未知" end `账户类型`,
+            account_name as `账户名`,bank_account as `银行`,branch_account as `支行`,bank_account_no as `卡号`,positive_bank_card_img as `卡正面`')
+            ->join('m left join ypt_merchants_users u on m.uid=u.id')
+            ->where("m.id='{$merchant_id}'")->find();
+        if(!$list){
+            $this->ajaxReturn(array('code'=>'1000','msg'=>'商户不存在'));
+        }
+        $base = array('营业执照号','身份证','卡号');
+        $img = array('门头','营业执照','法人正面','法人反面','卡正面','法人结算正面','法人结算反面','内景','收银台');
+        foreach ($list as $key => &$val) {
+            if($key == 'interior_img'){
+                if($val){
+                    $arr = explode(',', $val);
+                    $a['内景'] = $arr[0];
+                    $a['收银台'] = $arr[1];
+                    $this->array_insert($list,5,$a);
+                }
+                unset($list[$key]);
+                continue;
+            }
+            if(in_array($key, $base)){
+                $val = decrypt($val);
+                continue;
+            }
+            if(in_array($key, $img)){
+                if(strpos($val,'merchants') === 0){
+                    $val = './data/upload/' . $val;
+                }
+                $com = strpos($val,'com.cn');
+                if($com){
+                    $val = substr($val,$com+6);
+                }
+            }
+        }
+        $list['法人结算正面'] = $list['法人正面'];
+        $list['法人结算反面'] = $list['法人反面'];
+        $list['结算身份证号'] = $list['身份证'];
+
+        $this->ajaxReturn(array(
+            'code'=> '0000',
+            'list'=> array_filter($list),
+            'mch_id'=> $merchant_id,
+        ));
+    }
+
+    public function get_add_code()
+    {
+        $this->input = I("post.");
+        array_filter($this->input);
+        $taskCode = $this->getTaskCode();
+        $this->input['task_code'] = $taskCode;
+        $res = $this->adddb();
+        if($res !== false){
+            $this->ajaxReturn(array('code'=> '0000','task_code'=>$taskCode,'id'=>$res));
+        } else {
+            $this->ajaxReturn(array('code'=> '1000','msg'=>'获取失败了'));
+        }
+    }
 
     public function wxconfig()
     {
@@ -283,13 +392,13 @@ class IntosxfController extends AdminbaseController
 
     public function adddb()
     {
-        $this->input['status'] = 1;
+        $this->input['status'] = $this->status;
         $merchant_id = $this->input['merchant_id'];
         $id = $this->sxfModel->where(array('merchant_id'=>$merchant_id))->getField('id');
         if($id){
-            $this->sxfModel->where(array('id'=>$id))->save($this->input);
+            return $this->sxfModel->where(array('id'=>$id))->save($this->input);
         } else {
-            $this->sxfModel->add($this->input);
+            return $this->sxfModel->add($this->input);
         }
     }
 

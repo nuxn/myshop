@@ -8,6 +8,10 @@
     <link rel="stylesheet" type="text/css" href="__TMPL__Public/pay/version1/css/index-rem.css">
     <link rel="stylesheet" type="text/css" href="__TMPL__Public/pay/version1/css/member.css">
     <link rel="stylesheet" href="__TMPL__Public/pay/version1/js/layer_mobile/need/layer.css">
+    <!--<link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css">-->
+    <style>
+        .conter_left{display: none}
+    </style>
 </head>
 
 <body style="background:#f2f2f2;">
@@ -21,7 +25,7 @@
 <div class="conter">
     <h5>{$merchant['jianchen']}</h5>
     <div class="conter_box">
-        <p class="conter_left">已优惠 <span>￥</span><span class="discount">0</span> , <a href="javascript:void(0);" onclick="myjs()">点击查看</a></p>
+        <p class="conter_left">已优惠 <span>￥</span><span class="total-discount">0</span> , <a href="javascript:void(0);" onclick="myjs()">点击查看</a></p>
         <p class="conter_right">应付金额：<span class="payables">￥0.00</span></p>
     </div>
     <div class="conter_key">
@@ -29,32 +33,26 @@
     </div>
     <ul id="test">
         <h6>请选择付款方式</h6>
-        <if condition="isset($agent_yue) && ($agent_yue nheq '')">
+        <if condition="(isset($yue) && $yue nheq '') or (isset($agent_yue) && $agent_yue nheq '')">
             <li>
                 <img src="__TMPL__Public/pay/version1/imgs/222_02.png" alt="">
                 <span>储值支付</span>
-                <span class="ul_s">￥{$agent_yue|floatval}</span>
-                <input type="checkbox" name="check1" value="储值支付">
+
+                <if condition="isset($agent_yue) && ($agent_yue nheq '')">
+                    <span class="ul_s">￥{$agent_yue|floatval}</span>
+                    <elseif condition="isset($yue) && ($yue nheq '')"/>
+                    <span class="ul_s">￥{$yue|floatval}</span>
+                    <else/>
+                    <span class="ul_s"> </span>
+                </if>
+
+                <input type="checkbox" class="paytype" name="balancepay" value="储值支付">
             </li>
-        <elseif condition="isset($yue) && ($yue nheq '')"/>
-            <li>
-                <img src="__TMPL__Public/pay/version1/imgs/222_02.png" alt="">
-                <span>储值支付</span>
-                <span class="ul_s">￥{$yue|floatval}</span>
-                <input type="checkbox" name="check1" value="储值支付">
-            </li>
-        <else/>
-            <!--<li>-->
-                <!--<img src="__TMPL__Public/pay/version1/imgs/222_02.png" alt="">-->
-                <!--<span>储值支付</span>-->
-                <!--<span class="ul_s">￥10</span>-->
-                <!--<input type="checkbox" name="check1" value="储值支付">-->
-            <!--</li>-->
         </if>
         <li>
             <img src="__TMPL__Public/pay/version1/imgs/222_03.png" alt="">
             <span>微信支付</span>
-            <input type="checkbox" name="check1" value="微信支付">
+            <input type="checkbox" class="paytype" name="weixinpay" <if condition="$flag eq 0">checked disabled</if> value="微信支付">
         </li>
     </ul>
 </div>
@@ -63,29 +61,29 @@
 <div class='key-container'>
     <div class='keyboard'>
         <div class='key-row'>
-            <div class='key-cell' data-num='7' ontouchend="demo(this,1)">7</div>
-            <div class='key-cell' data-num='8' ontouchend="demo(this,1)">8</div>
-            <div class='key-cell' data-num='9' ontouchend="demo(this,1)">9</div>
-            <div class='key-cell keyimg' data-num='D' onclick="demo(this,2)"></div>
+            <div class='key-cell' data-num='7' ontouchend="inputPrice(this,1)">7</div>
+            <div class='key-cell' data-num='8' ontouchend="inputPrice(this,1)">8</div>
+            <div class='key-cell' data-num='9' ontouchend="inputPrice(this,1)">9</div>
+            <div class='key-cell keyimg' data-num='D' onclick="inputPrice(this,2)"></div>
         </div>
         <div class='key-row'>
-            <div class='key-cell' data-num='4' onclick="demo(this,1)">4</div>
-            <div class='key-cell' data-num='5' onclick="demo(this,1)">5</div>
-            <div class='key-cell' data-num='6' onclick="demo(this,1)">6</div>
+            <div class='key-cell' data-num='4' onclick="inputPrice(this,1)">4</div>
+            <div class='key-cell' data-num='5' onclick="inputPrice(this,1)">5</div>
+            <div class='key-cell' data-num='6' onclick="inputPrice(this,1)">6</div>
             <div class='key-cell' data-num='-1'></div>
         </div>
         <div class='key-row'>
-            <div class='key-cell' data-num='1' onclick="demo(this,1)">1</div>
-            <div class='key-cell' data-num='2' onclick="demo(this,1)">2</div>
-            <div class='key-cell' data-num='3' onclick="demo(this,1)">3</div>
+            <div class='key-cell' data-num='1' onclick="inputPrice(this,1)">1</div>
+            <div class='key-cell' data-num='2' onclick="inputPrice(this,1)">2</div>
+            <div class='key-cell' data-num='3' onclick="inputPrice(this,1)">3</div>
             <div class='key-cell' data-num='-1'></div>
         </div>
         <div class='key-row'>
-            <div class='key-cell key0' data-num='0' onclick="demo(this,1)">0</div>
-            <div class='key-cell' data-num='.' onclick="demo(this,1)">.</div>
+            <div class='key-cell key0' data-num='0' onclick="inputPrice(this,1)">0</div>
+            <div class='key-cell' data-num='.' onclick="inputPrice(this,1)">.</div>
             <div class='key-cell' data-num='-1'></div>
         </div>
-        <div class='key-confirm' data-num='S' onclick="handleConfirmKey()">
+        <div class='key-confirm' data-num='S' onclick="submitPay()">
             <p>确认支付</p>
         </div>
     </div>
@@ -96,18 +94,18 @@
     <div class="oooo1">
         <!--代理商联盟卡-->
         <if condition="!empty($agent_discount)">
-            <ul>
-                <p><span>宝安商圈卡</span><span class="right">银卡会员</span></p>
+            <ul class="agent-info">
+                <p><span>{$agtcardname|0}</span><span class="right">{$agent_levelname}</span></p>
                 <li>
                     <span>会员折扣 ({$agent_discount}折)</span>
-                    <input type="checkbox" name="check2" value="0">
-                    <span class="right">-￥0</span>
+                    <input type="checkbox" name="agent_discount" value="0" class="discount use-discount" data-card="agent" data-type="discount">
+                    <span class="right agent_disprice">-￥0</span>
                 </li>
                 <if condition="$agent_credits neq 0">
                     <li>
-                        <span>积分抵扣 (使用0积分)</span>
-                        <input type="checkbox" name="check2" value="0">
-                        <span class="right">-￥0</span>
+                        <span>积分抵扣 (使用<use calss="agent-integral">0</use>积分)</span>
+                        <input type="checkbox" name="agent_integral" value="0" class="discount integral" data-card="agent" data-type="integral">
+                        <span class="right agent-intprice">-￥0</span>
                     </li>
                 </if>
             </ul>
@@ -115,18 +113,18 @@
         <!--代理商联盟卡-->
         <!--商家会员卡-->
         <if condition="!empty($discount)">
-            <ul>
-                <p><span>宝安商圈卡</span><span class="right">银卡会员</span></p>
-                <li class="discount mch">
+            <ul class="mch-info">
+                <p><span>{$mchcardname|0}</span><span class="right">{$mch_levelname}</span></p>
+                <li>
                     <span>会员折扣 ({$discount}折)</span>
-                    <input type="checkbox" name="check2" value="0">
-                    <span class="right">-￥0</span>
+                    <input type="checkbox" name="mch_discount" value="0" class="discount use-discount" data-card="mch" data-type="discount">
+                    <span class="right mch_disprice">-￥0</span>
                 </li>
                 <if condition="$credits neq 0">
                     <li>
-                        <span>积分抵扣 (使用0积分)</span>
-                        <input type="checkbox" name="check2" value="0">
-                        <span class="right">-￥0</span>
+                        <span>积分抵扣 (使用<use class="mch-integral">0</use>积分)</span>
+                        <input type="checkbox" name="mch_integral" value="0" class="discount integral" data-card="mch" data-type="integral">
+                        <span class="right mch-intprice">-￥0</span>
                     </li>
                 </if>
             </ul>
@@ -136,13 +134,14 @@
         <if condition="!empty($coupon_data)">
             <ul>
                 <p><span>优惠券</span><span class="right">满减</span></p>
-                    <volist  name="coupon_data" id="v">
-                        <li man="{$v.total_price}" jian="{$v.de_price}" code="{$v.usercard}" class="coupon">
-                            <span>满{$v.total_price}减{$v.de_price}优惠券</span>
-                            <input type="checkbox" name="check2" value="{$v.de_price}">
-                            <span class="right">-￥{$v.de_price}</span>
-                        </li>
-                    </volist>
+                <volist  name="coupon_data" id="v">
+                    <li class="coupon">
+                        <span>满{$v.total_price}减{$v.de_price}优惠券</span>
+                        <input type="checkbox" name="coupon" value="{$v.de_price}" class="discount" data-type="coupon"
+                               data-man="{$v.total_price}" data-jian="{$v.de_price}" data-code="{$v.usercard}">
+                        <span class="right">-￥{$v.de_price}</span>
+                    </li>
+                </volist>
             </ul>
         </if>
         <!--优惠券-->
@@ -199,117 +198,259 @@
 <input type="hidden" name="openid" value="{$openid}">
 <input type="hidden" name="checker_id" value="{$checker_id|0}">
 <input type="hidden" name="agent_yue" value="{$agent_yue|0}">
-<input type="hidden" name="mch_yue" value="{$yue|0}">
 
 </body>
 <script src="__TMPL__Public/pay/version1/js/jquery.min.js"></script>
+<script src="__PUBLIC__/layui/layui.all.js"></script>
 <script src="__TMPL__Public/pay/version1/js/layer_mobile/layer.js"></script>
 </html>
 <script>
-    var flag = {$flag};
-    var mch_id ={$merchant.merchant_id|default=0};
+    var flag = {$flag|0};
+    var mch_id = {$merchant.merchant_id|default=0};
+    var agent_card_code ={$agent_card_code|default=0};  // 联名卡卡号
+    var agent_yue = {$agent_yue|default=0};             // 联名卡余额
+    var agent_discount = {$agent_discount|default=10};  // 联名卡折扣
+    var agent_integral = {$agent_credits|default=0};    // 联名卡可用积分
+    var agent_integral_use = {$agent_credits_use|default=0};            // 联名卡积分使用
+    var agent_integral_discount = {$agent_credits_discount|default=0};  // 联名卡积分使用抵扣金额
+
+    var mch_card_code ={$card_code|default=0};      // 商户卡卡号
+    var mch_yue = {$yue|default=0};                 // 商户卡余额
+    var mch_discount = {$discount|default=10};      // 商户卡折扣
+    var mch_integral = {$credits|default=0};        // 商户卡可用积分
+    var mch_integral_use = {$credits_use|default=0};            // 商户积分使用
+    var mch_integral_discount = {$credits_discount|default=0};  // 商户积分使用抵扣金额
 </script>
 <script type="text/javascript">
-    if(!flag){
-        $(".conter_left").hide();
+    if (flag) {
+        $(".conter_left").show();
     }
-    var test_val; //支付方式
-    var oooo1_val; //优惠卷的值
-    var payables_val; //应付金额
-    // $(document).ready(function() {
-    //     // JQuery 实现多个checkbox 只选中一个
-    //     $('#test').find('input[type=checkbox]').bind('click', function() {
-    //         $('#test').find('input[type=checkbox]').not(this).attr("checked", false);
-    //         test_val = $(this).val();
-    //     });
-    //     $('.oooo1').find('input[type=checkbox]').bind('click', function() {
-    //         $('.oooo1').find('input[type=checkbox]').not(this).attr("checked", false);
-    //         oooo1_val = $(this).val();
-    //     });
-    // })
-    //点击查看优惠卷
-    function myjs() {
-        $('.oooo').show();
-        $('.motai').show();
-    }
-    //点击优惠卷关闭的时候取值
-    function closex() {
-        $('.oooo').hide();
-        $('.motai').hide();
-        $(".discount").text(oooo1_val); //把值放到已优惠里面
-    }
-    //处理按键
-    function demo(obj, tip) {
-        var con = $('#content').val();
-        var num;    //点击按钮的值
-        if (tip == 1) {
-            num = con + $(obj).html();
-            if(num !=''&& num.substr(0,1) == '.'){num="";}
-            num = num.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符
-            num = num.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的
-            num = num.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
-            num = num.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数
-            // 此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
-            if(num.indexOf(".")< 0 && num !="") {
-                if (num.substr(0, 1) == '0' && num.length == 2) {
-                    num = num.substr(1, num.length);
-                }
-            }
-            if(num<=99999.99 && num.toString().length<=8){
-                if(num.indexOf(".")>0){
-                    num = num.replace(/\b(0+)/gi,"0");
-                    if(num.toString().split(".")[1].length<=2){
-                    } else {
-                        num = num.substr(0, num.length - 1);
-                    }
-                }
+
+    var input_price = 0;       // 输入的金额
+    var pay_price = 0;          // 最终金额
+    var integral_price = 0;     // 积分抵扣优惠的价格
+    var coupon_price = 0;       // 优惠券优惠的价格
+    var discount_price = 0;     // 打折优惠的价格
+    var total_discount = 0;     // 优惠的价格总额
+    var card_code = 0;          // 使用的卡号
+    var use_balance = 0;        // 使用的卡储值
+    var use_discount = 10;      // 使用的折扣
+    var use_integral = 0;       // 使用的积分
+    var coupon_code = 0;        // 使用的优惠券码
+    var clicknum;           // 弹窗点击次数
+
+    // 支付方式切换
+    $(".paytype").change(function () {
+        $(".paytype").attr("checked", false);
+        $(this).attr("checked", true);
+    });
+
+    // 优惠选择计算
+    $(".discount").change(function () {
+        pay_price = input_price;
+        var object = $(this);
+        var checked = object.is(':checked')
+        var type = object.data('type');
+        switch (type) {
+            case 'integral':
+                selectCard(object, checked);
+                break;
+            case 'coupon':
+                selectCoupon(object, checked)
+                break;
+            case 'discount':
+                selectCard(object, checked);
+                break;
+            default:
+                return false;
+        };
+        event.preventDefault();
+    });
+
+    // 选择使用的会员卡
+    function selectCard(object, checked) {
+        var card = object.data("card");
+        if(card == 'mch'){
+            if (checked) {
+                $(".mch-info input").attr("checked", true)
+                $(".agent-info input").attr("checked", false)
+                countDiscount();
             } else {
-                num =  num.substr(0, num.length - 1);
+                object.attr("checked", false);
+                countDiscount();
             }
-            if(num>0){  $(".key-confirm").css('background','#329CFF'); }
-            $('#content').attr('value', num);
-            // 应付金额
-            payables();
-        } else if (tip == 2) { //处理删除键
-            num = con.slice(0,-1);
-            $('#content').attr('value', con.slice(0, -1));
-            if(num < 0.01){
-                $(".key-confirm").css('background','#98CDFF');
+        }
+        if(card == 'agent'){
+            if (checked) {
+                $(".agent-info input").attr("checked", true)
+                $(".mch-info input").attr("checked", false)
+                countDiscount();
+            } else {
+                object.attr("checked", false);
+                countDiscount();
             }
-            // 应付金额
-            payables();
         }
     }
-    //应付金额
-    function payables() {
-        var discount = $(".discount").html();
-        payables_val = parseFloat(document.getElementById('content').value - discount);
-        if (document.getElementById('content').value < 10) {
-            $(".payables").text('￥' + document.getElementById('content').value);
+
+    // 选择使用的优惠券
+    function selectCoupon(object, checked) {
+        if (checked) {
+            var man = toDecimal(object.data('man'));
+            if(pay_price >= man){
+                $("input[name=coupon]").attr("checked", false);
+                object.attr("checked", true);
+                countDiscount();
+            } else {
+                object.attr("checked", false);
+            }
         } else {
-            $(".payables").text('￥' + payables_val);
+            object.attr("checked", false);
+            countDiscount();
         }
     }
-    // 确认
-    function handleConfirmKey() {
+
+    // 统计优惠金额
+    function countDiscount() {
+        // 积分抵扣的金额
+        integral_price = 0;
+        use_integral = 0;
+        use_balance = 0;
+        card_code = 0;
+        var int_card = $(".integral:checked").data("card");
+        if(int_card !== undefined){
+            if(int_card == 'mch'){
+                card_code = mch_card_code;  // 使用的会员卡号
+                use_balance = mch_yue;  // 使用的会员卡储值
+            }
+            if(int_card == 'agent'){
+                card_code = agent_card_code;    // 使用的会员卡号
+                use_balance = agent_yue;  // 使用的会员卡储值
+            }
+            use_integral = toDecimal($(".integral:checked").prev().find("use").html())
+            integral_price = toDecimal($(".integral:checked").next().html().substr(2))
+            pay_price = toDecimal(pay_price - integral_price);
+            console.log(pay_price +'|积分|'+integral_price)
+        }
+        // 优惠券抵扣的金额
+        coupon_price = 0;
+        coupon_code = 0;
+        var check_coupon = $("input[name=coupon]:checked");
+        if(check_coupon.data("code") !== undefined){
+            var man = toDecimal(check_coupon.data("man"));
+            var jian = toDecimal(check_coupon.data("jian"));
+            if(pay_price >= parseFloat(man)){
+                coupon_price = jian;
+                coupon_code = check_coupon.data("code");
+                pay_price = toDecimal(pay_price - coupon_price);
+                console.log(pay_price +'|券|'+coupon_price)
+            } else {
+                check_coupon.attr("checked", false);
+            }
+        }
+        // 折扣金额
+        discount_price = 0;
+        var dis_card = $(".use-discount:checked").data("card");
+        if(dis_card !== undefined){
+            if(dis_card == 'mch'){
+                discount_price = toDecimal((10-mch_discount)/10 * pay_price);   // 折扣金额
+                pay_price = toDecimal(pay_price - discount_price);  // 应付金额
+
+                use_discount = mch_discount;    // 折扣值
+                card_code = mch_card_code;      // 使用的会员卡号
+                use_balance = mch_yue;          // 使用的会员卡储值
+
+                $(".mch_disprice").html('-￥' + discount_price);
+            }
+            if(dis_card == 'agent'){
+                discount_price = toDecimal((10-agent_discount)/10 * pay_price); // 折扣金额
+                pay_price = toDecimal(pay_price - discount_price);  // 应付金额
+
+                use_discount = agent_discount;  // 折扣值
+                card_code = agent_card_code;    // 使用的会员卡号
+                use_balance = agent_yue;        // 使用的会员卡储值
+
+                $(".agent_disprice").html('-￥' + discount_price);
+            }
+            console.log(pay_price +'|折扣|'+discount_price)
+        }
+
+        total_discount = toDecimal(integral_price+coupon_price+discount_price); // 优惠总额
+        console.log(pay_price +'|总额|'+total_discount)
+        $(".payables").text('￥' + pay_price);   // 显示应付金额
+        $(".total-discount").text(total_discount);  // 显示优惠总额
+        $(".ul_s").text('￥'+use_balance);   // 显示剩余储值
+    }
+
+    // 处理输入金额按键
+    function inputPrice(obj, tip) {
+        var con = $('#content').val();
+        var disprice;    // 输入框的金额
+        if (tip == 1) {
+            disprice = con + $(obj).html();
+            // 限制用户输入金额
+            disprice = getPrice(disprice);
+            if (disprice > 0) { // 更改支付按钮背景颜色
+                $(".key-confirm").css('background', '#329cff');
+            }
+            $('#content').attr('value', disprice);
+        } else if (tip == 2) { //处理删除键
+            disprice = con.slice(0, -1);
+            $('#content').attr('value', con.slice(0, -1));
+            if (disprice < 0.01) { // 更改支付按钮背景颜色
+                $(".key-confirm").css('background', '#98CDFF');
+            }
+        }
+        input_price = toDecimal(disprice);
+        pay_price = input_price;
+        // 将折扣金额显示
+        if (flag) {
+            // 计算优惠金额 优惠顺序:积分>>优惠券>>折扣>>余额
+            payables();
+        }
+        $(".payables").text('￥' + pay_price);
+        event.preventDefault();
+    }
+
+    // 计算优惠后的应付金额
+    function payables() {
+        // 计算可抵扣金额
+        getIntegral();
+        // 计算优惠券可用
+        getCoupon();
+        // 计算打折优惠价格
+        getDiscount();
+        countDiscount();
+    }
+
+    // 点击支付按钮
+    function submitPay() {
         let S = $('#content').val();
         //未输入
-        if (!S.length || payables_val <= 0) {
-            layer.open({
-                content: '请输入消费金额',
-                skin: 'msg',
-                time: 2 //2秒后自动关闭
-            });
+        if (!S.length || pay_price <= 0) {
             return false;
         }
-        if (test_val == '储值支付') {
-            $('.pay').show();
-            $('.motai').show();
-            $(".payment_bot").text('￥' + payables_val);
-        } else if (test_val == '微信支付') {
-            $('.pay').show();
-            $('.motai').show();
-            $(".payment_bot").text('￥' + payables_val);
+        // 选择支付方式
+        var paytype = $(".paytype:checked").attr('name');
+        if (paytype == 'balancepay') {
+            // 发送请求接口
+            var have_yue = $('.ul_s').html();
+            have_yue = have_yue.substr(1);
+            if (have_yue > pay_price) {
+                $('.pay').show();
+                $('.motai').show();
+                $(".payment_bot").text('￥' + pay_price);
+            } else {
+                layer.open({
+                    title: ['提示'],
+                    content: '储值余额不足!',
+                    btn: ['确定'],
+                    yes: function (index) {
+                        layer.close(index);
+                    }
+                })
+            }
+        } else if (paytype == 'weixinpay') {
+
         } else {
             layer.open({
                 content: '请选择支付方式',
@@ -319,32 +460,41 @@
             return false;
         }
     }
-    //支付按键
+
+    // 使用余额储值支付
     function passworddemo(obj, tip) {
         var pay = $('#pay_content').val();
         if (tip == 1) {
             if (pay.length == 5) {
                 $('#pay_content').attr('value', pay + obj.innerHTML);
                 $('#inputValue5').attr('value', obj.innerHTML);
-                // 发送请求接口
                 //如果失败弹出询问框
-                layer.open({
-                    title: [
-                        '提示',
-                        'color:#323232'
-                    ],
-                    content: '支付密码错误!',
-                    btn: ['重试', '忘记密码'],
-                    yes: function(index) { //点击重试
-                        $('input[name=password]').val('');
-                        $('#pay_content').attr('value', "");
-                        layer.close(index);
-                    },
-                    no: function(index) { //忘记密码
-                        console.log(111)
-                        // layer.close(index);
-                    },
-                });
+                if (clicknum > 5) {
+                    layer.open({
+                        title: ['提示'],
+                        content: '支付密码错误，超过5次!',
+                        btn: ['找回密码'],
+                        yes: function (index) {
+                            layer.close(index);
+                        }
+                    })
+                } else {
+                    layer.open({
+                        title: ['提示'],
+                        content: '支付密码错误!',
+                        btn: ['重试', '忘记密码'],
+                        yes: function (index) { //点击重试
+                            $('input[name=password]').val('');
+                            $('#pay_content').attr('value', "");
+                            layer.close(index);
+                            clicknum = index;
+                        },
+                        no: function (index) { //忘记密码
+                            location.href = "respay_password.html";
+                            // layer.close(index);
+                        }
+                    });
+                }
                 return false;
             } else {
                 $('#pay_content').attr('value', pay + obj.innerHTML);
@@ -362,6 +512,7 @@
             }
         }
     }
+
     //支付按键关闭
     function closeXX() {
         $('.pay').hide();
@@ -374,7 +525,87 @@
         if (isNaN(f)) {
             return x;
         }
-        f = Math.round(x*100)/100;
+        f = Math.round(x * 100) / 100;
         return f;
+    }
+
+    //点击查看优惠卷
+    function myjs() {
+        $('.oooo').show();
+        $('.motai').show();
+    }
+
+    //点击优惠卷关闭的时候取值
+    function closex() {
+        $('.oooo').hide();
+        $('.motai').hide();
+    }
+
+    // 限制输入金额
+    function getPrice(param) {
+        if (param != '' && param.substr(0, 1) == '.') {
+            param = "";
+        }
+        param = param.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
+        param = param.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+        param = param.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        param = param.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数
+        // 此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+        if (param.indexOf(".") < 0 && param != "") {
+            if (param.substr(0, 1) == '0' && param.length == 2) {
+                param = param.substr(1, param.length);
+            }
+        }
+        if (param <= 99999.99 && param.toString().length <= 8) {
+            if (param.indexOf(".") > 0) {
+                param = param.replace(/\b(0+)/gi, "0");
+                if (param.toString().split(".")[1].length <= 2) {
+                } else {
+                    param = param.substr(0, param.length - 1);
+                }
+            }
+        } else {
+            param = param.substr(0, param.length - 1);
+        }
+        return param;
+    }
+
+    // 计算积分可抵扣的金额
+    function getIntegral() {
+        // 计算联盟卡可以抵扣的金额
+        var agent_times = Math.floor(agent_integral / agent_integral_use);                 // 最多使用积分的次数
+        var agent_usetimes = Math.floor(pay_price / agent_integral_discount);              // 本次使用积分的次数
+        if (agent_usetimes >= agent_times) {
+            agent_usetimes = agent_times;
+        }
+        var agent_integral_price = toDecimal(agent_integral_discount * agent_usetimes); // 抵扣的优惠
+        var agent_use_integral = agent_usetimes * agent_integral_use;
+        $(".agent-integral").html(agent_use_integral);
+        $(".agent-intprice").html('-￥' + agent_integral_price);
+
+        // 计算商家卡可抵扣金额
+        var mch_times = Math.floor(mch_integral / mch_integral_use);
+        var mch_usetimes = Math.floor(pay_price / mch_integral_discount);           // 本次使用积分的次数
+        if (mch_usetimes >= mch_times) {
+            mch_usetimes = mch_times;
+        }
+        var mch_integral_price = toDecimal(mch_integral_discount * mch_usetimes);
+        var mch_use_integral = mch_usetimes * mch_integral_use;
+        $(".mch-integral").html(mch_use_integral);
+        $(".mch-intprice").html('-￥' + mch_integral_price);
+    }
+
+    // 计算优惠券
+    function getCoupon() {
+        // 计算优惠券使用
+        $(".coupon input[name=coupon]").attr("checked", false);
+    }
+
+    // 计算折扣使用金额
+    function getDiscount() {
+        var agent_discount_price = toDecimal((10-agent_discount)/10 * pay_price);
+        $(".agent_disprice").html('-￥' + agent_discount_price);
+        var mch_discount_price = toDecimal((10-mch_discount)/10 * pay_price);
+        $(".mch_disprice").html('-￥' + mch_discount_price);
     }
 </script>

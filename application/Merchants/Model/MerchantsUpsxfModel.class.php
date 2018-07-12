@@ -119,6 +119,58 @@ class MerchantsUpsxfModel extends CommonModel
         return $this->send($this->batchFeedInfo, 'into');
     }
 
+//    public function batchFeedInfos()
+//    {
+//        return $this->sends($this->batchFeedInfo, 'batchinto');
+//    }
+//
+//    private function sends($url, $file_name = '')
+//    {
+//        $this->requestParams['reqId'] = md5(getOrderNumber());    // 请求唯一编号
+//        $this->requestParams['timestamp'] = date('YmdHis');    // 请求时间
+//        $this->requestParams['reqData'] = $this->parameters;
+//        $this->requestParams['sign'] = $this->getSign();
+//        $this->requestParams['reqData'] = array_map(function ($val) {
+//            return array_map(function ($value) {
+//                return urldecode($value);
+//            }, $val);
+//        }, $this->parameters);
+//        $send = json_encode($this->requestParams);
+//
+//        $result = $this->requestPost($url,$send);
+//        if($file_name){
+//            $this->get_date_log($file_name,'请求数据', $send);
+//            $this->get_date_log($file_name,'返回', $result);
+//        }
+//        return json_decode($result, true);
+//    }
+
+    public function setBatchInfoParams($val, $notify)
+    {
+        $into['qrcodeRate'] = urlencode($val['qrcodeRate']);
+        $into['mecDisNm'] = urlencode($val['mecDisNm']);
+        $into['mblNo'] = urlencode($val['mblNo']);
+        $into['mecTypeFlag'] = urlencode($val['mecTypeFlag']);
+        $into['cprRegNmCn'] = urlencode($val['cprRegNmCn']);
+        $into['registCode'] = urlencode($val['registCode']);
+        $into['regProvCd'] = urlencode($val['regProvCd']);
+        $into['regCityCd'] = urlencode($val['regCityCd']);
+        $into['regDistCd'] = urlencode($val['regDistCd']);
+        $into['cprRegAddr'] = urlencode($val['cprRegAddr']);
+        $into['mccCd'] = urlencode($val['mccCd']);
+        $into['identityName'] = urlencode($val['identityName']);
+        $into['identityTyp'] = urlencode($val['identityTyp']);
+        $into['identityNo'] = urlencode($val['identityNo']);
+        $into['actNm'] = urlencode($val['actNm']);
+        $into['actTyp'] = urlencode($val['actTyp']);
+        $into['stmManIdNo'] = urlencode($val['stmManIdNo']);
+        $into['actNo'] = urlencode($val['actNo']);
+        $into['lbnkNo'] = urlencode($val['lbnkNo']);
+        $into['taskCode'] = urlencode($val['task_code']);
+        $into['merUrl'] =  $notify;
+        $this->parameters = $into;
+    }
+
     public function setNull()
     {
         $this->parameters = null;

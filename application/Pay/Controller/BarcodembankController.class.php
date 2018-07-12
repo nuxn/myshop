@@ -59,6 +59,21 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
 //        }
         $this->display();
     }
+    //微信支付界面跳转
+    public function qr_wpay()
+    {
+//        这里直接获得openid;
+//        if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
+        $id = I("id");
+        $merchant = M("merchants_cate")->where("merchant_id=$id")->find();
+        $openid = 'oyaFdwCeMYLJd7r8WRrXIBqKSGWI';
+        $this->getOffer($merchant, $openid);
+        $this->assign('openid', $openid);
+        $this->assign("merchant", $merchant);
+        $this->assign('seller_id', $id);
+//        }
+        $this->display();
+    }
 
 
     //支付宝支付界面跳转
@@ -90,6 +105,7 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
             $this->agent_credits = '';
             $this->agent_credits_discount = '';
         } else {
+            $this->agtcardname = $agent_data['cardname'];
             # 参与代理异业联盟的商户
             $use_merchants = M("screen_cardset")->where(array('c_id' => $agent_data['id']))->getField("use_merchants");
             # 判断该商户是否参与代理的异业联盟
@@ -98,6 +114,7 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
             $agent_card_id = $agent_data['id'];
             $agent_mem_info = M('screen_memcard_use')->where(array('fromname' => $openid, 'memcard_id' => $agent_card_id,'status'=>1))->find();
             # 是否有该用户的会员信息
+            $this->agent_levelname = '';
             if (empty($agent_mem_info) || !$inarray) {
                 $this->agent_discount = '';
                 $this->agent_credits = 0;
@@ -119,6 +136,7 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
                         for ($i = 0; $i < count($agent_discount_data); $i++) {
                             if ($agent_user_integral >= $agent_discount_data[$i]['level_integral']) {
                                 $this->agent_discount = $agent_discount_data[$i]['level_discount'];
+                                $this->agent_levelname = $agent_discount_data[$i]['level_name'];
                             }
                         }
                     } else {
@@ -157,10 +175,12 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
             $this->credits = '';    // 本次可用积分
             $this->credits_discount = '';//积分可抵扣的金额
         } else {
+            $this->mchcardname = $card_data['cardname'];
             $this->card_code = M('screen_memcard_use')->where(array('memcard_id' => $card_data['id'], 'fromname' => $openid))->getField("card_code");
             $card_id = $card_data['id'];
             $mem_info = M('screen_memcard_use')->where(array('fromname' => $openid, 'memcard_id' => $card_id,'status'=>1))->find();
             # 是否有改用户会员信息
+            $this->mch_levelname = '';
             if (empty($mem_info)) {
                 $this->discount = '';
                 $this->credits = 0;
@@ -182,6 +202,7 @@ WBDdsn6coSK8qlh4Jxv9dquCaymS9Y+lGzBh2o4n0jOF
                         for ($i = 0; $i < count($discount_data); $i++) {
                             if ($user_integral >= $discount_data[$i]['level_integral']) {
                                 $this->discount = $discount_data[$i]['level_discount'];
+                                $this->mch_levelname = $discount_data[$i]['level_name'];
                             }
                         }
                     } else {

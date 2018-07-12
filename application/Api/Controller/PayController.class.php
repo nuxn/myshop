@@ -588,6 +588,21 @@ class  PayController extends ApibaseController
                     $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "success", "msg" => "成功", "data" => $pay)));
                 }
             }
+            // 随行付支付通道
+            if ($res['wx_bank'] == "14") {
+                $message = A("Pay/Banksxf")->wx_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, 5);
+                if ($message['code'] == "error") {
+                    $this->ajaxReturn(array("code" => "error", "msg" => "支付失败"));
+                }
+                if ($message['code'] == "success") {
+                    $pay = $this->pays->where("merchant_id=$id And price=$price And status=1")->order("paytime desc")->field("id,price,paystyle_id,mode,remark,paytime,status,jmt_remark")->find();
+                    if (!$pay) {
+                        $pay = array();
+                    }
+                    if (!$pay["jmt_remark"]) $pay["jmt_remark"] = "";
+                    $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "success", "msg" => "成功", "data" => $pay)));
+                }
+            }
         } else if ($number == '28') {//支付宝支付
 
             if ($res['ali_bank'] == "1") {//微众银行
@@ -648,6 +663,18 @@ class  PayController extends ApibaseController
             }
             if ($res['ali_bank'] == "11") {
                 $message = A("Pay/Barcodexdlbank")->pos_ali_micropay($id, $price, $code, $checker_id, $order_sn);
+                if ($message['code'] == "error") {
+                    $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "error", "msg" => "失败", "data" => "支付失败")));
+                }
+                if ($message['code'] == "success") {
+                    $pay = $this->pays->where("merchant_id=$id And price=$price And status=1")->order("paytime desc")->field("id,price,paystyle_id,mode,remark,paytime,status,jmt_remark")->find();
+                    if (!$pay["jmt_remark"]) $pay["jmt_remark"] = "";
+                    $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "success", "msg" => "成功", "data" => $pay)));
+                }
+            }
+            // 随行付支付
+            if ($res['ali_bank'] == "14") {
+                $message = A("Pay/Banksxf")->ali_micropay($id, $price, $code, $checker_id, $jmt_remark, $order_sn, 5);
                 if ($message['code'] == "error") {
                     $this->ajaxReturn(array("code" => "success", "msg" => "成功", "data" => array("code" => "error", "msg" => "失败", "data" => "支付失败")));
                 }
@@ -731,6 +758,8 @@ class  PayController extends ApibaseController
         $pay = $this->pays->where("remark='$remark' And merchant_id= $mid ")->find();
         if (!$pay) $this->ajaxReturn(array("code" => "error", "msg" => "未找到订单"));
         #储值订单退款
+        $dec_card_balance = 0;
+        $card = array();
         if ($pay['mode'] == 12) {
             #该笔订单充值到会员卡实际到账的金额
             $recharge_info = M('user_recharge')->where(array('order_sn' => $remark))->field('memcard_id,total_price')->find();
@@ -993,7 +1022,6 @@ class  PayController extends ApibaseController
             }
             // 随行付
             if ($pay['bank'] == 14) {
-                
                 $result = A("Pay/Banksxf")->pay_back($remark, $price_back);
                 if ($result['code'] == "success") {
                     $result['back_info'] = $this->add_pay_back($pay, 98, $price_back);
@@ -1151,9 +1179,11 @@ class  PayController extends ApibaseController
                 M('screen_memcard_use')->where(array('card_code' => $order['card_code']))->setField('yue', $card['yue'] + $order['user_money']);
             }
         }
+        $pay_id = $pay_back['id'];
         unset($pay_back['id']);
         $id = $this->payBack->add($pay_back);
-        $back_info = $this->payBack->where("id=$id")->field('id,paystyle_id,checker_id,price_back as price,remark,status,paytime,bill_date,mode')->find();
+        $back_info = $this->payBack->where("id=$id")->field('paystyle_id,checker_id,price_back as price,remark,status,paytime,bill_date,mode')->find();
+        $back_info['id'] = $pay_id;
         return $back_info;
     }
 

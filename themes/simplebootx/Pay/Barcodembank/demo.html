@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <title>向商家付款</title>
+    <link rel="stylesheet" type="text/css" href="./css/index-rem.css">
+    <link rel="stylesheet" type="text/css" href="./css/member.css">
+    <link rel="stylesheet" href="./js/layer_mobile/need/layer.css">
+</head>
+
+<body style="background:#f2f2f2;">
+<!-- 头部区域 -->
+<div class="header">
+    <a onclick="javascript:history.back();"><img src="./imgs/rignarr.png" /></a>
+    <h4>向商家付款</h4>
+</div>
+
+<!-- 内容部分 -->
+<div class="conter">
+    <h5>XXXX商户名称</h5>
+    <div class="conter_box">
+        <p class="conter_left">已优惠 <span>￥</span><span class="discount">5.30</span> , <a href="javascript:void(0);" onclick="myjs()">点击查看</a></p>
+        <p class="conter_right">应付金额：<span class="payables">￥0.00</span></p>
+    </div>
+    <div class="conter_key">
+        <p class='key-title'>消费金额 <span class='input-box'>元</span> <input type="text" id="content" placeholder="请输入消费金额" readonly> </p>
+    </div>
+    <ul id="test">
+        <h6>请选择付款方式</h6>
+        <li>
+            <img src="./imgs/222_02.png" alt="">
+            <span>储值支付</span>
+            <span style="color: #ff9232;">￥</span>
+            <span class="ul_s">10.00</span>
+            <input type="checkbox" name="check1" value="储值支付">
+        </li>
+        <li>
+            <img src="./imgs/222_03.png" alt="">
+            <span>微信支付</span>
+            <input type="checkbox" name="check1" value="微信支付">
+        </li>
+    </ul>
+</div>
+
+<!-- 安全键盘 -->
+<div class='key-container'>
+    <div class='keyboard'>
+        <div class='key-row'>
+            <div class='key-cell' data-num='7' onclick="demo(this,1)">7</div>
+            <div class='key-cell' data-num='8' onclick="demo(this,1)">8</div>
+            <div class='key-cell' data-num='9' onclick="demo(this,1)">9</div>
+            <div class='key-cell keyimg' data-num='D' onclick="demo(this,2)"></div>
+        </div>
+        <div class='key-row'>
+            <div class='key-cell' data-num='4' onclick="demo(this,1)">4</div>
+            <div class='key-cell' data-num='5' onclick="demo(this,1)">5</div>
+            <div class='key-cell' data-num='6' onclick="demo(this,1)">6</div>
+            <div class='key-cell' data-num='-1'></div>
+        </div>
+        <div class='key-row'>
+            <div class='key-cell' data-num='1' onclick="demo(this,1)">1</div>
+            <div class='key-cell' data-num='2' onclick="demo(this,1)">2</div>
+            <div class='key-cell' data-num='3' onclick="demo(this,1)">3</div>
+            <div class='key-cell' data-num='-1'></div>
+        </div>
+        <div class='key-row'>
+            <div class='key-cell key0' data-num='0' onclick="demo(this,1)">0</div>
+            <div class='key-cell' data-num='.' onclick="demo(this,1)">.</div>
+            <div class='key-cell' data-num='-1'></div>
+        </div>
+        <div class='key-confirm' data-num='S' onclick="handleConfirmKey()">
+            <p>确认支付</p>
+        </div>
+    </div>
+</div>
+<!-- 查看优惠卷 -->
+<div class="oooo">
+    <div class="xx" onclick="closex()">X</div>
+    <div class="oooo1">
+        <ul>
+            <p><span>宝安商圈卡</span><span class="right">银卡会员</span></p>
+            <li>
+                <span>会员折扣 (8.5折)</span>
+                <input type="checkbox" name="check2" value="5.00">
+                <span class="right">-￥5.00</span>
+            </li>
+            <li>
+                <span>积分抵扣 (使用5积分)</span>
+                <input type="checkbox" name="check2" value="5.00">
+                <span class="right">-￥5.00</span>
+            </li>
+        </ul>
+        <ul>
+            <p><span>宝安商圈卡</span><span class="right">银卡会员</span></p>
+            <li>
+                <span>会员折扣 (8.5折)</span>
+                <input type="checkbox" name="check2" value="5.00">
+                <span class="right">-￥5.00</span>
+            </li>
+            <li>
+                <span>积分抵扣 (使用5积分)</span>
+                <input type="checkbox" name="check2" value="5.00">
+                <span class="right">-￥5.00</span>
+            </li>
+        </ul>
+        <ul>
+            <p><span>宝安商圈卡</span><span class="right">银卡会员</span></p>
+            <li>
+                <span>会员折扣 (8.5折)</span>
+                <input type="checkbox" name="check2" value="5.00">
+                <span class="right">-￥5.00</span>
+            </li>
+            <li>
+                <span>积分抵扣 (使用5积分)</span>
+                <input type="checkbox" name="check2" value="5.00">
+                <span class="right">-￥5.00</span>
+            </li>
+        </ul>
+        <ul>
+            <p><span>宝安商圈卡</span><span class="right">银卡会员</span></p>
+            <li>
+                <span>会员折扣 (8.5折)</span>
+                <input type="checkbox" name="check2" value="5.00">
+                <span class="right">-￥5.00</span>
+            </li>
+            <li>
+                <span>积分抵扣 (使用5积分)</span>
+                <input type="checkbox" name="check2" value="5.00">
+                <span class="right">-￥5.00</span>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="motai"></div>
+<!-- 请输入支付密码 -->
+<div class="pay">
+    <div class="payment">
+        <h6>请输入支付密码<span onclick="closeXX()">X</span></h6>
+        <p>会员卡储值支付</p>
+        <p class="payment_bot">￥5.00</p>
+        <div class="cell_input">
+            <input type="password" name="" id="pay_content" maxlength="6" style="display: none;" />
+            <div>
+                <input type="password" name="password" id="inputValue0" maxlength="1" readonly/>
+                <input type="password" name="password" id="inputValue1" maxlength="1" readonly/>
+                <input type="password" name="password" id="inputValue2" maxlength="1" readonly/>
+                <input type="password" name="password" id="inputValue3" maxlength="1" readonly/>
+                <input type="password" name="password" id="inputValue4" maxlength="1" readonly/>
+                <input type="password" name="password" id="inputValue5" maxlength="1" readonly/>
+            </div>
+        </div>
+    </div>
+    <!-- 安全键盘 -->
+    <div class='key-password'>
+        <div class='keyboard'>
+            <div class='key-row'>
+                <div class='key-cell' data-num='1' onclick="passworddemo(this,1)">1</div>
+                <div class='key-cell' data-num='2' onclick="passworddemo(this,1)">2</div>
+                <div class='key-cell' data-num='3' onclick="passworddemo(this,1)">3</div>
+            </div>
+            <div class='key-row'>
+                <div class='key-cell' data-num='4' onclick="passworddemo(this,1)">4</div>
+                <div class='key-cell' data-num='5' onclick="passworddemo(this,1)">5</div>
+                <div class='key-cell' data-num='6' onclick="passworddemo(this,1)">6</div>
+            </div>
+            <div class='key-row'>
+                <div class='key-cell' data-num='7' onclick="passworddemo(this,1)">7</div>
+                <div class='key-cell' data-num='8' onclick="passworddemo(this,1)">8</div>
+                <div class='key-cell' data-num='9' onclick="passworddemo(this,1)">9</div>
+            </div>
+            <div class='key-row'>
+                <div class='key-cell cell' data-num='-1'></div>
+                <div class='key-cell' data-num='0' onclick="passworddemo(this,1)">0</div>
+                <div class='key-cell passwordimg' data-num='D' onclick="passworddemo(this,2)"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/layer_mobile/layer.js"></script>
+
+</html>
+<script type="text/javascript">
+    var test_val; //支付方式
+    var oooo1_val; //优惠卷的值
+    var payables_val; //应付金额
+    var num; //点击弹窗次数
+    $(document).ready(function() {
+        // JQuery 实现多个checkbox 只选中一个
+        $('#test').find('input[type=checkbox]').bind('click', function() {
+            $('#test').find('input[type=checkbox]').not(this).attr("checked", false);
+            test_val = $(this).val();
+        });
+        $('.oooo1').find('input[type=checkbox]').bind('click', function() {
+            $('.oooo1').find('input[type=checkbox]').not(this).attr("checked", false);
+            oooo1_val = $(this).val();
+        });
+    })
+    //点击查看优惠卷
+    function myjs() {
+        $('.oooo').show();
+        $('.motai').show();
+    }
+    //点击优惠卷关闭的时候取值
+    function closex() {
+        $('.oooo').hide();
+        $('.motai').hide();
+        $(".discount").text(oooo1_val); //把值放到已优惠里面
+    }
+    //处理按键
+    function demo(obj, tip) {
+        var con = $('#content').val();
+        if (tip == 1) {
+            $('#content').attr('value', con + obj.innerHTML);
+            // 应付金额
+            payables();
+        } else if (tip == 2) { //处理删除键
+            $('#content').attr('value', con.slice(0, -1));
+            // 应付金额
+            payables();
+        }
+    }
+    //应付金额
+    function payables() {
+        var discount = $(".discount").html();
+        payables_val = parseFloat(document.getElementById('content').value - discount);
+        if (document.getElementById('content').value < 10) {
+            $(".payables").text('￥' + document.getElementById('content').value);
+        } else {
+            $(".payables").text('￥' + payables_val);
+        }
+    }
+    // 确认
+    function handleConfirmKey() {
+        let S = $('#content').val();
+        //未输入
+        if (!S.length) {
+            layer.open({
+                content: '请输入消费金额',
+                skin: 'msg',
+                time: 2 //2秒后自动关闭
+            });
+            return false;
+        }
+        if (test_val == '储值支付') {
+            // 发送请求接口
+            var save_val = $('.ul_s').html();
+            console.log(payables_val)
+            if (save_val > payables_val) {
+                $('.pay').show();
+                $('.motai').show();
+                $(".payment_bot").text('￥' + payables_val);
+            } else {
+                layer.open({
+                    title: ['提示'],
+                    content: '储值余额不足!',
+                    btn: ['确定'],
+                    yes: function(index) {
+                        layer.close(index);
+                    }
+                })
+            }
+        } else if (test_val == '微信支付') {
+            $('.pay').show();
+            $('.motai').show();
+            $(".payment_bot").text('￥' + payables_val);
+        } else {
+            layer.open({
+                content: '请选择支付方式',
+                skin: 'msg',
+                time: 2 //2秒后自动关闭
+            });
+            return false;
+        }
+    }
+    //支付按键
+    function passworddemo(obj, tip) {
+        var pay = $('#pay_content').val();
+        if (tip == 1) {
+            if (pay.length == 5) {
+                $('#pay_content').attr('value', pay + obj.innerHTML);
+                $('#inputValue5').attr('value', obj.innerHTML);
+                // 发送请求接口
+                //如果失败弹出询问框
+                if (num > 5) {
+                    layer.open({
+                        title: ['提示'],
+                        content: '支付密码错误，超过5次!',
+                        btn: ['找回密码'],
+                        yes: function(index) {
+                            layer.close(index);
+                        }
+                    })
+                } else {
+                    layer.open({
+                        title: ['提示'],
+                        content: '支付密码错误!',
+                        btn: ['重试', '忘记密码'],
+                        yes: function(index) { //点击重试
+                            $('input[name=password]').val('');
+                            $('#pay_content').attr('value', "");
+                            layer.close(index);
+                            num = index;
+                        },
+                        no: function(index) { //忘记密码
+                            location.href = "respay_password.html";
+                            // layer.close(index);
+                        }
+                    });
+                }
+                return false;
+            } else {
+                $('#pay_content').attr('value', pay + obj.innerHTML);
+                for (var i = 0; i < document.getElementById('pay_content').value.length; i++) {
+                    if (pay.length == i) {
+                        $('#inputValue' + i).attr('value', obj.innerHTML);
+                    }
+                }
+            }
+        } else if (tip == 2) { //处理删除键
+            $('input[name=password]').val('');
+            document.getElementById('pay_content').value = pay.slice(0, -1);
+            for (var i = 0; i < document.getElementById('pay_content').value.length; i++) {
+                $('#inputValue' + i).attr('value', document.getElementById('pay_content').value[i]);
+            }
+        }
+    }
+    //支付按键关闭
+    function closeXX() {
+        $('.pay').hide();
+        $('.motai').hide();
+    }
+</script>
